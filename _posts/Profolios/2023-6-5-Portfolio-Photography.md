@@ -21,6 +21,10 @@ Here are some of my works that I am relatively satisfied with, categorized for d
 
 The images have been scaled down to a width of 1920px due to limitations of the website server. Please contact me to obtain the original images.
 
+由于众所周知的原因，访问github不太稳定，所以图片有概率加载不出。这是网络问题，可以换个网络环境或者过段时间再来访问。
+
+Due to well-known reasons, accessing GitHub may be unstable, causing images to occasionally fail to load. This is likely caused by network issues and can be resolved by switching to a different network environment or trying again at a later time.
+
 右键图片另存为即可下载图片。
 
 To download the image, right-click on it and choose "Save As."
@@ -32,7 +36,7 @@ To download the image, right-click on it and choose "Save As."
 --------------------------------------------------------
 
 # 风光 Landscape
-
+<!-- https://github.com/Kannmu/Kannmu.github.io/blob/master/img/Photography/Landscape/DSC5534.jpg -->
 ![](../../../../../img/Photography/Landscape/DSC5534.jpg "青城山")
 
 ![](../../../../../img/Photography/Landscape/DSC5505.jpg "青城山")
@@ -50,8 +54,6 @@ To download the image, right-click on it and choose "Save As."
 ![](../../../../../img/Photography/Creature/DSC4234-HDR.jpg)
 
 # 人文 Humanistic
-
-![](../../../../../img/Photography/Humanistic/DSC3863.jpg)
 
 ![](../../../../../img/Photography/Humanistic/DSC4237-HDR_1.jpg)
 
