@@ -23,7 +23,7 @@ Welcome fellow enthusiasts to come chat with me
 ##### Experience
 
 - [Robocon Pangolin Team](https://space.bilibili.com/1242339866) · Mechanical & Hardware Group · 2020-2022
-
+- Bachelor's degree · Mechanical Design, Manufacturing and Automation (Outstanding Engineer Program) from the [School of Mechanical Engineering](https://msec.scu.edu.cn/) · 2019.9-2023.6
 
 
 [1]: https://space.bilibili.com/1242339866

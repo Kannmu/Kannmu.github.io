@@ -91,9 +91,9 @@ page-mathjax: true
 # Friends
 friends:
   [
-    { title: "猫崎楓（Kaede）", href: "https://space.bilibili.com/22526335" },
-    # { title: "Ebn Zhang", href: "https://ebnbin.dev/" },
-    # { title: "Kun Qian", href: "http://kunq.me" },
+    { title: "猫崎楓Kaede", href: "https://space.bilibili.com/22526335/" },
+    { title: "阿鲁Aru", href: "https://blog.csdn.net/legendaryfisher/" },
+    { title: "王以俨WYY", href: "https://george-wyy.github.io/" },
     # { title: "Sherry Woo", href: "https://sherrywoo.me/" },
     # { title: "SmdCn", href: "http://blog.smdcn.net" },
     # { title: "JiyinYiyong", href: "http://tiye.me/" },
