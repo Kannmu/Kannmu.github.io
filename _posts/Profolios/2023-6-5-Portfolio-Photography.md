@@ -11,6 +11,12 @@ tags:
   - 摄影
 ---
 
+推荐播放音乐：
+
+Recommend Music:
+
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=700 height=86 src="http://music.163.com/outchain/player?type=2&id=1300698999&auto=1&height=66"></iframe>
+
 # 写在前面 Intro
 
 以下是个人相对比较满意的作品，分类展示。持续更新。
