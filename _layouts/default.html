@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?1f681335bb8c58643c8ed990ab06f8cc";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+    
+
 {% include head.html %}
 
 <!-- hack iOS CSS :active style -->
@@ -21,3 +32,27 @@
 </body>
 
 </html>
+
+<!-- Add Auto Resize Function -->
+<script type="text/javascript">
+
+    function updateIframeWidth() {
+        // 获取iframe元素
+        var iframe = document.getElementsByTagName('iframe')[0];
+
+        // 获取网页宽度的一半
+        var halfWidth = Math.floor(document.body.clientWidth / 2.15);
+
+        // 将iframe的宽度设置为网页宽度的一半
+        iframe.width = halfWidth;
+        }
+
+        // 在窗口大小发生变化时，重新计算iframe宽度
+        window.onresize = function() {
+        updateIframeWidth();
+        }
+
+        // 初始加载时计算iframe宽度
+        updateIframeWidth();
+
+</script>
