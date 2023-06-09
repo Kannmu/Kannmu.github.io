@@ -43,13 +43,16 @@
         // 获取网页宽度的一半
         var halfWidth = Math.floor(document.body.clientWidth / 2.15);
 
+        
         // 将iframe的宽度设置为网页宽度的一半
         iframe.width = halfWidth;
         }
 
         // 在窗口大小发生变化时，重新计算iframe宽度
         window.onresize = function() {
-        updateIframeWidth();
+            if (window.innerWidth < 750) {
+                updateIframeWidth();
+            }
         }
 
         // 初始加载时计算iframe宽度
