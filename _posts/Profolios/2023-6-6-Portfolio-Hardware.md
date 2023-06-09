@@ -15,6 +15,10 @@ tags:
 
 # 写在前面 Intro
 
+这里写一些详细的作品经历，可能会有一些很不完善的。
+
+Here are some detailed work experiences, which may be incomplete.
+
 我是在进行Robocon比赛期间开始学习的硬件知识。这部分比较基础了，放出来也只是记录一下。
 
 ---------------------------------------------------

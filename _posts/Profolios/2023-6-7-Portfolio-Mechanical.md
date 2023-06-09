@@ -14,6 +14,10 @@ tags:
 
 # 写在前面 Intro
 
+这里写一些详细的作品经历，可能会有一些很不完善的。
+
+Here are some detailed work experiences, which may be incomplete.
+
 这部分内容主要是和机械设计、结构设计相关的内容。
 
 This part mainly demonstrates my mechanical work.

@@ -1,0 +1,57 @@
+---
+layout: default
+---
+
+<!-- Page Header -->
+{% include intro-header.html type='page' %}
+
+<!-- Main Content -->
+<article>
+<div class="container">
+  <div class="row">
+    <!-- USE SIDEBAR -->
+    <!-- Side Catalog Container -->
+    {{ content }}
+      {% unless page.no-catalog %}
+        <div class="
+            col-lg-2 col-lg-offset-12
+            visible-lg-block
+            sidebar-container
+            catalog-container">
+            <div class="side-catalog">
+                <hr class="hidden-sm hidden-xs">
+                <h5>
+                    <a class="catalog-toggle" href="#">CATALOG</a>
+                </h5>
+                <ul class="catalog-body"></ul>
+            </div>
+        </div>
+      {% endunless %}
+  </div>
+      
+</div>
+</article>
+    <!-- Sidebar Container -->
+
+{% if site.page-mathjax %}
+<!-- Add support for Mathjax by Voleking-->
+<!-- If you want to see formulars well in post preview, Maybe you should add this.-->
+<!-- However, most of the time formulars may not appear in the post preview, you can delete it.-->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true,
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+{% endif %}
+
