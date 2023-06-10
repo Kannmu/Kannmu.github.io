@@ -2,17 +2,41 @@
 layout: default
 ---
 
+
 <!-- Page Header -->
 {% include intro-header.html type='page' %}
 
+
 <!-- Main Content -->
 <article>
+
 <div class="container">
+
   <div class="row">
     <!-- USE SIDEBAR -->
-    <!-- Side Catalog Container -->
+
+    <!-- <div class = "col-lg-8 col-lg-offset-2
+    col-md-10 col-md-offset-1
+    post-container"> -->
+    <center>
+
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="https://music.163.com/outchain/player?type=2&id=1381615652&auto=1&height=66"></iframe>
+    
+    </center>
+
+    <!-- </div> -->
+
+
+    <div class="
+    col-lg-8 col-lg-offset-2
+    col-md-10 col-md-offset-1
+    post-container">
+
     {{ content }}
-      {% unless page.no-catalog %}
+    
+    </div>
+
+    {% unless page.no-catalog %}
         <div class="
             col-lg-2 col-lg-offset-12
             visible-lg-block
@@ -27,31 +51,17 @@ layout: default
             </div>
         </div>
       {% endunless %}
+
+    <!-- Side Catalog Container -->
+    
+
+      
+    
   </div>
       
 </div>
 </article>
-    <!-- Sidebar Container -->
 
-{% if site.page-mathjax %}
-<!-- Add support for Mathjax by Voleking-->
-<!-- If you want to see formulars well in post preview, Maybe you should add this.-->
-<!-- However, most of the time formulars may not appear in the post preview, you can delete it.-->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    TeX: {
-      equationNumbers: {
-        autoNumber: "AMS"
-      }
-    },
-    tex2jax: {
-      inlineMath: [ ['$','$'] ],
-      displayMath: [ ['$$','$$'] ],
-      processEscapes: true,
-    }
-  });
-</script>
-<script type="text/javascript"
-  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-{% endif %}
+
+
 
