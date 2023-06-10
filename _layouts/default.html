@@ -37,30 +37,46 @@
 
 <!-- Add Auto Resize Function -->
 <script type="text/javascript">
+    var iframe = document.getElementsByTagName('iframe')[0];
 
-    function updateIframeWidth() {
-        // 获取iframe元素
-        var iframe = document.getElementsByTagName('iframe')[0];
+    // function updateIframeWidth() {
+    //     // 获取iframe元素
+    //     var iframe = document.getElementsByTagName('iframe')[0];
 
-        // 获取网页宽度的一半
-        var halfWidth = Math.floor(document.body.clientWidth / 2.15);
+    //     // 获取网页宽度的一半
+    //     var halfWidth = Math.floor(document.body.clientWidth / 2.15);
 
         
-        // 将iframe的宽度设置为网页宽度的一半
-        iframe.width = halfWidth;
-        }
+    //     // 将iframe的宽度设置为网页宽度的一半
+    //     iframe.width = halfWidth;
+    //     }
 
         // 在窗口大小发生变化时，重新计算iframe宽度
         window.onresize = function() {
-            if (window.innerWidth < 750) {
-                updateIframeWidth();
-            }
-            else{
+
+            if (window.innerWidth > 1200) {
+                // updateIframeWidth();
                 iframe.width = 720;
+                
+            }
+
+            else if (window.innerWidth > 760){
+                iframe.width = 640;
+            }
+
+            else{
+                var halfWidth = Math.floor(document.body.clientWidth/1.05);
+                if (window.innerWidth > halfWidth){
+                    iframe.width = halfWidth;
+                }
+                // else{
+                //     iframe.width = 600;
+                // }
             }
         }
+        
 
         // 初始加载时计算iframe宽度
-        updateIframeWidth();
+        // updateIframeWidth();
 
 </script>

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[UnityShader] 2D UI边缘发光效果 [学习笔记]"
+title: "[Tch] Unity Shader 2D UI边缘发光效果 [学习笔记]"
 subtitle: "2D UI Edge glowing effect using Unity Shader"
 author: "Kannmu"
 header-style: text
