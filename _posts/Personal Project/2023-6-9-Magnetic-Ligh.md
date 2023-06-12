@@ -3,7 +3,9 @@ layout: post
 title: "[Personal Project] 桌面磁吸灯"
 subtitle: "Desktop magnetic light"
 author: "Kannmu"
-header-style: text
+# header-style: text
+# header-img: "../../../../img/Backgrounds/Bg (1).jpg"
+# header-mask: 0.4
 tags:
   - Hardware
   - Mechanical

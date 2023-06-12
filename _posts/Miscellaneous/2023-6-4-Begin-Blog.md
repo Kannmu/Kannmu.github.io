@@ -3,7 +3,9 @@ layout: post
 title: "博客：开始篇"
 subtitle: "Start to write blog"
 author: "Kannmu"
-header-style: text
+# header-style: text
+header-img: "../../../../img/Backgrounds/Bg (4).jpg"
+header-mask: 0.4
 tags:
   - Miscellaneous
 ---

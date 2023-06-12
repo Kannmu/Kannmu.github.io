@@ -3,7 +3,9 @@ layout: post
 title: "[Tch] Unity Shader 2D UI边缘发光效果 [学习笔记]"
 subtitle: "2D UI Edge glowing effect using Unity Shader"
 author: "Kannmu"
-header-style: text
+# header-style: text
+header-img: "../../../../img/Photography/Humanistic/DSC3869.jpg"
+header-mask: 0.4
 tags:
   - Shader
   - TA

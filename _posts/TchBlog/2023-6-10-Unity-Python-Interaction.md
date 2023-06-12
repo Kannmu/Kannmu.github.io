@@ -3,7 +3,9 @@ layout: post
 title: "[Tch] Unity C# 对 Python 调用与通信"
 subtitle: "Run and communicate with Python Script from Unity C#"
 author: "Kannmu"
-header-style: text
+# header-style: text
+header-img: "../../../../img/Photography/Architecture/P1230474.jpg"
+header-mask: 0.4
 tags:
   - Unity
   - C#
@@ -50,7 +52,7 @@ private Process process;
 
 首先新建两类变量
 
-### 设置Cmd命令 Set CMD Command
+## 设置Cmd命令 Set CMD Command
 
 接着在```Start()```函数中来激活Conda虚拟环境并调用Python文件。这里调用cmd命令来实现。```Start()```函数内容如下：
 
@@ -67,7 +69,7 @@ string command = "/c activate Python & python \"" + fullPath + "\"";
 
 最后的```command```便是最终需要执行的命令，这里我的Anaconda虚拟环境名称是Python，注意替换成自己的名称。并且已经添加好了conda的环境变量，如果没有添加的话需要将```activate```替换为 ```conda activate```。
 
-### 创建ProcessStartInfo Create ProcessStartInfo
+## 创建ProcessStartInfo Create ProcessStartInfo
 
 接下来需要设置要创建的进程Process的相关属性
 
@@ -88,7 +90,7 @@ startInfo.RedirectStandardOutput = true;
 startInfo.RedirectStandardError = true;
 
 ```
-### 创建进程 Create Process
+## 创建进程 Create Process
 
 设定好进程的StartInfo之后就可以创建进程了
 
@@ -108,7 +110,7 @@ process.BeginErrorReadLine();
 process.BeginOutputReadLine();
 ```
 
-### 捕获输出 Capture Output
+## 捕获输出 Capture Output
 
 另外需要添加两个回调函数，用来异步的实时捕获Python程序产生的输出，并显示到Unity。如下：
 
@@ -139,7 +141,7 @@ private void OnErrorDataReceived(object sender, DataReceivedEventArgs e)
 
 为了实现 C# 向 Python 发送指令，使用UDP协议来传输数据，C#作为发送端，Python监听端口响应。
 
-### C# UDP设置
+## C# UDP设置
 
 在C#中定义两个变量：
 
@@ -179,7 +181,7 @@ void Update()
 
 这里按下空格后会对```127.0.01:31415```端口发送```"Recognizing"```字符串指令。
 
-### Python UDP设置
+## Python UDP设置
 
 在Python中设置监听端口使用```socket```库
 
@@ -213,7 +215,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
 ```
 启动端口监听
 
-注意``` sys.stdout.flush() ```这一行一定要有，用来清除Python标准输出的缓存，不然Unity C# 中捕获不到 ```Print()``` 的输出。
+**注意``` sys.stdout.flush() ```这一行一定要有，用来清除Python标准输出的缓存，不然Unity C# 中捕获不到 ```Print()``` 的输出。**
 
 # 进程查杀 Kill Process
 
@@ -268,7 +270,7 @@ void OnApplicationQuit()
 
 # 全部代码 Code
 
-### C#
+## C#
 
 ```cs
 using System.Collections;
@@ -401,7 +403,7 @@ public class Voice_Recognition : MonoBehaviour
 
 ```
 
-### Python
+## Python
 
 ```py
 import socket
