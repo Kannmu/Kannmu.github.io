@@ -1,6 +1,6 @@
 Hi, Here is Linhan Fan (涵无Kannmu).
 
-I'm currently being a graduated student majoring in department of industry design at Southeast University. My supervisor is [Professor Yafeng Niu](https://me.seu.edu.cn/nyf_31777/list.htm)
+I am currently a graduate student majoring in design in the Department of Industrial Design at Southeast University. My supervisor is [Professor Yafeng Niu](https://me.seu.edu.cn/nyf_31777/list.htm)
 
 Currently learning TA(Technical Artist) related knowledge.
 
