@@ -1,0 +1,22 @@
+---
+layout: portfolio
+title: "Portfolio"
+description: "「做了什么」"
+header-img: "img/Backgrounds/Bg (2).jpg"
+header-mask: 0.3
+---
+
+<!-- Chinese Version -->
+<div class="zh post-container">
+    
+{% capture Portfolio_zh %}{% include Portfolio/zh.md %}{% endcapture %}
+{{ Portfolio_zh | markdownify }}
+
+</div>
+
+<!-- English Version -->
+<!-- <div class="en post-container">
+    {% capture Portfolio_en %}{% include Portfolio/en.md %}{% endcapture %}
+    {{ Portfolio_en | markdownify }}
+</div> -->
+

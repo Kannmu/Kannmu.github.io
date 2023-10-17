@@ -1,0 +1,57 @@
+---
+layout: default
+---
+
+
+<!-- Page Header -->
+{% include intro-header.html type='page' %}
+
+
+<!-- Main Content -->
+<article>
+
+<div class="container">
+
+  <div class="row">
+  <!-- <center> -->
+
+      
+  <!-- </center> -->
+    
+
+    <div class="
+    col-lg-8 col-lg-offset-2
+    col-md-10 col-md-offset-1
+    post-container">
+
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="https://music.163.com/outchain/player?type=2&id=1381615652&auto=1&height=66"></iframe>
+    
+
+      {{ content }}
+    
+    </div>
+
+    {% unless page.no-catalog %}
+        <div class="
+            col-lg-2 col-lg-offset-10
+            visible-lg-block
+            sidebar-container
+            catalog-container">
+            <div class="side-catalog">
+                <hr class="hidden-sm hidden-xs">
+                <h5>
+                    <a class="catalog-toggle" href="#">CATALOG</a>
+                </h5>
+                <ul class="catalog-body"></ul>
+            </div>
+        </div>
+      {% endunless %}
+    
+  </div>
+      
+</div>
+</article>
+
+
+
+

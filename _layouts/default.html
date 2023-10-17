@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Add Bing Analysis -->
+<meta name="msvalidate.01" content="39DBA1088E4D102A5E0F2E461D60227E" />
+
+<!-- Add Baidu Analysis -->
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?1f681335bb8c58643c8ed990ab06f8cc";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+    
+
+{% include head.html %}
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    {% include nav.html %}
+    {% include search.html %}
+    {{ content }}
+    {% include footer.html %}
+    
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
+
+<!-- Add Auto Resize Function -->
+<script type="text/javascript">
+    var iframe = document.getElementsByTagName('iframe')[0];
+
+    function Resize(){
+        if (window.innerWidth > 1200) {
+            // updateIframeWidth();
+            iframe.width = 720;
+            
+        }
+
+        else if (window.innerWidth > 760){
+            iframe.width = 640;
+        }
+
+        else{
+            var halfWidth = Math.floor(document.body.clientWidth/1.05);
+            if (window.innerWidth > halfWidth){
+                iframe.width = halfWidth;
+            }
+        }
+    }
+
+    // 在窗口大小发生变化时，重新计算iframe宽度
+    window.onresize = function() {
+        Resize();
+    }
+        
+
+        // 初始加载时计算iframe宽度
+    Resize();
+
+</script>
