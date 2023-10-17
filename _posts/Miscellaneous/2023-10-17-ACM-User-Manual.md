@@ -12,19 +12,19 @@ tags:
     - User Manual
 ---
 
-## Introduction
+## 1. Introduction
 
 The ACM Digital Library is a comprehensive repository of resources in the field of computer science and information technology. It provides access to a diverse range of scholarly articles, conference proceedings, technical reports, and other publications related to computer science and its various sub-disciplines.
 
-### Overview
+### 1.1 Overview
 
 The ACM Digital Library is a prominent digital repository for computer science research and literature. It serves as a valuable resource for researchers, academics, and professionals in the field. The library offers an extensive collection of high-quality content, covering a wide range of topics in computer science and technology.
 
-### Development History
+### 1.2 Development History
 
 Established in 1997, the ACM Digital Library has grown to become one of the leading online databases in computer science. It has continuously expanded its collection and features to meet the evolving needs of the research community. The library has also incorporated technological advancements to enhance accessibility and usability.
 
-### Resource Types
+### 1.3 Resource Types
 
 The ACM Digital Library includes a variety of resource types, such as:
 
@@ -34,23 +34,23 @@ The ACM Digital Library includes a variety of resource types, such as:
 4. Books: Books and monographs on various computer science topics.
 5. Magazines: ACM's magazines, featuring articles on emerging trends and industry insights.
 
-### Resource Quantity
+### 1.4 Resource Quantity
 
 The ACM Digital Library hosts a vast collection of resources, comprising thousands of articles, conference papers, reports, and other publications. The exact number of resources may vary as new content is continually added to the database.
 
-### Disciplinary Coverage
+### 1.5 Disciplinary Coverage
 
 The ACM Digital Library covers a broad range of disciplines within computer science and information technology. It encompasses sub-disciplines such as artificial intelligence, data science, computer networks, software engineering, human-computer interaction, and more. The library aims to provide comprehensive coverage of the entire spectrum of computer science research.
 
-### Update Frequency
+### 1.6 Update Frequency
 
 The ACM Digital Library is regularly updated with new content to ensure access to the latest research and developments. The frequency of updates may vary depending on the availability of new publications and the publishing schedule of ACM journals and conferences.
 
 In summary, the ACM Digital Library is a valuable resource for researchers, students, and professionals in the field of computer science. It offers a wealth of knowledge and insights to support their work and keep them informed about the latest advancements in the discipline.
 
-## Access Methods
+## 2. Access Methods
 
-### On-campus
+### 2.1 On-campus
 
 Open the [SEU Library webpage](http://lib.seu.edu.cn/)
 
@@ -64,9 +64,9 @@ Open the [SEU Library webpage](http://lib.seu.edu.cn/)
 
 ![Alt text](../../../../img/UserManual/image-2.png)
 
-### Off-campus
+### 2.2 Off-campus
 
-#### Use the VPN
+#### 2.2.1 Use the VPN
 
 - Open the [Network and Information Center of SEU](https://nic.seu.edu.cn/) webpage.
 
@@ -100,7 +100,7 @@ Open the [SEU Library webpage](http://lib.seu.edu.cn/)
 
 ![Alt text](../../../../img/UserManual/image-10.png)
 
-#### Through the URL
+#### 2.2.2 Through the URL
 
 - Open your browser.
 
@@ -112,7 +112,9 @@ Open the [SEU Library webpage](http://lib.seu.edu.cn/)
 
 - Reach the  ACM DL homepage.
 
-#### By searching
+![Alt text](../../../../img/UserManual/image-10.png)
+
+#### 2.2.3 By searching
 
 - Open your browser.
 
@@ -132,11 +134,11 @@ Open the [SEU Library webpage](http://lib.seu.edu.cn/)
 
 PS:(Methods Ⅱ and Ⅲ also apply to on-campus)
 
-### Register or Sign in
+### 2.3 Register or Sign in
 
-#### Register
+#### 2.3.1 Register
 
-- Click on the “Register” button in the upper right-hand corner of the DL screen to create a web account.
+- Click on the "Register" button in the upper right-hand corner of the DL screen to create a web account.
 
 ![Alt text](../../../../img/UserManual/image-17.png)
 
@@ -148,7 +150,7 @@ PS:(Methods Ⅱ and Ⅲ also apply to on-campus)
 
 ![Alt text](../../../../img/UserManual/image-19.png)
 
-#### Sign in
+#### 2.3.2 Sign in
 
 - Sign in using the link in the upper right-hand corner of the screen.
 
@@ -158,7 +160,7 @@ PS:(Methods Ⅱ and Ⅲ also apply to on-campus)
 
 ![Alt text](../../../../img/UserManual/image-21.png)
 
-#### Uses of the ACM web account
+#### 2.3.3 Uses of the ACM web account
 
 - Remote Access: sign in with your web account to the ACM DL from inside a full-text authenticated environment,and for 6 months from that time you will be able to access the full-text articles from outside that authenticated environment by logging in with your web account.
 
@@ -166,11 +168,11 @@ PS:(Methods Ⅱ and Ⅲ also apply to on-campus)
 
 - Save Search queries and set up Content Alerts.
 
-## Retrieval Methods
+## 3. Retrieval Methods
 
 ![Alt text](../../../../img/UserManual/image-22.png)
 
-- The Basic Search box is found at the top of the DL(Digital Library)home page，as shown in the figure above.
+- The Basic Search box is found at the top of the DL(Digital Library)home page, as shown in the figure above.
 
 ![Alt text](../../../../img/UserManual/image-23.png)
 
@@ -178,7 +180,7 @@ PS:(Methods Ⅱ and Ⅲ also apply to on-campus)
 
 ![Alt text](../../../../img/UserManual/image-24.png)
 
-- Basic Search allows Boolean operators AND, OR and NOT (use capital letters).
+- Basic Search allows Boolean operators ```AND```, ```OR``` and ```NOT``` (use capital letters).
 
 ![Alt text](../../../../img/UserManual/image-25.png)
 
