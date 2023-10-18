@@ -28,15 +28,25 @@ Established in 1997, the ACM Digital Library has grown to become one of the lead
 
 The ACM Digital Library includes a variety of resource types, such as:
 
-1. Journal Articles: Peer-reviewed articles from renowned ACM journals.
-2. Conference Proceedings: Proceedings from ACM-sponsored conferences and symposiums.
-3. Technical Reports: Technical reports and white papers covering research findings and developments.
-4. Books: Books and monographs on various computer science topics.
-5. Magazines: ACM's magazines, featuring articles on emerging trends and industry insights.
+1. The Full-Text Collection of all ACM publications, including journals, conference proceedings, technical magazines, newsletters and books.
+2. A collection of curated and hosted full-text publications from select publishers.
+3. The ACM Guide to Computing Literature, a comprehensive bibliographic database focused exclusively on the field of computing.
+4. A richly interlinked set of connections among authors, works, institutions, and specialized communities.
+5. The ACM Digital Library Board, oversees the design, operations and direction of the ACM Digital Library and supporting technology platforms.
+
 
 ### 1.4 Resource Quantity
 
-The ACM Digital Library hosts a vast collection of resources, comprising thousands of articles, conference papers, reports, and other publications. The exact number of resources may vary as new content is continually added to the database.
+The ACM Digital Library hosts a vast collection of resources, comprising thousands of articles, conference papers, reports, and other publications. 
+
+- 71 journals and magazines, all back to the original volume;
+- Over 5,700 volumes of proceedings, with 275 volumes expected to be added each year;
+- 38 ACM SIG (Special Interest Group) publications;
+- "Online Computer Literature Guide" database: 
+
+
+contains more than 2,800,800 abstracts from more than 5,000 publishing houses.
+The exact number of resources may vary as new content is continually added to the database.
 
 ### 1.5 Disciplinary Coverage
 
@@ -214,5 +224,89 @@ PS:(Methods Ⅱ and Ⅲ also apply to on-campus)
 - The following characters have a special meaning when they appear ina query: ```+ - && || ! ( ) { } [ ] ^ " ~ * ? : /```.
 - To instruct Search to interpret any of these characters literally,rather as a special character, precede the character with a backslash character```\```.
 
+### 3.1 Refine Search Results
+
 ![Alt text](../../../../img/UserManual/image-31.png)
+
+- The ACM web account allows the user to save their created searches.
+- You must be signed in with your web account to enable this feature.
+- Click the ```Edit Search``` button to search within results.
+- Users can screen the results through the options bar at the top of the page.
+- Click the ```10```,```20``` or ```50``` button to choose the amount of the articles in one page.
+- Users can find some basic information of the articles in the search interface, such as the publication time of the literatures, the author of the article, a portion of abstract and so on.
+
+Refine Search Results Options
+
+- by People
+- by Publication Info
+- by Conferences
+- by Reproducibility Badges (some kind of authentication mode)
+- by Publication Date
+
+### 3.2 More Information
+
+![1697618312578](../../../../img/UserManual/1697618312578.png)
+
+On article citation page, you can find:
+
+- Article Authors & Links to Profiles
+- Click for Author Affiliations & Links to Profiles
+- Article Citation
+- Links to Full-Text
+- Quick Bibliometrics
+- Publication Navigator
+- Recommended Relevant Articles
+Also includes Index Terms, Article Subject Taxonomy and Comments.
+
+![1697618359023](../../../../img/UserManual/1697618359023.png)
+
+On author profile page, there are:
+
+- Search Within Author’s Work
+- Institutional Affiliations
+- ACM Awards
+- Links to Author Email and Website
+- Key Subject Areas and Collaborators
+
+![1697618416595](../../../../img/UserManual/1697618416595.png)
+
+Institutional profile page includes: 
+
+- Search Within Institution’s Research
+- Link to website
+- Award Winners
+- Most Cited Author
+- Key Subject Areas in Research
+- Top Collaborating Institution
+
+### 3.3 View Online and Download
+
+![1697618514563](../../../../img/UserManual/1697618514563.png)
+
+On search result page, users can click the blue button to view online, red button to download.
+
+![1697618559245](../../../../img/UserManual/1697618559245.png)
+
+You can also find the button on article citation page.
+
+![1697618591820](../../../../img/UserManual/1697618591820.png)
+
+![1697618643263](../../../../img/UserManual/1697618643263.png)
+
+Users can view articles online with eReader and download through **<span style="color: #0BEEFF;"> the blue button</span>**.
+
+The number of downloads in 24 hours shall not exceed 100 articles, and the number of downloads shall not exceed 50 articles in 1 hour.
+
+Continuous manual download is strictly prohibited, and software download is strictly prohibited.
+
+### 3.4 Citation
+
+![1697618707423](../../../../img/UserManual/1697618707423.png)
+
+![1697618719617](../../../../img/UserManual/1697618719617.png)
+
+On search result page, users can click the double quotes button to export citations.
+
+Users can choose reference format here.
+
 
