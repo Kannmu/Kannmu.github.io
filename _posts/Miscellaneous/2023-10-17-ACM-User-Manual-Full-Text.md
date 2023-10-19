@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "[Document] User Manual For ACM Digital Library"
-subtitle: "User Manual For ACM Digital Library"
+title: "[Document] Full Text Of User Manual For ACM Digital Library"
+subtitle: "Full Text Of User Manual For ACM Digital Library"
 author: "All Member in Group One"
 # header-style: text
 header-img: "../../../../img/Backgrounds/Bg(18).jpg"
