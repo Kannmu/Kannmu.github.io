@@ -79,3 +79,5 @@ Continuous manual download is strictly prohibited, and software download is stri
 On search result page, users can click the double quotes button to export citations.
 
 Users can choose reference format here.
+
+**[Return To Main Page](../ACM-Index-Page/index.html)**

@@ -57,3 +57,4 @@ The ACM Digital Library covers a broad range of disciplines within computer scie
 
 ACM is dedicated to advancing information technology education, research, and its practical applications, publishing authoritative and forward-looking literature, such as professional journals, conference proceedings, letters and other full-text articles. Its dedication to knowledge dissemination is evident through its regular updates, with approximately 20,000 articles added each year.
 
+**[Return To Main Page](../ACM-Index-Page/index.html)**

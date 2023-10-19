@@ -39,3 +39,5 @@ ACM is one of the largest professional organizations in the field of computer sc
 ####  1.2.3. <a name='Getalertsformagazines'></a>Get alerts for magazines
 
 ![1697627462077](../../../../img/UserManual/1697627462077.png)
+
+**[Return To Main Page](../ACM-Index-Page/index.html)**

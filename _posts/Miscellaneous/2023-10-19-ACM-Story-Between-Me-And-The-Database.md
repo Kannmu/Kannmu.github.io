@@ -11,6 +11,7 @@ tags:
     - English
     - User Manual
 ---
+
 ##  1. <a name='StoryBetweenMeAndTheDatabase'></a>Story Between Me And The Database
 
 **<span style="color: blue;">Q:</span>** What is your first impression when you open the ACM Web?
@@ -47,3 +48,4 @@ tags:
 
 **Update speed:**Providing more accurate and rapid papers and research results.
 
+**[Return To Main Page](../ACM-Index-Page/index.html)**
