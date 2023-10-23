@@ -16,9 +16,9 @@ tags:
 
 ###  2. <a name='AccessMethod..ACM-Access-Methodindex.html'></a>[Access Method](../ACM-Access-Method/index.html)
 
-###  3. <a name='RetrievalMethod..ACM-Retrieval-Methodindex.html'></a>[Retrieval Method](../ACM-Retrieval-Method/index.html)
+###  3. <a name='RetrievalMethod..ACM-Retrieval-Methodindex.html'></a>[Retrieval Method](../ACM-Retrieval-Methods/index.html)
 
-###  4. <a name='DownloadAndReadingMethod..ACM-Download-And-Reading-Methodindex.html'></a>[Download And Reading Method](../ACM-Download-And-Reading-Method/index.html)
+###  4. <a name='DownloadAndReadingMethod..ACM-Download-And-Reading-Methodindex.html'></a>[Download And Reading Method](../ACM-Download-And-Reading-Methods/index.html)
 
 ###  5. <a name='CustomFeatures..ACM-Custom-Featuresindex.html'></a>[Custom Features](../ACM-Custom-Features/index.html)
 
