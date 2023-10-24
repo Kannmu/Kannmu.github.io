@@ -346,7 +346,8 @@ pre.highlight {
   color: #abb2bf;
 }
 .highlight .p {
-  color: #abb2bf;
+  /* color: #abb2bf; */
+  color: #000000;
 }
 .highlight .cm {
   color: #5c6370;
