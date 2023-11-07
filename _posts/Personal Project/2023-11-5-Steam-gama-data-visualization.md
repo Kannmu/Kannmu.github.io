@@ -7,9 +7,9 @@ author: "Kannmu"
 header-img: "../../../../img/UserManual/Library_BG_5.jpg"
 header-mask: 0.3
 tags:
-    - TC
-    - English
-    - User Manual
+    - Data Visualization
+    - Steam
+    - Game
 ---
 
 ## 数据来源声明
