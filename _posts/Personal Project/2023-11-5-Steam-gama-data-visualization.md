@@ -88,7 +88,7 @@ Steam平台作为全球最大的数字游戏发行和分发平台，扮演着重
 
 处理完成后绘制分布图如下:
 
-![Price Distribution](../../../../img/SteamData/Price-Distribution.png)
+![Price Distribution](../../../../img/SteamData/Tag-Related.png)
 
 从图中可以看出，绝大部分的Steam游戏为免费或者几乎免费游戏，数据并没有很好的遵守正态分布。
 
