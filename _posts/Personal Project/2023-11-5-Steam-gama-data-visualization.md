@@ -78,7 +78,7 @@ Steam平台作为全球最大的数字游戏发行和分发平台，扮演着重
 
 之后进行种类的交叉分析，探究哪些类型的 Tag 更倾向于同时出现。这里考虑到计算性能，只选取总数量前20多出现的 Tag。遍历每款游戏的 Tag 列表，并剔除出现次数不在前10的 Tag 。之后在同一款游戏的Tag列表下两两之间绘制一条线，共得到了761819个两两匹配结果，由于性能原因，在得到结果中随机抽取10000条进行图像绘制。结果如下图所示:
 
-![Tag](../../../../img/SteamData/First-Ten-Tag-Count.png)
+![Tag](../../../../img/SteamData/Tag-Related.png)
 
 ### 价格分布
 
@@ -88,7 +88,7 @@ Steam平台作为全球最大的数字游戏发行和分发平台，扮演着重
 
 处理完成后绘制分布图如下:
 
-![Price Distribution](../../../../img/SteamData/Tag-Related.png)
+![Price Distribution](../../../../img/SteamData/Price-Distribution.png)
 
 从图中可以看出，绝大部分的Steam游戏为免费或者几乎免费游戏，数据并没有很好的遵守正态分布。
 
