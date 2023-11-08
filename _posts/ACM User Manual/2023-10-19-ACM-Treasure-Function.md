@@ -42,6 +42,8 @@ The ACM Digital Library not only offers literature retrieval services but also o
 
 ![1697632875447](../../../../img/UserManual/1697632875447.png)
 
+Select to watch online or download the video.
+
 ![1697632886242](../../../../img/UserManual/1697632886242.png)
 
 **[Return To Main Page](../ACM-Index-Page/index.html)**

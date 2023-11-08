@@ -20,7 +20,7 @@ tags:
 
 ![1697627088958](../../../../img/UserManual/1697627088958.png)
 
-ACM is one of the largest professional organizations in the field of computer science, and its members enjoy a range of privileges, including free or discounted access to the ACM Digital Library, participation in ACM-hosted academic conferences and events, and involvement in ACM Special Interest Groups (SIGs).
+ACM is one of the largest professional organizations in the field of computer science, and its members enjoy a range of privileges, including free or discounted access to the ACM Digital Library, participation in ACM-hosted academic conferences and events, and involvement in ACM Special Interest Groups (SIGs).[Join Membership](https://www.acm.org/membership/join)
 
 ###  1.2. <a name='Personalization'></a>Personalization
 
