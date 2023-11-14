@@ -14,7 +14,27 @@ tags:
 
 ##  1. <a name='DownloadandReadingMethods'></a>Download and Reading Methods
 
-###  1.1. <a name='MoreInformation'></a>More Information
+###  1.1. <a name='ViewOnlineandDownload'></a>View Online and Download
+
+![1697618514563](../../../../img/UserManual/1697618514563.png)
+
+On search result page, users can click the **<span style="color: #0BEEFF;"> the blue button</span>** to view online [1], **<span style="color: #D32D38;"> the red button</span>** to download [2]
+
+![1697618559245](../../../../img/UserManual/1697618559245.png)
+
+You can also find the button on article citation page.
+
+![1697618591820](../../../../img/UserManual/1697618591820.png)
+
+<!-- ![1697618643263](../../../../img/UserManual/1697618643263.png) -->
+
+Users can view articles online with eReader and download through **<span style="color: #0BEEFF;"> the blue button</span>**.
+
+The number of downloads in 24 hours shall not exceed 100 articles, and the number of downloads shall not exceed 50 articles in 1 hour.
+
+Continuous manual download is strictly prohibited, and software download is strictly prohibited.
+
+###  1.2. <a name='MoreInformation'></a>More Information
 
 ![1697618312578](../../../../img/UserManual/1697618312578.png)
 
@@ -49,26 +69,6 @@ Institutional profile page includes:
 - Most Cited Author [4]
 - Key Subject Areas in Research [5]
 - Top Collaborating Institution [6]
-
-###  1.2. <a name='ViewOnlineandDownload'></a>View Online and Download
-
-![1697618514563](../../../../img/UserManual/1697618514563.png)
-
-On search result page, users can click the blue button to view online [1], red button to download [2]
-
-![1697618559245](../../../../img/UserManual/1697618559245.png)
-
-You can also find the button on article citation page.
-
-![1697618591820](../../../../img/UserManual/1697618591820.png)
-
-<!-- ![1697618643263](../../../../img/UserManual/1697618643263.png) -->
-
-Users can view articles online with eReader and download through **<span style="color: #0BEEFF;"> the blue button</span>**.
-
-The number of downloads in 24 hours shall not exceed 100 articles, and the number of downloads shall not exceed 50 articles in 1 hour.
-
-Continuous manual download is strictly prohibited, and software download is strictly prohibited.
 
 ###  1.3. <a name='Citation'></a>Citation
 

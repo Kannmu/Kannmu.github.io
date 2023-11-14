@@ -16,18 +16,17 @@ tags:
 
 ###  1.1. <a name='BasicSearch'></a>Basic Search
 
-
 ![Alt text](../../../../img/UserManual/image-22.png)
 
-- The Basic Search box is found at the top of the DL(Digital Library)home page, as shown in the figure above.
+- The Basic Search box is located at the top of the DL homepage, as illustrated below
 
 ![Alt text](../../../../img/UserManual/image-23.png)
 
-- The Basic Search allows you to search for People, Publications, andContent.
+- The Basic Search lets you search for People, Publications, and Content
 
 ![Alt text](../../../../img/UserManual/image-24.png)
 
-- Basic Search allows Boolean operators ```AND```, ```OR``` and ```NOT``` (use capital letters).
+- Basic Search supports Boolean operators ```AND```, ```OR``` and ```NOT``` (use capital letters).
 
 ![Alt text](../../../../img/UserManual/image-25.png)
 
@@ -37,15 +36,15 @@ tags:
 
 ![Alt text](../../../../img/UserManual/image-26.png)
 
-- The Advanced Search is right below the Basic Search box.
+- The Advanced Search is right below the Basic Search box
 
 ![Alt text](../../../../img/UserManual/image-27.png)
 
-- Advanced Search is based on a filtering system that allows the user to refine their search parameters.
+- Advanced Search uses filters to refine your search
 
-- User may select between searching Full-Text only or also includingThe Guide to Computing Literature bibliometric index.
+- You can choose to search Full-Text or include The Guide to Computing Literature bibliometric index
 
-- User can select among these search fields from drop-down menu.
+- Select your search fields from a drop-down menu
 
 ![Alt text](../../../../img/UserManual/image-28.png)
 
@@ -55,7 +54,7 @@ tags:
 ![Alt text](../../../../img/UserManual/image-29.png)
 ![Alt text](../../../../img/UserManual/image-30.png)
 
-- User may then add additional content filters such as for terms related to article supplemental materials, general computing subject area, publisher and more.
+- Add content filters for things like supplemental materials, computing subject, and publisher. Define the publication date range for your search results
 - Finally, user may define the publication date range for their search results.
 
 ###  1.3. <a name='SpecialCharacters'></a>Special Characters

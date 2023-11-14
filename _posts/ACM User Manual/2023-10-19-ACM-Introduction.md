@@ -15,13 +15,21 @@ tags:
 
 ##  1. <a name='Introduction'></a>Introduction
 
-The ACM Digital Library is a comprehensive repository of resources in the field of computer science and information technology. It provides access to a diverse range of scholarly articles, conference proceedings, technical reports, and other publications related to computer science and its various sub-disciplines.
+The ACM Digital Library is a comprehensive repository of resources in the field of computer science and information technology. It provides access to a diverse range of scholarly articles, conference
+proceedings, technical reports, and other publications related to computer science and its various sub-disciplines.
 
 ###  1.1. <a name='DevelopmentHistory'></a>Development History
 
-ACM (Association for Computing Machinery), established in 1947, stands as the world's oldest and largest institution dedicated to computer education and research. With a diverse membership exceeding 90,000 individuals from various sectors, such as business, academia, and government, ACM extends its reach to more than 100 countries across the globe. The inception of the ACM Digital Library dates back to 1999.
+ACM (Association for Computing Machinery), established in 1947, stands as the world s oldest and
+largest institution dedicated to computer education and research. With diverse membership exceeding
+90,000 individuals from various sectors, such as business, academia, and government, ACM extends its
+reach to more than 100 countries across the globe. The inception of the ACM Digital Library dates back to 1999
 
-In recent years, ACM has taken significant steps to enhance its Full-text Database, encompassing materials dating from the 1950s onwards. This expansion integrates publications from Special Interest Groups (SIGs), newsletters, and conference proceedings. Moreover, ACM has seamlessly integrated third-party publishers' content and the bibliographic abstract database known as "The Guide to Computing Literature." This integration effectively combines ACM's publications with those of over 3,000 other publishers, resulting in a comprehensive resource for the field of computing and information technology.
+In recent years, ACM has taken significant steps to enhance its Full-text Database, encompassing
+materials dating from the 1950s onwards. This expansion integrates publications from Special Interest
+Groups (SIGs), newsletters, and conference proceedings. Moreover, ACM has seamlessly integrate
+third-party publishers content and the bibliographic abstract database known as The Guide to
+Computing Literature. This integration effectively combines ACM s publications with those of over 3,000 other publishers, resulting in a comprehensive resource for the field of computing and information technology
 
 In 2014, ACM forged a partnership with Morgan & Claypool to introduce the ACM BOOKS series, covering the entire spectrum of computer sciences. This collaborative effort further enriches the wealth of knowledge and resources available through ACM.
 
@@ -29,11 +37,12 @@ In 2014, ACM forged a partnership with Morgan & Claypool to introduce the ACM BO
 
 The ACM Digital Library includes a variety of resource types, such as:
 
-1. The Full-Text Collection of all ACM publications, including journals, conference proceedings, technical magazines, newsletters and books.
-2. A collection of curated and hosted full-text publications from select publishers.
-3. The ACM Guide to Computing Literature, a comprehensive bibliographic database focused exclusively on the field of computing.
-4. A richly interlinked set of connections among authors, works, institutions, and specialized communities.
-5. The ACM Digital Library Board, oversees the design, operations and direction of the ACM Digital Library and supporting technology platforms.
+1. Full-Text Collection: ACM publications, including journals, conference proceedings, technical magazines, newsletters, and books
+2. Curated Full-Text: Curated and hosted full-text publications from selected publishers
+3. The ACM Guide to Computing Literature, a comprehensive bibliographic database focused exclusively on the field of computing
+4. A richly interlinked set of connections among authors, works, institutions, and specialized communities
+5. The ACM Digital Library Board, Oversees the design, operations, and direction of the ACM Digital
+Library and supporting technology platforms
 
 
 ###  1.3. <a name='ResourceQuantity'></a>Resource Quantity
@@ -55,6 +64,6 @@ The ACM Digital Library covers a broad range of disciplines within computer scie
 
 ###  1.5. <a name='UpdateFrequency'></a>Update Frequency
 
-ACM is dedicated to advancing information technology education, research, and its practical applications, publishing authoritative and forward-looking literature, such as professional journals, conference proceedings, letters and other full-text articles. Its dedication to knowledge dissemination is evident through its regular updates, with approximately 20,000 articles added each year.
+ACM is committed to advancing information technology education, research, and its practical applications by publishing authoritative and forward-looking literature, including professional journals, conference proceedings, letters, and other full-text articles. Its commitment to disseminating knowledge is evident through regular updates, adding approximately 20,000 articles each year.
 
 **[Return To Main Page](../ACM-Index-Page/index.html)**
