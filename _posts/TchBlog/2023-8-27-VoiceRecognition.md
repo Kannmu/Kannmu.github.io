@@ -7,6 +7,7 @@ header-img: "../../../../img/Backgrounds/Bg (12).jpg"
 header-mask: 0.4
 tags:
   - 深度学习
+  - Python
   - Deep Learning
   - AI
   - 语音识别

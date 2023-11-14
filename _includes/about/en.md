@@ -1,30 +1,51 @@
-# About Me
+```cs
+using System;
 
-Hi, Here is Linhan Fan (涵无Kannmu).
+class Program
+{
+    static void Main()
+    {
+        // About Me
+        string name = "Linhan Fan (Kannmu)";
+        string university = "Southeast University";
+        string department = "Industrial Design Department / Design Studies";
+        string supervisor = "[Yaofeng Niu](https://me.seu.edu.cn/nyf_31777/list.htm)";
+        string[] hobbies = { "Photography", "Gaming", "Hiking", "Jogging" };
 
-I am currently a graduate student majoring in design in the Department of Industrial Design at Southeast University. My supervisor is [Professor Yafeng Niu](https://me.seu.edu.cn/nyf_31777/list.htm)
+        // Experiences
+        var masterDegree = new
+        {
+            university = "Southeast University",
+            school = "School of Mechanical Engineering",
+            department = "Industrial Design Department",
+            major = "Design Studies",
+            startDate = "September 2023",
+            endDate = "Present"
+        };
 
-Currently learning TA(Technical Artist) related knowledge.
+        var internship = new
+        {
+            company = "Chengdu Luxingtong Information Technology Co., Ltd.",
+            position = "Deep Learning Algorithm Intern",
+            startDate = "August 2022",
+            endDate = "March 2023"
+        };
 
-I enjoy listening J-POP and Jazz music. Like:
-> Vocaloid
->
-> ずっと真夜中でいいのに
->
-> Reol & reol
->
-> Wowaka & Hitorie
->
-> Supercell
->
-> etc.
+        var roboconTeam = new
+        {
+            name = "Robocon Chuanshanjia Team",
+            roles = new[] { "Mechanical & Hardware Team" },
+            duration = "2020-2022"
+        };
 
-Welcome fellow enthusiasts to come chat with me
-
-## Experience
-
-- [Chengdu LXT Information Technology Co., Ltd.](http://www.lxt-inc.com/#/) · Deep Learning Algorithm Intern · Aug 2022 - Mar 2023
-- [Robocon Pangolin Team](https://space.bilibili.com/1242339866) · Mechanical & Hardware Group · 2020-2022
-- Bachelor's degree · Mechanical Design, Manufacturing and Automation (Outstanding Engineer Program) from the [School of Mechanical Engineering](https://msec.scu.edu.cn/) · 2019.9-2023.6
-
-[1]: https://space.bilibili.com/1242339866
+        var bachelorDegree = new
+        {
+            university = "Sichuan University",
+            school = "School of Mechanical Engineering",
+            major = "Mechanical Design, Manufacturing, and Automation (Outstanding Engineer)",
+            startDate = "September 2019",
+            endDate = "June 2023"
+        };
+    }
+}
+```
