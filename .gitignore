@@ -11,3 +11,5 @@ node_modules
 .jekyll-cache
 */.DS_Store
 */*/.DS_Store
+/_posts/ACM_User_Manual
+/img/User_Manual
