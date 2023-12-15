@@ -21,9 +21,7 @@ Here are some detailed work experiences, which may be incomplete.
 
 This part mainly demonstrates my mechanical work.
 
-## 气动步进马达
-
-<font size = 4> Pneumatic step motor `</font>`
+## 气动步进马达 Pneumatic step motor
 
 在核磁共振强磁场强电场下工作运动动力源，需要满足 MRI 安全条件，不能使用金属材料。并提供较高精度控制与大输出力矩。
 
@@ -45,9 +43,7 @@ Planetary gearbox gears are made with POM material, which is self-lubricating an
 
 <center><font size = 3> 行星减速器部分 <br> Planetary retarder part </font></center>
 
-## 磁吸式桌面灯
-
-<font size = 4> Magnetic table light `</font>`
+## 磁吸式桌面灯 Magnetic table light
 
 顶盖使用透明材料3D打印，毛玻璃散射效果。
 
