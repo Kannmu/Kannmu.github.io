@@ -387,7 +387,7 @@ vec3(texture(texture_diffuse1, TexCoord));
 
 ### References
 
-https://github.com/JoeyDeVries/LearnOpenGL
+[https://github.com/JoeyDeVries/LearnOpenGL](https://github.com/JoeyDeVries/LearnOpenGL)
 
 ## 代码 Codes
 
