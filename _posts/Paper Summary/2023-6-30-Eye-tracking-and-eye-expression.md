@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[论文研读] Eye tracking and eye expression decoding
+title: "[Paper Reading] Eye tracking and eye expression decoding
 based on transparent, flexible and ultra persistent electrostatic interface"
 subtitle: "Paper reading"
 author: "Kannmu"
