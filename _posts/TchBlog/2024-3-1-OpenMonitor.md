@@ -13,7 +13,9 @@ tags:
   - Open Source
 ---
 
-仓库地址：[OpenMonitor](https://github.com/Kannmu/OpenMonitor/tree/v0.1)
+为了给新添置的屏幕上放置一些常驻窗口，再加上刚好对之前用的Core Temp的信息展示方式不是很满意，所以打算自己来写一个小的资源监视器应用。还会添加一些更多的其他信息监控的功能。
+
+仓库地址：[OpenMonitor](https://github.com/Kannmu/OpenMonitor/)
 
 ## OpenMonitor
 
@@ -41,7 +43,7 @@ OpenMonitor是一个使用Python开发的命令行工具，提供实时的系统
 
 要运行该脚本，请使用以下命令：
 
-```
+```cmd
 python OpenMonitor.py [-t]
 ```
 
@@ -64,7 +66,7 @@ python OpenMonitor.py [-t]
 
 您可以使用以下命令安装这些依赖项：
 
-```
+```py
 pip install psutil cpuinfo gputil pywifi prettytable argparse
 ```
 
