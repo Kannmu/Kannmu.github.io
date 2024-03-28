@@ -34,7 +34,7 @@ class Program
         var roboconTeam = new
         {
             name = "Robocon川山甲战队",
-            roles = new[] { "机械","硬件组" },
+            roles =  { "机械组","硬件组" },
             duration = "2020-2022"
         };
 

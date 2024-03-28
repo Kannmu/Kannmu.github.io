@@ -13,6 +13,7 @@ tags:
 
 我的第一篇SCI论文终于发出来了，欢迎大家来交流！
 
-![Design recommendations for voluntary blink interactions based on pressure sensors](https://www.sciencedirect.com/science/article/abs/pii/S147403462400137X)
+[Design recommendations for voluntary blink interactions based on pressure sensors](https://www.sciencedirect.com/science/article/abs/pii/S147403462400137X)
+
 
 
