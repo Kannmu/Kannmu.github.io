@@ -4,7 +4,7 @@ title: "博客：开始篇"
 subtitle: "Start to write blog"
 author: "Kannmu"
 # header-style: text
-header-img: "https://picx.zhimg.com/70/v2-592f63cec8332eff4428d66d484c5811_1440w.avis?source=172ae18b&biz_tag=Post)g"
+header-img: "https://picx.zhimg.com/70/v2-592f63cec8332eff4428d66d484c5811_1440w.avis?source=172ae18b&biz_tag=Post"
 header-mask: 0.4
 tags:
   - Miscellaneous
