@@ -109,7 +109,7 @@ tags:
 驱动解压出来的文件夹中的```setup.exe```即为官方的驱动安装入口。但是直接运行的话会出现硬件不兼容的报错。
 
 ![alt text](../../../../img/Tch/GPU/image-9.png)
-![Error](https://i-blog.csdnimg.cn/blog_migrate/af3c187dff67e2cf959b5b405e206a18.png)
+![Error](https://dynamic-image.yesky.com/1200x-/uploadImages/2022/074/13/9HFLS1N5478A.jpg)
 
 文字描述可能略有差异，不过均为硬件不兼容导致的。这时就需要骗过驱动安装程序，修改检测兼容性的文件，来使得驱动程序成功通过兼容性检验。具体步骤如下：
 
@@ -144,13 +144,13 @@ tags:
 - 选择高级启动
 ![alt text](../../../../img/Tch/GPU/image-18.png)
 - 重启后选择疑难解答
-![alt text](https://i-blog.csdnimg.cn/blog_migrate/ccb4df92cd7df0aafeb0bf23e290a2a8.png)
+![alt text](https://mspoweruser.com/wp-content/uploads/2024/01/Driver-Signature-Enforcement-Windows-11-Troubleshoot-e1704803350424.jpg)
 - 高级选项
-![alt text](https://i-blog.csdnimg.cn/blog_migrate/6571da4a2ce2110490367438c2eb39fb.png)
+![alt text](https://mspoweruser.com/wp-content/uploads/2024/01/Driver-Signature-Enforcement-Windows-11-Advanced-Options-e1704803529871.jpg)
 - 启动设置
-![alt text](https://i-blog.csdnimg.cn/blog_migrate/ab928a617f62509f3ea1f7c636347fd5.png)
+![alt text](https://mspoweruser.com/wp-content/uploads/2024/01/Driver-Signature-Enforcement-Windows-11-Startup-Settings-e1704804046896.jpg)
 - 最后按键盘上的7或者F7即可
-![alt text](https://i-blog.csdnimg.cn/blog_migrate/65c2e26319fe6140406a6ed654db52e2.png)
+![alt text](https://mspoweruser.com/wp-content/uploads/2024/01/Driver-Signature-Enforcement-Windows-11-Startup-Settings-Restart-e1704804317196.jpg)
 
 这时，电脑会自动重新启动，这时只要正常执行```setup.exe```的安装程序即可成功通过兼容性测试，正常安装驱动。请注意禁用windows驱动签名仅能生效在一次启动中，若出现了重启后则需要重新执行3.3来进行禁用一次。
 
