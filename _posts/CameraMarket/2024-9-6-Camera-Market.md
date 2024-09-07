@@ -73,7 +73,7 @@ tags:
 var cameraChart = null;
 var defaultBrand = null;
 var allData = [];
-fetch('../../../../CameraMarketData/Data.json')
+fetch('../../../../Data/Data.json')
   .then(response => {
     if (response.ok) {
       return response.json();
