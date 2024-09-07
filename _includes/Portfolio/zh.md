@@ -2,9 +2,8 @@
 
 ## 论文 Papers
 
-[**Design recommendations for voluntary blink interactions based on pressure sensors**](https://www.sciencedirect.com/science/article/abs/pii/S147403462400137X)
+- [**Design recommendations for voluntary blink interactions based on pressure sensors**](https://www.sciencedirect.com/science/article/abs/pii/S147403462400137X) - Advanced Engineering Informatics - IF = 8.8
 
-**本科毕业论文**：**基于VisionTransformer的车挡风玻璃雨量检测**
 
 ## 项目 Projects
 
