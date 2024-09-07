@@ -4,7 +4,7 @@ SEOTitle: 涵无的博客 | Kannmu Blog
 header-img: img/Backgrounds/Bg_2.jpg
 email: Kannmu@163.com
 description: "这里是 @Kannmu 涵无 的个人博客 | 一个杂食者"
-keyword: "涵无, Kannmu涵无, 涵无, 涵无的博客, Kannmu Blog, 博客, 个人网站, TA, 技术美术, 硬件, 交互, 设计"
+keyword: "涵无, Kannmu涵无, 涵无, 涵无的博客, Kannmu Blog, 博客, 个人网站, 硬件, 交互, 设计, 摄影"
 url: "https://kannmu.github.io/" # your host, for absolute URL
 baseurl: "" # for example, '/blog' if your blog hosted on 'host/blog'
 
@@ -78,8 +78,8 @@ sidebar-about-description: "涵无Kannmu <br> Nature does not hurry, yet everyth
 sidebar-avatar: /img/Kannmu-Avatar.jpg # use absolute URL, seeing it's used in both `/` and `/about/`
 
 # Featured Tags
-featured-tags: true # whether or not using Feature-Tags
-featured-condition-size: 0 # A tag will be featured if the size of it is more than this condition value
+featured-tags: false # whether or not using Feature-Tags
+featured-condition-size: 4 # A tag will be featured if the size of it is more than this condition value
 
 # Progressive Web Apps
 chrome-tab-theme-color: "#000000"

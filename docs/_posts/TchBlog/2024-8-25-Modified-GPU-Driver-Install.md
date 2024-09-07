@@ -6,9 +6,9 @@ author: "Kannmu"
 header-img: "../../../../img/Tch/GPU/GPU_Face.jpg"
 header-mask: 0.4
 tags:
-  - tag1
-  - tag2
-  - tag3
+  - Modified GPU drivers
+  - Laptop GPU
+  - GPU
 ---
 
 <!-- Latex Support -->

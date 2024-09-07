@@ -5,11 +5,15 @@ subtitle: "Second hand camera price trends"
 author: "Kannmu"
 header-img: "../../../../img/Photography/Humanistic/DSC3869.jpg"
 header-mask: 0.4
+keywords: "Second hand camera price trends"
 tags:
   - Tool
   - Camera
   - 二手相机
+  - 二手相机价格历史
 ---
+
+<html lang="zh-CN"> <head> <meta name="keywords" content="二手相机,价格历史,价格趋势,二手相机价格历史,二手相机市场" /> </head> </html>
 
 <!-- Latex Support -->
 <head>
