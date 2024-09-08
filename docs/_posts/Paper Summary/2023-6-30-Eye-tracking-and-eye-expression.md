@@ -1,7 +1,6 @@
 ---
 layout: post
-title: "[Paper Reading] Eye tracking and eye expression decoding
-based on transparent, flexible and ultra persistent electrostatic interface"
+title: "[Paper Reading] Eye tracking and eye expression decoding"
 subtitle: "Paper reading"
 author: "Kannmu"
 # header-style: text

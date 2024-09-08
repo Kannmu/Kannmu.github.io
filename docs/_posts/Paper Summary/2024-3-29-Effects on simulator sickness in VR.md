@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[Paper Reading] Effects of virtual reality technology locomotive multi-sensory motion stimuli on a user simulator sickness and controller intuitiveness during a navigation task"
+title: "Effects of VR technology locomotive multi-sensory motion stimuli"
 subtitle: "Paper reading"
 author: "Kannmu"
 # header-style: text

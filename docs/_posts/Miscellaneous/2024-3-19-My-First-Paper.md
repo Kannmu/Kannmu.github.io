@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Design recommendations for voluntary blink interactions based on pressure sensors"
+title: "Design recommendations for blink interactions"
 subtitle: "Design recommendations for voluntary blink interactions based on pressure sensors"
 author: "Kannmu"
 # header-style: text
