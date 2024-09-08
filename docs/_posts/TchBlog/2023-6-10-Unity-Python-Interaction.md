@@ -261,10 +261,7 @@ void OnApplicationQuit()
 
 ```
 
-
-
-
-![](../../../../../img/Tch/Unity-Python-UDP.png)
+![Unity-Python-UDP.png](https://p.sda1.dev/19/67243380b3a1ff4527dcd9e0dac92f45/Unity-Python-UDP.png)
 
 结果看到在Unity中运行C#脚本后，自动启动Python程序，并返回结果。
 

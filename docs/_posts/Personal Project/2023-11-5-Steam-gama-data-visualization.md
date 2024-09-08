@@ -36,13 +36,13 @@ Steam平台作为全球最大的数字游戏发行和分发平台，扮演着重
 
 由于原始数据通过爬虫算法获取，数据比较脏。
 
-![Messy Code](../../../../img/SteamData/MessyCode.png)
+![MessyCode.png](https://p.sda1.dev/19/3a6b491a958780c3225c0fe7848d875e/MessyCode.png)
 
-![Messy Code](../../../../img/SteamData/MessyCode_1.png)
+![MessyCode_1.png](https://p.sda1.dev/19/b11c901ed17e79e6c4f8c9b947655bcf/MessyCode_1.png)
 
 <center><font size = 3> 游戏标题乱码 </font></center>
 
-![Messy Code](../../../../img/SteamData/MessyCode_2.png)
+![MessyCode_2.png](https://p.sda1.dev/19/cd000f85a5e807e83757814efbe7ffb1/MessyCode_2.png)
 
 <center><font size = 3> 数据缺失、串行 </font></center>
 
@@ -64,7 +64,7 @@ Steam平台作为全球最大的数字游戏发行和分发平台，扮演着重
 
 为了统计Steam商城中游戏的总数量随着时间的变化，首先提取出数据中包含了发售日期的游戏数据，并按照时间顺序升序排序。得到发售日期列表。并进行逐日统计，结果如图所示：
 
-![All Number Though Time](../../../../img/SteamData/Numbe-of-games-in-total-through-time.png)
+![Numbe-of-games-in-total-through-time.png](https://p.sda1.dev/19/bc49a87b15e555a4b9c7511c0f887cff/Numbe-of-games-in-total-through-time.png)
 
 可以看出，数据整体呈现指数增长。证明游戏行业在过去的时间里发展非常迅速，且目前未见有明显衰退迹象。
 
@@ -72,13 +72,13 @@ Steam平台作为全球最大的数字游戏发行和分发平台，扮演着重
 
 游戏类型数据为 ```Tag```筛选出数据后，首先进行频度统计。其中出现次数最多的两个 Tag 为```Indie```和```Single-player```。前十个出现频率最高的 Tag 如下图所示：
 
-![First Ten  Tag](../../../../img/SteamData/First-Ten-Tag-Count.png)
+![First-Ten-Tag-Count.png](https://p.sda1.dev/19/3860354bdf4ae3bf8695d088185ced7a/First-Ten-Tag-Count.png)
 
 其中，每个圆形的面积与颜色代表了该 Tag 的出现次数。可以看出，同时出现频率较高的还有休闲游戏(Casual)与动作游戏(Action)。这可能与平台选择有关，Steam作为最大的游戏发布平台，任何个人与组织在通过审核与流程后均可上传自己制作的游戏，这也就使得独立游戏数量远超其他类型。
 
 之后进行种类的交叉分析，探究哪些类型的 Tag 更倾向于同时出现。这里考虑到计算性能，只选取总数量前20多出现的 Tag。遍历每款游戏的 Tag 列表，并剔除出现次数不在前10的 Tag 。之后在同一款游戏的Tag列表下两两之间绘制一条线，共得到了761819个两两匹配结果，由于性能原因，在得到结果中随机抽取10000条进行图像绘制。结果如下图所示:
 
-![Tag](../../../../img/SteamData/Tag-Related.png)
+![Tag-Related.png](https://p.sda1.dev/19/a663d797ce15cf43e8d615472bb74006/Tag-Related.png)
 
 ### 价格分布
 
@@ -88,7 +88,7 @@ Steam平台作为全球最大的数字游戏发行和分发平台，扮演着重
 
 处理完成后绘制分布图如下:
 
-![Price Distribution](../../../../img/SteamData/Price-Distribution.png)
+![Price-Distribution.png](https://p.sda1.dev/19/97b4ddf72ecc160f62c7457c8e09390c/Price-Distribution.png)
 
 从图中可以看出，绝大部分的Steam游戏为免费或者几乎免费游戏，数据并没有很好的遵守正态分布。
 
@@ -100,13 +100,13 @@ Steam平台作为全球最大的数字游戏发行和分发平台，扮演着重
 
 首先对第一种评价等级进行研究，统计所有数据中每种等级出现的次数，如下：
 
-![Review0](../../../../img/SteamData/Review.png)
+![Review.png](https://p.sda1.dev/19/0d04f2fe6f9da994a03324713994745a/Review.png)
 
 可以看出大部分游戏的评价均为正面，同时也可以注意到，该项目数据污染严重，仅有5千多个游戏该项数据有效。且统计结果中 Negative 的评价几乎为0.
 
 接着对评价分布数据进行研究，分布图如下：
 
-![Review1](../../../../img/SteamData/Review_1.png)
+![Review_1.png](https://p.sda1.dev/19/fbc8770efcf1e5dfa3f8bd660ad6efc7/Review_1.png)
 
 这里同样可以得到大部分游戏评价均为正面的结论。
 
@@ -114,7 +114,7 @@ Steam平台作为全球最大的数字游戏发行和分发平台，扮演着重
 
 这一部分来统计在Steam发行的游戏中的开发者的分布情况，如下图所示：
 
-![Developer](../../../../img/SteamData/Developer.png)
+![Developer.png](https://p.sda1.dev/19/b0637c8c93598595823a70a8335ccfbc/Developer.png)
 
 从图中可以看出，在 Steam 上开发游戏数量最多的开发者是```'Choice of Games'```。其游戏类型全部为小成本独立小游戏，这一结果也印证了上文的结论。
 
@@ -122,7 +122,7 @@ Steam平台作为全球最大的数字游戏发行和分发平台，扮演着重
 
 为了探究不同类型游戏的价格差异，取每个游戏 Tag 数据的前三位作为该游戏的特征 Tag 。并计算包含该 Tag 的游戏总价格。如下图所示：
 
-![TagVsPrice](../../../../img/SteamData/TagVsPrice.png)
+![TagVsPrice.png](https://p.sda1.dev/19/9d1a5a1d18b54fdbb117b6e309f31803/TagVsPrice.png)
 
 从图中可以看出，总价格最高的标签为```Single Player```，前文已经发现，```Single Player``` 为数量第二多的标签类型，在这里总价变为第一表明 ```Single Player``` 游戏的平均价格大于拥有 ```Indie``` 的标签的游戏。从图中的平均价格曲线可以看出，在总价格前十名的Tag中平均价格最高的游戏标签类型为```RPG```。
 

@@ -59,7 +59,7 @@ pip install -e .
 
 将音频数据集文件按照类型分文件夹放置，如下：
 
-![Audio Dataset Folder](../../../../img/Tch/AudioFolder.png)
+![AudioFolder.png](https://p.sda1.dev/19/e417840ed513bab183142dc569262590/AudioFolder.png)
 
 训练模型过程仅需调用一个函数：
 
@@ -143,7 +143,7 @@ Spec = normalization(Spec)
 
 对于每条音频，得到频谱数据形式为(128, 256)，如下图：
 
-![Mel_Spec](../../../../img/Tch/Mel_Spec.png)
+![Mel_Spec.png](https://p.sda1.dev/19/86347dc58c4cb787f6a415ddd31259ff/Mel_Spec.png)
 
 
 ### 训练Resnet-18模型
@@ -163,7 +163,7 @@ def Resnet18():
 
 修改后的模型架构图如下：
 
-![图片](../../../../img/Tch/Model_Structure.png)
+![Model_Structure.png](https://p.sda1.dev/19/df2a78e38ad7095b548bf197c2a938c7/Model_Structure.png)
 
 在训练平台上，使用如下的超参数训练Resnet-18模型：
 
@@ -182,7 +182,7 @@ Drop_Rate = 0.5
 在验证集上准确率```Val_Accuracy：0.962162``` ，误差```Val_Loss: 0.207721```。
 绘制混淆矩阵图如下，该图表现了模型对20个类型中每个类型的分类情况：
 
-![Confusion_Matrix](../../../../img/Tch/Confusion_Matrix.png)
+![Confusion_Matrix.png](https://p.sda1.dev/19/a56de6aa1054aff7b868c5b722ac2f81/Confusion_Matrix.png)
 
 其中，横坐标为预测类别，纵坐标为真实类别。处于对角线上的元素代表分类正确。
 

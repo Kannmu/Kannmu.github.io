@@ -43,10 +43,10 @@ tags:
 
 首先需要准备增加目标效果的UI图片，这里使用png格式。举例如下：
 ​
-![](https://picx.zhimg.com/80/v2-d2e503d950c78c60d427242e35b0501f_720w.png?source=d16d100b "未选中默认按钮贴图")
+![未选中默认按钮贴图](https://picx.zhimg.com/80/v2-d2e503d950c78c60d427242e35b0501f_720w.png?source=d16d100b "未选中默认按钮贴图")
 <center><font size=2>未选中默认按钮贴图</font></center>
 
-![](https://pic1.zhimg.com/80/v2-2e35377fbe5fa0c25a1252855f28ff88_720w.png?source=d16d100b"被选中状态贴图")
+![被选中状态贴图](https://pic1.zhimg.com/80/v2-2e35377fbe5fa0c25a1252855f28ff88_720w.png?source=d16d100b "被选中状态贴图")
 <center><font size=2>被选中状态贴图</font></center>
 
 背景为透明像素。
@@ -101,7 +101,7 @@ $
 
 在代码中为了提高运行效率，使用_OutLineWidth参数来定义边缘扩展的程度。会在边长为2倍_OutLineWidth的正方形区域内均匀采样10*10共100个点，使用100个点的透明度平均值来定义这个点的透明度。示意如下图：
 ​
-![](https://pica.zhimg.com/80/v2-53923194019d0ef46121f8d5b87eb395_720w.png?source=d16d100b)
+![100点采样中值模糊](https://pica.zhimg.com/80/v2-53923194019d0ef46121f8d5b87eb395_720w.png?source=d16d100b)
 <center><font size=2>100点采样中值模糊</font></center>
 
 本文所有计算都放在片元着色器中实现，代码如下：

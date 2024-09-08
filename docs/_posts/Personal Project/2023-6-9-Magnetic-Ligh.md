@@ -26,13 +26,13 @@ tags:
 
 PCB如下
 
-![](../../../../../img/Tch/Light_PCB.png "Light_PCB")
+![Light_PCB.png](https://p.sda1.dev/19/7a733df2a0905e0454bb4ee3038b2747/Light_PCB.png)
 
 使用TypeC接口充电和供电。
 
 交给嘉立创SMT贴片一些元件后如下：
 
-![](../../../../../img/Tch/Light_PCB_Real.jpg "Light_PCB_Real")
+![Light_PCB_Real.jpg](https://p.sda1.dev/19/7a1039254742b6f4587810cbdd84969c/Light_PCB_Real.jpg)
 
 ## 结构 Structure
 
@@ -40,8 +40,8 @@ PCB如下
 
 外壳结构整体使用了三种材料来3D打印，顶盖使用透明材料，并且不加抛光直接使用，会有一种毛玻璃的模糊效果。
 
-![](../../../../../img/Tch/Light_0.jpg)
+![Light_0.jpg](https://p.sda1.dev/19/e36de77bf500e047f3e89c272f6e3285/Light_0.jpg)
 
-![](../../../../../img/Tch/Light_3.png)
+![Light_3.png](https://p.sda1.dev/19/7c21d41ba9100df961b0d677750e4be4/Light_3.png)
 
 <center><font size = 3> 菲涅尔凹透镜原理 <br> Fresnel concave lens principle </font></center>

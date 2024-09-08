@@ -38,11 +38,11 @@ Here are some detailed work experiences, which may be incomplete.
 
 NRF无线模块接口
 
-![](../../../../../img/Tch/PCB_STM32F407.png "基于 STM32F407ZGT6 的机器人主控板")
+![PCB_STM32F407.png](https://p.sda1.dev/19/f0e4d60170498e66aa9938cc54934542/PCB_STM32F407.png)
 
-![](../../../../../img/Tch/PCB_STM32F407_1.png "基于 STM32F407ZGT6 的机器人主控板")
+![PCB_STM32F407_1.png](https://p.sda1.dev/19/25cecc93cc71933108caa1cb4edc02a7/PCB_STM32F407_1.png)
 
-![](../../../../../img/Tch/PCB_STM32F407_2.png "基于 STM32F407ZGT6 的机器人主控板")
+![PCB_STM32F407_2.png](https://p.sda1.dev/19/8e0d46bf7975c5007a0e24abebbf7223/PCB_STM32F407_2.png)
 
 ## NMOS 管高速开关
 
@@ -50,7 +50,7 @@ NRF无线模块接口
 
 由于有个项目需要对气阀进行高速开关，而继电器最大通断频率一般只有50Hz，所以设计这个用来替代继电器进行高速气阀控制。
 
-![](../../../../../img/Tch/PCB_NMOS.png "NMOS")
+![PCB_NMOS.png](https://p.sda1.dev/19/7205ff25f3c856d23db185f0b1a02ae7/PCB_NMOS.png)
 
 ## BLDC 电机 FOC 驱动器（未成功）
 
@@ -58,4 +58,4 @@ NRF无线模块接口
 
 这个前前后后迭代了有5、6代都炸了，最终还是没成功放弃了。
 
-![](../../../../../img/Tch/PCB_FOC.png "FOC")
+![PCB_FOC.png](https://p.sda1.dev/19/edb46dc2bf76bbcc5f48c0dd77f53882/PCB_FOC.png)

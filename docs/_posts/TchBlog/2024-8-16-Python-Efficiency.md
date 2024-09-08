@@ -52,12 +52,12 @@ tags:
 
 **解释器直接运行测试结果**
 
-![alt text](../../../../img/Tch/PythonSpeedTest_0.png)
+![PythonSpeedTest_0.png](https://p.sda1.dev/19/e3690d01ba18b252d04f40d0717feadb/PythonSpeedTest_0.png)
 
 
 **打包可执行.exe文件测试结果**
 
-![alt text](../../../../img/Tch/PythonSpeedTest_1.png)
+![PythonSpeedTest_1.png](https://p.sda1.dev/19/e0b7740f7a2fb7ec505e163cdf60b31f/PythonSpeedTest_1.png)
 
 
 可以看出，在两个测试项上，打包为可执行文件后的运行效率都有少许提升。平均5次测试结果，基本循环效率提升了约3.58%。而使用Numpy库的效率提升了4.14%。推测引起两者效率提升的应该为统一原因。但由于笔者能力问题，无法再进一步深入探索引起这种性能提升差异的原因。

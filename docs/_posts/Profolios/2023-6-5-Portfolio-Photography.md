@@ -48,13 +48,13 @@ To download the image, right-click on it and choose "Save As."
 
 <!-- https://github.com/Kannmu/Kannmu.github.io/blob/master/img/Photography/Landscape/DSC5534.jpg -->
 
-![](../../../../../img/Photography/Landscape/DSC5534.jpg "青城山")
+![青城山](../../../../../img/Photography/Landscape/DSC5534.jpg "青城山")
 
-![](../../../../../img/Photography/Landscape/DSC5505.jpg "青城山")
+![青城山](../../../../../img/Photography/Landscape/DSC5505.jpg "青城山")
 
-![](../../../../../img/Photography/Landscape/DSC5507.jpg "青城山")
+![青城山](../../../../../img/Photography/Landscape/DSC5507.jpg "青城山")
 
-![](../../../../../img/Photography/Landscape/DSC4967.jpg "川西神木垒")
+![川西神木垒](../../../../../img/Photography/Landscape/DSC4967.jpg "川西神木垒")
 
 ## 生物 Creature
 

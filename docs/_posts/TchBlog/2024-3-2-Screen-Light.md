@@ -17,10 +17,10 @@ tags:
 
 最近想添置一个屏幕挂灯，但是看到明基1k多的价格直接劝退。不如来DIY一个吧。
 
-![1](https://github.com/Kannmu/Kannmu.github.io/blob/master/img/Tch/Screen_Light_20240302184703.jpg?raw=true)
-![2](https://github.com/Kannmu/Kannmu.github.io/blob/master/img/Tch/Screen_Light_20240302184704.jpg?raw=true)
-![3](https://github.com/Kannmu/Kannmu.github.io/blob/master/img/Tch/Screen_Light_20240302184706.jpg?raw=true)
-![4](https://github.com/Kannmu/Kannmu.github.io/blob/master/img/Tch/Screen_Light_20240302184709.jpg?raw=true)
+![Screen_Light_20240302184703.jpg](https://p.sda1.dev/19/f7ee6cbac2ed15fd5da02345bd3e967c/Screen_Light_20240302184703.jpg)
+![Screen_Light_20240302184704.jpg](https://p.sda1.dev/19/0fe7c474415008efc7b44bf3cee9151a/Screen_Light_20240302184704.jpg)
+![Screen_Light_20240302184706.jpg](https://p.sda1.dev/19/07200669cf9114554288ded66a0bd6cd/Screen_Light_20240302184706.jpg)
+![Screen_Light_20240302184709.jpg](https://p.sda1.dev/19/0e34affe30ba30f3bcf3ada49894aa5f/Screen_Light_20240302184709.jpg)
 
 ## 光路
 
@@ -28,7 +28,7 @@ tags:
 
 下图是反射板光路的侧截面轮廓图，曲线分为两段，红色的第一段为一个抛物线，蓝色的第二段为直线。对应到反射板三维模型上，第一段则为一个抛物线沿着垂直于抛物线平面的直线运动掠过的面，第二段为一平面。
 
-![5](https://github.com/Kannmu/Kannmu.github.io/blob/master/img/Tch/Kannmu_Light_Reflector.png?raw=true)
+![Kannmu_Light_Reflector.png](https://p.sda1.dev/19/771edf195b75743e8cadbe77a8104ae7/Kannmu_Light_Reflector.png)
 
 将LED灯珠放置在抛物线的焦点处，在这张图中即为原点的位置。由于PCB物理遮挡，则仅有上部180°范围内会有光线射出。其中左上的150°范围的光线会被抛物线面接收到，并反射为水平向右的光线。
 

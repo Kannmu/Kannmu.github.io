@@ -20,15 +20,15 @@ OpenGL 是一种跨平台的图形编程接口，用于开发二维和三维图�
 
 ## 效果展示 Presentation
 
-![图片](../../../../img/Tch/Rocket_0.png)
+![Rocket_0.png](https://p.sda1.dev/19/21f2828e857dbf892fc32a7cc208a923/Rocket_0.png)
 
-![图片](../../../../img/Tch/Rocket_1.png)
+![Rocket_1.png](https://p.sda1.dev/19/9910e9157694aeda02f71bce35baab0b/Rocket_1.png)
 
-![图片](../../../../img/Tch/Rocket_2.png)
+![Rocket_2.png](https://p.sda1.dev/19/80222ee8eec9bca3dd200f1821c7489e/Rocket_2.png)
 
-![图片](../../../../img/Tch/Rocket_3.png)
+![Rocket_3.png](https://p.sda1.dev/19/3e44c74b237d0c7e3c7147f0ce0ab88b/Rocket_3.png)
 
-![图片](../../../../img/Tch/Rocket_4.png)
+![Rocket_4.png](https://p.sda1.dev/19/5b10a009635488af892878b36f915ac6/Rocket_4.png)
 
 ## 建模 Modeling
 
@@ -36,7 +36,7 @@ OpenGL 是一种跨平台的图形编程接口，用于开发二维和三维图�
 
 在```Blender```中建模长征五号运载火箭，并构建材质。最终模型渲染图如下：
 
-![图片](../../../../img/Tch/Rocket_5.png)
+![Rocket_5.png](https://p.sda1.dev/19/b1e4b1cf1e04682c743f775189c54561/Rocket_5.png)
 
 导出为```.obj```格式的模型文件，以便导入OpenGL中使用。同时会生成```.mtl```文件来保持模型的材质与贴图信息。
 

@@ -35,11 +35,11 @@ Materials: Photosensitive resin, carbon fiber, and POM.
 
 Planetary gearbox gears are made with POM material, which is self-lubricating and wear-resistant.
 
-![](../../../../../img/Tch/Step_Motor_0.png)
+![Step_Motor_0.png](https://p.sda1.dev/19/2df6230995a131ae652eb361df4dd260/Step_Motor_0.png)
 
 <center><font size = 3> 气动步进原理 <br> Pneumatic stepping principle </font></center>
 
-![](../../../../../img/Tch/Step_Motor_1.png)
+![Step_Motor_1.png](https://p.sda1.dev/19/a51f713d7a7fc3b83dc9bccedfa4e399/Step_Motor_1.png)
 
 <center><font size = 3> 行星减速器部分 <br> Planetary retarder part </font></center>
 
