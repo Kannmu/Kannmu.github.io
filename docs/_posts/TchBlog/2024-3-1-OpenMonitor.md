@@ -112,11 +112,7 @@ python openmonitor.py
 
 该脚本会持续更新和刷新系统信息，每秒钟更新一次。
 
-### 许可证
-
-本项目基于 MIT 许可证。详见 [LICENSE](LICENSE) 文件以获取更多信息。
-
-## OpenMonitor
+## OpenMonitor - English
 
 ![LineMode](https://github.com/Kannmu/OpenMonitor/assets/53987473/5aac234f-d9aa-4e97-808a-b38e37356c76)
 ![TableMode](https://github.com/Kannmu/OpenMonitor/assets/53987473/a94d2755-de33-4256-ad2c-10025fc90882)
@@ -210,7 +206,3 @@ python openmonitor.py
 ```
 
 The script will continuously update and refresh the system information every second.
-
-### License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.

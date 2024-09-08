@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[Assignment] 数字化工业设计AIGC作业"
+title: "使用AIGC工具进行概念设计（以自行车设计为例）"
 subtitle: "AI Generated Road Bike"
 author: "Kannmu"
 header-style: post

@@ -11,6 +11,9 @@ tags:
   - Exe Packaging
 ---
 
+
+
+
 <!-- Latex Support -->
 <head>
     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  type="text/javascript"></script>
@@ -24,16 +27,16 @@ tags:
     </script>
 </head>
 
-## 1. 介绍
+## 介绍
 
 本文探讨了Python代码在解释器中运行与被打包成.exe可执行文件后运行的效率差异。这种对比对于理解不同运行环境下Python程序的性能表现至关重要。
 
-### 1.1 测试环境
+### 测试环境
 
 测试在Python 3.11环境下进行，使用Anaconda进行环境配置。
 测试使用的硬件平台为 ThinkPad T495。CPU为 AMD Ryzen 5 PRO 3500U w/ Radeon Vega Mobile Gfx。四核，默频2.1GHz。
 
-### 1.2 测试方法
+### 测试方法
 
 测试代码设计为评估两个主要方面的性能：**Python基本循环效率**与**使用Numpy操作效率**。
 
@@ -45,7 +48,7 @@ tags:
 
 使用PyInstaller工具将Python脚本打包成.exe文件，并在相同硬件环境下进行测试，以确保测试的公正性。
 
-## 2. 测试结果
+## 测试结果
 
 **解释器直接运行测试结果**
 
@@ -59,7 +62,7 @@ tags:
 
 可以看出，在两个测试项上，打包为可执行文件后的运行效率都有少许提升。平均5次测试结果，基本循环效率提升了约3.58%。而使用Numpy库的效率提升了4.14%。推测引起两者效率提升的应该为统一原因。但由于笔者能力问题，无法再进一步深入探索引起这种性能提升差异的原因。
 
-## 3. 测试代码
+## 测试代码
 
 具体进行测试使用的Python代码如下
 
@@ -108,7 +111,7 @@ if __name__ == "__main__":
 
 ```
 
-## 4. 结语
+## 结语
 
 通过对比Python解释器与打包为.exe可执行文件的运行效率，可以得出打包为可执行文件可以略微提高程序运行效率的结论。然而，进一步的原理探究和更加全面详细的测试需要被执行。
 

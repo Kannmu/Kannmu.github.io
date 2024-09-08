@@ -173,6 +173,49 @@ layout: default
         }
     }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // 选择所有的标题元素，除了h1
+        var headers = document.querySelectorAll('h2, h3, h4');
+    
+        // 初始化一个计数器对象
+        var counter = { h2: 0, h3: 0, h4: 0};
+    
+        // 遍历每个标题元素
+        headers.forEach(function(header) {
+            // 如果标题是目录中的元素，则不编号
+            if (
+                header.classList.contains('side-catalog') || 
+                header.classList.contains('subheading')) {
+                return;
+            }
+    
+            // 获取标题的级别
+            var tagName = header.tagName.toLowerCase();
+    
+            // 为当前级别的标题增加计数
+            counter[tagName]++;
+    
+            // 为所有低于当前级别的标题重置计数
+            for (var i = parseInt(tagName.charAt(1)) + 1; i <= 4; i++) {
+                counter['h' + i] = 0;
+            }
+    
+            // 创建编号字符串
+            var numbering = '';
+            for (var i = 2; i <= parseInt(tagName.charAt(1)); i++) {
+                numbering += counter['h' + i] + '.';
+            }
+    
+            // 将编号添加到标题文本中
+            header.textContent = numbering + ' ' + header.textContent;
+        });
+    });
+</script>
+    
+    
+
 {% endif %}
 
 
