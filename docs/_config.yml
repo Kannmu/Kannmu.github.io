@@ -5,9 +5,12 @@ header-img: img/Backgrounds/Bg_2.jpg
 email: Kannmu@163.com
 description: "这里是 @Kannmu 涵无 的个人博客 | 一个杂食者"
 keyword: "Kannmu,涵无, Kannmu涵无,涵无,涵无的博客,Kannmu Blog, 博客, 个人网站, 硬件, 交互, 设计, 摄影, 技术,文章"
-url: "https://kannmu.github.io/" # your host, for absolute URL
+url: "https://kannmu.top/" # your host, for absolute URL
 baseurl: "" # for example, '/blog' if your blog hosted on 'host/blog'
 
+author:
+  name: kannmu
+  email: kannmu@163.com
 # Publish posts or collection documents with a future date.
 future: true
 
@@ -36,18 +39,19 @@ exclude:
   ]
 anchorjs: true # if you want to customize anchor. check out line:181 of `post.html`
 # If you have timezone issue (e.g. #68) in China, uncomment to use this:
-#timezone: CN
+timezone: CN
 
 # Gems
 # from PR#40, to support local preview for Jekyll 3.0
 # make sure you have this gem installed
 # `$ gem install jekyll-paginate`
 
-plugins: [jekyll-paginate]
-# plugins: [jekyll-minibundle]
 plugins:
   - jekyll/minibundle
   - jekyll-paginate
+  - jekyll-minifier
+  - jekyll-sitemap
+  - jekyll-seo-tag
 
 sass:
     style: compressed

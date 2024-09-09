@@ -1,7 +1,10 @@
 source 'https://rubygems.org'
 gem 'jekyll-paginate'
 gem "jekyll", "~> 4.0"
-gem "rake"
+
+# gem "rake"
+
+gem 'jekyll-sitemap'
 
 gem "webrick", "~> 1.7"
 
@@ -10,3 +13,6 @@ gem 'jekyll-minibundle'
 # gem "jekyll-minibundle", "~> 3.0" 
 
 # gem "jekyll-minibundle", "~> 3.0"
+
+gem "jekyll-minifier", "~> 0.1.10"
+gem 'jekyll-seo-tag'

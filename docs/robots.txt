@@ -1,3 +1,3 @@
 User-agent: *
 Disallow: 
-Sitemap: https://kannmu.github.io/Data/sitemap_New.xml
+Sitemap: https://kannmu.kannmu/Data/sitemap.xml
