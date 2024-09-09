@@ -58,36 +58,36 @@ To download the image, right-click on it and choose "Save As."
 
 ## 生物 Creature
 
-![](../../../../../img/Photography/Creature/DSC4441.jpg)
+![照片Photo](../../../../../img/Photography/Creature/DSC4441.jpg)
 
-![](../../../../../img/Photography/Creature/DSC3919.jpg)
+![照片Photo](../../../../../img/Photography/Creature/DSC3919.jpg)
 
-![](../../../../../img/Photography/Creature/DSC4234-HDR.jpg)
+![照片Photo](../../../../../img/Photography/Creature/DSC4234-HDR.jpg)
 
 ## 人文 Humanistic
 
-![](../../../../../img/Photography/Humanistic/DSC4237-HDR_1.jpg)
+![照片Photo](../../../../../img/Photography/Humanistic/DSC4237-HDR_1.jpg)
 
-![](../../../../../img/Photography/Humanistic/DSC4494.jpg)
+![照片Photo](../../../../../img/Photography/Humanistic/DSC4494.jpg)
 
-![](../../../../../img/Photography/Humanistic/DSC5492.jpg)
+![照片Photo](../../../../../img/Photography/Humanistic/DSC5492.jpg)
 
 ## 建筑 Architecture
 
-![](../../../../../img/Photography/Architecture/DSC_4821_1.jpg)
+![照片Photo](../../../../../img/Photography/Architecture/DSC_4821_1.jpg)
 
-![](../../../../../img/Photography/Architecture/DSC3830.jpg)
+![照片Photo](../../../../../img/Photography/Architecture/DSC3830.jpg)
 
-![](../../../../../img/Photography/Architecture/DSC4455.jpg)
+![照片Photo](../../../../../img/Photography/Architecture/DSC4455.jpg)
 
-![](../../../../../img/Photography/Architecture/DSC5361.jpg)
+![照片Photo](../../../../../img/Photography/Architecture/DSC5361.jpg)
 
-![](../../../../../img/Photography/Architecture/P1230474.jpg)
+![照片Photo](../../../../../img/Photography/Architecture/P1230474.jpg)
 
 ## 艺术 Art
 
-![](../../../../../img/Photography/Art/DSC3948.jpg)
+![照片Photo](../../../../../img/Photography/Art/DSC3948.jpg)
 
-![](../../../../../img/Photography/Art/DSC4399.jpg)
+![照片Photo](../../../../../img/Photography/Art/DSC4399.jpg)
 
-![](../../../../../img/Photography/Art/DSC4401.jpg)
+![照片Photo](../../../../../img/Photography/Art/DSC4401.jpg)
