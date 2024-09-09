@@ -23,26 +23,26 @@
 </footer>
 
 <!-- jQuery -->
-<script src="{{ "/js/jquery.min.js " | prepend: site.baseurl }}"></script>
+<script async src="{{ "/js/jquery.min.js " | prepend: site.baseurl }}"></script>
 
 <!-- Bootstrap Core JavaScript -->
 <!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
-<script src="{{ "/js/bootstrap.min.js " | prepend: site.baseurl }}"></script>
+<script async src="{{ "/js/bootstrap.min.js " | prepend: site.baseurl }}"></script>
 
 <!-- Custom Theme JavaScript -->
-<script src="{{ "/js/hux-blog.min.js " | prepend: site.baseurl }}"></script>
+<script async src="{{ "/js/hux-blog.min.js " | prepend: site.baseurl }}"></script>
 
 <!-- Simple Jekyll Search -->
-<script src="{{ "/js/simple-jekyll-search.min.js" | prepend: site.baseurl }}"></script>
+<script async src="{{ "/js/simple-jekyll-search.min.js" | prepend: site.baseurl }}"></script>
 
 <!-- Service Worker -->
 {% if site.service-worker %}
-<script src="{{ "/js/snackbar.js " | prepend: site.baseurl }}"></script>
-<script src="{{ "/js/sw-registration.js " | prepend: site.baseurl }}"></script>
+<script async src="{{ "/js/snackbar.js " | prepend: site.baseurl }}"></script>
+<script async src="{{ "/js/sw-registration.js " | prepend: site.baseurl }}"></script>
 {% endif %}
 
 <!-- async load function -->
-<script>
+<script async>
     function async(u, c) {
         var d = document, t = 'script',
             o = d.createElement(t),
@@ -64,7 +64,7 @@
      - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
 -->
 <!--
-    <script>
+    <script async>
         async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
             hljs.initHighlightingOnLoad();
         })
@@ -75,7 +75,7 @@
 
 {% if page.plchart %}
 <!-- jquery.tagcloud.js -->
-<script>
+<script async>
     // https://stackoverflow.com/questions/9975810/make-iframe-automatically-adjust-height-according-to-the-contents-without-using
     function resizeIframe(obj) {
         obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
@@ -96,7 +96,7 @@
 
 {% if page.title == 'Archive' %}
 <!-- jquery.tagcloud.js -->
-<script>
+<script async>
     async('{{ "/js/jquery.tagcloud.js" | prepend: site.baseurl }}', function () {
         $.fn.tagcloud.defaults = {
             //size: {start: 1, end: 1, unit: 'em'},
@@ -109,7 +109,7 @@
 {% endif %}
 
 <!--fastClick.js -->
-<script>
+<script async>
     async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function () {
         var $nav = document.querySelector("nav");
         if ($nav) FastClick.attach($nav);
@@ -119,7 +119,7 @@
 
 <!-- Google Analytics -->
 {% if site.ga_track_id %}
-<script>
+<script async>
     // dynamic User by Hux
     var _gaId = '{{ site.ga_track_id }}';
     var _gaDomain = '{{ site.ga_domain }}';
@@ -140,7 +140,7 @@
 
 <!-- Baidu Tongji -->
 {% if site.ba_track_id %}
-<script>
+<script async>
     // dynamic User by Hux
     var _baId = '{{ site.ba_track_id }}';
 
@@ -274,7 +274,7 @@
 {% endif %}
 
 <!-- Simple Jekyll Search -->
-<script>
+<script async>
     // https://stackoverflow.com/questions/1912501/unescape-html-entities-in-javascript
     function htmlDecode(input) {
         var e = document.createElement('textarea');

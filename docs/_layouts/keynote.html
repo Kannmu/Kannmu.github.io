@@ -72,7 +72,7 @@ layout: default
 </article>
 
 <!-- resize header to fullscreen keynotes -->
-<script>
+<script async>
     var $header = document.getElementsByTagName("header")[0];
     function resize(){
         /*
@@ -97,7 +97,7 @@ layout: default
 
 {% if site.disqus_username %}
 <!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
+<script async type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "{{site.disqus_username}}";
     var disqus_identifier = "{{page.id}}";
@@ -115,7 +115,7 @@ layout: default
 
 {% if site.anchorjs %}
 <!-- async load function -->
-<script>
+<script async>
     function async(u, c) {
       var d = document, t = 'script',
           o = d.createElement(t),
@@ -126,7 +126,7 @@ layout: default
     }
 </script>
 <!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
-<script>
+<script async>
     async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
         anchors.options = {
           visible: 'always',

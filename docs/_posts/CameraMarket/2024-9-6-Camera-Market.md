@@ -15,20 +15,7 @@ tags:
 
 <html lang="zh-CN"> <head> <meta name="keywords" content="二手相机,价格历史,价格趋势,二手相机价格历史,二手相机市场" /> </head> </html>
 
-<!-- Latex Support -->
-<head>
-    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            tex2jax: {
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-            inlineMath: [['$','$']]
-            }
-        });
-    </script>
-</head>
-
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=700 height=86 src="https://music.163.com/outchain/player?type=2&id=1300698999&auto=1&height=66"></iframe>
+<!-- <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=700 height=86 src="https://music.163.com/outchain/player?type=2&id=1300698999&auto=1&height=66"></iframe> -->
 
 ## 介绍
 
@@ -72,7 +59,8 @@ tags:
     <canvas id="cameraChart" width="1920" height="1080"></canvas>
     <select id="brandSelect"></select>
 </div>
-<script>
+
+<script defer>
 // 初始化全局变量
 var cameraChart = null;
 var defaultBrand = null;

@@ -107,7 +107,7 @@ layout: default
 {% if site.netease_comment %}
 <!-- 网易云跟帖JS代码 start -->
 <script src="https://img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"></script>
-<script>
+<script async>
   var cloudTieConfig = {
     url: document.location.href, 
     sourceId: "",
@@ -141,7 +141,7 @@ layout: default
 
 {% if site.anchorjs %}
 <!-- async load function -->
-<script>
+<script async>
     function async(u, c) {
       var d = document, t = 'script',
           o = d.createElement(t),
@@ -152,7 +152,7 @@ layout: default
     }
 </script>
 <!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
-<script>
+<script async>
     async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
         anchors.options = {
           visible: 'hover',
@@ -174,7 +174,7 @@ layout: default
     }
 </style>
 
-<script>
+<script async>
     document.addEventListener("DOMContentLoaded", function() {
         // 选择所有的标题元素，除了h1
         var headers = document.querySelectorAll('h2, h3, h4');
