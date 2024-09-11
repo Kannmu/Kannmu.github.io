@@ -141,7 +141,7 @@ layout: default
 
 {% if site.anchorjs %}
 <!-- async load function -->
-<script async>
+<script>
     function async(u, c) {
       var d = document, t = 'script',
           o = d.createElement(t),
@@ -162,6 +162,7 @@ layout: default
         anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
     })
 </script>
+
 <style>
     /* place left on bigger screen */
     @media all and (min-width: 800px) {
@@ -214,7 +215,13 @@ layout: default
     });
 </script>
     
-    
+<!-- 引入多语言切换的js -->
+<script async src="https://cdn.staticfile.net/translate.js/3.2.1/translate.js"></script>
+<script async>
+	translate.selectLanguageTag.show = false; //不出现的select的选择语言
+    translate.service.use('client.edge'); //设置机器翻译服务通道
+	translate.execute();
+</script>
 
 {% endif %}
 

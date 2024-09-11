@@ -10,7 +10,7 @@
                     Copyright &copy; {{ site.title }} {{ site.time | date: '%Y' }}
                     <br>
                         Powered by <a href="http://huangxuan.me">Hux Blog</a><br>
-                        All background photos featured on this blog were Shot by Kannmu
+                        All photographs featured in this site were shot by kannmu
                         <!-- <center><font size = 2>All Background Photo Are Take By Me</font></center>> -->
                         <!-- <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="100px"
                             height="20px"
@@ -23,26 +23,26 @@
 </footer>
 
 <!-- jQuery -->
-<script async src="{{ "/js/jquery.min.js " | prepend: site.baseurl }}"></script>
+<script src="{{ "/js/jquery.min.js " | prepend: site.baseurl }}"></script>
 
 <!-- Bootstrap Core JavaScript -->
 <!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
-<script async src="{{ "/js/bootstrap.min.js " | prepend: site.baseurl }}"></script>
+<script src="{{ "/js/bootstrap.min.js " | prepend: site.baseurl }}"></script>
 
 <!-- Custom Theme JavaScript -->
-<script async src="{{ "/js/hux-blog.min.js " | prepend: site.baseurl }}"></script>
+<script src="{{ "/js/hux-blog.min.js " | prepend: site.baseurl }}"></script>
 
 <!-- Simple Jekyll Search -->
-<script async src="{{ "/js/simple-jekyll-search.min.js" | prepend: site.baseurl }}"></script>
+<script src="{{ "/js/simple-jekyll-search.min.js" | prepend: site.baseurl }}"></script>
 
 <!-- Service Worker -->
 {% if site.service-worker %}
-<script async src="{{ "/js/snackbar.js " | prepend: site.baseurl }}"></script>
-<script async src="{{ "/js/sw-registration.js " | prepend: site.baseurl }}"></script>
+<script src="{{ "/js/snackbar.js " | prepend: site.baseurl }}"></script>
+<script src="{{ "/js/sw-registration.js " | prepend: site.baseurl }}"></script>
 {% endif %}
 
 <!-- async load function -->
-<script async>
+<script>
     function async(u, c) {
         var d = document, t = 'script',
             o = d.createElement(t),

@@ -13,8 +13,6 @@ tags:
   - 二手相机价格历史
 ---
 
-<html lang="zh-CN"> <head> <meta name="keywords" content="二手相机,价格历史,价格趋势,二手相机价格历史,二手相机市场" /> </head> </html>
-
 <!-- <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=700 height=86 src="https://music.163.com/outchain/player?type=2&id=1300698999&auto=1&height=66"></iframe> -->
 
 ## 介绍
@@ -25,20 +23,20 @@ tags:
 
 计算方法：抽取搜索时最前出现的价格的第一分位点到第三分位点之间的价格数据(25% - 75%)的平均值作为当日价格行情。数据每日更新一次。
 
-曲线图右下角的按钮可以切换相机品牌
+曲线图右下角的按钮可以切换相机品牌。
 
 ## 价格走势 Price trends
 
 <head>
     <title>二手相机价格走势</title>
     <!-- 引入Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- 引入zoom插件 -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
     <style>
         .chart-container {
             position: relative; /* 设置相对定位 */
-            width: 800px; /* 设置容器宽度 */
+            width: 700px; /* 设置容器宽度 */
             margin: 0 auto; /* 居中容器 */
         }
         #brandSelect {
