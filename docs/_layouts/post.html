@@ -14,6 +14,7 @@ layout: default
     <amp-auto-ads type="adsense"
         data-ad-client="ca-pub-7629675373716127">
     </amp-auto-ads>
+    
     <div class="container">
         <div class="row">
 
@@ -22,7 +23,11 @@ layout: default
                 col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
-
+                <!-- <ul class="ignore">
+                    <li><a href="javascript:translate.changeLanguage('english');">English</a></li>|
+                    <li><a href="javascript:translate.changeLanguage('chinese_simplified');">简体中文</a></li>|
+                    <li><a href="javascript:translate.changeLanguage('chinese_traditional');">繁體中文</a></li>
+                </ul> -->
                 <!-- Multi-Lingual -->
                 {% if page.multilingual %}
                     {% include multilingual-sel.html %}
@@ -73,6 +78,9 @@ layout: default
                 visible-lg-block
                 sidebar-container
                 catalog-container">
+                
+                <div id="translate"></div>
+
                 <div class="side-catalog">
                     <hr class="hidden-sm hidden-xs">
                     <h5>
@@ -97,6 +105,9 @@ layout: default
             </div>
         </div>
     </div>
+    
+
+
 </article>
 
 <!-- add support for mathjax by voleking-->
@@ -215,13 +226,7 @@ layout: default
     });
 </script>
     
-<!-- 引入多语言切换的js -->
-<script async src="https://cdn.staticfile.net/translate.js/3.2.1/translate.js"></script>
-<script async>
-	translate.selectLanguageTag.show = false; //不出现的select的选择语言
-    translate.service.use('client.edge'); //设置机器翻译服务通道
-	translate.execute();
-</script>
+
 
 {% endif %}
 

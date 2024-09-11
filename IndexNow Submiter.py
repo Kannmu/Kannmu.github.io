@@ -8,8 +8,8 @@ headers = {
 }
 data = {
     "host": "kannmu.top",
-    "key": "efa24de7d51947398d9d86fd104da054",
-    "keyLocation": "https://kannmu.top/efa24de7d51947398d9d86fd104da054.txt",
+    "key": "aba713782af045ec8eede384cdd8c216",
+    "keyLocation": "https://kannmu.top/aba713782af045ec8eede384cdd8c216.txt",
     "urlList": [
         "https://kannmu.top/"
         "https://kannmu.top/2024/09/06/Camera-Market/",

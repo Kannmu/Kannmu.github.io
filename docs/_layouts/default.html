@@ -28,7 +28,9 @@ layout: compress
 </amp-auto-ads>
     {% include nav.html %}
     {% include search.html %}
+
     {{ content }}
+
     {% include footer.html %}
     
 
@@ -38,6 +40,27 @@ layout: compress
 <!-- Migrate from head to bottom, no longer block render and still work -->
 
 </body>
+
+<style>
+    .translateSelectLanguage{
+        position: relative;
+        top:0px;
+        right:0px;
+    }
+</style>
+
+<script async>
+    translate.language.setDefaultTo('english');
+    translate.language.setLocal('chinese_simplified');
+    translate.setAutoDiscriminateLocalLanguage();
+    // translate.selectLanguageTag.show = false; //不出现的select的选择语言
+    translate.selectLanguageTag.languages = 'english,chinese_simplified,japanese,french,spanish,russian';
+    translate.selectLanguageTag.refreshRender();
+    translate.language.translateLanguagesRange = ['chinese_simplified'];
+    translate.service.use('client.edge'); //设置机器翻译服务通道
+    
+    translate.execute();//进行翻译
+</script>
 
 </html>
 

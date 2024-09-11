@@ -24,6 +24,8 @@ tags:
     </script>
 </head>
 
+
+
 ## 介绍
 
 去年为了给自己的ITX主机配一张独显，终结使用核显打Apex的困窘。在某宝浏览合适的显卡。由于超小机箱的缘故，仅支持半高的显卡，且长度不超190mm。这时，突然发现一张RTX 3050 Ti，身材苗条，尺寸适中，价格廉价。便快速买下了。但是最近在使用它玩Apex和黑神话悟空时，遇到了各种问题（小蓝熊反作弊不通过、黑神话悟空没有DLSS选项等）。这里记录一下解决方法。
@@ -153,4 +155,5 @@ tags:
 ![alt text](https://mspoweruser.com/wp-content/uploads/2024/01/Driver-Signature-Enforcement-Windows-11-Startup-Settings-Restart-e1704804317196.jpg)
 
 这时，电脑会自动重新启动，这时只要正常执行```setup.exe```的安装程序即可成功通过兼容性测试，正常安装驱动。请注意禁用windows驱动签名仅能生效在一次启动中，若出现了重启后则需要重新执行3.3来进行禁用一次。
+
 
