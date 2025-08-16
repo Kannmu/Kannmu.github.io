@@ -1,0 +1,389 @@
+/*!
+ * 现代响应式布局系统 - CSS Grid & Flexbox
+ * 为Jekyll博客项目提供现代化的响应式布局支持
+ */
+
+/* ===== CSS变量定义 ===== */
+:root {
+  /* 断点定义 */
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 992px;
+  --breakpoint-lg: 1200px;
+  --breakpoint-xl: 1400px;
+  
+  /* 间距系统 */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  
+  /* 容器最大宽度 */
+  --container-max-width: 1200px;
+  --content-max-width: 800px;
+  
+  /* 网格间距 */
+  --grid-gap: var(--spacing-md);
+  --grid-gap-lg: var(--spacing-lg);
+}
+
+/* ===== 现代容器系统 ===== */
+.responsive-container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+  .responsive-container {
+    padding: 0 var(--spacing-lg);
+  }
+}
+
+@media (min-width: 1200px) {
+  .responsive-container {
+    padding: 0 var(--spacing-xl);
+  }
+}
+
+/* ===== CSS Grid 布局系统 ===== */
+.grid-container {
+  display: grid;
+  gap: var(--grid-gap);
+  width: 100%;
+}
+
+/* 主要布局网格 */
+.main-layout-grid {
+  display: grid;
+  gap: var(--grid-gap-lg);
+  grid-template-areas: 
+    "header"
+    "main"
+    "sidebar"
+    "footer";
+  grid-template-rows: auto 1fr auto auto;
+  min-height: 100vh;
+}
+
+@media (min-width: 992px) {
+  .main-layout-grid {
+    grid-template-areas: 
+      "header header"
+      "main sidebar"
+      "footer footer";
+    grid-template-columns: 1fr 300px;
+    grid-template-rows: auto 1fr auto;
+  }
+}
+
+@media (min-width: 1200px) {
+  .main-layout-grid {
+    grid-template-columns: 1fr 350px;
+  }
+}
+
+/* 网格区域定义 */
+.grid-header {
+  grid-area: header;
+}
+
+.grid-main {
+  grid-area: main;
+  min-width: 0; /* 防止内容溢出 */
+}
+
+.grid-sidebar {
+  grid-area: sidebar;
+}
+
+.grid-footer {
+  grid-area: footer;
+}
+
+/* 文章列表网格 */
+.posts-grid {
+  display: grid;
+  gap: var(--spacing-lg);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .posts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+/* ===== Flexbox 组件系统 ===== */
+.flex-container {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.flex-row {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-between {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-around {
+  justify-content: space-around;
+  align-items: center;
+}
+
+.flex-start {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.flex-end {
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+/* Flex项目控制 */
+.flex-1 {
+  flex: 1;
+}
+
+.flex-2 {
+  flex: 2;
+}
+
+.flex-3 {
+  flex: 3;
+}
+
+.flex-none {
+  flex: none;
+}
+
+.flex-auto {
+  flex: auto;
+}
+
+/* ===== 响应式导航系统 ===== */
+.responsive-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  position: relative;
+}
+
+.nav-brand {
+  flex: none;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.nav-menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: var(--spacing-lg);
+}
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-sm);
+}
+
+@media (max-width: 767px) {
+  .nav-toggle {
+    display: block;
+  }
+  
+  .nav-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    flex-direction: column;
+    padding: var(--spacing-md);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-menu.active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* ===== 响应式卡片系统 ===== */
+.card-container {
+  display: grid;
+  gap: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.responsive-card {
+  background: white;
+  border-radius: 8px;
+  padding: var(--spacing-lg);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.responsive-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+/* ===== 响应式媒体容器 ===== */
+.responsive-media {
+  position: relative;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+}
+
+.responsive-media.ratio-16-9 {
+  padding-bottom: 56.25%; /* 16:9 */
+}
+
+.responsive-media.ratio-4-3 {
+  padding-bottom: 75%; /* 4:3 */
+}
+
+.responsive-media.ratio-1-1 {
+  padding-bottom: 100%; /* 1:1 */
+}
+
+.responsive-media img,
+.responsive-media iframe,
+.responsive-media video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ===== 响应式文本系统 ===== */
+.responsive-text {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  line-height: 1.6;
+}
+
+.responsive-heading {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  line-height: 1.2;
+  margin-bottom: var(--spacing-md);
+}
+
+.responsive-subheading {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  line-height: 1.3;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* ===== 响应式间距系统 ===== */
+.spacing-xs { margin: var(--spacing-xs); }
+.spacing-sm { margin: var(--spacing-sm); }
+.spacing-md { margin: var(--spacing-md); }
+.spacing-lg { margin: var(--spacing-lg); }
+.spacing-xl { margin: var(--spacing-xl); }
+.spacing-xxl { margin: var(--spacing-xxl); }
+
+.padding-xs { padding: var(--spacing-xs); }
+.padding-sm { padding: var(--spacing-sm); }
+.padding-md { padding: var(--spacing-md); }
+.padding-lg { padding: var(--spacing-lg); }
+.padding-xl { padding: var(--spacing-xl); }
+.padding-xxl { padding: var(--spacing-xxl); }
+
+/* 方向性间距 */
+.mt-auto { margin-top: auto; }
+.mb-auto { margin-bottom: auto; }
+.ml-auto { margin-left: auto; }
+.mr-auto { margin-right: auto; }
+
+/* ===== 响应式显示控制 ===== */
+.hide-xs { display: none; }
+.hide-sm { display: none; }
+.hide-md { display: none; }
+.hide-lg { display: none; }
+.hide-xl { display: none; }
+
+@media (min-width: 480px) {
+  .hide-xs { display: initial; }
+  .show-xs-only { display: none; }
+}
+
+@media (min-width: 768px) {
+  .hide-sm { display: initial; }
+  .show-sm-only { display: none; }
+}
+
+@media (min-width: 992px) {
+  .hide-md { display: initial; }
+  .show-md-only { display: none; }
+}
+
+@media (min-width: 1200px) {
+  .hide-lg { display: initial; }
+  .show-lg-only { display: none; }
+}
+
+@media (min-width: 1400px) {
+  .hide-xl { display: initial; }
+  .show-xl-only { display: none; }
+}
+
+/* ===== 性能优化 ===== */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* ===== 打印样式 ===== */
+@media print {
+  .responsive-container {
+    max-width: none;
+    padding: 0;
+  }
+  
+  .main-layout-grid {
+    display: block;
+  }
+  
+  .grid-sidebar {
+    display: none;
+  }
+  
+  .responsive-nav {
+    display: none;
+  }
+}

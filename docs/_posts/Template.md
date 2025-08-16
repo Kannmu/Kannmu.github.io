@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "这里是文章标题"
-subtitle: "这里是文章英文标题"
+subtitle: "Here is the English subtitle"
 author: "Kannmu"
 header-img: "../../../../img/Photography/Humanistic/DSC3869.jpg"
 header-mask: 0.4

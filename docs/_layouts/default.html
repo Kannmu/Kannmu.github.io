@@ -95,3 +95,14 @@ layout: compress
     Resize();
 
 </script>
+
+<!-- Responsive Handler JavaScript -->
+<script src="{{ "/js/responsive-handler.js" | prepend: site.baseurl }}"></script>
+<script>
+    // Initialize responsive handler when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof ResponsiveHandler !== 'undefined') {
+            window.responsiveHandler = new ResponsiveHandler();
+        }
+    });
+</script>
