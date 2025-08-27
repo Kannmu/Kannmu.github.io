@@ -59,6 +59,13 @@ layout: compress
     translate.language.translateLanguagesRange = ['chinese_simplified'];
     translate.service.use('client.edge'); //设置机器翻译服务通道
     
+    // Add by Gemini, to prevent specific words from being translated.
+    translate.office.append('english', '知=知');
+    translate.office.append('japanese', '知=知');
+    translate.office.append('french', '知=知');
+    translate.office.append('spanish', '知=知');
+    translate.office.append('russian', '知=知');
+    
     translate.execute();//进行翻译
 </script>
 
