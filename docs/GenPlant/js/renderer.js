@@ -1,7 +1,7 @@
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import Stats from 'three/examples/jsm/libs/stats.module.js';
+import * as THREE from './three.module.js';
+import { GLTFLoader } from './three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js';
+import Stats from './three/examples/jsm/libs/stats.module.js';
 import { RENDERER_CONFIG, PATHS } from './config/constants.js';
 import { scaleAndPositionObject, enableShadows, disposeObject } from './util/geometry.js';
 

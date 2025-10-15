@@ -3,7 +3,7 @@
  * 提供常用的几何计算和操作
  */
 
-import * as THREE from 'three';
+import * as THREE from '../three';
 
 /**
  * 计算模型的边界框信息

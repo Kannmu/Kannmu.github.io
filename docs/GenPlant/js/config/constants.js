@@ -3,7 +3,7 @@
  * 统一管理所有硬编码的魔法数字和配置参数
  */
 
-import * as THREE from 'three';
+import * as THREE from '../three';
 
 // ==================== 渲染器配置 ====================
 export const RENDERER_CONFIG = {

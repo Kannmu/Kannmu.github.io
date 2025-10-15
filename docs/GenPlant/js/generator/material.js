@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "../three";
 import { MATERIAL_CONFIG } from '../config/constants.js';
 
 const baseColor = new THREE.Color(MATERIAL_CONFIG.COLORS.BASE_COLOR);
