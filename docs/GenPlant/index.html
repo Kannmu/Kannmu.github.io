@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenPlant</title>
+    <link rel="stylesheet" href="style.css"> <!-- 链接到样式表 -->
+</head>
+<body>
+    <div id="app-container">
+        <div id="ui-panel">
+            <input type="number" id="seedInput" step="1" placeholder="Input Seed or Random Generated">
+            <button id="generateBtn">Generate Plant</button>
+            <button id="randomBtn">Random Plant</button>
+            <button id="resetCameraButton">Reset Camera</button>
+        </div>
+        <canvas id="three-canvas"></canvas> <!-- Three.js的渲染目标 -->
+    </div>
+
+    <script type="module" src="js/main.js"></script> <!-- 主脚本，使用ES模块方式加载 -->
+</body>
+</html>
