@@ -2,6 +2,8 @@
 
 🌱 A web-based procedural plant generator that creates unique 3D plant models using deterministic algorithms.
 
+🖥️Demo: <https://kannmu.top/GenPlant/GenPlant/>
+
 [中文文档 / Chinese Documentation](./README_zh.md)
 
 ## ✨ Features
@@ -14,25 +16,23 @@
 
 ## 🚀 Quick Start
 
-### Online Experience
-
-Simply open the `GenPlant/index.html` file to start using the application.
-
 ### Usage
 
-1. **Input Seed**: Enter any number in the input field as the generation seed
-2. **Generate Plant**: Click the "Generate Plant" button to create a plant
-3. **Random Generation**: Click the "Random Plant" button to generate a random plant
-4. **Camera Control**: Use mouse to drag and rotate view, scroll to zoom, click "Reset Camera" to reset view
+1. **Input Seed**: Enter any number in the input field as the generation seed.
+2. **Generate Plant**: Click the "Generate Plant" button to create a plant.
+3. **Random Generation**: Click the "Random Plant" button to generate a random plant.
+4. **Camera Control**: Use the mouse to drag and rotate the view, scroll to zoom, and click "Reset Camera" to reset the view.
+
+> **Note**: This project uses ES6 modules and requires a local server to run. See the [Development Guide](#-development-guide) for more details.
 
 ## 🏗️ Technical Architecture
 
 ### Core Technology Stack
 
-- **Three.js**: 3D rendering engine
-- **ES6 Modules**: Modular architecture
-- **WebGL**: Hardware-accelerated rendering
-- **HTML5 Canvas**: Rendering target
+- **Three.js**: 3D rendering engine (loaded via CDN from `esm.sh`).
+- **ES6 Modules**: Modular architecture.
+- **WebGL**: Hardware-accelerated rendering.
+- **HTML5 Canvas**: Rendering target.
 
 ### System Architecture
 
@@ -54,58 +54,58 @@ HTML5 Canvas
 
 ### Core Algorithms
 
-- **Deterministic Random Number Generation**: Uses Mulberry32 algorithm to ensure reproducibility
-- **Hierarchical Parameter System**: Multi-layer parameter control from macro morphology to detail textures
-- **Recursive Branch Generation**: Recursive algorithms simulating natural plant branching
-- **Procedural Materials**: Parameter-based material and texture generation
+- **Deterministic Random Number Generation**: Uses the Mulberry32 algorithm to ensure reproducibility.
+- **Hierarchical Parameter System**: Multi-layer parameter control from macro morphology to detail textures.
+- **Recursive Branch Generation**: Recursive algorithms simulating natural plant branching.
+- **Procedural Materials**: Parameter-based material and texture generation.
 
 ## 📁 Project Structure
 
 ```
 GenPlant/
 ├── index.html              # Main page
-├── style.css              # Stylesheet
+├── style.css               # Stylesheet
 ├── js/
-│   ├── main.js            # Main controller
-│   ├── renderer.js        # Renderer module
+│   ├── main.js             # Main controller
+│   ├── renderer.js         # Renderer module
 │   ├── config/
-│   │   └── constants.js   # Configuration constants
+│   │   └── constants.js    # Configuration constants
 │   ├── generator/
-│   │   ├── index.js       # Generator entry point
-│   │   ├── parameters.js  # Parameter generation
-│   │   ├── structure.js   # Structure generation
-│   │   ├── geometry.js    # Geometry building
-│   │   └── material.js    # Material generation
+│   │   ├── index.js        # Generator entry point
+│   │   ├── parameters.js   # Parameter generation
+│   │   ├── structure.js    # Structure generation
+│   │   ├── geometry.js     # Geometry building
+│   │   └── material.js     # Material generation
 │   └── util/
-│       ├── random.js      # Random utilities
-│       ├── math.js        # Math utilities
-│       └── geometry.js    # Geometry utilities
+│       ├── random.js       # Random utilities
+│       ├── math.js         # Math utilities
+│       └── geometry.js     # Geometry utilities
 └── data/
-    └── defaultModel/      # Default model resources
+    └── defaultModel/       # Default model resources
 ```
 
 ## 🎯 Parameter System
 
 ### Hierarchical Parameter Architecture
 
-1. **Global Seed**: Root of all random processes
-2. **Archetype Parameters**: Basic plant type and macro morphology
-3. **Environmental Parameters**: Environmental influences like phototropism, gravity, pruning factors
-4. **Structural Parameters**: Geometric properties of trunk and branches
-5. **Material Parameters**: Colors, textures, surface properties
+1. **Global Seed**: The root of all random processes.
+2. **Archetype Parameters**: Basic plant type and macro morphology.
+3. **Environmental Parameters**: Environmental influences like phototropism, gravity, and pruning factors.
+4. **Structural Parameters**: Geometric properties of the trunk and branches.
+5. **Material Parameters**: Colors, textures, and surface properties.
 
 ### Biologically Inspired
 
-- **Phototropism**: Simulates plant growth towards light
-- **Gravitropism**: Simulates gravity's effect on plant morphology
-- **Apical Dominance**: Simulates trunk's growth advantage over side branches
-- **Natural Pruning**: Simulates natural elimination of internal branches
+- **Phototropism**: Simulates plant growth towards light.
+- **Gravitropism**: Simulates gravity's effect on plant morphology.
+- **Apical Dominance**: Simulates the trunk's growth advantage over side branches.
+- **Natural Pruning**: Simulates the natural elimination of internal branches.
 
 ## 🔧 Development Guide
 
 ### Local Development
 
-Since ES6 modules are used, run through an HTTP server:
+Since ES6 modules are used, you need to run the project through an HTTP server:
 
 ```bash
 # Using Python
@@ -120,17 +120,17 @@ npx serve .
 
 ### Code Standards
 
-- Use ES6+ syntax
-- Modular design with single responsibility principle
-- Detailed JSDoc comments
-- Unified error handling mechanisms
+- Use ES6+ syntax.
+- Modular design with a single responsibility principle.
+- Detailed JSDoc comments.
+- Unified error handling mechanisms.
 
 ### Extension Development
 
-- **New Plant Types**: Add new archetype types in `parameters.js`
-- **New Growth Algorithms**: Implement new generation logic in `structure.js`
-- **New Material Effects**: Add new material types in `material.js`
-- **New Geometric Features**: Extend geometry generation in `geometry.js`
+- **New Growth Algorithms**: Implement new generation logic in `structure.js`.
+- **New Material Effects**: Add new material types in `material.js`.
+- **New Geometric Features**: Extend geometry generation in `geometry.js`.
+
 
 ## 📄 License
 
