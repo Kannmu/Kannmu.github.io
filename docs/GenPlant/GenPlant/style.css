@@ -125,18 +125,21 @@ canvas {
     position: relative;
     box-sizing: border-box;
     top: 60px;
-    width: 70vw;
-    height: min(700px, 70vh);
+    width: min(85vw, calc(100vh - 200px), 1000px);
+    height: min(calc(85vw * 0.75), calc(100vh - 200px), 750px);
+    min-width: 320px;
+    min-height: 240px;
+    max-width: calc(100vw - 40px);
+    max-height: calc(100vh - 160px);
     padding: 20px 20px;
-    /* max-width: calc(100vw - 40px); */
-    max-height: 100%;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-soft);
     background: #CDF1AA;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     margin: 0 auto;
-    /* display: block; */
+    aspect-ratio: 4/3;
+    object-fit: contain;
 }
 
 /* 加载状态 */
@@ -205,9 +208,14 @@ canvas {
     }
 
     #three-canvas {
-        width: 90vw;
+        /* 平板设备优化：更大的显示区域 */
+        width: min(92vw, calc(100vh - 180px));
+        height: min(calc(92vw * 0.75), calc(100vh - 180px));
         max-width: calc(100vw - 32px);
-        height: 60vh;
+        max-height: calc(100vh - 140px);
+        min-width: 280px;
+        min-height: 210px;
+        top: 40px;
     }
 }
 
@@ -220,9 +228,49 @@ canvas {
     }
     
     #three-canvas {
-        width: calc(100vw - 24px);
+        /* 手机设备优化：适应小屏幕 */
+        width: min(95vw, calc(100vh - 160px));
+        height: min(calc(95vw * 0.8), calc(100vh - 160px));
         max-width: calc(100vw - 24px);
-        height: 60vh;
+        max-height: calc(100vh - 120px);
+        min-width: 260px;
+        min-height: 200px;
         margin: 0 12px;
+        top: 30px;
+        /* 手机上使用稍微不同的宽高比 */
+        aspect-ratio: 5/4;
+    }
+}
+
+/* 超宽屏幕优化 */
+@media (min-width: 1400px) {
+    #three-canvas {
+        /* 大屏幕上限制最大尺寸，保持合适比例 */
+        width: min(70vw, 1200px);
+        height: min(calc(70vw * 0.75), 900px);
+        max-width: 1200px;
+        max-height: 900px;
+    }
+}
+
+/* 竖屏设备特殊处理 */
+@media (orientation: portrait) and (max-width: 768px) {
+    #three-canvas {
+        /* 竖屏时优先考虑宽度 */
+        width: min(90vw, 500px);
+        height: min(calc(90vw * 0.8), 400px);
+        aspect-ratio: 5/4;
+    }
+}
+
+/* 横屏设备特殊处理 */
+@media (orientation: landscape) and (max-height: 600px) {
+    #three-canvas {
+        /* 横屏低高度时优先考虑高度 */
+        width: min(calc(100vh - 120px), 80vw);
+        height: calc(100vh - 120px);
+        max-height: calc(100vh - 100px);
+        top: 20px;
+        aspect-ratio: 4/3;
     }
 }
