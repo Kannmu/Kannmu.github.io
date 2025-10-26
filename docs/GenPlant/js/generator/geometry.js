@@ -1,4 +1,4 @@
-import * as THREE from "../three";
+import * as THREE from "https://esm.sh/three";
 import { random, randomFloat, randomInt, choice } from '../util/random.js';
 import { GEOMETRY_CONFIG } from '../config/constants.js';
 import { calculateTubeSegments } from '../util/geometry.js';

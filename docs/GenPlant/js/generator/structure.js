@@ -1,4 +1,4 @@
-import * as THREE from "../three";
+import * as THREE from "https://esm.sh/three";
 import { random, randomFloat, randomFloatNormal, randomFloatSurprise, randomInt, choice } from '../util/random.js';
 import { GENERATOR_CONFIG } from '../config/constants.js';
 import { createPerpendicularVector, safeNormalize } from '../util/geometry.js';
