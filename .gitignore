@@ -14,9 +14,9 @@ node_modules
 */*/.DS_Store
 /_posts/ACM_User_Manual
 /img/User_Manual
-*/.trae/*
-.trae
+# */.trae/*
+# .trae
 documents/*
-/.trae/
-.trae/*
-*trae*
+# /.trae/
+# .trae/*
+# *trae*
