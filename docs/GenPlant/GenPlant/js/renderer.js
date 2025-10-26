@@ -68,7 +68,6 @@ function initLighting() {
         LIGHTING.HEMISPHERE_LIGHT.GROUND_COLOR,
         LIGHTING.HEMISPHERE_LIGHT.INTENSITY
     );
-    hemisphereLight.castShadow = true;
     scene.add(hemisphereLight);
     
     // 环境光

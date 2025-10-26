@@ -1,5 +1,5 @@
 import { init, randomFloat, randomFloatNormal, randomFloatSurprise, randomInt, choice } from '../util/random.js';
-import * as THREE from 'three';
+import * as THREE from "https://esm.sh/three";
 import { PARAMETER_CONFIG } from '../config/constants.js';
 
 export function createParameters(seed) {
