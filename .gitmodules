@@ -1,0 +1,6 @@
+[submodule "docs/CalcFlow"]
+	path = docs/CalcFlow
+	url = https://github.com/Kannmu/CalcFlow.git
+[submodule "docs/GenPlant"]
+	path = docs/GenPlant
+	url = https://github.com/Kannmu/GenPlant.git
