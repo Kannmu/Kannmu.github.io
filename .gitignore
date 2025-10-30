@@ -15,7 +15,7 @@ node_modules
 /_posts/ACM_User_Manual
 /img/User_Manual
 # */.trae/*
-# .trae
+.trae/
 documents/*
 # /.trae/
 # .trae/*
