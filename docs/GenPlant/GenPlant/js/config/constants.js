@@ -230,6 +230,7 @@ export const UI_CONFIG = {
         RANDOM_BUTTON: 'randomBtn',
         GENERATE_BUTTON: 'generateBtn',
         RESET_CAMERA_BUTTON: 'resetCameraButton',
+        EXPORT_BUTTON: 'exportButton',
         CANVAS: 'three-canvas'
     },
     

@@ -2,7 +2,7 @@ import * as generator from './generator/index.js';
 import * as renderer from './renderer.js';
 import { GENERATOR_CONFIG, UI_CONFIG } from './config/constants.js';
 
-let seedInput, randomSeedButton, generateButton, resetCameraButton, canvas;
+let seedInput, randomSeedButton, generateButton, resetCameraButton, exportButton, canvas;
 
 function init() {
     try {
@@ -22,10 +22,11 @@ function initDOMElements() {
     randomSeedButton = document.getElementById(ELEMENT_IDS.RANDOM_BUTTON);
     generateButton = document.getElementById(ELEMENT_IDS.GENERATE_BUTTON);
     resetCameraButton = document.getElementById(ELEMENT_IDS.RESET_CAMERA_BUTTON);
+    exportButton = document.getElementById(ELEMENT_IDS.EXPORT_BUTTON);
     canvas = document.getElementById(ELEMENT_IDS.CANVAS);
     
     // 验证DOM元素是否存在
-    const elements = { seedInput, randomSeedButton, generateButton, resetCameraButton, canvas };
+    const elements = { seedInput, randomSeedButton, generateButton, resetCameraButton, exportButton, canvas };
     for (const [name, element] of Object.entries(elements)) {
         if (!element) {
             throw new Error(`Required DOM element not found: ${name}`);
@@ -41,10 +42,21 @@ function bindEventListeners() {
     generateButton.addEventListener('click', handleGenerateClick);
     randomSeedButton.addEventListener('click', handleRandomSeedClick);
     resetCameraButton.addEventListener('click', handleResetCameraClick);
+    exportButton.addEventListener('click', handleExportClick);
 }
 
 function handleResetCameraClick() {
     renderer.reset();
+}
+
+function handleExportClick() {
+    try {
+        const seed = validateAndGetSeed();
+        renderer.exportGLB(seed);
+    } catch (error) {
+        console.error('Failed to export model:', error);
+        showErrorMessage('模型导出失败，请重试。');
+    }
 }
 
 function handleRandomSeedClick() {

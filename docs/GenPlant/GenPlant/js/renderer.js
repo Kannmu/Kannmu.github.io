@@ -1,5 +1,6 @@
 import * as THREE from "https://esm.sh/three";
 import { GLTFLoader } from 'https://esm.sh/three/examples/jsm/loaders/GLTFLoader.js';
+import { GLTFExporter } from 'https://esm.sh/three/examples/jsm/exporters/GLTFExporter.js';
 import { OrbitControls } from 'https://esm.sh/three/examples/jsm/controls/OrbitControls.js';
 import Stats from 'https://esm.sh/three/examples/jsm/libs/stats.module.js';
 import { RENDERER_CONFIG, PATHS } from './config/constants.js';
@@ -196,6 +197,59 @@ export function clear() {
 
 export function reset() {
     controls.reset();
+}
+
+export function exportGLB(seed = 'default') {
+    if (!plantObject) {
+        console.warn("No plant model to export.");
+        return;
+    }
+
+    const exporter = new GLTFExporter();
+    const options = {
+        binary: true, // 导出为 .glb 格式
+        trs: true,
+        onlyVisible: true,
+        truncateDrawRange: true,
+    };
+
+    exporter.parse(
+        plantObject,
+        function (result) {
+            const fileName = `plant_seed_${seed}.glb`;
+            if (result instanceof ArrayBuffer) {
+                saveArrayBuffer(result, fileName);
+            } else {
+                const output = JSON.stringify(result, null, 2);
+                saveString(output, `plant_seed_${seed}.gltf`);
+            }
+        },
+        function (error) {
+            console.error('An error happened during parsing', error);
+        },
+        options
+    );
+}
+
+function saveString(text, filename) {
+    save(new Blob([text], { type: 'text/plain' }), filename);
+}
+
+function saveArrayBuffer(buffer, filename) {
+    save(new Blob([buffer], { type: 'application/octet-stream' }), filename);
+}
+
+function save(blob, filename) {
+    const link = document.createElement('a');
+    link.style.display = 'none';
+    document.body.appendChild(link);
+
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
 }
 
 export function loadDefaultModel() {

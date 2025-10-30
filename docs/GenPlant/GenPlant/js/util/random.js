@@ -16,6 +16,7 @@ function mulberry32(a) {
 
 export function init(seed) {
     _randomFunc = mulberry32(seed);
+    randomFloatNormal.hasSpare = false;
 }
 
 export function random() {
