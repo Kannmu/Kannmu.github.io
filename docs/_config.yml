@@ -79,10 +79,10 @@ netease_comment: false
 # Giscus settings
 giscus:
   enabled: true
-  repo: "Kannmu/KannmuSite" # [ENTER REPO HERE]
-  repo_id: "" # [ENTER REPO ID HERE]
+  repo: "Kannmu/Kannmu.github.io" # [ENTER REPO HERE]
+  repo_id: "R_kgDOJrNJPA" # [ENTER REPO ID HERE]
   category: "Announcements"
-  category_id: "" # [ENTER CATEGORY ID HERE]
+  category_id: "DIC_kwDOJrNJPM4C1hJq" # [ENTER CATEGORY ID HERE]
   mapping: "pathname"
   reactions_enabled: "1"
   emit_metadata: "0"
