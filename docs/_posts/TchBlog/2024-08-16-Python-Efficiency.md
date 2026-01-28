@@ -3,7 +3,7 @@ layout: post
 title: "Python解释器直接运行与打包为.exe可执行文件的运行效率对比"
 subtitle: "Efficiency Comparison of Python Interpreter and Packaged .exe Executable"
 author: "Kannmu"
-header-img: "../../../../img/Photography/Humanistic/DSC3869.jpg"
+header-img: "/img/Photography/Humanistic/DSC3869.jpg"
 header-mask: 0.4
 tags:
   - Python
@@ -14,18 +14,7 @@ tags:
 
 
 
-<!-- Latex Support -->
-<head>
-    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  type="text/javascript"></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            tex2jax: {
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-            inlineMath: [['$','$']]
-            }
-        });
-    </script>
-</head>
+
 
 ## 介绍
 
@@ -116,3 +105,6 @@ if __name__ == "__main__":
 通过对比Python解释器与打包为.exe可执行文件的运行效率，可以得出打包为可执行文件可以略微提高程序运行效率的结论。然而，进一步的原理探究和更加全面详细的测试需要被执行。
 
 请注意，实际的测试结果可能会因为多种因素而有所不同，包括但不限于硬件配置、操作系统版本、Python解释器的优化等。因此，本文的结论仅供参考，具体的性能表现还需根据实际使用场景进行评估。
+
+
+

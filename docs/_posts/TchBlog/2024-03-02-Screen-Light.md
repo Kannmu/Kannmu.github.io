@@ -4,7 +4,7 @@ title: "[Tch] 反射式屏幕挂灯"
 subtitle: "Reflective screen hanging lamp"
 author: "Kannmu"
 # header-style: text
-header-img: "../../../../img/Photography/Humanistic/DSC3869.jpg"
+header-img: "/img/Photography/Humanistic/DSC3869.jpg"
 header-mask: 0.4
 tags:
   - Project
@@ -53,3 +53,5 @@ tags:
 电路部分，PCB加工交给嘉立创打样。并且立创的基础库原件可以很便宜的进行SMT贴片加工。绝大部分的常用电阻电容，还有一些AMS1117等非常非常常用的芯片都很推荐直接SMT加工。在这里我五块板子贴片了两片，包含PCB加工一共也就花了不到100块。
 
 但是对于类似排针排母这样的插件，嘉立创目前都归类为扩展库，每种原件需要额外加20块钱，就不是很划算了。不过对于16Pin及以上的TypeC接口还是推荐使用SMT加工，除非有热风枪、加热台或者回流焊机这样的工具，仅使用烙铁将会非常难以焊接（引脚太接近，且角度刁钻）。
+
+

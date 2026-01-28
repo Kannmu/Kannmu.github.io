@@ -3,7 +3,7 @@ layout: post
 title: "二手相机历史价格趋势查询"
 subtitle: "Second hand camera price trends"
 author: "Kannmu"
-header-img: "../../../../img/Photography/Humanistic/DSC3869.jpg"
+header-img: "/img/Photography/Humanistic/DSC3869.jpg"
 header-mask: 0.4
 keywords: "Second hand camera price trends"
 tags:
@@ -63,7 +63,7 @@ tags:
 var cameraChart = null;
 var defaultBrand = null;
 var allData = [];
-fetch('../../../../Data/Data.json')
+fetch('/Data/Data.json')
   .then(response => {
     if (response.ok) {
       return response.json();
@@ -205,3 +205,5 @@ function getPairedColor() {
 }
 </script>
 </body>
+
+

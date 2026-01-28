@@ -3,7 +3,7 @@ layout: post
 title: "[Tch] 进入AI辅助写作：使用Trae+Latex+Zotero来加速学术写作"
 subtitle: "Entering the AI Era: Accelerate Academic Writing with Trae+Latex+Zotero" 
 author: "Kannmu"
-header-img: "../../../../img/Photography/Humanistic/DSC3869.jpg"
+header-img: "/img/Photography/Humanistic/DSC3869.jpg"
 header-mask: 0.4
 tags:
   - AI
@@ -13,19 +13,6 @@ tags:
   - Trae
   - Zotero
 ---
-
-<!-- Latex Support -->
-<head>
-    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            tex2jax: {
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-            inlineMath: [['$','$']]
-            }
-        });
-    </script>
-</head>
 
 ## 引言
 
@@ -80,7 +67,7 @@ Zotero的一些主要功能包括：
 
 这个工作流的核心之一是利用AI自动生成论文总结。通过一个自定义的JavaScript脚本，我们可以让Zotero调用[Deepseek-Chat](https://chat.deepseek.com/)模型，为选中的、带有PDF附件的文献条目自动生成全文总结。
 
-这个脚本([Script](../../../../Data/Zotero_Script_For_Paper_Summary_Using_Deepseek_API.js))会自动将生成的总结作为一个note（笔记）附加到对应的文献条目下。这样，你就可以在Zotero中快速浏览每篇论文的核心内容，而无需打开PDF文件。
+这个脚本([Script](/Data/Zotero_Script_For_Paper_Summary_Using_Deepseek_API.js))会自动将生成的总结作为一个note（笔记）附加到对应的文献条目下。这样，你就可以在Zotero中快速浏览每篇论文的核心内容，而无需打开PDF文件。
 
 复制这个脚本到Zotero的`Run Script`窗口中，然后在Zotero中选择想要总结的条目，之后点击`Run Script`按钮，等待程序执行结束后，你就可以在Zotero中看到每个条目下看到AI总结好的Paper Summary啦。
 
@@ -112,6 +99,8 @@ Zotero的一些主要功能包括：
 * [Zotero](https://www.zotero.org/)
 * [Better BibTeX for Zotero](https://retorque.re/zotero-better-bibtex/)
 * [Deepseek-Chat](https://chat.deepseek.com/)
+
+
 
 
 

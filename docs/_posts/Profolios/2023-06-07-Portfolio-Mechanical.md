@@ -57,10 +57,12 @@ The sides are printed in white photosensitive resin.
 
 At the same time, the Fresnel concave lens is added to refract the light outwards and increase the range of the illuminated area.
 
-![Light](../../../../../img/Tch/Light_0.jpg)
+![Light](/img/Tch/Light_0.jpg)
 
-![Light](../../../../../img/Tch/Light_1.jpg)
+![Light](/img/Tch/Light_1.jpg)
 
-![Light](../../../../../img/Tch/Light_3.png)
+![Light](/img/Tch/Light_3.png)
 
 <center><font size = 3> 菲涅尔凹透镜原理 <br> Fresnel concave lens principle </font></center>
+
+

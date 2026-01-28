@@ -4,7 +4,7 @@ title: "[Report] Steam 游戏数据可视化报告"
 subtitle: "Steam Game Data Visualization"
 author: "Kannmu"
 # header-style: text
-header-img: "../../../../img/UserManual/Library_BG_5.jpg"
+header-img: "/img/UserManual/Library_BG_5.jpg"
 header-mask: 0.3
 tags:
     - Data Visualization
@@ -145,3 +145,5 @@ Steam平台作为全球最大的数字游戏发行和分发平台，扮演着重
 > [1] 注意：这里统计价格时剔除了过于离谱的数据。
 >
 > [2] 由于原始数据混乱问题，所得结果可能与他人并不一致。以总价格项为例，[这篇文章](https://zhuanlan.zhihu.com/p/245011556)中给出的结果为 $537,192.37 (约合人民币367万元)对比本文数据在同一数量级。
+
+

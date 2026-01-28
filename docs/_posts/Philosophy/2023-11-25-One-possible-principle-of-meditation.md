@@ -4,7 +4,7 @@ title: "[Philosophy] 一种可能的冥想的原理"
 subtitle: "One possible principle of meditation"
 author: "Kannmu"
 # header-style: text
-header-img: "../../../../img/Backgrounds/Bg (9).jpg"
+header-img: "/img/Backgrounds/Bg (9).jpg"
 header-mask: 0.4
 tags:
   - Philosophy
@@ -78,3 +78,5 @@ tags:
 总之，冥想提供了一条捷径，让我们可以不借助语言和想法来真正零距离面对接触到自己内心的问题，从而最终熟悉并解决它。
 
 这便是我认识中的冥想。
+
+

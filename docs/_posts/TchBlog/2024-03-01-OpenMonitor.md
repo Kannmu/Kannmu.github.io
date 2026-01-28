@@ -4,7 +4,7 @@ title: "[Tch] OpenMonitor 命令行系统资源监视器"
 subtitle: "OpenMonitor command line resource monitoring tool"
 author: "Kannmu"
 # header-style: text
-header-img: "../../../../img/Photography/Humanistic/DSC3869.jpg"
+header-img: "/img/Photography/Humanistic/DSC3869.jpg"
 header-mask: 0.4
 tags:
   - Project
@@ -206,3 +206,5 @@ python openmonitor.py
 ```
 
 The script will continuously update and refresh the system information every second.
+
+

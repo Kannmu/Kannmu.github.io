@@ -4,7 +4,7 @@ title: "[Project] 桌面磁吸灯"
 subtitle: "Desktop magnetic light"
 author: "Kannmu"
 # header-style: text
-# header-img: "../../../../img/Backgrounds/Bg (1).jpg"
+# header-img: "/img/Backgrounds/Bg (1).jpg"
 # header-mask: 0.4
 tags:
   - Hardware
@@ -45,3 +45,5 @@ PCB如下
 ![Light_3.png](https://p.sda1.dev/19/7c21d41ba9100df961b0d677750e4be4/Light_3.png)
 
 <center><font size = 3> 菲涅尔凹透镜原理 <br> Fresnel concave lens principle </font></center>
+
+

@@ -4,7 +4,7 @@ title: "使用AIGC工具进行概念设计（以自行车设计为例）"
 subtitle: "AI Generated Road Bike"
 author: "Kannmu"
 header-style: post
-header-img: "../../../../img/Backgrounds/Bg (12).jpg"
+header-img: "/img/Backgrounds/Bg (12).jpg"
 header-mask: 0.4
 tags:
   - AI
@@ -13,25 +13,25 @@ tags:
 
 ## Presentation
 
-![alt text](<../../../../img/AIGCAssignment/Cover.png>)
+![alt text](</img/AIGCAssignment/Cover.png>)
 
-![alt text](<../../../../img/AIGCAssignment/Frame 20.png>)
+![alt text](</img/AIGCAssignment/Frame 20.png>)
 
-![alt text](<../../../../img/AIGCAssignment/Frame 21.png>)
+![alt text](</img/AIGCAssignment/Frame 21.png>)
 
-![alt text](<../../../../img/AIGCAssignment/Frame 22.png>)
+![alt text](</img/AIGCAssignment/Frame 22.png>)
 
-![alt text](<../../../../img/AIGCAssignment/Frame 23.png>)
+![alt text](</img/AIGCAssignment/Frame 23.png>)
 
-![alt text](<../../../../img/AIGCAssignment/Frame 24.png>)
+![alt text](</img/AIGCAssignment/Frame 24.png>)
 
-![alt text](<../../../../img/AIGCAssignment/Frame 18.png>)
+![alt text](</img/AIGCAssignment/Frame 18.png>)
 
-![alt text](<../../../../img/AIGCAssignment/Frame 19.png>)
+![alt text](</img/AIGCAssignment/Frame 19.png>)
 
-![alt text](../../../../img/AIGCAssignment/image-9.png)
+![alt text](/img/AIGCAssignment/image-9.png)
 
-![alt text](../../../../img/AIGCAssignment/Cover-1.png)
+![alt text](/img/AIGCAssignment/Cover-1.png)
 
 
 ## 项目背景
@@ -58,13 +58,13 @@ tags:
 
 初步首先进行头脑风暴式生成、尽可能生成多种类型与风格的设计如下。
 
-![alt text](<../../../../img/AIGCAssignment/downloadedImage (12).png>)
+![alt text](</img/AIGCAssignment/downloadedImage (12).png>)
 <p align="center">传统公路车形态</p>
 
-![alt text](<../../../../img/AIGCAssignment/downloadedImage (10)-1.png>)
+![alt text](</img/AIGCAssignment/downloadedImage (10)-1.png>)
 <p align="center">直线条科幻</p>
 
-![alt text](../../../../img/AIGCAssignment/2024-04-17_1713325795w1WLYlGqPj_U2-1.png)
+![alt text](/img/AIGCAssignment/2024-04-17_1713325795w1WLYlGqPj_U2-1.png)
 <p align="center">流线型科幻</p>
 
 为了保证大体结构合理、符合人体工学，这里初步选用传统公路车风格。
@@ -75,28 +75,28 @@ tags:
 
 迭代流程如下
 
-![alt text](<../../../../img/AIGCAssignment/downloadedImage (12).png>)
+![alt text](</img/AIGCAssignment/downloadedImage (12).png>)
 <p align="center">第0代</p>
 
-![alt text](<../../../../img/AIGCAssignment/enhanced-image (2).png>)
+![alt text](</img/AIGCAssignment/enhanced-image (2).png>)
 <p align="center">第1代</p>
 
 ![alt text](<enhanced-image (4).png>)
 <p align="center">第2代，修改为碟式封闭轮与破风车架</p>
 
-![alt text](../../../../img/AIGCAssignment/image-4.png)
-![alt text](<../../../../img/AIGCAssignment/downloadedImage (14).png>)
+![alt text](/img/AIGCAssignment/image-4.png)
+![alt text](</img/AIGCAssignment/downloadedImage (14).png>)
 <p align="center">第3代，细节上色</p>
 
-![alt text](../../../../img/AIGCAssignment/image-7.png)
-![alt text](<../../../../img/AIGCAssignment/downloadedImage (18).png>)
+![alt text](/img/AIGCAssignment/image-7.png)
+![alt text](</img/AIGCAssignment/downloadedImage (18).png>)
 <p align="center">第4代，封闭车架，去除文字Logo，背景亮化白色</p>
 
 设计迭代结束，使用去除背景工具抠图出来。
 
-![alt text](../../../../img/AIGCAssignment/image-8.png)
+![alt text](/img/AIGCAssignment/image-8.png)
 
-![alt text](<../../../../img/AIGCAssignment/enhanced-image (7).png>)
+![alt text](</img/AIGCAssignment/enhanced-image (7).png>)
 
 在 Krea AI 中叠加在一张带公路的背景图上，然后利用AI对图像进行合理化。
 
@@ -104,24 +104,26 @@ tags:
 
 使用 Uncrop 工具对图像进行扩展：
 
-![alt text](../../../../img/AIGCAssignment/image-9.png)
+![alt text](/img/AIGCAssignment/image-9.png)
 
-![alt text](<../../../../img/AIGCAssignment/enhanced-image (7)-vmake(3)-2.jpeg>)
+![alt text](</img/AIGCAssignment/enhanced-image (7)-vmake(3)-2.jpeg>)
 
 ## 设计过程花絮
 
-![alt text](../../../../img/AIGCAssignment/image.png)
+![alt text](/img/AIGCAssignment/image.png)
 
 GPT生成背景与产品定位
 
-![alt text](../../../../img/AIGCAssignment/image-2.png)
+![alt text](/img/AIGCAssignment/image-2.png)
 
 生成初步风格共选择
 
-![alt text](../../../../img/AIGCAssignment/image-3.png)
+![alt text](/img/AIGCAssignment/image-3.png)
 
 迭代生成，控制大体形状，并使用画笔控制细节向预期方向
 
-![alt text](../../../../img/AIGCAssignment/image-10.png)
+![alt text](/img/AIGCAssignment/image-10.png)
 
 图像扩展
+
+

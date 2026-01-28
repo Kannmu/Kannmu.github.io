@@ -4,7 +4,7 @@ title: "[Paper Reading] Eye tracking and eye expression decoding"
 subtitle: "Paper reading"
 author: "Kannmu"
 # header-style: text
-header-img: "../../../../img/Photography/Art/DSC3948.jpg"
+header-img: "/img/Photography/Art/DSC3948.jpg"
 header-mask: 0.4
 tags:
   - Paper
@@ -160,3 +160,5 @@ tags:
 ## 结论
 
 证明了该系统可以捕捉到眼部动作，并通过两个应用验证有一定的实用价值。实现了5°的眼球转动检测精度。通过该方法可以实现闭眼的眼动检测，这对研究快速眼动周期（REM）睡眠有很不错的帮助。
+
+

@@ -3,7 +3,8 @@ layout: post
 title: "[Tch] 语音关键词识别"
 subtitle: "Voice Key Word Recognition"
 author: "Kannmu"
-header-img: "../../../../img/Backgrounds/Bg (12).jpg"
+mathjax: true
+header-img: "/img/Backgrounds/Bg (12).jpg"
 header-mask: 0.4
 tags:
   - 深度学习
@@ -15,17 +16,7 @@ tags:
   - 技术博客
 ---
 
-<head>
-    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            tex2jax: {
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-            inlineMath: [['$','$']]
-            }
-        });
-    </script>
-</head>
+
 
 ## 缘由
 
@@ -187,3 +178,8 @@ Drop_Rate = 0.5
 其中，横坐标为预测类别，纵坐标为真实类别。处于对角线上的元素代表分类正确。
 
 可以看出，效果非常不错。
+
+
+
+
+

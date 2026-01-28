@@ -3,8 +3,9 @@ layout: post
 title: "[Tch] Unity Shader 2D UI边缘发光效果 [学习笔记]"
 subtitle: "2D UI Edge glowing effect using Unity Shader"
 author: "Kannmu"
+mathjax: true
 # header-style: text
-header-img: "../../../../img/Photography/Humanistic/DSC3869.jpg"
+header-img: "/img/Photography/Humanistic/DSC3869.jpg"
 header-mask: 0.4
 tags:
   - Shader
@@ -16,17 +17,7 @@ tags:
   - 技术美术
 ---
 
-<head>
-    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            tex2jax: {
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-            inlineMath: [['$','$']]
-            }
-        });
-    </script>
-</head>
+
 
 > 这篇文章转载自[我在知乎上的文章](https://zhuanlan.zhihu.com/p/633616509)
 
@@ -250,3 +241,8 @@ Shader "Unlit/Edge Glowing"
     }
 }
 ```
+
+
+
+
+

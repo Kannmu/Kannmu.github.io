@@ -4,7 +4,7 @@ title: "[Tch] Unity C# 对 Python 调用与通信"
 subtitle: "Run and communicate with Python Script from Unity C#"
 author: "Kannmu"
 # header-style: text
-header-img: "../../../../img/Photography/Architecture/P1230474.jpg"
+header-img: "/img/Photography/Architecture/P1230474.jpg"
 header-mask: 0.4
 tags:
   - Unity
@@ -424,3 +424,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
 
 
 ```
+

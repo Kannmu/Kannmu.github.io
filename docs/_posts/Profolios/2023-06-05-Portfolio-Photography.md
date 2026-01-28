@@ -48,46 +48,48 @@ To download the image, right-click on it and choose "Save As."
 
 <!-- https://github.com/Kannmu/Kannmu.github.io/blob/master/img/Photography/Landscape/DSC5534.jpg -->
 
-![青城山](../../../../../img/Photography/Landscape/DSC5534.jpg "青城山")
+![青城山](/img/Photography/Landscape/DSC5534.jpg "青城山")
 
-![青城山](../../../../../img/Photography/Landscape/DSC5505.jpg "青城山")
+![青城山](/img/Photography/Landscape/DSC5505.jpg "青城山")
 
-![青城山](../../../../../img/Photography/Landscape/DSC5507.jpg "青城山")
+![青城山](/img/Photography/Landscape/DSC5507.jpg "青城山")
 
-![川西神木垒](../../../../../img/Photography/Landscape/DSC4967.jpg "川西神木垒")
+![川西神木垒](/img/Photography/Landscape/DSC4967.jpg "川西神木垒")
 
 ## 生物 Creature
 
-![照片Photo](../../../../../img/Photography/Creature/DSC4441.jpg)
+![照片Photo](/img/Photography/Creature/DSC4441.jpg)
 
-![照片Photo](../../../../../img/Photography/Creature/DSC3919.jpg)
+![照片Photo](/img/Photography/Creature/DSC3919.jpg)
 
-![照片Photo](../../../../../img/Photography/Creature/DSC4234-HDR.jpg)
+![照片Photo](/img/Photography/Creature/DSC4234-HDR.jpg)
 
 ## 人文 Humanistic
 
-![照片Photo](../../../../../img/Photography/Humanistic/DSC4237-HDR_1.jpg)
+![照片Photo](/img/Photography/Humanistic/DSC4237-HDR_1.jpg)
 
-![照片Photo](../../../../../img/Photography/Humanistic/DSC4494.jpg)
+![照片Photo](/img/Photography/Humanistic/DSC4494.jpg)
 
-![照片Photo](../../../../../img/Photography/Humanistic/DSC5492.jpg)
+![照片Photo](/img/Photography/Humanistic/DSC5492.jpg)
 
 ## 建筑 Architecture
 
-![照片Photo](../../../../../img/Photography/Architecture/DSC_4821_1.jpg)
+![照片Photo](/img/Photography/Architecture/DSC_4821_1.jpg)
 
-![照片Photo](../../../../../img/Photography/Architecture/DSC3830.jpg)
+![照片Photo](/img/Photography/Architecture/DSC3830.jpg)
 
-![照片Photo](../../../../../img/Photography/Architecture/DSC4455.jpg)
+![照片Photo](/img/Photography/Architecture/DSC4455.jpg)
 
-![照片Photo](../../../../../img/Photography/Architecture/DSC5361.jpg)
+![照片Photo](/img/Photography/Architecture/DSC5361.jpg)
 
-![照片Photo](../../../../../img/Photography/Architecture/P1230474.jpg)
+![照片Photo](/img/Photography/Architecture/P1230474.jpg)
 
 ## 艺术 Art
 
-![照片Photo](../../../../../img/Photography/Art/DSC3948.jpg)
+![照片Photo](/img/Photography/Art/DSC3948.jpg)
 
-![照片Photo](../../../../../img/Photography/Art/DSC4399.jpg)
+![照片Photo](/img/Photography/Art/DSC4399.jpg)
 
-![照片Photo](../../../../../img/Photography/Art/DSC4401.jpg)
+![照片Photo](/img/Photography/Art/DSC4401.jpg)
+
+

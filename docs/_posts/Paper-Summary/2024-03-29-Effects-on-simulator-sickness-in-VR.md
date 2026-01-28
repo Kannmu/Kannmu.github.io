@@ -4,7 +4,7 @@ title: "Effects of VR technology locomotive multi-sensory motion stimuli"
 subtitle: "Paper reading"
 author: "Kannmu"
 # header-style: text
-header-img: "../../../../img/Photography/Art/DSC3948.jpg"
+header-img: "/img/Photography/Art/DSC3948.jpg"
 header-mask: 0.4
 tags:
   - Paper Reading
@@ -116,3 +116,4 @@ $\quad$实验中选取了四种VR移动控制器，除Joystick与全向跑步机
 $\quad$本研究中研究了性别对Sickness和Intuitive的影响，但并未深入研究其他用户变量对这两者的影响。结论较为局限。
 
 $\quad$例如，实验中被试均选取为年轻人，而年龄和性别有很大可能为相关变量。则本文对性别影响的结论仅适用于改年龄段的人群，缺少普遍性。
+

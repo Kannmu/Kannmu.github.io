@@ -4,7 +4,7 @@ title: "[Tch] OpenGL初见!"
 subtitle: "The first meet with OpenGL"
 author: "Kannmu"
 # header-style: text
-header-img: "../../../../img/Backgrounds/Bg(18).jpg"
+header-img: "/img/Backgrounds/Bg(18).jpg"
 header-mask: 0.4
 tags:
   - OpenGL
@@ -676,3 +676,5 @@ void main()
     // FragColor *= mix(texture(Texture1, TexCoord),texture(Texture2, TexCoord),0.2);
 }
 ```
+
+
