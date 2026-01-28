@@ -76,6 +76,21 @@ kramdown:
 # Netease settings
 netease_comment: false
 
+# Giscus settings
+giscus:
+  enabled: true
+  repo: "Kannmu/KannmuSite" # [ENTER REPO HERE]
+  repo_id: "" # [ENTER REPO ID HERE]
+  category: "Announcements"
+  category_id: "" # [ENTER CATEGORY ID HERE]
+  mapping: "pathname"
+  reactions_enabled: "1"
+  emit_metadata: "0"
+  input_position: "bottom"
+  theme: "preferred_color_scheme"
+  lang: "zh-CN"
+  loading: "lazy"
+
 
 # Analytics settings
 # Baidu Analytics

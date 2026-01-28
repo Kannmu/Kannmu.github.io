@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     {% seo %}
 
+    <!-- Language Alternates -->
+    <link rel="alternate" hreflang="zh-CN" href="{{ site.url }}{{ page.url }}">
+    <link rel="alternate" hreflang="en-US" href="{{ site.url }}{{ page.url }}">
+    <link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ page.url }}">
+
     <!-- Web App Manifest -->
     <link rel="manifest" href="{{ site.baseurl }}/pwa/manifest.json">
 
@@ -19,8 +24,19 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ "/css/hux-blog.min.css" | prepend: site.baseurl }}">
     
+    <!-- Dark Mode CSS -->
+    <link rel="stylesheet" href="{{ "/css/dark-mode.css" | prepend: site.baseurl }}">
+
     <!-- Responsive Layout CSS -->
     <link rel="stylesheet" href="{{ "/css/responsive-layout.css" | prepend: site.baseurl }}">
+
+    <!-- Dark Mode Inline Script (Prevent FOUC) -->
+    <script>
+        (function() {
+            var currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', currentTheme);
+        })();
+    </script>
 
     <!-- Custom Fonts -->
     <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->

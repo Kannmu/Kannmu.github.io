@@ -34,6 +34,12 @@
                         <li class="multilingual-nav-item">
                             {% include multilingual-sel.html %}
                         </li>
+                        <li>
+                            <a id="dark-mode-toggle" class="dark-mode-toggle">
+                                <i class="fa fa-sun-o"></i>
+                                <i class="fa fa-moon-o"></i>
+                            </a>
+                        </li>
                         <li class="search-icon">
                             <a href="javascript:void(0)">
                                 <i class="fa fa-search"></i>
@@ -99,3 +105,6 @@
             __HuxNav__.close();
         })
     </script>
+    
+    <!-- Dark Mode Switcher -->
+    <script src="{{ "/js/dark-mode.js" | prepend: site.baseurl }}"></script>

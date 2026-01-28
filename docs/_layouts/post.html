@@ -69,6 +69,27 @@ layout: default
                 <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
                 <!-- 网易云跟帖 评论框 end -->
                 {% endif %}
+
+                {% if site.giscus.enabled %}
+                <!-- Giscus 评论框 start -->
+                <div class="comment">
+                    <script src="https://giscus.app/client.js"
+                        data-repo="{{ site.giscus.repo }}"
+                        data-repo-id="{{ site.giscus.repo_id }}"
+                        data-category="{{ site.giscus.category }}"
+                        data-category-id="{{ site.giscus.category_id }}"
+                        data-mapping="{{ site.giscus.mapping }}"
+                        data-reactions-enabled="{{ site.giscus.reactions_enabled }}"
+                        data-emit-metadata="{{ site.giscus.emit_metadata }}"
+                        data-input-position="{{ site.giscus.input_position }}"
+                        data-theme="{{ site.giscus.theme }}"
+                        data-lang="{{ site.giscus.lang }}"
+                        crossorigin="anonymous"
+                        async>
+                    </script>
+                </div>
+                <!-- Giscus 评论框 end -->
+                {% endif %}
             </div>  
 
     <!-- Side Catalog Container -->

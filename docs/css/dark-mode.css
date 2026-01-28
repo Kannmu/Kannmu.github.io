@@ -1,0 +1,143 @@
+:root {
+    --bg-color: #ffffff;
+    --text-color: #404040;
+    --heading-color: #404040;
+    --navbar-bg: rgba(255, 255, 255, 0.9);
+    --post-container-bg: #ffffff;
+    --footer-bg: #ffffff;
+    --link-color: #0085a1;
+    --border-color: #eeeeee;
+    --code-bg: #f5f5f5;
+    --sidebar-text: #bfbfbf;
+    --sidebar-heading: #a3a3a3;
+}
+
+[data-theme='dark'] {
+    --bg-color: #1a1a1a;
+    --text-color: #d1d1d1;
+    --heading-color: #eeeeee;
+    --navbar-bg: rgba(26, 26, 26, 0.95);
+    --post-container-bg: #242424;
+    --footer-bg: #1a1a1a;
+    --link-color: #4db6ac;
+    --border-color: #333333;
+    --code-bg: #2d2d2d;
+    --sidebar-text: #888888;
+    --sidebar-heading: #aaaaaa;
+}
+
+/* Base Elements */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Smooth transition for main containers */
+body, 
+.navbar-custom, 
+.post-container, 
+footer, 
+.sidebar-container, 
+.side-catalog,
+.multilingual-selector .lang-dropdown {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--heading-color);
+}
+
+a {
+    color: var(--link-color);
+}
+
+/* Navbar */
+.navbar-custom {
+    background-color: var(--navbar-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-custom .navbar-brand,
+.navbar-custom .nav li a {
+    color: var(--text-color);
+}
+
+[data-theme='dark'] .navbar-custom.affix {
+    background-color: var(--navbar-bg);
+}
+
+/* Post Container */
+.post-container {
+    background-color: var(--post-container-bg);
+}
+
+.post-container p,
+.post-container li {
+    color: var(--text-color);
+}
+
+/* Sidebar */
+.sidebar-container {
+    color: var(--sidebar-text);
+}
+
+.sidebar-container h5,
+.sidebar-container h5 a {
+    color: var(--sidebar-heading);
+}
+
+/* Footer */
+footer {
+    background-color: var(--footer-bg);
+    border-top: 1px solid var(--border-color);
+}
+
+/* Code */
+pre, code {
+    background-color: var(--code-bg);
+    color: var(--text-color);
+}
+
+/* Dark Mode Toggle Button */
+.dark-mode-toggle {
+    cursor: pointer;
+    display: inline-block;
+    transition: all 0.3s;
+}
+
+.dark-mode-toggle i {
+    font-size: 18px;
+}
+
+/* Initially hide both, then show based on theme */
+.dark-mode-toggle .fa-sun-o,
+.dark-mode-toggle .fa-moon-o {
+    display: none;
+}
+
+html[data-theme='dark'] .dark-mode-toggle .fa-sun-o {
+    display: inline-block;
+    color: #ffb300;
+}
+
+html[data-theme='light'] .dark-mode-toggle .fa-moon-o {
+    display: inline-block;
+    color: #757575;
+}
+
+/* Adjust for Navbar Invert */
+.navbar-custom.invert .dark-mode-toggle i {
+    color: var(--text-color);
+}
+
+/* Specific overrides for Hux Blog */
+[data-theme='dark'] .intro-header .site-heading h1,
+[data-theme='dark'] .intro-header .post-heading h1,
+[data-theme='dark'] .intro-header .page-heading h1 {
+    color: #fff; /* Keep titles white on header images */
+}
+
+[data-theme='dark'] .navbar-default .navbar-toggle .icon-bar {
+    background-color: #fff;
+}
