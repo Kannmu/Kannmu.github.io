@@ -270,6 +270,14 @@
         }
         
         addToNavigation() {
+            // Try to find the placeholder first
+            const placeholder = document.getElementById('enhanced-multilingual-placeholder');
+            if (placeholder) {
+                placeholder.appendChild(this.container);
+                return;
+            }
+
+            // Fallback: append to navbar
             const navRight = document.querySelector('.navbar-nav.navbar-right');
             if (navRight) {
                 // Create language selector list item
