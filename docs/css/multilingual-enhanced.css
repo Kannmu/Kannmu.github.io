@@ -3,8 +3,9 @@
 
 .multilingual-nav-item {
     position: relative;
-    display: inline-block;
-    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    padding: 14px 10px; /* Adjust padding to center vertically with other nav items */
 }
 
 /* Container */
@@ -19,7 +20,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 12px;
+    padding: 5px 10px;
     background: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 18px;
@@ -43,6 +44,33 @@
 .multilingual-selector.open .lang-trigger {
     background: rgba(255, 255, 255, 0.3);
     border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Dark Mode Overrides for Trigger */
+[data-theme='dark'] .multilingual-selector .lang-trigger {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #eeeeee;
+}
+
+[data-theme='dark'] .multilingual-selector .lang-trigger:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Navbar Invert / Fixed State */
+.navbar-custom.invert .multilingual-selector .lang-trigger,
+.navbar-custom.is-fixed .multilingual-selector .lang-trigger {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #404040;
+}
+
+[data-theme='dark'] .navbar-custom.invert .multilingual-selector .lang-trigger,
+[data-theme='dark'] .navbar-custom.is-fixed .multilingual-selector .lang-trigger {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #eeeeee;
 }
 
 /* Flag and Text in Trigger */
@@ -89,6 +117,11 @@
     z-index: 1001;
 }
 
+[data-theme='dark'] .multilingual-selector .lang-dropdown {
+    background: rgba(36, 36, 36, 0.95);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
 .multilingual-selector.open .lang-dropdown {
     opacity: 1;
     visibility: visible;
@@ -113,6 +146,10 @@
     margin-bottom: 2px;
 }
 
+[data-theme='dark'] .multilingual-selector .lang-option {
+    color: #eeeeee;
+}
+
 .multilingual-selector .lang-option:last-child {
     margin-bottom: 0;
 }
@@ -122,10 +159,20 @@
     color: #0085a1;
 }
 
+[data-theme='dark'] .multilingual-selector .lang-option:hover {
+    background: rgba(77, 182, 172, 0.15);
+    color: #4db6ac;
+}
+
 .multilingual-selector .lang-option.active {
     background: rgba(0, 133, 161, 0.12);
     color: #0085a1;
     font-weight: 600;
+}
+
+[data-theme='dark'] .multilingual-selector .lang-option.active {
+    background: rgba(77, 182, 172, 0.2);
+    color: #4db6ac;
 }
 
 .multilingual-selector .lang-option .lang-native {
@@ -134,38 +181,34 @@
     margin-left: auto;
 }
 
+[data-theme='dark'] .multilingual-selector .lang-option .lang-native {
+    color: #aaaaaa;
+}
+
 .multilingual-selector .lang-option.active .lang-native {
     color: rgba(0, 133, 161, 0.7);
 }
 
-/* Dark Theme Support (Invert Navbar) */
-.navbar-custom.invert .multilingual-selector .lang-trigger,
-.navbar-custom.is-fixed .multilingual-selector .lang-trigger {
-    background: rgba(0, 0, 0, 0.05);
-    border-color: rgba(0, 0, 0, 0.1);
-    color: #404040;
-}
-
-.navbar-custom.invert .multilingual-selector .lang-trigger:hover,
-.navbar-custom.is-fixed .multilingual-selector .lang-trigger:hover {
-    background: rgba(0, 0, 0, 0.1);
-    border-color: rgba(0, 0, 0, 0.2);
-    color: #0085a1;
+[data-theme='dark'] .multilingual-selector .lang-option.active .lang-native {
+    color: rgba(77, 182, 172, 0.7);
 }
 
 /* Mobile Responsiveness */
 @media (max-width: 767px) {
+    .multilingual-nav-item {
+        padding: 10px 15px;
+        display: block;
+    }
+    
     .multilingual-selector .lang-dropdown {
-        right: -50px; /* Center slightly better on small screens */
-        transform-origin: top center;
+        right: auto;
+        left: 0;
+        top: calc(100% + 5px);
+        transform-origin: top left;
     }
     
     .multilingual-selector .lang-name {
-        display: none; /* Only show flag and arrow on very small screens */
-    }
-    
-    .multilingual-selector .lang-trigger {
-        padding: 6px 8px;
+        display: inline;
     }
 }
 
