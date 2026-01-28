@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UMH | Ultrasound Mid-Air Haptics</title>
-    <meta name="description" content="High-precision acoustic radiation pressure for next-generation haptic interfaces.">
-    
+    <meta name="description"
+        content="High-precision acoustic radiation pressure for next-generation haptic interfaces.">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
+    <script src="https://cdn.tailwindcss.com" crossorigin></script>
+
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+
     <script>
         tailwind.config = {
             theme: {
@@ -40,11 +44,18 @@
             }
         }
     </script>
-    
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #000000;
@@ -52,70 +63,99 @@
             overflow-x: hidden;
             line-height: 1.6;
         }
-        
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #000000; }
-        ::-webkit-scrollbar-thumb { background: #2d5a2d; border-radius: 3px; }
-        
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2d5a2d;
+            border-radius: 3px;
+        }
+
         .card {
             background: #0a0a0a;
             border: 1px solid #1a3d1a;
             transition: all 0.3s ease;
         }
+
         .card:hover {
             border-color: #3d7a3d;
             background: #141414;
         }
-        
+
         .btn-primary {
             background: #2d5a2d;
             color: #f5f5f5;
             transition: all 0.3s ease;
         }
-        .btn-primary:hover { background: #3d7a3d; transform: translateY(-2px); }
-        
+
+        .btn-primary:hover {
+            background: #3d7a3d;
+            transform: translateY(-2px);
+        }
+
         .btn-secondary {
             background: transparent;
             border: 1px solid #2d5a2d;
             color: #f5f5f5;
             transition: all 0.3s ease;
         }
-        .btn-secondary:hover { background: #1a3d1a; border-color: #3d7a3d; }
-        
+
+        .btn-secondary:hover {
+            background: #1a3d1a;
+            border-color: #3d7a3d;
+        }
+
         .form-input {
             background: #0a0a0a;
             border: 1px solid #1a3d1a;
             color: #f5f5f5;
             transition: all 0.3s ease;
         }
+
         .form-input:focus {
             outline: none;
             border-color: #3d7a3d;
             background: #141414;
         }
-        .form-input::placeholder { color: #525252; }
-        
+
+        .form-input::placeholder {
+            color: #525252;
+        }
+
         .nav-link {
             color: #a3a3a3;
             transition: color 0.3s ease;
         }
-        .nav-link:hover { color: #4ade80; }
-        
+
+        .nav-link:hover {
+            color: #4ade80;
+        }
+
         .lang-btn {
             color: #525252;
             transition: all 0.3s ease;
         }
+
         .lang-btn.active {
             color: #4ade80;
             border-bottom: 2px solid #4ade80;
         }
-        .lang-btn:hover { color: #a3a3a3; }
-        
+
+        .lang-btn:hover {
+            color: #a3a3a3;
+        }
+
         .section-divider {
             height: 1px;
             background: linear-gradient(90deg, transparent, #1a3d1a, transparent);
         }
-        
+
         .icon-box {
             background: #141414;
             border: 1px solid #1a3d1a;
@@ -123,22 +163,23 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .formula-box {
             background: #0a0a0a;
             border: 1px solid #1a3d1a;
         }
-        
+
         .fade-in {
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.6s ease, transform 0.6s ease;
         }
+
         .fade-in.visible {
             opacity: 1;
             transform: translateY(0);
         }
-        
+
         .success-icon {
             width: 60px;
             height: 60px;
@@ -148,12 +189,12 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         footer {
             background: #0a0a0a;
             border-top: 1px solid #1a3d1a;
         }
-        
+
         /* ============================================
            HERO DYNAMIC BACKGROUND
            ============================================ */
@@ -166,7 +207,7 @@
             overflow: hidden;
             z-index: 0;
         }
-        
+
         .wave-particle {
             position: absolute;
             border-radius: 50%;
@@ -175,14 +216,31 @@
             filter: blur(30px);
             will-change: transform, opacity;
         }
-        
+
         @keyframes float-wave {
-            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
-            25% { transform: translate(50px, -50px) scale(1.2); opacity: 0.7; }
-            50% { transform: translate(-30px, 30px) scale(0.8); opacity: 0.4; }
-            75% { transform: translate(-50px, -30px) scale(1.1); opacity: 0.6; }
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.4;
+            }
+
+            25% {
+                transform: translate(50px, -50px) scale(1.2);
+                opacity: 0.7;
+            }
+
+            50% {
+                transform: translate(-30px, 30px) scale(0.8);
+                opacity: 0.4;
+            }
+
+            75% {
+                transform: translate(-50px, -30px) scale(1.1);
+                opacity: 0.6;
+            }
         }
-        
+
         .hex-grid-bg {
             position: absolute;
             top: 0;
@@ -196,10 +254,17 @@
         }
 
         @keyframes pulse-grid {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
         }
-        
+
         .acoustic-beam {
             position: absolute;
             width: 3px;
@@ -209,14 +274,29 @@
             opacity: 0;
             animation-fill-mode: both;
         }
-        
+
         @keyframes beam-sweep {
-            0%, 100% { transform: rotate(-35deg); opacity: 0; }
-            20% { opacity: 0.5; }
-            50% { transform: rotate(35deg); opacity: 0.7; }
-            80% { opacity: 0.5; }
+
+            0%,
+            100% {
+                transform: rotate(-35deg);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: rotate(35deg);
+                opacity: 0.7;
+            }
+
+            80% {
+                opacity: 0.5;
+            }
         }
-        
+
         /* ============================================
            PHASED ARRAY VISUALIZATION
            ============================================ */
@@ -227,13 +307,13 @@
             aspect-ratio: 1;
             margin: 0 auto;
         }
-        
+
         @media (max-width: 640px) {
             .phased-array-container {
                 max-width: 320px;
             }
         }
-        
+
         .transducer {
             position: absolute;
             border-radius: 50%;
@@ -243,44 +323,59 @@
             transition: all 0.2s ease;
             cursor: pointer;
         }
-        
+
         .transducer:hover {
             box-shadow: 0 0 20px rgba(74, 222, 128, 0.8), 0 0 40px rgba(74, 222, 128, 0.4);
             transform: scale(1.3);
             z-index: 10;
         }
-        
+
         .transducer.center {
             background: radial-gradient(circle at 30% 30%, #f5f5f5, #4ade80);
             box-shadow: 0 0 15px rgba(74, 222, 128, 0.6), 0 0 30px rgba(74, 222, 128, 0.3);
         }
-        
+
         .transducer.active {
             animation: transducer-pulse 0.5s ease-out;
         }
-        
+
         @keyframes transducer-pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.5); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.5);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
-        
+
         .wave-ring {
             position: absolute;
             border: 2px solid rgba(74, 222, 128, 0.6);
             border-radius: 50%;
             pointer-events: none;
         }
-        
+
         @keyframes wave-expand {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(4);
+                opacity: 0;
+            }
         }
-        
+
         .wave-animation {
             animation: wave-expand 1.5s ease-out forwards;
         }
-        
+
         /* ============================================
            VIRTUAL TOUCH DEMO - WAVE INTERFERENCE
            ============================================ */
@@ -290,12 +385,12 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .demo-canvas {
             width: 100%;
             height: 100%;
         }
-        
+
         /* ============================================
            STIMULATION MODES
            ============================================ */
@@ -305,40 +400,59 @@
             transition: all 0.3s ease;
             overflow: hidden;
         }
-        
+
         .mode-card:hover {
             border-color: #3d7a3d;
             transform: translateY(-4px);
         }
-        
+
         .mode-visualization {
             height: 120px;
             background: #000;
             position: relative;
             overflow: hidden;
         }
-        
+
         /* AM Mode Animation */
         @keyframes am-wave {
-            0% { transform: scaleX(0.5); opacity: 0.5; }
-            50% { transform: scaleX(1); opacity: 1; }
-            100% { transform: scaleX(0.5); opacity: 0.5; }
+            0% {
+                transform: scaleX(0.5);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scaleX(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scaleX(0.5);
+                opacity: 0.5;
+            }
         }
-        
+
         .am-ripple {
             position: absolute;
             border: 2px solid #4ade80;
             border-radius: 50%;
             animation: am-wave 1s ease-in-out infinite;
         }
-        
+
         /* LM Mode Animation */
         @keyframes lm-move {
-            0% { left: 10%; }
-            50% { left: 70%; }
-            100% { left: 10%; }
+            0% {
+                left: 10%;
+            }
+
+            50% {
+                left: 70%;
+            }
+
+            100% {
+                left: 10%;
+            }
         }
-        
+
         .lm-dot {
             position: absolute;
             width: 12px;
@@ -348,13 +462,22 @@
             box-shadow: 0 0 20px #4ade80;
             animation: lm-move 2s ease-in-out infinite;
         }
-        
+
         /* STM Mode Animation */
         @keyframes stm-pulse {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.3); opacity: 1; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
         }
-        
+
         .stm-point {
             position: absolute;
             width: 20px;
@@ -363,13 +486,20 @@
             border-radius: 50%;
             animation: stm-pulse 0.3s ease-in-out infinite;
         }
-        
+
         /* TwinTrap Mode Animation */
         @keyframes twin-trap {
-            0%, 100% { transform: translateX(-15px); }
-            50% { transform: translateX(15px); }
+
+            0%,
+            100% {
+                transform: translateX(-15px);
+            }
+
+            50% {
+                transform: translateX(15px);
+            }
         }
-        
+
         .twin-dot {
             position: absolute;
             width: 14px;
@@ -378,22 +508,30 @@
             border-radius: 50%;
             box-shadow: 0 0 15px #4ade80;
         }
-        
-        .twin-dot.left { animation: twin-trap 1s ease-in-out infinite; }
-        .twin-dot.right { animation: twin-trap 1s ease-in-out infinite reverse; }
-        
+
+        .twin-dot.left {
+            animation: twin-trap 1s ease-in-out infinite;
+        }
+
+        .twin-dot.right {
+            animation: twin-trap 1s ease-in-out infinite reverse;
+        }
+
         @media (max-width: 768px) {
-            .hero-title { font-size: 2.5rem !important; }
+            .hero-title {
+                font-size: 2.5rem !important;
+            }
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
     <nav id="navbar" class="fixed top-0 left-0 w-full z-50 bg-black/90 backdrop-blur-sm border-b border-deep-green/30">
         <div class="max-w-7xl mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <a href="#hero" class="font-space text-2xl font-bold text-off-white">UMH</a>
-                
+
                 <div class="hidden md:flex items-center gap-8">
                     <a href="#product" class="nav-link text-sm" data-i18n="nav.product">Product</a>
                     <a href="#modes" class="nav-link text-sm" data-i18n="nav.modes">Modes</a>
@@ -401,7 +539,7 @@
                     <a href="#usecases" class="nav-link text-sm" data-i18n="nav.usecases">Use Cases</a>
                     <a href="#contact" class="nav-link text-sm" data-i18n="nav.contact">Contact</a>
                 </div>
-                
+
                 <div class="flex items-center gap-3">
                     <button class="lang-btn active px-2 py-1 text-sm" data-lang="en">EN</button>
                     <button class="lang-btn px-2 py-1 text-sm" data-lang="zh">中</button>
@@ -417,37 +555,47 @@
         <div class="hero-bg">
             <div class="hex-grid-bg"></div>
             <!-- Floating particles -->
-            <div class="wave-particle" style="width: 300px; height: 300px; top: 10%; left: 10%; animation-delay: 0s;"></div>
-            <div class="wave-particle" style="width: 200px; height: 200px; top: 60%; left: 70%; animation-delay: 3s;"></div>
-            <div class="wave-particle" style="width: 250px; height: 250px; top: 30%; left: 80%; animation-delay: 6s;"></div>
-            <div class="wave-particle" style="width: 180px; height: 180px; top: 70%; left: 20%; animation-delay: 9s;"></div>
-            <div class="wave-particle" style="width: 150px; height: 150px; top: 20%; left: 50%; animation-delay: 12s;"></div>
+            <div class="wave-particle" style="width: 300px; height: 300px; top: 10%; left: 10%; animation-delay: 0s;">
+            </div>
+            <div class="wave-particle" style="width: 200px; height: 200px; top: 60%; left: 70%; animation-delay: 3s;">
+            </div>
+            <div class="wave-particle" style="width: 250px; height: 250px; top: 30%; left: 80%; animation-delay: 6s;">
+            </div>
+            <div class="wave-particle" style="width: 180px; height: 180px; top: 70%; left: 20%; animation-delay: 9s;">
+            </div>
+            <div class="wave-particle" style="width: 150px; height: 150px; top: 20%; left: 50%; animation-delay: 12s;">
+            </div>
             <!-- Acoustic beams -->
             <div class="acoustic-beam" style="height: 150%; top: -25%; left: 15%; animation-delay: -2s;"></div>
             <div class="acoustic-beam" style="height: 150%; top: -25%; left: 45%; animation-delay: -7s;"></div>
             <div class="acoustic-beam" style="height: 150%; top: -25%; left: 80%; animation-delay: -4s;"></div>
         </div>
-        
+
         <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
             <div class="mb-6">
-                <span class="inline-block px-4 py-2 bg-deep-green/30 border border-forest rounded-full text-xs font-medium text-bright-green tracking-wider uppercase" data-i18n="hero.badge">
+                <span
+                    class="inline-block px-4 py-2 bg-deep-green/30 border border-forest rounded-full text-xs font-medium text-bright-green tracking-wider uppercase"
+                    data-i18n="hero.badge">
                     Next-Generation Haptic Technology
                 </span>
             </div>
-            
+
             <h1 class="hero-title font-space text-5xl md:text-7xl font-bold text-off-white mb-6">
                 Touch the Intangible
             </h1>
-            
+
             <p class="text-lg md:text-xl text-muted max-w-2xl mx-auto mb-10" data-i18n="hero.subtitle">
-                High-precision acoustic radiation pressure for next-generation haptic interfaces. Experience tactile feedback without physical contact.
+                High-precision acoustic radiation pressure for next-generation haptic interfaces. Experience tactile
+                feedback without physical contact.
             </p>
-            
+
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#contact" class="btn-primary px-8 py-4 rounded-lg font-semibold text-center" data-i18n="hero.cta1">
+                <a href="#contact" class="btn-primary px-8 py-4 rounded-lg font-semibold text-center"
+                    data-i18n="hero.cta1">
                     Request Allocation
                 </a>
-                <a href="#product" class="btn-secondary px-8 py-4 rounded-lg font-semibold text-center" data-i18n="hero.cta2">
+                <a href="#product" class="btn-secondary px-8 py-4 rounded-lg font-semibold text-center"
+                    data-i18n="hero.cta2">
                     <i class="fas fa-file-lines mr-2"></i>Technical Specifications
                 </a>
             </div>
@@ -460,18 +608,22 @@
     <section id="product" class="py-24 px-6">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16 fade-in">
-                <span class="text-bright-green text-sm font-medium tracking-wider uppercase" data-i18n="product.badge">The Dev Kit</span>
-                <h2 class="font-space text-4xl md:text-5xl font-bold text-off-white mt-4 mb-6" data-i18n="product.title">Technical Specifications</h2>
+                <span class="text-bright-green text-sm font-medium tracking-wider uppercase"
+                    data-i18n="product.badge">The Dev Kit</span>
+                <h2 class="font-space text-4xl md:text-5xl font-bold text-off-white mt-4 mb-6"
+                    data-i18n="product.title">Technical Specifications</h2>
                 <p class="text-muted max-w-2xl mx-auto" data-i18n="product.description">
                     61-element ultrasonic phased array generating precise acoustic radiation pressure in mid-air.
                 </p>
             </div>
-            
+
             <!-- Phased Array Visualization -->
             <div class="mb-16 fade-in">
                 <div class="card rounded-xl p-6 md:p-8">
-                    <h3 class="font-space text-xl font-bold text-off-white mb-2 text-center">61-Element Hexagonal Phased Array</h3>
-                    <p class="text-muted text-sm text-center mb-6">Click or hover over transducers to see wave propagation</p>
+                    <h3 class="font-space text-xl font-bold text-off-white mb-2 text-center">61-Element Hexagonal Phased
+                        Array</h3>
+                    <p class="text-muted text-sm text-center mb-6">Click or hover over transducers to see wave
+                        propagation</p>
                     <div class="phased-array-container" id="phased-array">
                         <!-- Transducers generated by JS -->
                     </div>
@@ -487,7 +639,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Specs Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Spec Card 1 -->
@@ -495,21 +647,23 @@
                     <div class="icon-box w-14 h-14 rounded-lg mb-6">
                         <i class="fas fa-wave-square text-2xl text-bright-green"></i>
                     </div>
-                    <h3 class="font-space text-3xl font-bold text-off-white mb-2">40<span class="text-lg text-muted">kHz</span></h3>
+                    <h3 class="font-space text-3xl font-bold text-off-white mb-2">40<span
+                            class="text-lg text-muted">kHz</span></h3>
                     <p class="text-muted text-sm" data-i18n="product.spec1">Carrier Frequency</p>
                     <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec1detail">Ultrasonic wave generation</p>
                 </div>
-                
+
                 <!-- Spec Card 2 -->
                 <div class="card rounded-xl p-8 fade-in">
                     <div class="icon-box w-14 h-14 rounded-lg mb-6">
                         <i class="fas fa-signal text-2xl text-bright-green"></i>
                     </div>
-                    <h3 class="font-space text-3xl font-bold text-off-white mb-2">200<span class="text-lg text-muted">Hz</span></h3>
+                    <h3 class="font-space text-3xl font-bold text-off-white mb-2">200<span
+                            class="text-lg text-muted">Hz</span></h3>
                     <p class="text-muted text-sm" data-i18n="product.spec2">Modulation Frequency</p>
                     <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec2detail">Optimal haptic perception</p>
                 </div>
-                
+
                 <!-- Spec Card 3 -->
                 <div class="card rounded-xl p-8 fade-in">
                     <div class="icon-box w-14 h-14 rounded-lg mb-6">
@@ -519,7 +673,7 @@
                     <p class="text-muted text-sm" data-i18n="product.spec3">Transducer Channels</p>
                     <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec3detail">Hexagonal phased array</p>
                 </div>
-                
+
                 <!-- Spec Card 4 -->
                 <div class="card rounded-xl p-8 fade-in">
                     <div class="icon-box w-14 h-14 rounded-lg mb-6">
@@ -529,17 +683,18 @@
                     <p class="text-muted text-sm" data-i18n="product.spec4">ARM Cortex-M7</p>
                     <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec4detail">480MHz real-time control</p>
                 </div>
-                
+
                 <!-- Spec Card 5 -->
                 <div class="card rounded-xl p-8 fade-in">
                     <div class="icon-box w-14 h-14 rounded-lg mb-6">
                         <i class="fas fa-bolt text-2xl text-bright-green"></i>
                     </div>
-                    <h3 class="font-space text-3xl font-bold text-off-white mb-2">3000<span class="text-lg text-muted">Hz</span></h3>
+                    <h3 class="font-space text-3xl font-bold text-off-white mb-2">3000<span
+                            class="text-lg text-muted">Hz</span></h3>
                     <p class="text-muted text-sm" data-i18n="product.spec5">Control Loop</p>
                     <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec5detail">DMA-driven precision</p>
                 </div>
-                
+
                 <!-- Spec Card 6 - Fixed USB Icon -->
                 <div class="card rounded-xl p-8 fade-in">
                     <div class="icon-box w-14 h-14 rounded-lg mb-6">
@@ -559,18 +714,21 @@
     <section id="modes" class="py-24 px-6">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16 fade-in">
-                <span class="text-bright-green text-sm font-medium tracking-wider uppercase" data-i18n="modes.badge">Stimulation Modes</span>
-                <h2 class="font-space text-4xl md:text-5xl font-bold text-off-white mt-4 mb-6" data-i18n="modes.title">Multiple Haptic Patterns</h2>
+                <span class="text-bright-green text-sm font-medium tracking-wider uppercase"
+                    data-i18n="modes.badge">Stimulation Modes</span>
+                <h2 class="font-space text-4xl md:text-5xl font-bold text-off-white mt-4 mb-6" data-i18n="modes.title">
+                    Multiple Haptic Patterns</h2>
                 <p class="text-muted max-w-2xl mx-auto" data-i18n="modes.subtitle">
                     UMH supports various stimulation modes for different haptic experiences.
                 </p>
             </div>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- AM Mode -->
                 <div class="mode-card rounded-xl fade-in">
                     <div class="mode-visualization rounded-t-xl" id="am-viz">
-                        <div class="am-ripple" style="width: 60px; height: 60px; top: 50%; left: 50%; margin: -30px 0 0 -30px;"></div>
+                        <div class="am-ripple"
+                            style="width: 60px; height: 60px; top: 50%; left: 50%; margin: -30px 0 0 -30px;"></div>
                     </div>
                     <div class="p-6">
                         <h3 class="font-space text-xl font-bold text-off-white mb-2">AM</h3>
@@ -580,12 +738,14 @@
                         </p>
                     </div>
                 </div>
-                
+
                 <!-- LM Mode -->
                 <div class="mode-card rounded-xl fade-in">
                     <div class="mode-visualization rounded-t-xl" id="lm-viz">
                         <div class="lm-dot" style="top: 50%; margin-top: -6px;"></div>
-                        <div class="am-ripple" style="width: 40px; height: 40px; top: 50%; left: 50%; margin: -20px 0 0 -20px; animation-duration: 0.5s;"></div>
+                        <div class="am-ripple"
+                            style="width: 40px; height: 40px; top: 50%; left: 50%; margin: -20px 0 0 -20px; animation-duration: 0.5s;">
+                        </div>
                     </div>
                     <div class="p-6">
                         <h3 class="font-space text-xl font-bold text-off-white mb-2">LM</h3>
@@ -595,7 +755,7 @@
                         </p>
                     </div>
                 </div>
-                
+
                 <!-- STM Mode -->
                 <div class="mode-card rounded-xl fade-in">
                     <div class="mode-visualization rounded-t-xl" id="stm-viz">
@@ -603,13 +763,14 @@
                     </div>
                     <div class="p-6">
                         <h3 class="font-space text-xl font-bold text-off-white mb-2">STM</h3>
-                        <p class="text-bright-green text-sm mb-2" data-i18n="modes.stm.subtitle">Spatio-Temporal Modulation</p>
+                        <p class="text-bright-green text-sm mb-2" data-i18n="modes.stm.subtitle">Spatio-Temporal
+                            Modulation</p>
                         <p class="text-muted text-sm" data-i18n="modes.stm.desc">
                             High-frequency spatial modulation creates sharp, localized tactile points.
                         </p>
                     </div>
                 </div>
-                
+
                 <!-- TwinTrap Mode -->
                 <div class="mode-card rounded-xl fade-in">
                     <div class="mode-visualization rounded-t-xl" id="twin-viz">
@@ -636,17 +797,22 @@
             <div class="card rounded-xl p-8 md:p-12 fade-in">
                 <div class="flex flex-col lg:flex-row items-center gap-12">
                     <div class="flex-1">
-                        <h3 class="font-space text-2xl md:text-3xl font-bold text-off-white mb-4" data-i18n="demo.title">Virtual Touch Demo</h3>
+                        <h3 class="font-space text-2xl md:text-3xl font-bold text-off-white mb-4"
+                            data-i18n="demo.title">Virtual Touch Demo</h3>
                         <p class="text-muted mb-4" data-i18n="demo.description">
-                            Click anywhere to see wave interference from multiple transducers. Waves constructively interfere at the focal point, creating acoustic radiation pressure.
+                            Click anywhere to see wave interference from multiple transducers. Waves constructively
+                            interfere at the focal point, creating acoustic radiation pressure.
                         </p>
                         <div class="space-y-3 text-sm">
                             <div class="flex items-center gap-3">
-                                <div class="w-4 h-4 rounded-full" style="background: rgba(74, 222, 128, 0.3); border: 1px solid #4ade80;"></div>
+                                <div class="w-4 h-4 rounded-full"
+                                    style="background: rgba(74, 222, 128, 0.3); border: 1px solid #4ade80;"></div>
                                 <span class="text-muted">Individual wave from transducer</span>
                             </div>
                             <div class="flex items-center gap-3">
-                                <div class="w-4 h-4 rounded-full" style="background: radial-gradient(circle, #f5f5f5, #4ade80); box-shadow: 0 0 10px #4ade80;"></div>
+                                <div class="w-4 h-4 rounded-full"
+                                    style="background: radial-gradient(circle, #f5f5f5, #4ade80); box-shadow: 0 0 10px #4ade80;">
+                                </div>
                                 <span class="text-muted">Constructive interference (focal point)</span>
                             </div>
                         </div>
@@ -665,16 +831,20 @@
     <section id="technology" class="py-24 px-6">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16 fade-in">
-                <span class="text-bright-green text-sm font-medium tracking-wider uppercase" data-i18n="tech.badge">How It Works</span>
-                <h2 class="font-space text-4xl md:text-5xl font-bold text-off-white mt-4 mb-6" data-i18n="tech.title">Phased Array Technology</h2>
+                <span class="text-bright-green text-sm font-medium tracking-wider uppercase" data-i18n="tech.badge">How
+                    It Works</span>
+                <h2 class="font-space text-4xl md:text-5xl font-bold text-off-white mt-4 mb-6" data-i18n="tech.title">
+                    Phased Array Technology</h2>
             </div>
-            
+
             <!-- Formula Section -->
             <div class="formula-box rounded-xl p-8 md:p-16 mb-16 fade-in">
                 <div class="text-center">
-                    <p class="text-muted mb-8" data-i18n="tech.formula.desc">Phase delay calculation for focal point generation</p>
+                    <p class="text-muted mb-8" data-i18n="tech.formula.desc">Phase delay calculation for focal point
+                        generation</p>
                     <div class="font-space text-2xl md:text-4xl lg:text-5xl font-bold text-off-white mb-8">
-                        Δφ = (2πf/c)(d<sub class="text-bright-green">focus</sub> - d<sub class="text-bright-green">i</sub>)
+                        Δφ = (2πf/c)(d<sub class="text-bright-green">focus</sub> - d<sub
+                            class="text-bright-green">i</sub>)
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
                         <div class="text-center">
@@ -696,16 +866,18 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- DMA & Timing -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="card rounded-xl p-8 fade-in">
                     <div class="icon-box w-14 h-14 rounded-lg mb-6">
                         <i class="fas fa-rotate text-2xl text-bright-green"></i>
                     </div>
-                    <h3 class="font-space text-2xl font-bold text-off-white mb-4" data-i18n="tech.dma.title">Circular DMA Mode</h3>
+                    <h3 class="font-space text-2xl font-bold text-off-white mb-4" data-i18n="tech.dma.title">Circular
+                        DMA Mode</h3>
                     <p class="text-muted mb-6" data-i18n="tech.dma.desc">
-                        Direct Memory Access in circular mode enables continuous waveform generation with zero CPU overhead. The DMA controller automatically transfers phase data to timer registers at 40kHz.
+                        Direct Memory Access in circular mode enables continuous waveform generation with zero CPU
+                        overhead. The DMA controller automatically transfers phase data to timer registers at 40kHz.
                     </p>
                     <div class="flex items-center gap-6">
                         <div>
@@ -718,14 +890,16 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="card rounded-xl p-8 fade-in">
                     <div class="icon-box w-14 h-14 rounded-lg mb-6">
                         <i class="fas fa-stopwatch text-2xl text-bright-green"></i>
                     </div>
-                    <h3 class="font-space text-2xl font-bold text-off-white mb-4" data-i18n="tech.timing.title">Real-Time Precision</h3>
+                    <h3 class="font-space text-2xl font-bold text-off-white mb-4" data-i18n="tech.timing.title">
+                        Real-Time Precision</h3>
                     <p class="text-muted mb-6" data-i18n="tech.timing.desc">
-                        3000Hz control loop ensures smooth haptic rendering. Phase updates are synchronized with the carrier frequency for precise acoustic focusing.
+                        3000Hz control loop ensures smooth haptic rendering. Phase updates are synchronized with the
+                        carrier frequency for precise acoustic focusing.
                     </p>
                     <div class="flex items-center gap-6">
                         <div>
@@ -748,55 +922,65 @@
     <section id="usecases" class="py-24 px-6">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16 fade-in">
-                <span class="text-bright-green text-sm font-medium tracking-wider uppercase" data-i18n="usecases.badge">Applications</span>
-                <h2 class="font-space text-4xl md:text-5xl font-bold text-off-white mt-4 mb-6" data-i18n="usecases.title">Transforming Industries</h2>
+                <span class="text-bright-green text-sm font-medium tracking-wider uppercase"
+                    data-i18n="usecases.badge">Applications</span>
+                <h2 class="font-space text-4xl md:text-5xl font-bold text-off-white mt-4 mb-6"
+                    data-i18n="usecases.title">Transforming Industries</h2>
                 <p class="text-muted max-w-2xl mx-auto" data-i18n="usecases.subtitle">
                     From automotive to healthcare, mid-air haptics is redefining human-machine interaction.
                 </p>
             </div>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Automotive -->
                 <div class="card rounded-xl p-8 fade-in">
                     <div class="icon-box w-16 h-16 rounded-xl mb-6">
                         <i class="fas fa-car text-3xl text-bright-green"></i>
                     </div>
-                    <h3 class="font-space text-2xl font-bold text-off-white mb-3" data-i18n="usecases.auto.title">Automotive</h3>
+                    <h3 class="font-space text-2xl font-bold text-off-white mb-3" data-i18n="usecases.auto.title">
+                        Automotive</h3>
                     <p class="text-muted" data-i18n="usecases.auto.desc">
-                        Gesture control without contact. Drivers can interact with infotainment systems through mid-air haptic feedback, reducing visual distraction.
+                        Gesture control without contact. Drivers can interact with infotainment systems through mid-air
+                        haptic feedback, reducing visual distraction.
                     </p>
                 </div>
-                
+
                 <!-- VR/AR -->
                 <div class="card rounded-xl p-8 fade-in">
                     <div class="icon-box w-16 h-16 rounded-xl mb-6">
                         <i class="fas fa-vr-cardboard text-3xl text-bright-green"></i>
                     </div>
-                    <h3 class="font-space text-2xl font-bold text-off-white mb-3" data-i18n="usecases.vr.title">VR/AR</h3>
+                    <h3 class="font-space text-2xl font-bold text-off-white mb-3" data-i18n="usecases.vr.title">VR/AR
+                    </h3>
                     <p class="text-muted" data-i18n="usecases.vr.desc">
-                        Tactile feedback in virtual environments. Feel virtual objects, textures, and interactions without wearing gloves or holding controllers.
+                        Tactile feedback in virtual environments. Feel virtual objects, textures, and interactions
+                        without wearing gloves or holding controllers.
                     </p>
                 </div>
-                
+
                 <!-- Medical -->
                 <div class="card rounded-xl p-8 fade-in">
                     <div class="icon-box w-16 h-16 rounded-xl mb-6">
                         <i class="fas fa-heart-pulse text-3xl text-bright-green"></i>
                     </div>
-                    <h3 class="font-space text-2xl font-bold text-off-white mb-3" data-i18n="usecases.medical.title">Medical</h3>
+                    <h3 class="font-space text-2xl font-bold text-off-white mb-3" data-i18n="usecases.medical.title">
+                        Medical</h3>
                     <p class="text-muted" data-i18n="usecases.medical.desc">
-                        Sterile interface interaction. Surgeons and medical staff can control equipment without touching surfaces, maintaining sterile fields.
+                        Sterile interface interaction. Surgeons and medical staff can control equipment without touching
+                        surfaces, maintaining sterile fields.
                     </p>
                 </div>
-                
+
                 <!-- Industrial -->
                 <div class="card rounded-xl p-8 fade-in">
                     <div class="icon-box w-16 h-16 rounded-xl mb-6">
                         <i class="fas fa-industry text-3xl text-bright-green"></i>
                     </div>
-                    <h3 class="font-space text-2xl font-bold text-off-white mb-3" data-i18n="usecases.industrial.title">Industrial</h3>
+                    <h3 class="font-space text-2xl font-bold text-off-white mb-3" data-i18n="usecases.industrial.title">
+                        Industrial</h3>
                     <p class="text-muted" data-i18n="usecases.industrial.desc">
-                        HMI for cleanroom environments. Operators can interact with control systems without introducing contaminants or wearing special equipment.
+                        HMI for cleanroom environments. Operators can interact with control systems without introducing
+                        contaminants or wearing special equipment.
                     </p>
                 </div>
             </div>
@@ -810,44 +994,54 @@
         <div class="max-w-4xl mx-auto">
             <div class="card rounded-xl p-8 md:p-12">
                 <div class="text-center mb-12 fade-in">
-                    <span class="text-bright-green text-sm font-medium tracking-wider uppercase" data-i18n="contact.badge">Priority Access</span>
-                    <h2 class="font-space text-4xl md:text-5xl font-bold text-off-white mt-4 mb-6" data-i18n="contact.title">Join the Waitlist</h2>
+                    <span class="text-bright-green text-sm font-medium tracking-wider uppercase"
+                        data-i18n="contact.badge">Priority Access</span>
+                    <h2 class="font-space text-4xl md:text-5xl font-bold text-off-white mt-4 mb-6"
+                        data-i18n="contact.title">Join the Waitlist</h2>
                     <p class="text-muted" data-i18n="contact.subtitle">
                         Be among the first to experience the future of haptic interfaces. Batch 1 allocation is limited.
                     </p>
                 </div>
-                
+
                 <!-- Form -->
                 <form id="lead-form" class="space-y-6 fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.name">Full Name *</label>
-                            <input type="text" name="name" required class="form-input w-full px-4 py-3 rounded-lg" placeholder="John Doe">
+                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.name">Full Name
+                                *</label>
+                            <input type="text" name="name" required class="form-input w-full px-4 py-3 rounded-lg"
+                                placeholder="John Doe">
                         </div>
                         <div>
-                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.email">Work Email *</label>
-                            <input type="email" name="email" required class="form-input w-full px-4 py-3 rounded-lg" placeholder="john@company.com">
+                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.email">Work Email
+                                *</label>
+                            <input type="email" name="email" required class="form-input w-full px-4 py-3 rounded-lg"
+                                placeholder="john@company.com">
                         </div>
                     </div>
-                    
+
                     <div>
                         <label class="block text-sm text-muted mb-2" data-i18n="contact.form.org">Organization *</label>
-                        <input type="text" name="organization" required class="form-input w-full px-4 py-3 rounded-lg" placeholder="Company or Institution">
+                        <input type="text" name="organization" required class="form-input w-full px-4 py-3 rounded-lg"
+                            placeholder="Company or Institution">
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.usecase">Intended Use Case *</label>
+                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.usecase">Intended Use
+                                Case *</label>
                             <select name="usecase" required class="form-input w-full px-4 py-3 rounded-lg">
                                 <option value="" data-i18n="contact.form.select">Select...</option>
                                 <option value="rnd" data-i18n="contact.form.rnd">R&D</option>
-                                <option value="integration" data-i18n="contact.form.integration">Product Integration</option>
+                                <option value="integration" data-i18n="contact.form.integration">Product Integration
+                                </option>
                                 <option value="academic" data-i18n="contact.form.academic">Academic</option>
                                 <option value="other" data-i18n="contact.form.other">Other</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.volume">Estimated Volume *</label>
+                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.volume">Estimated
+                                Volume *</label>
                             <select name="volume" required class="form-input w-full px-4 py-3 rounded-lg">
                                 <option value="" data-i18n="contact.form.select">Select...</option>
                                 <option value="1-10" data-i18n="contact.form.vol1">1-10 units</option>
@@ -857,7 +1051,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.timeline">Timeline *</label>
+                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.timeline">Timeline
+                                *</label>
                             <select name="timeline" required class="form-input w-full px-4 py-3 rounded-lg">
                                 <option value="" data-i18n="contact.form.select">Select...</option>
                                 <option value="immediate" data-i18n="contact.form.time1">Immediate</option>
@@ -867,20 +1062,23 @@
                             </select>
                         </div>
                     </div>
-                    
-                    <button type="submit" class="btn-primary w-full py-4 rounded-lg font-semibold flex items-center justify-center gap-2">
+
+                    <button type="submit"
+                        class="btn-primary w-full py-4 rounded-lg font-semibold flex items-center justify-center gap-2">
                         <span data-i18n="contact.form.submit">Request Allocation</span>
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </form>
-                
+
                 <!-- Success State -->
                 <div id="success-state" class="hidden text-center py-12">
                     <div class="success-icon mx-auto mb-6">
                         <i class="fas fa-check text-3xl text-off-white"></i>
                     </div>
-                    <h3 class="font-space text-2xl font-bold text-off-white mb-4" data-i18n="contact.success.title">You're on the list.</h3>
-                    <p class="text-muted" data-i18n="contact.success.message">Batch 1 allocation pending. We'll contact you soon.</p>
+                    <h3 class="font-space text-2xl font-bold text-off-white mb-4" data-i18n="contact.success.title">
+                        You're on the list.</h3>
+                    <p class="text-muted" data-i18n="contact.success.message">Batch 1 allocation pending. We'll contact
+                        you soon.</p>
                 </div>
             </div>
         </div>
@@ -893,32 +1091,41 @@
                 <div class="md:col-span-2">
                     <h3 class="font-space text-2xl font-bold text-off-white mb-4">UMH</h3>
                     <p class="text-muted mb-6 max-w-md" data-i18n="footer.desc">
-                        Ultrasound Mid-Air Haptics technology from Niu Lab at Southeast University. Pioneering the future of touchless interfaces.
+                        Ultrasound Mid-Air Haptics technology from Niu Lab at Southeast University. Pioneering the
+                        future of touchless interfaces.
                     </p>
                     <div class="flex gap-4">
-                        <a href="mailto:linhanfan@seu.edu.cn" class="icon-box w-10 h-10 rounded-full hover:bg-forest transition-colors">
+                        <a href="mailto:linhanfan@seu.edu.cn"
+                            class="icon-box w-10 h-10 rounded-full hover:bg-forest transition-colors">
                             <i class="fas fa-envelope text-bright-green"></i>
                         </a>
-                        <a href="https://me.seu.edu.cn/nyf_31777/list.htm" target="_blank" class="icon-box w-10 h-10 rounded-full hover:bg-forest transition-colors">
+                        <a href="https://me.seu.edu.cn/nyf_31777/list.htm" target="_blank"
+                            class="icon-box w-10 h-10 rounded-full hover:bg-forest transition-colors">
                             <i class="fas fa-building text-bright-green"></i>
                         </a>
-                        <a href="https://kannmu.top/" target="_blank" class="icon-box w-10 h-10 rounded-full hover:bg-forest transition-colors">
+                        <a href="https://kannmu.top/" target="_blank"
+                            class="icon-box w-10 h-10 rounded-full hover:bg-forest transition-colors">
                             <i class="fas fa-user text-bright-green"></i>
                         </a>
                     </div>
                 </div>
-                
+
                 <div>
                     <h4 class="font-space font-semibold text-off-white mb-4" data-i18n="footer.links.title">Links</h4>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-muted hover:text-bright-green transition-colors text-sm" data-i18n="footer.links.privacy">Privacy Policy</a></li>
-                        <li><a href="#" class="text-muted hover:text-bright-green transition-colors text-sm" data-i18n="footer.links.terms">Terms of Service</a></li>
-                        <li><a href="mailto:linhanfan@seu.edu.cn" class="text-muted hover:text-bright-green transition-colors text-sm" data-i18n="footer.links.contact">Contact</a></li>
+                        <li><a href="#" class="text-muted hover:text-bright-green transition-colors text-sm"
+                                data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                        <li><a href="#" class="text-muted hover:text-bright-green transition-colors text-sm"
+                                data-i18n="footer.links.terms">Terms of Service</a></li>
+                        <li><a href="mailto:linhanfan@seu.edu.cn"
+                                class="text-muted hover:text-bright-green transition-colors text-sm"
+                                data-i18n="footer.links.contact">Contact</a></li>
                     </ul>
                 </div>
-                
+
                 <div>
-                    <h4 class="font-space font-semibold text-off-white mb-4" data-i18n="footer.newsletter.title">Newsletter</h4>
+                    <h4 class="font-space font-semibold text-off-white mb-4" data-i18n="footer.newsletter.title">
+                        Newsletter</h4>
                     <form id="newsletter-form" class="flex gap-2">
                         <input type="email" placeholder="Email" class="form-input flex-1 px-4 py-2 rounded-lg text-sm">
                         <button type="submit" class="btn-primary px-4 py-2 rounded-lg">
@@ -927,7 +1134,7 @@
                     </form>
                 </div>
             </div>
-            
+
             <div class="border-t border-deep-green pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                 <p class="text-gray-600 text-sm">© 2025 UMH Technologies. All rights reserved.</p>
                 <p class="text-gray-700 text-xs">Niu Lab, Southeast University</p>
@@ -942,43 +1149,43 @@
         function createHexagonalArray() {
             const container = document.getElementById('phased-array');
             if (!container) return;
-            
+
             // Clear existing
             container.innerHTML = '';
-            
+
             // Hexagonal close-packed with side length 5
             // Row counts: 5, 6, 7, 8, 9, 8, 7, 6, 5 = 61
             const rowCounts = [5, 6, 7, 8, 9, 8, 7, 6, 5];
             const containerSize = container.offsetWidth;
             const spacing = containerSize / 11; // Adjust spacing to fit
             const transducerSize = spacing * 0.7;
-            
+
             const centerY = containerSize / 2;
             const centerX = containerSize / 2;
-            
+
             let transducerIndex = 0;
-            
+
             rowCounts.forEach((count, rowIndex) => {
                 const y = centerY + (rowIndex - 4) * spacing * 0.866; // 0.866 = sqrt(3)/2
                 const rowOffset = (9 - count) * spacing / 2;
-                
+
                 for (let i = 0; i < count; i++) {
                     const x = centerX - (count - 1) * spacing / 2 + i * spacing;
-                    
+
                     const transducer = document.createElement('div');
                     transducer.className = 'transducer';
-                    
+
                     // Center element (middle of middle row)
                     if (rowIndex === 4 && i === 4) {
                         transducer.classList.add('center');
                     }
-                    
+
                     transducer.style.width = transducerSize + 'px';
                     transducer.style.height = transducerSize + 'px';
                     transducer.style.left = (x - transducerSize / 2) + 'px';
                     transducer.style.top = (y - transducerSize / 2) + 'px';
                     transducer.dataset.index = transducerIndex++;
-                    
+
                     // Click/hover effect
                     transducer.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -986,16 +1193,16 @@
                         transducer.classList.add('active');
                         setTimeout(() => transducer.classList.remove('active'), 500);
                     });
-                    
+
                     transducer.addEventListener('mouseenter', () => {
                         createLargeWave(container, x, y);
                     });
-                    
+
                     container.appendChild(transducer);
                 }
             });
         }
-        
+
         function createLargeWave(container, x, y) {
             const wave = document.createElement('div');
             wave.className = 'wave-ring wave-animation';
@@ -1004,7 +1211,7 @@
             wave.style.width = '40px';
             wave.style.height = '40px';
             container.appendChild(wave);
-            
+
             setTimeout(() => wave.remove(), 1500);
         }
 
@@ -1014,17 +1221,17 @@
         function initWaveCanvas() {
             const canvas = document.getElementById('wave-canvas');
             if (!canvas) return;
-            
+
             const ctx = canvas.getContext('2d');
             const container = canvas.parentElement;
-            
+
             function resize() {
                 canvas.width = container.offsetWidth;
                 canvas.height = container.offsetHeight;
             }
             resize();
             window.addEventListener('resize', resize);
-            
+
             // Wave sources (transducers around the perimeter)
             const sources = [];
             const numSources = 16;
@@ -1036,31 +1243,31 @@
                     id: i
                 });
             }
-            
+
             let waves = [];
             let focalPoint = null;
             let lastClickTime = 0;
             const waveSpeed = 0.005; // Normalized units per frame
-            
+
             canvas.addEventListener('click', (e) => {
                 const rect = canvas.getBoundingClientRect();
                 const xf = (e.clientX - rect.left) / canvas.width;
                 const yf = (e.clientY - rect.top) / canvas.height;
-                
+
                 focalPoint = { x: xf, y: yf, time: 0, active: true };
                 waves = []; // Clear old waves
-                
+
                 // Phased Array Logic:
                 // 1. Calculate distances from each source to focal point
                 const distances = sources.map(s => Math.sqrt(Math.pow(s.x - xf, 2) + Math.pow(s.y - yf, 2)));
                 const maxDist = Math.max(...distances);
-                
+
                 // 2. Calculate delays so all waves reach focal point at the same time
                 // t_arrival = maxDist / waveSpeed
                 // t_emit_i = t_arrival - (dist_i / waveSpeed)
                 sources.forEach((source, i) => {
                     const delay = (maxDist - distances[i]) / waveSpeed;
-                    
+
                     waves.push({
                         sourceX: source.x,
                         sourceY: source.y,
@@ -1073,16 +1280,16 @@
                         reachedFocal: false
                     });
                 });
-                
+
                 lastClickTime = 0;
             });
-            
+
             function animate() {
                 ctx.fillStyle = '#050505';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
+
                 lastClickTime += 1;
-                
+
                 // Draw sources
                 sources.forEach(source => {
                     ctx.beginPath();
@@ -1093,17 +1300,17 @@
                     ctx.lineWidth = 1;
                     ctx.stroke();
                 });
-                
+
                 if (focalPoint) {
                     focalPoint.time += 1;
-                    
+
                     waves.forEach(wave => {
                         if (lastClickTime >= wave.startTime) {
                             wave.radius += waveSpeed;
-                            
+
                             // Calculate current distance from source
                             const currentDist = wave.radius;
-                            
+
                             // Opacity increases as it approaches focal point, then fades
                             if (currentDist < wave.distToFocal) {
                                 wave.opacity = Math.min(0.6, currentDist / wave.distToFocal);
@@ -1111,7 +1318,7 @@
                                 wave.reachedFocal = true;
                                 wave.opacity = Math.max(0, 1 - (currentDist - wave.distToFocal) * 2);
                             }
-                            
+
                             if (wave.opacity > 0) {
                                 ctx.beginPath();
                                 ctx.arc(wave.sourceX * canvas.width, wave.sourceY * canvas.height, wave.radius * canvas.width, 0, Math.PI * 2);
@@ -1121,35 +1328,35 @@
                             }
                         }
                     });
-                    
+
                     // Draw focal point highlight when waves interfere
                     const allReached = waves.every(w => lastClickTime >= w.startTime + (w.distToFocal / waveSpeed));
                     const peakTime = waves[0] ? waves[0].startTime + (waves[0].distToFocal / waveSpeed) : 0;
-                    
+
                     const timeSincePeak = Math.abs(lastClickTime - peakTime);
                     if (timeSincePeak < 20) {
                         const intensity = 1 - (timeSincePeak / 20);
                         const fx = focalPoint.x * canvas.width;
                         const fy = focalPoint.y * canvas.height;
-                        
+
                         // Constructive interference glow
                         const gradient = ctx.createRadialGradient(fx, fy, 0, fx, fy, 40 * intensity);
                         gradient.addColorStop(0, `rgba(245, 245, 245, ${intensity * 0.8})`);
                         gradient.addColorStop(0.4, `rgba(74, 222, 128, ${intensity * 0.5})`);
                         gradient.addColorStop(1, 'transparent');
-                        
+
                         ctx.fillStyle = gradient;
                         ctx.beginPath();
                         ctx.arc(fx, fy, 40 * intensity, 0, Math.PI * 2);
                         ctx.fill();
-                        
+
                         // Core
                         ctx.beginPath();
                         ctx.arc(fx, fy, 5 * intensity, 0, Math.PI * 2);
                         ctx.fillStyle = '#fff';
                         ctx.fill();
                     }
-                    
+
                     // Focal point marker
                     const fx = focalPoint.x * canvas.width;
                     const fy = focalPoint.y * canvas.height;
@@ -1158,7 +1365,7 @@
                     ctx.strokeStyle = '#4ade80';
                     ctx.lineWidth = 2;
                     ctx.stroke();
-                    
+
                     ctx.fillStyle = '#a3a3a3';
                     ctx.font = '10px Inter';
                     ctx.textAlign = 'center';
@@ -1170,10 +1377,10 @@
                     ctx.textAlign = 'center';
                     ctx.fillText('Click to set focal point (Phased Array Demo)', canvas.width / 2, canvas.height / 2);
                 }
-                
+
                 requestAnimationFrame(animate);
             }
-            
+
             animate();
         }
 
@@ -1358,7 +1565,7 @@
                     el.textContent = translations[lang][key];
                 }
             });
-            
+
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.dataset.lang === lang) {
@@ -1397,10 +1604,10 @@
 
             leadForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                
+
                 const email = leadForm.querySelector('input[name="email"]').value;
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                
+
                 if (!emailRegex.test(email)) {
                     alert('Please enter a valid email address');
                     return;
@@ -1429,12 +1636,12 @@
             initWaveCanvas();
             initScrollAnimation();
             initForms();
-            
+
             // Handle resize for phased array
             window.addEventListener('resize', () => {
                 setTimeout(createHexagonalArray, 100);
             });
-            
+
             setTimeout(() => {
                 document.querySelectorAll('.fade-in').forEach(el => {
                     el.classList.add('visible');
@@ -1443,4 +1650,5 @@
         });
     </script>
 </body>
+
 </html>
