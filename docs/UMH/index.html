@@ -170,15 +170,17 @@
         .wave-particle {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(74, 222, 128, 0.15) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(74, 222, 128, 0.25) 0%, transparent 70%);
             animation: float-wave 15s ease-in-out infinite;
+            filter: blur(30px);
+            will-change: transform, opacity;
         }
         
         @keyframes float-wave {
-            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-            25% { transform: translate(30px, -30px) scale(1.1); opacity: 0.5; }
-            50% { transform: translate(-20px, 20px) scale(0.9); opacity: 0.3; }
-            75% { transform: translate(-30px, -20px) scale(1.05); opacity: 0.4; }
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+            25% { transform: translate(50px, -50px) scale(1.2); opacity: 0.7; }
+            50% { transform: translate(-30px, 30px) scale(0.8); opacity: 0.4; }
+            75% { transform: translate(-50px, -30px) scale(1.1); opacity: 0.6; }
         }
         
         .hex-grid-bg {
@@ -187,21 +189,32 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5l25 15v30l-25 15-25-15V20z' fill='none' stroke='rgba(26, 61, 26, 0.3)' stroke-width='0.5'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5l25 15v30l-25 15-25-15V20z' fill='none' stroke='rgba(74, 222, 128, 0.15)' stroke-width='0.5'/%3E%3C/svg%3E");
             background-size: 60px 60px;
-            opacity: 0.5;
+            opacity: 0.4;
+            animation: pulse-grid 10s ease-in-out infinite;
+        }
+
+        @keyframes pulse-grid {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
         }
         
         .acoustic-beam {
             position: absolute;
-            width: 2px;
-            background: linear-gradient(180deg, transparent, rgba(74, 222, 128, 0.3), transparent);
-            animation: beam-sweep 8s ease-in-out infinite;
+            width: 3px;
+            background: linear-gradient(180deg, transparent, rgba(74, 222, 128, 0.4), transparent);
+            animation: beam-sweep 12s ease-in-out infinite;
+            transform-origin: top center;
+            opacity: 0;
+            animation-fill-mode: both;
         }
         
         @keyframes beam-sweep {
-            0%, 100% { transform: rotate(-30deg); opacity: 0.2; }
-            50% { transform: rotate(30deg); opacity: 0.4; }
+            0%, 100% { transform: rotate(-35deg); opacity: 0; }
+            20% { opacity: 0.5; }
+            50% { transform: rotate(35deg); opacity: 0.7; }
+            80% { opacity: 0.5; }
         }
         
         /* ============================================
@@ -410,8 +423,9 @@
             <div class="wave-particle" style="width: 180px; height: 180px; top: 70%; left: 20%; animation-delay: 9s;"></div>
             <div class="wave-particle" style="width: 150px; height: 150px; top: 20%; left: 50%; animation-delay: 12s;"></div>
             <!-- Acoustic beams -->
-            <div class="acoustic-beam" style="height: 150%; top: -25%; left: 30%; animation-delay: 0s;"></div>
-            <div class="acoustic-beam" style="height: 150%; top: -25%; left: 70%; animation-delay: 4s;"></div>
+            <div class="acoustic-beam" style="height: 150%; top: -25%; left: 15%; animation-delay: -2s;"></div>
+            <div class="acoustic-beam" style="height: 150%; top: -25%; left: 45%; animation-delay: -7s;"></div>
+            <div class="acoustic-beam" style="height: 150%; top: -25%; left: 80%; animation-delay: -4s;"></div>
         </div>
         
         <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
@@ -1004,7 +1018,6 @@
             const ctx = canvas.getContext('2d');
             const container = canvas.parentElement;
             
-            // Set canvas size
             function resize() {
                 canvas.width = container.offsetWidth;
                 canvas.height = container.offsetHeight;
@@ -1012,59 +1025,68 @@
             resize();
             window.addEventListener('resize', resize);
             
-            // Wave sources (simulating transducers around the perimeter)
+            // Wave sources (transducers around the perimeter)
             const sources = [];
-            const numSources = 12;
+            const numSources = 16;
             for (let i = 0; i < numSources; i++) {
                 const angle = (i / numSources) * Math.PI * 2;
                 sources.push({
-                    x: 0.5 + Math.cos(angle) * 0.35,
-                    y: 0.5 + Math.sin(angle) * 0.35,
-                    phase: 0
+                    x: 0.5 + Math.cos(angle) * 0.4,
+                    y: 0.5 + Math.sin(angle) * 0.4,
+                    id: i
                 });
             }
             
             let waves = [];
             let focalPoint = null;
-            let time = 0;
+            let lastClickTime = 0;
+            const waveSpeed = 0.005; // Normalized units per frame
             
-            // Click to create focal point
             canvas.addEventListener('click', (e) => {
                 const rect = canvas.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / canvas.width;
-                const y = (e.clientY - rect.top) / canvas.height;
+                const xf = (e.clientX - rect.left) / canvas.width;
+                const yf = (e.clientY - rect.top) / canvas.height;
                 
-                focalPoint = { x, y, time: 0 };
+                focalPoint = { x: xf, y: yf, time: 0, active: true };
+                waves = []; // Clear old waves
                 
-                // Emit waves from all sources
+                // Phased Array Logic:
+                // 1. Calculate distances from each source to focal point
+                const distances = sources.map(s => Math.sqrt(Math.pow(s.x - xf, 2) + Math.pow(s.y - yf, 2)));
+                const maxDist = Math.max(...distances);
+                
+                // 2. Calculate delays so all waves reach focal point at the same time
+                // t_arrival = maxDist / waveSpeed
+                // t_emit_i = t_arrival - (dist_i / waveSpeed)
                 sources.forEach((source, i) => {
-                    setTimeout(() => {
-                        waves.push({
-                            x: source.x,
-                            y: source.y,
-                            radius: 0,
-                            maxRadius: Math.sqrt(Math.pow(x - source.x, 2) + Math.pow(y - source.y, 2)) * 1.5,
-                            opacity: 1,
-                            focalX: x,
-                            focalY: y
-                        });
-                    }, i * 30);
+                    const delay = (maxDist - distances[i]) / waveSpeed;
+                    
+                    waves.push({
+                        sourceX: source.x,
+                        sourceY: source.y,
+                        focalX: xf,
+                        focalY: yf,
+                        distToFocal: distances[i],
+                        startTime: delay,
+                        radius: 0,
+                        opacity: 0,
+                        reachedFocal: false
+                    });
                 });
+                
+                lastClickTime = 0;
             });
             
             function animate() {
-                ctx.fillStyle = '#0a0a0a';
+                ctx.fillStyle = '#050505';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                time += 0.05;
+                lastClickTime += 1;
                 
-                // Draw transducer positions
+                // Draw sources
                 sources.forEach(source => {
-                    const sx = source.x * canvas.width;
-                    const sy = source.y * canvas.height;
-                    
                     ctx.beginPath();
-                    ctx.arc(sx, sy, 6, 0, Math.PI * 2);
+                    ctx.arc(source.x * canvas.width, source.y * canvas.height, 4, 0, Math.PI * 2);
                     ctx.fillStyle = '#1a3d1a';
                     ctx.fill();
                     ctx.strokeStyle = '#4ade80';
@@ -1072,78 +1094,81 @@
                     ctx.stroke();
                 });
                 
-                // Update and draw waves
-                waves = waves.filter(wave => wave.opacity > 0.01);
-                
-                waves.forEach(wave => {
-                    wave.radius += 2;
-                    wave.opacity = 1 - (wave.radius / (canvas.width * 0.6));
+                if (focalPoint) {
+                    focalPoint.time += 1;
                     
-                    if (wave.opacity < 0) wave.opacity = 0;
+                    waves.forEach(wave => {
+                        if (lastClickTime >= wave.startTime) {
+                            wave.radius += waveSpeed;
+                            
+                            // Calculate current distance from source
+                            const currentDist = wave.radius;
+                            
+                            // Opacity increases as it approaches focal point, then fades
+                            if (currentDist < wave.distToFocal) {
+                                wave.opacity = Math.min(0.6, currentDist / wave.distToFocal);
+                            } else {
+                                wave.reachedFocal = true;
+                                wave.opacity = Math.max(0, 1 - (currentDist - wave.distToFocal) * 2);
+                            }
+                            
+                            if (wave.opacity > 0) {
+                                ctx.beginPath();
+                                ctx.arc(wave.sourceX * canvas.width, wave.sourceY * canvas.height, wave.radius * canvas.width, 0, Math.PI * 2);
+                                ctx.strokeStyle = `rgba(74, 222, 128, ${wave.opacity * 0.4})`;
+                                ctx.lineWidth = 1.5;
+                                ctx.stroke();
+                            }
+                        }
+                    });
                     
-                    const cx = wave.x * canvas.width;
-                    const cy = wave.y * canvas.height;
+                    // Draw focal point highlight when waves interfere
+                    const allReached = waves.every(w => lastClickTime >= w.startTime + (w.distToFocal / waveSpeed));
+                    const peakTime = waves[0] ? waves[0].startTime + (waves[0].distToFocal / waveSpeed) : 0;
                     
-                    // Draw wave ring
-                    ctx.beginPath();
-                    ctx.arc(cx, cy, wave.radius, 0, Math.PI * 2);
-                    ctx.strokeStyle = `rgba(74, 222, 128, ${wave.opacity * 0.5})`;
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                    
-                    // Check if wave reaches focal point
-                    const focalCx = wave.focalX * canvas.width;
-                    const focalCy = wave.focalY * canvas.height;
-                    const distToFocal = Math.sqrt(Math.pow(focalCx - cx, 2) + Math.pow(focalCy - cy, 2));
-                    
-                    if (Math.abs(distToFocal - wave.radius) < 10) {
-                        // Draw constructive interference at focal point
+                    const timeSincePeak = Math.abs(lastClickTime - peakTime);
+                    if (timeSincePeak < 20) {
+                        const intensity = 1 - (timeSincePeak / 20);
+                        const fx = focalPoint.x * canvas.width;
+                        const fy = focalPoint.y * canvas.height;
+                        
+                        // Constructive interference glow
+                        const gradient = ctx.createRadialGradient(fx, fy, 0, fx, fy, 40 * intensity);
+                        gradient.addColorStop(0, `rgba(245, 245, 245, ${intensity * 0.8})`);
+                        gradient.addColorStop(0.4, `rgba(74, 222, 128, ${intensity * 0.5})`);
+                        gradient.addColorStop(1, 'transparent');
+                        
+                        ctx.fillStyle = gradient;
                         ctx.beginPath();
-                        ctx.arc(focalCx, focalCy, 15, 0, Math.PI * 2);
-                        ctx.fillStyle = `rgba(245, 245, 245, ${wave.opacity * 0.8})`;
+                        ctx.arc(fx, fy, 40 * intensity, 0, Math.PI * 2);
                         ctx.fill();
                         
+                        // Core
                         ctx.beginPath();
-                        ctx.arc(focalCx, focalCy, 20, 0, Math.PI * 2);
-                        ctx.strokeStyle = `rgba(74, 222, 128, ${wave.opacity})`;
-                        ctx.lineWidth = 3;
-                        ctx.stroke();
+                        ctx.arc(fx, fy, 5 * intensity, 0, Math.PI * 2);
+                        ctx.fillStyle = '#fff';
+                        ctx.fill();
                     }
-                });
-                
-                // Draw focal point marker
-                if (focalPoint) {
-                    focalPoint.time += 0.1;
+                    
+                    // Focal point marker
                     const fx = focalPoint.x * canvas.width;
                     const fy = focalPoint.y * canvas.height;
-                    
-                    // Pulsing effect
-                    const pulse = Math.sin(focalPoint.time) * 0.3 + 0.7;
-                    
                     ctx.beginPath();
-                    ctx.arc(fx, fy, 8 * pulse, 0, Math.PI * 2);
-                    ctx.fillStyle = '#4ade80';
-                    ctx.fill();
-                    
-                    ctx.beginPath();
-                    ctx.arc(fx, fy, 15 * pulse, 0, Math.PI * 2);
-                    ctx.strokeStyle = `rgba(74, 222, 128, 0.5)`;
+                    ctx.arc(fx, fy, 6, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#4ade80';
                     ctx.lineWidth = 2;
                     ctx.stroke();
                     
-                    // Label
                     ctx.fillStyle = '#a3a3a3';
-                    ctx.font = '12px Inter';
+                    ctx.font = '10px Inter';
                     ctx.textAlign = 'center';
-                    ctx.fillText('Focal Point', fx, fy + 30);
-                }
-                
-                // Instructions
-                if (waves.length === 0 && !focalPoint) {
-                    ctx.fillStyle = '#525252';
+                    ctx.fillText('TARGET', fx, fy + 20);
+                } else {
+                    // Instructions
+                    ctx.fillStyle = '#333';
                     ctx.font = '14px Inter';
                     ctx.textAlign = 'center';
-                    ctx.fillText('Click anywhere to see wave interference', canvas.width / 2, canvas.height / 2);
+                    ctx.fillText('Click to set focal point (Phased Array Demo)', canvas.width / 2, canvas.height / 2);
                 }
                 
                 requestAnimationFrame(animate);
