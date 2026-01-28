@@ -1,63 +1,83 @@
-[Hux Blog](https://huangxuan.me)
-================================
+# Kannmu Blog | 涵无的博客
 
-> I never expect this becomes popular.
+> 这里是 @Kannmu 涵无 的个人博客 | 一个杂食者的精神角落
 
-![](http://huangxuan.me/img/blog-desktop.jpg)
+[![Website](https://img.shields.io/badge/Website-kannmu.top-blue?style=flat-square)](https://kannmu.top/)
+[![GitHub](https://img.shields.io/github/stars/Kannmu?style=flat-square&label=GitHub)](https://github.com/Kannmu)
 
+---
 
-[User Manual 👉](_doc/Manual.md)
---------------------------------------------------
+## 👨‍💻 关于我
 
-### Getting Started
+**范林涵 (Linhan Fan)**，网络 ID 为 **涵无 (Kannmu)**。
+目前在 **东南大学 (Southeast University)** 攻读设计学博士学位。
 
-1. You will need [Ruby](https://www.ruby-lang.org/en/) and [Bundler](https://bundler.io/) to use [Jekyll](https://jekyllrb.com/). Following [Using Jekyll with Bundler](https://jekyllrb.com/tutorials/using-jekyll-with-bundler/) to fullfill the enviromental requirement.
+- **研究方向**: 人机交互 (HCI)、人工智能 (AI)、眼动交互、脑机接口。
+- **学术成果**: 曾在 *Nature Communications*、*Advanced Engineering Informatics*、*Displays* 等期刊发表论文。
+- **技能树**: 硬件开发 (Robocon 经历)、深度学习、Unity 开发、交互设计、摄影。
 
-2. Installed dependencies in the `Gemfile`:
+---
 
-```sh
-$ bundle install 
-```
+## 📚 博客内容
 
-3. Serve the website (`localhost:4000` by default):
+本博客记录了我在学术研究、项目开发和日常生活中的点滴：
 
-```sh
-$ bundle exec jekyll serve  # alternatively, npm start
-```
+- **[学术研究](https://kannmu.top/archive/?tag=Paper-Summary)**: 论文研读笔记与学术思考。
+- **[技术博客](https://kannmu.top/archive/?tag=TchBlog)**: Unity Shader、Python 效率、硬件 DIY、GPU 驱动修改等技术干货。
+- **[个人项目](https://kannmu.top/archive/?tag=Personal-Project)**:
+  - **CalcFlow**: 基于流程图的数学计算工具。
+  - **GenPlant**: 参数化植物生成系统。
+  - **Magnetic Light**: 磁吸交互灯光项目。
+- **[作品集](https://kannmu.top/archive/?tag=Profolios)**: 摄影作品（建筑、艺术、生物）与机械/硬件设计展示。
 
-### Development (Build From Source)
+---
 
-To modify the theme, you will need [Grunt](https://gruntjs.com/). There are numbers of tasks you can find in the `Gruntfile.js`, includes minifing JavaScript, compiling `.less` to `.css`, adding banners to keep the Apache 2.0 license intact, watching for changes, etc. 
+## 🛠️ 项目结构
 
-Yes, they were inherited and are extremely old-fashioned. There is no modularization and transpilation, etc.
+本项目基于 [Jekyll](https://jekyllrb.com/) 构建，使用了高度定制化的 Hux 模板。
 
-Critical Jekyll-related code are located in `_include/` and `_layouts/`. Most of them are [Liquid](https://github.com/Shopify/liquid/wiki) templates.
+- `docs/`: 博客的核心源代码。
+  - `_posts/`: 所有的博客文章 (Markdown)。
+  - `_config.yml`: 网站配置文件。
+  - `img/`: 网站引用的所有静态图片资源。
+  - `CalcFlow/` & `GenPlant/`: 独立的子项目页面。
+- `README.md`: 你当前看到的文档。
 
-This theme uses the default code syntax highlighter of jekyll, [Rouge](http://rouge.jneen.net/), which is compatible with Pygments theme so just pick any pygments theme css (e.g. from [here](http://jwarby.github.io/jekyll-pygments-themes/languages/javascript.html) and replace the content of `highlight.less`.
+---
 
+## 🚀 快速开始
 
-### Interesting to know more? Checkout the [full user manual](_doc/Manual.md)!
+如果你想在本地运行这个博客：
 
+1. **安装环境**: 确保已安装 Ruby 和 Bundler。
+2. **安装依赖**:
 
-Other Resources
----------------
+   ```bash
+   cd docs
+   bundle install
+   ```
 
-Ports
-- [**Hexo**](https://github.com/Kaijun/hexo-theme-huxblog) by @kaijun
-- [**React-SSR**](https://github.com/LucasIcarus/huxpro.github.io/tree/ssr) by @LucasIcarus
+3. **启动预览**:
 
-[Starter/Boilerplate](https://github.com/huxpro/huxblog-boilerplate)
-- Out of date. Helps wanted for updating it on par with the main repo
+   ```bash
+   bundle exec jekyll serve
+   ```
 
-Translation
-- [🇨🇳  中文文档（有点过时）](https://github.com/Huxpro/huxpro.github.io/blob/master/_doc/README.zh.md)
+   然后访问 `http://localhost:4000`。
 
+---
 
-License
--------
+## 📬 联系我
+
+- **Email**: <Kannmu@163.com>
+- **知乎**: [sk4-project](https://www.zhihu.com/people/sk4-project)
+- **LinkedIn**: [林涵-范](https://www.linkedin.com/in/%E6%9E%97%E6%B6%B5-%E8%8C%83-578a47279)
+- **GitHub**: [@Kannmu](https://github.com/Kannmu)
+
+---
+
+## 📄 License
 
 Apache License 2.0.
-Copyright (c) 2015-present Huxpro
-
-Hux Blog is derived from [Clean Blog Jekyll Theme (MIT License)](https://github.com/BlackrockDigital/startbootstrap-clean-blog-jekyll/)
-Copyright (c) 2013-2016 Blackrock Digital LLC.
+Copyright (c) 2023-present Kannmu.
+Derived from [Hux Blog](https://github.com/Huxpro/huxpro.github.io).
