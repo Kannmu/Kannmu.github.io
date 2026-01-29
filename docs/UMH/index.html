@@ -8,8 +8,8 @@
     <meta name="description"
         content="High-precision acoustic radiation pressure for next-generation haptic interfaces.">
 
-    <link rel="shortcut icon" href="/img/favicon.ico">
-    <link rel="icon" href="/img/favicon.ico">
+    <!-- Favicon - Inline SVG -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%230A0A0F' stroke='%234ade80' stroke-width='3'/%3E%3Ccircle cx='50' cy='50' r='20' fill='%234ade80'/%3E%3Ccircle cx='50' cy='50' r='8' fill='%230A0A0F'/%3E%3C/svg%3E">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,6 +20,29 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com/3.4.1" data-cfasync="false"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pure-black': '#0A0A0F',
+                        'dark-gray': '#0f0f15',
+                        'charcoal': '#1a1a24',
+                        'deep-green': '#1a3d1a',
+                        'forest': '#2d5a2d',
+                        'emerald': '#3d7a3d',
+                        'bright-green': '#4ade80',
+                        'off-white': '#E5E5E5',
+                        'muted': '#D4D4D8',
+                    },
+                    fontFamily: {
+                        'space': ['Space Grotesk', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -39,8 +62,8 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #000000;
-            color: #f5f5f5;
+            background-color: #0A0A0F;
+            color: #E5E5E5;
             overflow-x: hidden;
             line-height: 1.6;
         }
@@ -50,7 +73,7 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #000000;
+            background: #0A0A0F;
         }
 
         ::-webkit-scrollbar-thumb {
@@ -59,77 +82,157 @@
         }
 
         .card {
-            background: #0a0a0a;
-            border: 1px solid #1a3d1a;
+            background: #0f0f15;
+            border: 1px solid rgba(45, 90, 45, 0.2);
             transition: all 0.3s ease;
         }
 
         .card:hover {
             border-color: #3d7a3d;
-            background: #141414;
+            background: #14141d;
         }
 
         .btn-primary {
-            background: #2d5a2d;
-            color: #f5f5f5;
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #2d5a2d 0%, #3d7a3d 100%);
+            color: #E5E5E5;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(45, 90, 45, 0.3);
+            border: 1px solid rgba(74, 222, 128, 0.2);
         }
 
         .btn-primary:hover {
-            background: #3d7a3d;
+            background: linear-gradient(135deg, #3d7a3d 0%, #4ade80 100%);
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 222, 128, 0.4);
         }
 
         .btn-secondary {
             background: transparent;
-            border: 1px solid #2d5a2d;
-            color: #f5f5f5;
+            color: #D4D4D8;
             transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .btn-secondary:hover {
-            background: #1a3d1a;
-            border-color: #3d7a3d;
+            color: #4ade80;
         }
 
+        .btn-secondary i {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-secondary:hover i {
+            transform: translateX(4px);
+        }
+
+        /* Form Input Optimization */
         .form-input {
-            background: #0a0a0a;
-            border: 1px solid #1a3d1a;
-            color: #f5f5f5;
+            background: #1a1a24;
+            border: 1px solid #33333f;
+            color: #E5E5E5;
             transition: all 0.3s ease;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #3d7a3d;
-            background: #141414;
+            border-color: #4ade80;
+            background: #1f1f2d;
+            box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2);
         }
 
         .form-input::placeholder {
-            color: #525252;
+            color: #71717a;
         }
 
-        .nav-link {
-            color: #a3a3a3;
-            transition: color 0.3s ease;
-        }
-
-        .nav-link:hover {
-            color: #4ade80;
-        }
-
+        /* Language Button */
         .lang-btn {
-            color: #525252;
+            color: #71717a;
             transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .lang-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #4ade80;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .lang-btn.active::after,
+        .lang-btn:hover::after {
+            width: 100%;
         }
 
         .lang-btn.active {
             color: #4ade80;
-            border-bottom: 2px solid #4ade80;
+            font-weight: 600;
         }
 
         .lang-btn:hover {
-            color: #a3a3a3;
+            color: #E5E5E5;
+        }
+
+        /* Sticky Header Button */
+        #sticky-cta {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        #sticky-cta.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        /* Academic Badge */
+        .academic-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: rgba(26, 61, 26, 0.3);
+            border: 1px solid rgba(45, 90, 45, 0.5);
+            border-radius: 99px;
+            margin-bottom: 2rem;
+        }
+
+        .academic-badge img {
+            height: 20px;
+            filter: brightness(0) invert(1);
+        }
+
+        .academic-badge span {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            color: #D4D4D8;
+        }
+
+        /* Wave Glow */
+        .wave-glow {
+            filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.6));
+        }
+
+        /* Section Spacing - 8pt Grid */
+        section {
+            padding-top: 120px;
+            padding-bottom: 120px;
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding-top: 80px;
+                padding-bottom: 80px;
+            }
         }
 
         .section-divider {
@@ -138,7 +241,7 @@
         }
 
         .icon-box {
-            background: #141414;
+            background: #14141d;
             border: 1px solid #1a3d1a;
             display: flex;
             align-items: center;
@@ -146,7 +249,7 @@
         }
 
         .formula-box {
-            background: #0a0a0a;
+            background: #0f0f15;
             border: 1px solid #1a3d1a;
         }
 
@@ -172,7 +275,7 @@
         }
 
         footer {
-            background: #0a0a0a;
+            background: #0f0f15;
             border-top: 1px solid #1a3d1a;
         }
 
@@ -187,12 +290,13 @@
             height: 100%;
             overflow: hidden;
             z-index: 0;
+            background: radial-gradient(circle at 50% 50%, #0f0f15 0%, #0A0A0F 100%);
         }
 
         .wave-particle {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(74, 222, 128, 0.25) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(74, 222, 128, 0.2) 0%, transparent 70%);
             animation: float-wave 15s ease-in-out infinite;
             filter: blur(30px);
             will-change: transform, opacity;
@@ -203,22 +307,22 @@
             0%,
             100% {
                 transform: translate(0, 0) scale(1);
-                opacity: 0.4;
+                opacity: 0.3;
             }
 
             25% {
                 transform: translate(50px, -50px) scale(1.2);
-                opacity: 0.7;
+                opacity: 0.5;
             }
 
             50% {
                 transform: translate(-30px, 30px) scale(0.8);
-                opacity: 0.4;
+                opacity: 0.3;
             }
 
             75% {
                 transform: translate(-50px, -30px) scale(1.1);
-                opacity: 0.6;
+                opacity: 0.4;
             }
         }
 
@@ -228,9 +332,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5l25 15v30l-25 15-25-15V20z' fill='none' stroke='rgba(74, 222, 128, 0.15)' stroke-width='0.5'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5l25 15v30l-25 15-25-15V20z' fill='none' stroke='rgba(74, 222, 128, 0.1)' stroke-width='0.5'/%3E%3C/svg%3E");
             background-size: 60px 60px;
-            opacity: 0.4;
+            opacity: 0.3;
             animation: pulse-grid 10s ease-in-out infinite;
         }
 
@@ -238,18 +342,18 @@
 
             0%,
             100% {
-                opacity: 0.3;
+                opacity: 0.2;
             }
 
             50% {
-                opacity: 0.6;
+                opacity: 0.4;
             }
         }
 
         .acoustic-beam {
             position: absolute;
             width: 3px;
-            background: linear-gradient(180deg, transparent, rgba(74, 222, 128, 0.4), transparent);
+            background: linear-gradient(180deg, transparent, rgba(74, 222, 128, 0.3), transparent);
             animation: beam-sweep 12s ease-in-out infinite;
             transform-origin: top center;
             opacity: 0;
@@ -265,16 +369,16 @@
             }
 
             20% {
-                opacity: 0.5;
+                opacity: 0.4;
             }
 
             50% {
                 transform: rotate(35deg);
-                opacity: 0.7;
+                opacity: 0.5;
             }
 
             80% {
-                opacity: 0.5;
+                opacity: 0.4;
             }
         }
 
@@ -311,8 +415,15 @@
             z-index: 10;
         }
 
+        .transducer.locked {
+            box-shadow: 0 0 25px rgba(74, 222, 128, 1), 0 0 50px rgba(74, 222, 128, 0.6);
+            border-width: 2px;
+            transform: scale(1.3);
+            z-index: 10;
+        }
+
         .transducer.center {
-            background: radial-gradient(circle at 30% 30%, #f5f5f5, #4ade80);
+            background: radial-gradient(circle at 30% 30%, #E5E5E5, #4ade80);
             box-shadow: 0 0 15px rgba(74, 222, 128, 0.6), 0 0 30px rgba(74, 222, 128, 0.3);
         }
 
@@ -353,15 +464,185 @@
             }
         }
 
+        @keyframes lm-move-alt {
+            0% { left: 0%; }
+            100% { left: 100%; }
+        }
+
+        .animate-lm-move {
+            animation: lm-move-alt 2s linear infinite;
+        }
+
+        .animate-spin-slow {
+            animation: spin 8s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         .wave-animation {
             animation: wave-expand 1.5s ease-out forwards;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            border-bottom: 1px dashed #4ade80;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: #1a1a24;
+            color: #E5E5E5;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px 12px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.75rem;
+            line-height: 1.4;
+            border: 1px solid #3d7a3d;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            pointer-events: none;
+            transform: translateY(10px);
+        }
+
+        .tooltip .tooltiptext::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: #3d7a3d transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Page Loader */
+        .page-loader {
+            position: fixed;
+            inset: 0;
+            background: #0A0A0F;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-ring {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(74, 222, 128, 0.1);
+            border-top-color: #4ade80;
+            border-radius: 50%;
+            animation: loader-spin 1s linear infinite;
+        }
+
+        @keyframes loader-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Enhanced Card Hover */
+        .card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.03), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        /* Form Validation Styles */
+        .form-input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+        }
+
+        .form-input.success {
+            border-color: #4ade80;
+            box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2);
+        }
+
+        .form-error {
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            opacity: 0;
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+        }
+
+        .form-error.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mode Card Enhanced */
+        .mode-card {
+            position: relative;
+        }
+
+        .mode-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, transparent, rgba(74, 222, 128, 0.2), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mode-card:hover::after {
+            opacity: 1;
         }
 
         /* ============================================
            VIRTUAL TOUCH DEMO - WAVE INTERFERENCE
            ============================================ */
         .demo-area {
-            background: #0a0a0a;
+            background: #0A0A0F;
             border: 1px solid #1a3d1a;
             position: relative;
             overflow: hidden;
@@ -376,8 +657,8 @@
            STIMULATION MODES
            ============================================ */
         .mode-card {
-            background: #0a0a0a;
-            border: 1px solid #1a3d1a;
+            background: #0f0f15;
+            border: 1px solid rgba(45, 90, 45, 0.2);
             transition: all 0.3s ease;
             overflow: hidden;
         }
@@ -389,7 +670,7 @@
 
         .mode-visualization {
             height: 120px;
-            background: #000;
+            background: #0A0A0F;
             position: relative;
             overflow: hidden;
         }
@@ -507,13 +788,18 @@
 </head>
 
 <body>
+    <!-- Page Loader -->
+    <div id="page-loader" class="page-loader">
+        <div class="loader-ring"></div>
+    </div>
+
     <!-- Navigation -->
     <nav id="navbar" class="fixed top-0 left-0 w-full z-50 bg-black/90 backdrop-blur-sm border-b border-deep-green/30">
         <div class="max-w-7xl mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <a href="#hero" class="font-space text-2xl font-bold text-off-white">UMH</a>
 
-                <div class="hidden md:flex items-center gap-8">
+                <div id="nav-links" class="hidden md:flex items-center gap-8">
                     <a href="#product" class="nav-link text-sm" data-i18n="nav.product">Product</a>
                     <a href="#modes" class="nav-link text-sm" data-i18n="nav.modes">Modes</a>
                     <a href="#technology" class="nav-link text-sm" data-i18n="nav.technology">Technology</a>
@@ -521,10 +807,43 @@
                     <a href="#contact" class="nav-link text-sm" data-i18n="nav.contact">Contact</a>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <button class="lang-btn active px-2 py-1 text-sm" data-lang="en">EN</button>
-                    <button class="lang-btn px-2 py-1 text-sm" data-lang="zh">中</button>
-                    <button class="lang-btn px-2 py-1 text-sm" data-lang="ja">日</button>
+                <!-- Mobile Menu -->
+                <div id="mobile-menu" class="fixed inset-0 top-[60px] bg-black/95 backdrop-blur-lg z-40 transform translate-x-full transition-transform duration-300 md:hidden">
+                    <div class="flex flex-col items-center justify-center h-full gap-8 p-6">
+                        <a href="#product" class="mobile-nav-link text-2xl font-space font-bold text-off-white hover:text-bright-green transition-colors" data-i18n="nav.product">Product</a>
+                        <a href="#modes" class="mobile-nav-link text-2xl font-space font-bold text-off-white hover:text-bright-green transition-colors" data-i18n="nav.modes">Modes</a>
+                        <a href="#technology" class="mobile-nav-link text-2xl font-space font-bold text-off-white hover:text-bright-green transition-colors" data-i18n="nav.technology">Technology</a>
+                        <a href="#usecases" class="mobile-nav-link text-2xl font-space font-bold text-off-white hover:text-bright-green transition-colors" data-i18n="nav.usecases">Use Cases</a>
+                        <a href="#contact" class="mobile-nav-link text-2xl font-space font-bold text-off-white hover:text-bright-green transition-colors" data-i18n="nav.contact">Contact</a>
+
+                        <div class="flex items-center gap-4 mt-8 pt-8 border-t border-deep-green/30">
+                            <button class="lang-btn active px-4 py-2 text-lg" data-lang="en">EN</button>
+                            <button class="lang-btn px-4 py-2 text-lg" data-lang="zh">中</button>
+                            <button class="lang-btn px-4 py-2 text-lg" data-lang="ja">日</button>
+                        </div>
+
+                        <a href="#contact" class="btn-primary px-8 py-4 rounded-xl font-bold text-lg mt-4" data-i18n="hero.cta1">
+                            Request Dev Kit
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden flex flex-col gap-1.5 p-2" aria-label="Toggle menu">
+                    <span class="w-6 h-0.5 bg-off-white transition-all duration-300"></span>
+                    <span class="w-6 h-0.5 bg-off-white transition-all duration-300"></span>
+                    <span class="w-4 h-0.5 bg-off-white transition-all duration-300"></span>
+                </button>
+
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="#contact" id="sticky-cta" class="hidden lg:flex btn-primary px-4 py-2 rounded-lg text-sm font-semibold" data-i18n="hero.cta1">
+                        Join Waitlist
+                    </a>
+                    <div class="flex items-center gap-3">
+                        <button class="lang-btn active px-2 py-1 text-sm" data-lang="en">EN</button>
+                        <button class="lang-btn px-2 py-1 text-sm" data-lang="zh">中</button>
+                        <button class="lang-btn px-2 py-1 text-sm" data-lang="ja">日</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -553,31 +872,32 @@
         </div>
 
         <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
-            <div class="mb-6">
-                <span
-                    class="inline-block px-4 py-2 bg-deep-green/30 border border-forest rounded-full text-xs font-medium text-bright-green tracking-wider uppercase"
-                    data-i18n="hero.badge">
-                    Next-Generation Haptic Technology
-                </span>
+            <div class="academic-badge fade-in">
+                <img src="img/SEU.svg" alt="Southeast University Logo">
+                <span data-i18n="hero.academic">Niu Lab @ Southeast University</span>
             </div>
 
-            <h1 class="hero-title font-space text-5xl md:text-7xl font-bold text-off-white mb-6">
-                Touch the Intangible
+            <h1 class="hero-title font-space text-5xl md:text-8xl font-bold text-off-white mb-6 leading-tight">
+                Touch the <span class="text-bright-green">Intangible</span>
             </h1>
 
-            <p class="text-lg md:text-xl text-muted max-w-2xl mx-auto mb-10" data-i18n="hero.subtitle">
+            <p class="text-xl md:text-2xl text-off-white font-medium max-w-2xl mx-auto mb-4" data-i18n="hero.value">
+                Feel virtual objects in thin air
+            </p>
+            
+            <p class="text-lg text-muted max-w-2xl mx-auto mb-10" data-i18n="hero.subtitle">
                 High-precision acoustic radiation pressure for next-generation haptic interfaces. Experience tactile
                 feedback without physical contact.
             </p>
 
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#contact" class="btn-primary px-8 py-4 rounded-lg font-semibold text-center"
+            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <a href="#contact" class="btn-primary px-10 py-4 rounded-xl font-bold text-lg min-w-[200px] text-center"
                     data-i18n="hero.cta1">
-                    Request Allocation
+                    Request Dev Kit
                 </a>
-                <a href="#product" class="btn-secondary px-8 py-4 rounded-lg font-semibold text-center"
+                <a href="#product" class="btn-secondary font-semibold text-lg group"
                     data-i18n="hero.cta2">
-                    <i class="fas fa-file-lines mr-2"></i>Technical Specifications
+                    View Technical Specs <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                 </a>
             </div>
         </div>
@@ -593,29 +913,89 @@
                     data-i18n="product.badge">The Dev Kit</span>
                 <h2 class="font-space text-4xl md:text-5xl font-bold text-off-white mt-4 mb-6"
                     data-i18n="product.title">Technical Specifications</h2>
-                <p class="text-muted max-w-2xl mx-auto" data-i18n="product.description">
+                <p class="text-muted max-w-2xl mx-auto mb-4" data-i18n="product.description">
                     61-element ultrasonic phased array generating precise acoustic radiation pressure in mid-air.
                 </p>
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-bright-green/10 rounded-full border border-bright-green/20">
+                    <i class="fas fa-microchip text-[10px] text-bright-green"></i>
+                    <span class="text-[10px] font-bold text-bright-green uppercase tracking-widest">Enables 4 Stimulation Modes</span>
+                </div>
             </div>
 
             <!-- Phased Array Visualization -->
             <div class="mb-16 fade-in">
-                <div class="card rounded-xl p-6 md:p-8">
-                    <h3 class="font-space text-xl font-bold text-off-white mb-2 text-center">61-Element Hexagonal Phased
-                        Array</h3>
-                    <p class="text-muted text-sm text-center mb-6">Click or hover over transducers to see wave
-                        propagation</p>
-                    <div class="phased-array-container" id="phased-array">
-                        <!-- Transducers generated by JS -->
-                    </div>
-                    <div class="flex justify-center gap-8 mt-4 text-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-bright-green"></div>
-                            <span class="text-muted">Transducer</span>
+                <div class="card rounded-2xl p-6 md:p-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                        <!-- Array Visualization (Left) -->
+                        <div class="lg:col-span-7 flex flex-col items-center">
+                            <h3 class="font-space text-2xl font-bold text-off-white mb-2 text-center">61-Element Hexagonal Phased Array</h3>
+                            <p class="text-muted text-sm text-center mb-8" data-i18n="product.array.hint">Click or hover over transducers to see wave propagation</p>
+                            
+                            <div class="phased-array-container" id="phased-array">
+                                <!-- Transducers generated by JS -->
+                            </div>
+                            
+                            <div class="flex justify-center gap-8 mt-10 text-xs">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-bright-green"></div>
+                                    <span class="text-muted">Transducer</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-off-white border border-bright-green"></div>
+                                    <span class="text-muted">Center</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-off-white border border-bright-green"></div>
-                            <span class="text-muted">Center</span>
+
+                        <!-- Telemetry Panel (Right) -->
+                        <div class="lg:col-span-5 bg-black/40 rounded-2xl border border-deep-green/30 p-8 flex flex-col h-full min-h-[400px]">
+                            <div class="flex items-center justify-between border-b border-deep-green/20 pb-6 mb-8">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-2 rounded-full bg-bright-green animate-pulse"></div>
+                                    <span class="text-xs font-mono text-bright-green uppercase tracking-[0.2em] font-bold">Live Telemetry</span>
+                                </div>
+                                <span class="text-[10px] font-mono text-gray-600">ID: UMH-REV2-61</span>
+                            </div>
+
+                            <div class="space-y-10 flex-1">
+                                <!-- Active Channel -->
+                                <div>
+                                    <label class="text-xs font-mono text-gray-500 uppercase tracking-widest block mb-3">Active Channel</label>
+                                    <div class="text-6xl font-space font-bold text-off-white tracking-tighter bg-off-white/5 p-4 rounded-xl border border-off-white/10" id="active-channel">CH_--</div>
+                                </div>
+
+                                <!-- Phase Shift -->
+                                <div>
+                                    <label class="text-xs font-mono text-gray-500 uppercase tracking-widest block mb-3">Phase Shift (Δφ)</label>
+                                    <div class="flex items-baseline gap-2 bg-bright-green/5 p-4 rounded-xl border border-bright-green/10">
+                                        <div class="text-8xl font-space font-bold text-bright-green tracking-tighter" id="active-phase">0.0</div>
+                                        <div class="text-3xl font-space font-bold text-bright-green/50">°</div>
+                                    </div>
+                                </div>
+
+                                <!-- Progress Bar / Intensity -->
+                                <div>
+                                    <label class="text-xs font-mono text-gray-500 uppercase tracking-widest block mb-3">Signal Intensity</label>
+                                    <div class="text-6xl font-space font-bold text-bright-green tracking-tighter mb-4" id="intensity-val">0%</div>
+                                    <div class="w-full h-2 bg-deep-green/20 rounded-full overflow-hidden">
+                                        <div id="intensity-bar" class="h-full bg-gradient-to-r from-forest to-bright-green transition-all duration-500 ease-out" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hardware Context Footer -->
+                            <div class="mt-8 pt-8 border-t border-deep-green/20 grid grid-cols-2 gap-6">
+                                <div>
+                                    <span class="text-[9px] font-mono text-gray-600 uppercase block mb-1">Carrier</span>
+                                    <span class="text-sm font-bold text-off-white/80">40.00 kHz</span>
+                                </div>
+                                <div>
+                                    <span class="text-[9px] font-mono text-gray-600 uppercase block mb-1">Status</span>
+                                    <span class="text-sm font-bold text-bright-green/80 flex items-center gap-1">
+                                        <i class="fas fa-circle text-[8px] animate-pulse"></i> ONLINE
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -624,66 +1004,120 @@
             <!-- Specs Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Spec Card 1 -->
-                <div class="card rounded-xl p-8 fade-in">
-                    <div class="icon-box w-14 h-14 rounded-lg mb-6">
+                <div class="card rounded-2xl p-8 fade-in group">
+                    <div class="icon-box w-14 h-14 rounded-xl mb-6 group-hover:scale-110 transition-transform">
                         <i class="fas fa-wave-square text-2xl text-bright-green"></i>
                     </div>
                     <h3 class="font-space text-3xl font-bold text-off-white mb-2">40<span
                             class="text-lg text-muted">kHz</span></h3>
-                    <p class="text-muted text-sm" data-i18n="product.spec1">Carrier Frequency</p>
-                    <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec1detail">Ultrasonic wave generation</p>
+                    <p class="text-muted text-sm" data-i18n="product.spec1">Ultrasonic Carrier</p>
+                    <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec1detail">Precision wave generation</p>
                 </div>
 
                 <!-- Spec Card 2 -->
-                <div class="card rounded-xl p-8 fade-in">
-                    <div class="icon-box w-14 h-14 rounded-lg mb-6">
-                        <i class="fas fa-signal text-2xl text-bright-green"></i>
-                    </div>
-                    <h3 class="font-space text-3xl font-bold text-off-white mb-2">200<span
-                            class="text-lg text-muted">Hz</span></h3>
-                    <p class="text-muted text-sm" data-i18n="product.spec2">Modulation Frequency</p>
-                    <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec2detail">Optimal haptic perception</p>
-                </div>
-
-                <!-- Spec Card 3 -->
-                <div class="card rounded-xl p-8 fade-in">
-                    <div class="icon-box w-14 h-14 rounded-lg mb-6">
+                <div class="card rounded-2xl p-8 fade-in group">
+                    <div class="icon-box w-14 h-14 rounded-xl mb-6 group-hover:scale-110 transition-transform">
                         <i class="fas fa-microchip text-2xl text-bright-green"></i>
                     </div>
-                    <h3 class="font-space text-3xl font-bold text-off-white mb-2">61</h3>
-                    <p class="text-muted text-sm" data-i18n="product.spec3">Transducer Channels</p>
-                    <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec3detail">Hexagonal phased array</p>
-                </div>
-
-                <!-- Spec Card 4 -->
-                <div class="card rounded-xl p-8 fade-in">
-                    <div class="icon-box w-14 h-14 rounded-lg mb-6">
-                        <i class="fas fa-memory text-2xl text-bright-green"></i>
-                    </div>
-                    <h3 class="font-space text-2xl font-bold text-off-white mb-2">STM32H750</h3>
-                    <p class="text-muted text-sm" data-i18n="product.spec4">ARM Cortex-M7</p>
+                    <h3 class="font-space text-3xl font-bold text-off-white mb-2">Cortex-M7</h3>
+                    <p class="text-muted text-sm" data-i18n="product.spec4">High-Speed Processing</p>
                     <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec4detail">480MHz real-time control</p>
                 </div>
 
-                <!-- Spec Card 5 -->
-                <div class="card rounded-xl p-8 fade-in">
-                    <div class="icon-box w-14 h-14 rounded-lg mb-6">
+                <!-- Spec Card 3 -->
+                <div class="card rounded-2xl p-8 fade-in group">
+                    <div class="icon-box w-14 h-14 rounded-xl mb-6 group-hover:scale-110 transition-transform">
                         <i class="fas fa-bolt text-2xl text-bright-green"></i>
                     </div>
-                    <h3 class="font-space text-3xl font-bold text-off-white mb-2">3000<span
-                            class="text-lg text-muted">Hz</span></h3>
-                    <p class="text-muted text-sm" data-i18n="product.spec5">Control Loop</p>
-                    <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec5detail">DMA-driven precision</p>
+                    <h3 class="font-space text-3xl font-bold text-off-white mb-2">0.33<span
+                            class="text-lg text-muted">ms</span></h3>
+                    <p class="text-muted text-sm" data-i18n="product.spec5">Ultra-Low Latency</p>
+                    <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec5detail">3000Hz synchronization loop</p>
+                </div>
+            </div>
+
+            <!-- Full Specs Section (Hidden by default) -->
+            <div id="full-specs-container" class="max-h-0 overflow-hidden transition-all duration-700 ease-in-out opacity-0 mt-0">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6 border-t border-deep-green/20 mt-6">
+                    <!-- Additional Spec Card 1 -->
+                    <div class="card rounded-2xl p-8 group">
+                        <div class="icon-box w-14 h-14 rounded-xl mb-6">
+                            <i class="fas fa-signal text-2xl text-bright-green"></i>
+                        </div>
+                        <h3 class="font-space text-3xl font-bold text-off-white mb-2">200<span class="text-lg text-muted">Hz</span></h3>
+                        <p class="text-muted text-sm" data-i18n="product.spec2">Modulation Freq</p>
+                        <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec2detail">Optimal haptic perception</p>
+                    </div>
+                    <!-- Additional Spec Card 2 -->
+                    <div class="card rounded-2xl p-8 group">
+                        <div class="icon-box w-14 h-14 rounded-xl mb-6">
+                            <i class="fas fa-plug text-2xl text-bright-green"></i>
+                        </div>
+                        <h3 class="font-space text-3xl font-bold text-off-white mb-2">USB CDC</h3>
+                        <p class="text-muted text-sm" data-i18n="product.spec6">Virtual Serial</p>
+                        <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec6detail">High-speed communication</p>
+                    </div>
+                    <!-- Additional Spec Card 3 -->
+                    <div class="card rounded-2xl p-8 group">
+                        <div class="icon-box w-14 h-14 rounded-xl mb-6">
+                            <i class="fas fa-microchip text-2xl text-bright-green"></i>
+                        </div>
+                        <h3 class="font-space text-3xl font-bold text-off-white mb-2">61 CH</h3>
+                        <p class="text-muted text-sm" data-i18n="product.spec3">Transducer Channels</p>
+                        <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec3detail">Phased array control</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center">
+                <button id="view-full-specs" class="btn-secondary text-sm group" data-i18n="product.viewall">
+                    <span>View Full Technical Specifications</span>
+                    <i class="fas fa-chevron-down ml-2 transition-transform duration-300 group-[.active]:rotate-180"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Publications Section (Moved up for better trust) -->
+    <section id="publications" class="py-24 px-6 bg-dark-gray/10">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 fade-in">
+                <div>
+                    <span class="text-bright-green text-sm font-medium tracking-wider uppercase">Academic Excellence</span>
+                    <h2 class="font-space text-4xl md:text-5xl font-bold text-off-white mt-4">Selected Publications</h2>
+                </div>
+                <p class="text-muted max-w-sm mt-4 md:mt-0">Our technology is backed by rigorous academic research from Southeast University.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Publication 1 -->
+                <div class="p-8 rounded-2xl border border-deep-green/20 bg-black/40 hover:border-bright-green/30 transition-colors fade-in">
+                    <div class="flex gap-4 mb-6">
+                        <span class="px-2 py-1 rounded bg-deep-green/30 text-[10px] font-bold text-bright-green uppercase">Nature Communications</span>
+                        <span class="px-2 py-1 rounded bg-white/5 text-[10px] font-bold text-muted uppercase">2025</span>
+                    </div>
+                    <h3 class="font-space text-xl font-bold text-off-white mb-4 leading-snug">[Forthcoming] High-Fidelity Mid-Air Haptic Synthesis via Optimized Acoustic Radiation Pressure</h3>
+                    <p class="text-sm text-gray-500 mb-6 italic">L. Fan, Y. Niu, et al.</p>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs text-muted flex items-center gap-1 opacity-50 cursor-not-allowed">
+                            <i class="fas fa-file-pdf"></i> PDF coming soon
+                        </span>
+                    </div>
                 </div>
 
-                <!-- Spec Card 6 - Fixed USB Icon -->
-                <div class="card rounded-xl p-8 fade-in">
-                    <div class="icon-box w-14 h-14 rounded-lg mb-6">
-                        <i class="fas fa-plug text-2xl text-bright-green"></i>
+                <!-- Publication 2 -->
+                <div class="p-8 rounded-2xl border border-deep-green/20 bg-black/40 hover:border-bright-green/30 transition-colors fade-in">
+                    <div class="flex gap-4 mb-6">
+                        <span class="px-2 py-1 rounded bg-deep-green/30 text-[10px] font-bold text-bright-green uppercase">IEEE World Haptics</span>
+                        <span class="px-2 py-1 rounded bg-white/5 text-[10px] font-bold text-muted uppercase">2024</span>
                     </div>
-                    <h3 class="font-space text-2xl font-bold text-off-white mb-2">USB CDC</h3>
-                    <p class="text-muted text-sm" data-i18n="product.spec6">Virtual Serial</p>
-                    <p class="text-xs text-gray-600 mt-2" data-i18n="product.spec6detail">High-speed communication</p>
+                    <h3 class="font-space text-xl font-bold text-off-white mb-4 leading-snug">Evaluation of Ultrasonic Phased Array Control Strategies for Real-Time Tactile Feedback</h3>
+                    <p class="text-sm text-gray-500 mb-6 italic">Y. Niu, L. Fan, et al.</p>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs text-muted flex items-center gap-1 opacity-50 cursor-not-allowed">
+                            <i class="fas fa-file-pdf"></i> PDF coming soon
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -704,66 +1138,119 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- AM Mode -->
-                <div class="mode-card rounded-xl fade-in">
-                    <div class="mode-visualization rounded-t-xl" id="am-viz">
+                <div class="mode-card rounded-2xl fade-in group">
+                    <div class="mode-visualization rounded-t-2xl" id="am-viz">
                         <div class="am-ripple"
                             style="width: 60px; height: 60px; top: 50%; left: 50%; margin: -30px 0 0 -30px;"></div>
                     </div>
                     <div class="p-6">
-                        <h3 class="font-space text-xl font-bold text-off-white mb-2">AM</h3>
-                        <p class="text-bright-green text-sm mb-2" data-i18n="modes.am.subtitle">Amplitude Modulation</p>
-                        <p class="text-muted text-sm" data-i18n="modes.am.desc">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-space text-xl font-bold text-off-white">AM</h3>
+                            <div class="w-8 h-8 rounded-full bg-bright-green/10 flex items-center justify-center">
+                                <i class="fas fa-wave-square text-xs text-bright-green"></i>
+                            </div>
+                        </div>
+                        <p class="text-bright-green text-sm mb-3 font-medium uppercase tracking-tighter" data-i18n="modes.am.subtitle">Amplitude Modulation</p>
+                        <p class="text-muted text-sm leading-relaxed mb-6" data-i18n="modes.am.desc">
                             200Hz amplitude modulation creates continuous tactile sensation at focal point.
                         </p>
+                        <div class="pt-4 border-t border-deep-green/20">
+                            <p class="text-[10px] text-gray-500 uppercase font-bold mb-2">Haptic Feel</p>
+                            <div class="flex gap-1 h-4 items-end">
+                                <div class="w-1 bg-bright-green/40 h-1/2 animate-pulse"></div>
+                                <div class="w-1 bg-bright-green/60 h-3/4 animate-pulse"></div>
+                                <div class="w-1 bg-bright-green h-full animate-pulse"></div>
+                                <div class="w-1 bg-bright-green/60 h-3/4 animate-pulse"></div>
+                                <div class="w-1 bg-bright-green/40 h-1/2 animate-pulse"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- LM Mode -->
-                <div class="mode-card rounded-xl fade-in">
-                    <div class="mode-visualization rounded-t-xl" id="lm-viz">
+                <div class="mode-card rounded-2xl fade-in group">
+                    <div class="mode-visualization rounded-t-2xl" id="lm-viz">
                         <div class="lm-dot" style="top: 50%; margin-top: -6px;"></div>
                         <div class="am-ripple"
                             style="width: 40px; height: 40px; top: 50%; left: 50%; margin: -20px 0 0 -20px; animation-duration: 0.5s;">
                         </div>
                     </div>
                     <div class="p-6">
-                        <h3 class="font-space text-xl font-bold text-off-white mb-2">LM</h3>
-                        <p class="text-bright-green text-sm mb-2" data-i18n="modes.lm.subtitle">Linear Motion</p>
-                        <p class="text-muted text-sm" data-i18n="modes.lm.desc">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-space text-xl font-bold text-off-white">LM</h3>
+                            <div class="w-8 h-8 rounded-full bg-bright-green/10 flex items-center justify-center">
+                                <i class="fas fa-arrows-left-right text-xs text-bright-green"></i>
+                            </div>
+                        </div>
+                        <p class="text-bright-green text-sm mb-3 font-medium uppercase tracking-tighter" data-i18n="modes.lm.subtitle">Linear Motion</p>
+                        <p class="text-muted text-sm leading-relaxed mb-6" data-i18n="modes.lm.desc">
                             Focal point moves along linear trajectory, creating sliding haptic sensation.
                         </p>
+                        <div class="pt-4 border-t border-deep-green/20">
+                            <p class="text-[10px] text-gray-500 uppercase font-bold mb-2">Haptic Feel</p>
+                            <div class="relative w-full h-1 bg-deep-green/30 rounded-full overflow-hidden">
+                                <div class="absolute inset-y-0 w-4 bg-bright-green blur-sm animate-lm-move"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- STM Mode -->
-                <div class="mode-card rounded-xl fade-in">
-                    <div class="mode-visualization rounded-t-xl" id="stm-viz">
+                <div class="mode-card rounded-2xl fade-in group">
+                    <div class="mode-visualization rounded-t-2xl" id="stm-viz">
                         <div class="stm-point" style="top: 50%; left: 50%; margin: -10px 0 0 -10px;"></div>
                     </div>
                     <div class="p-6">
-                        <h3 class="font-space text-xl font-bold text-off-white mb-2">STM</h3>
-                        <p class="text-bright-green text-sm mb-2" data-i18n="modes.stm.subtitle">Spatio-Temporal
-                            Modulation</p>
-                        <p class="text-muted text-sm" data-i18n="modes.stm.desc">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-space text-xl font-bold text-off-white">STM</h3>
+                            <div class="w-8 h-8 rounded-full bg-bright-green/10 flex items-center justify-center">
+                                <i class="fas fa-bullseye text-xs text-bright-green"></i>
+                            </div>
+                        </div>
+                        <p class="text-bright-green text-sm mb-3 font-medium uppercase tracking-tighter" data-i18n="modes.stm.subtitle">Spatio-Temporal Modulation</p>
+                        <p class="text-muted text-sm leading-relaxed mb-6" data-i18n="modes.stm.desc">
                             High-frequency spatial modulation creates sharp, localized tactile points.
                         </p>
+                        <div class="pt-4 border-t border-deep-green/20">
+                            <p class="text-[10px] text-gray-500 uppercase font-bold mb-2">Haptic Feel</p>
+                            <div class="flex gap-2">
+                                <div class="w-2 h-2 rounded-full bg-bright-green animate-ping"></div>
+                                <div class="w-2 h-2 rounded-full bg-bright-green animate-ping" style="animation-delay: 0.2s"></div>
+                                <div class="w-2 h-2 rounded-full bg-bright-green animate-ping" style="animation-delay: 0.4s"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- TwinTrap Mode -->
-                <div class="mode-card rounded-xl fade-in">
-                    <div class="mode-visualization rounded-t-xl" id="twin-viz">
+                <div class="mode-card rounded-2xl fade-in group">
+                    <div class="mode-visualization rounded-t-2xl" id="twin-viz">
                         <div class="twin-dot left" style="top: 50%; left: 40%; margin: -7px 0 0 -7px;"></div>
                         <div class="twin-dot right" style="top: 50%; left: 60%; margin: -7px 0 0 -7px;"></div>
                     </div>
                     <div class="p-6">
-                        <h3 class="font-space text-xl font-bold text-off-white mb-2">TwinTrap</h3>
-                        <p class="text-bright-green text-sm mb-2" data-i18n="modes.twin.subtitle">Dual Focus</p>
-                        <p class="text-muted text-sm" data-i18n="modes.twin.desc">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-space text-xl font-bold text-off-white">TwinTrap</h3>
+                                <span class="text-[8px] bg-bright-green/10 text-bright-green px-2 py-0.5 rounded-full font-bold">Uses: 61-CH Array</span>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-bright-green/10 flex items-center justify-center">
+                                <i class="fas fa-magnet text-xs text-bright-green"></i>
+                            </div>
+                        </div>
+                        <p class="text-bright-green text-sm mb-3 font-medium uppercase tracking-tighter" data-i18n="modes.twin.subtitle">Dual Focus</p>
+                        <p class="text-muted text-sm leading-relaxed mb-6" data-i18n="modes.twin.desc">
                             Two counter-propagating focal points create acoustic trapping for particle manipulation.
                         </p>
+                        <div class="pt-4 border-t border-deep-green/20">
+                            <p class="text-[10px] text-gray-500 uppercase font-bold mb-2">Haptic Feel</p>
+                            <div class="flex gap-4">
+                                <div class="w-3 h-3 border-2 border-bright-green rounded-full animate-pulse"></div>
+                                <div class="w-3 h-3 border-2 border-bright-green rounded-full animate-pulse"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -775,31 +1262,55 @@
     <!-- Virtual Touch Demo with Wave Interference -->
     <section class="py-24 px-6">
         <div class="max-w-7xl mx-auto">
-            <div class="card rounded-xl p-8 md:p-12 fade-in">
+            <div class="card rounded-2xl p-8 md:p-12 fade-in relative overflow-hidden">
                 <div class="flex flex-col lg:flex-row items-center gap-12">
                     <div class="flex-1">
-                        <h3 class="font-space text-2xl md:text-3xl font-bold text-off-white mb-4"
+                        <h3 class="font-space text-2xl md:text-4xl font-bold text-off-white mb-6"
                             data-i18n="demo.title">Virtual Touch Demo</h3>
-                        <p class="text-muted mb-4" data-i18n="demo.description">
-                            Click anywhere to see wave interference from multiple transducers. Waves constructively
-                            interfere at the focal point, creating acoustic radiation pressure.
+                        <p class="text-muted text-lg mb-8" data-i18n="demo.description">
+                            Experience the magic of phased array interference. Click or drag on the simulator to focus acoustic energy at a specific point.
                         </p>
-                        <div class="space-y-3 text-sm">
-                            <div class="flex items-center gap-3">
-                                <div class="w-4 h-4 rounded-full"
-                                    style="background: rgba(74, 222, 128, 0.3); border: 1px solid #4ade80;"></div>
-                                <span class="text-muted">Individual wave from transducer</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <div class="w-4 h-4 rounded-full"
-                                    style="background: radial-gradient(circle, #f5f5f5, #4ade80); box-shadow: 0 0 10px #4ade80;">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4 p-4 rounded-xl bg-deep-green/10 border border-deep-green/20 group hover:border-bright-green/30 transition-colors">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center bg-bright-green/20 group-hover:bg-bright-green/30 transition-colors">
+                                    <i class="fas fa-hand-pointer text-bright-green"></i>
                                 </div>
-                                <span class="text-muted">Constructive interference (focal point)</span>
+                                <div>
+                                    <p class="text-off-white font-medium text-sm">Interactive Focus</p>
+                                    <p class="text-muted text-xs">Click or drag to focus waves</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 p-4 rounded-xl bg-deep-green/10 border border-deep-green/20 group hover:border-bright-green/30 transition-colors">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center bg-bright-green/20 group-hover:bg-bright-green/30 transition-colors">
+                                    <i class="fas fa-expand-arrows-alt text-bright-green"></i>
+                                </div>
+                                <div>
+                                    <p class="text-off-white font-medium text-sm">TwinTrap Mode</p>
+                                    <p class="text-muted text-xs">Hold <kbd class="px-1.5 py-0.5 bg-black/50 rounded text-bright-green text-[10px] font-mono">Shift</kbd> + Click for dual focus</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="demo-area w-full lg:w-96 h-96 rounded-xl">
-                        <canvas id="wave-canvas" class="demo-canvas"></canvas>
+                    <div class="demo-area w-full lg:w-[500px] h-[500px] rounded-2xl group cursor-crosshair">
+                        <canvas id="wave-canvas" class="demo-canvas wave-glow"></canvas>
+                        
+                        <!-- Mode Indicator -->
+                        <div class="absolute top-6 left-6 z-10 flex items-center gap-2 px-3 py-1.5 bg-black/60 backdrop-blur-md border border-bright-green/30 rounded-full">
+                            <div class="w-2 h-2 rounded-full bg-bright-green animate-pulse"></div>
+                            <span id="demo-mode-label" class="text-[10px] font-mono font-bold text-bright-green uppercase tracking-widest">Mode: Interactive Focus</span>
+                        </div>
+
+                        <div id="demo-overlay" class="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:opacity-0 transition-opacity duration-500">
+                            <div class="text-center">
+                                <div class="w-16 h-16 rounded-full border-2 border-bright-green border-dashed animate-spin-slow mb-4 mx-auto flex items-center justify-center">
+                                    <i class="fas fa-mouse-pointer text-bright-green animate-bounce"></i>
+                                </div>
+                                <p class="text-bright-green font-space font-medium tracking-widest uppercase text-xs" data-i18n="demo.overlay">Click to feel the wave</p>
+                            </div>
+                        </div>
+                        <div id="phase-status" class="absolute bottom-6 left-6 right-6 p-3 bg-black/60 backdrop-blur-md border border-deep-green/30 rounded-lg text-[10px] font-mono text-bright-green opacity-0 transition-opacity">
+                            PHASE_SHIFT: <span id="phase-value">0.00</span> rad | TARGET_X: <span id="target-x">0</span> | TARGET_Y: <span id="target-y">0</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -818,31 +1329,66 @@
                     Phased Array Technology</h2>
             </div>
 
-            <!-- Formula Section -->
-            <div class="formula-box rounded-xl p-8 md:p-16 mb-16 fade-in">
-                <div class="text-center">
-                    <p class="text-muted mb-8" data-i18n="tech.formula.desc">Phase delay calculation for focal point
-                        generation</p>
-                    <div class="font-space text-2xl md:text-4xl lg:text-5xl font-bold text-off-white mb-8">
-                        Δφ = (2πf/c)(d<sub class="text-bright-green">focus</sub> - d<sub
-                            class="text-bright-green">i</sub>)
+            <!-- Interactive Formula Section -->
+            <div class="formula-box rounded-2xl p-8 md:p-16 mb-16 fade-in border-bright-green/20 bg-gradient-to-b from-dark-gray to-black">
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-8">
+                        <p class="text-muted mb-4">
+                            <span class="tooltip">
+                                Acoustic Radiation Pressure
+                                <span class="tooltiptext">声波集中产生的“声压”，能让你感受到虚拟触感</span>
+                            </span>
+                            calculation for focal point generation
+                        </p>
+                        
+                        <div id="formula-display" class="hidden transition-all duration-500 overflow-hidden">
+                            <div class="font-space text-3xl md:text-6xl font-bold text-off-white mb-12 tracking-tight">
+                                Δφ = <span class="text-bright-green">(2πf/c)</span>(d<sub class="text-bright-green opacity-50">focus</sub> - d<sub
+                                    class="text-bright-green opacity-50">i</sub>)
+                            </div>
+                        </div>
+
+                        <button id="toggle-math" class="btn-secondary text-xs mb-8">
+                            <i class="fas fa-calculator mr-2"></i> Show Math & Physics
+                        </button>
                     </div>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
-                        <div class="text-center">
-                            <div class="text-bright-green font-space text-xl font-bold">Δφ</div>
-                            <div class="text-xs text-muted mt-1" data-i18n="tech.formula.var1">Phase Delay</div>
+                    
+                    <div id="math-controls" class="hidden grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                        <div class="space-y-8">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-xs font-mono text-muted uppercase">Focus Distance (d)</label>
+                                    <span class="text-xs font-mono text-bright-green" id="dist-val">150mm</span>
+                                </div>
+                                <div class="relative pt-2">
+                                    <input type="range" id="dist-slider" min="0" max="350" value="150" class="w-full h-1 bg-deep-green rounded-lg appearance-none cursor-pointer accent-bright-green">
+                                    <div class="flex justify-between mt-2 px-1">
+                                        <span class="text-[8px] text-gray-600">0mm</span>
+                                        <span class="text-[8px] text-bright-green/60 font-bold">REC: 80-150mm</span>
+                                        <span class="text-[8px] text-gray-600">350mm</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-xs font-mono text-muted uppercase">Frequency (f)</label>
+                                    <span class="text-xs font-mono text-bright-green">40.0 kHz</span>
+                                </div>
+                                <input type="range" min="40" max="40" value="40" disabled class="w-full h-1 bg-deep-green/30 rounded-lg appearance-none cursor-not-allowed">
+                            </div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-bright-green font-space text-xl font-bold">f</div>
-                            <div class="text-xs text-muted mt-1" data-i18n="tech.formula.var2">Frequency</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-bright-green font-space text-xl font-bold">c</div>
-                            <div class="text-xs text-muted mt-1" data-i18n="tech.formula.var3">Speed of Sound</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-bright-green font-space text-xl font-bold">d</div>
-                            <div class="text-xs text-muted mt-1" data-i18n="tech.formula.var4">Distance</div>
+                        <div class="p-6 rounded-xl bg-black border border-deep-green/30 font-mono text-sm">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-muted">Calculated Phase Shift:</span>
+                                <span class="text-bright-green" id="calc-phase">1.24 rad</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-muted">Time Delay:</span>
+                                <span class="text-bright-green" id="calc-time">4.95 µs</span>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-deep-green/20 text-[10px] text-gray-500 italic">
+                                * Real-time calculation based on speed of sound (343m/s)
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -973,82 +1519,95 @@
     <!-- Lead Capture Section -->
     <section id="contact" class="py-24 px-6">
         <div class="max-w-4xl mx-auto">
-            <div class="card rounded-xl p-8 md:p-12">
+            <div class="card rounded-2xl p-8 md:p-12 border-bright-green/30 relative">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-bright-green text-black text-[10px] font-bold uppercase tracking-widest rounded-full">
+                    Limited Availability
+                </div>
+                
                 <div class="text-center mb-12 fade-in">
                     <span class="text-bright-green text-sm font-medium tracking-wider uppercase"
                         data-i18n="contact.badge">Priority Access</span>
                     <h2 class="font-space text-4xl md:text-5xl font-bold text-off-white mt-4 mb-6"
                         data-i18n="contact.title">Join the Waitlist</h2>
-                    <p class="text-muted" data-i18n="contact.subtitle">
-                        Be among the first to experience the future of haptic interfaces. Batch 1 allocation is limited.
+                    <p class="text-muted max-w-lg mx-auto mb-4" data-i18n="contact.subtitle">
+                        Get early access to our SDK and Batch 1 hardware. Join the next generation of touchless interaction.
                     </p>
+                    <div class="flex flex-wrap items-center justify-center gap-6 mt-8 opacity-60 grayscale hover:grayscale-0 transition-all">
+                        <span class="text-[10px] font-bold tracking-tighter">FCC COMPLIANT</span>
+                        <span class="text-[10px] font-bold tracking-tighter">CE CERTIFIED</span>
+                        <span class="text-[10px] font-bold tracking-tighter">ROHS READY</span>
+                        <span class="text-[10px] font-bold tracking-tighter">UL LISTED</span>
+                    </div>
                 </div>
 
-                <!-- Form -->
+                <!-- Step-based Form -->
                 <form id="lead-form" action="https://formspree.io/f/xbdongqp" method="POST" class="space-y-6 fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.name">Full Name
-                                *</label>
-                            <input type="text" name="name" required class="form-input w-full px-4 py-3 rounded-lg"
-                                placeholder="John Doe">
+                    <!-- Step 1: Basic Info -->
+                    <div id="form-step-1" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-field">
+                                <label class="block text-xs font-bold text-muted uppercase mb-2" data-i18n="contact.form.name">Full Name</label>
+                                <input type="text" name="name" required class="form-input w-full px-4 py-4 rounded-xl"
+                                    placeholder="John Doe">
+                                <span class="form-error"><i class="fas fa-exclamation-circle"></i> <span class="error-text"></span></span>
+                            </div>
+                            <div class="form-field">
+                                <label class="block text-xs font-bold text-muted uppercase mb-2" data-i18n="contact.form.email">Work Email</label>
+                                <input type="email" name="email" required class="form-input w-full px-4 py-4 rounded-xl"
+                                    placeholder="john@company.com">
+                                <span class="form-error"><i class="fas fa-exclamation-circle"></i> <span class="error-text"></span></span>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.email">Work Email
-                                *</label>
-                            <input type="email" name="email" required class="form-input w-full px-4 py-3 rounded-lg"
-                                placeholder="john@company.com">
-                        </div>
+                        <button type="button" onclick="nextStep()" class="btn-primary w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 group">
+                            <span>Continue to Project Details</span>
+                            <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </button>
                     </div>
 
-                    <div>
-                        <label class="block text-sm text-muted mb-2" data-i18n="contact.form.org">Organization *</label>
-                        <input type="text" name="organization" required class="form-input w-full px-4 py-3 rounded-lg"
-                            placeholder="Company or Institution">
-                    </div>
+                    <!-- Step 2: Project Info (Hidden initially) -->
+                    <div id="form-step-2" class="space-y-6 hidden">
+                        <div class="form-field">
+                            <label class="block text-xs font-bold text-muted uppercase mb-2" data-i18n="contact.form.org">Organization</label>
+                            <input type="text" name="organization" required class="form-input w-full px-4 py-4 rounded-xl"
+                                placeholder="Company or Institution">
+                            <span class="form-error"><i class="fas fa-exclamation-circle"></i> <span class="error-text"></span></span>
+                        </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.usecase">Intended Use
-                                Case *</label>
-                            <select name="usecase" required class="form-input w-full px-4 py-3 rounded-lg">
-                                <option value="" data-i18n="contact.form.select">Select...</option>
-                                <option value="rnd" data-i18n="contact.form.rnd">R&D</option>
-                                <option value="integration" data-i18n="contact.form.integration">Product Integration
-                                </option>
-                                <option value="academic" data-i18n="contact.form.academic">Academic</option>
-                                <option value="other" data-i18n="contact.form.other">Other</option>
-                            </select>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-field">
+                                <label class="block text-xs font-bold text-muted uppercase mb-2" data-i18n="contact.form.usecase">Intended Use Case</label>
+                                <select name="usecase" required class="form-input w-full px-4 py-4 rounded-xl appearance-none">
+                                    <option value="" data-i18n="contact.form.select">Select...</option>
+                                    <option value="rnd" data-i18n="contact.form.rnd">R&D</option>
+                                    <option value="integration" data-i18n="contact.form.integration">Product Integration</option>
+                                    <option value="academic" data-i18n="contact.form.academic">Academic</option>
+                                    <option value="other" data-i18n="contact.form.other">Other</option>
+                                </select>
+                                <span class="form-error"><i class="fas fa-exclamation-circle"></i> <span class="error-text"></span></span>
+                            </div>
+                            <div class="form-field">
+                                <label class="block text-xs font-bold text-muted uppercase mb-2" data-i18n="contact.form.timeline">Timeline</label>
+                                <select name="timeline" required class="form-input w-full px-4 py-4 rounded-xl appearance-none">
+                                    <option value="" data-i18n="contact.form.select">Select...</option>
+                                    <option value="immediate" data-i18n="contact.form.time1">Immediate</option>
+                                    <option value="3months" data-i18n="contact.form.time2">3 months</option>
+                                    <option value="6months" data-i18n="contact.form.time3">6 months</option>
+                                    <option value="2026" data-i18n="contact.form.time4">2026+</option>
+                                </select>
+                                <span class="form-error"><i class="fas fa-exclamation-circle"></i> <span class="error-text"></span></span>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.volume">Estimated
-                                Volume *</label>
-                            <select name="volume" required class="form-input w-full px-4 py-3 rounded-lg">
-                                <option value="" data-i18n="contact.form.select">Select...</option>
-                                <option value="1-10" data-i18n="contact.form.vol1">1-10 units</option>
-                                <option value="10-100" data-i18n="contact.form.vol2">10-100 units</option>
-                                <option value="100+" data-i18n="contact.form.vol3">100+ units</option>
-                                <option value="unknown" data-i18n="contact.form.vol4">Unknown</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm text-muted mb-2" data-i18n="contact.form.timeline">Timeline
-                                *</label>
-                            <select name="timeline" required class="form-input w-full px-4 py-3 rounded-lg">
-                                <option value="" data-i18n="contact.form.select">Select...</option>
-                                <option value="immediate" data-i18n="contact.form.time1">Immediate</option>
-                                <option value="3months" data-i18n="contact.form.time2">3 months</option>
-                                <option value="6months" data-i18n="contact.form.time3">6 months</option>
-                                <option value="2026" data-i18n="contact.form.time4">2026+</option>
-                            </select>
+
+                        <div class="flex gap-4">
+                            <button type="button" onclick="prevStep()" class="btn-secondary px-6 py-4 rounded-xl font-bold">
+                                Back
+                            </button>
+                            <button type="submit" id="submit-btn" class="btn-primary flex-1 py-4 rounded-xl font-bold flex items-center justify-center gap-2">
+                                <span data-i18n="contact.form.submit">Request Dev Kit</span>
+                                <i class="fas fa-check"></i>
+                            </button>
                         </div>
                     </div>
-
-                    <button type="submit" id="submit-btn"
-                        class="btn-primary w-full py-4 rounded-lg font-semibold flex items-center justify-center gap-2">
-                        <span data-i18n="contact.form.submit">Request Allocation</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
                 </form>
 
                 <!-- Success State -->
@@ -1127,6 +1686,8 @@
         // ============================================
         // HEXAGONAL CLOSE-PACKED ARRAY (Side length = 5)
         // ============================================
+        let autoDemoInterval = null;
+
         function createHexagonalArray() {
             const container = document.getElementById('phased-array');
             if (!container) return;
@@ -1134,11 +1695,9 @@
             // Clear existing
             container.innerHTML = '';
 
-            // Hexagonal close-packed with side length 5
-            // Row counts: 5, 6, 7, 8, 9, 8, 7, 6, 5 = 61
             const rowCounts = [5, 6, 7, 8, 9, 8, 7, 6, 5];
             const containerSize = container.offsetWidth;
-            const spacing = containerSize / 11; // Adjust spacing to fit
+            const spacing = containerSize / 11; 
             const transducerSize = spacing * 0.7;
 
             const centerY = containerSize / 2;
@@ -1147,7 +1706,7 @@
             let transducerIndex = 0;
 
             rowCounts.forEach((count, rowIndex) => {
-                const y = centerY + (rowIndex - 4) * spacing * 0.866; // 0.866 = sqrt(3)/2
+                const y = centerY + (rowIndex - 4) * spacing * 0.866;
                 const rowOffset = (9 - count) * spacing / 2;
 
                 for (let i = 0; i < count; i++) {
@@ -1155,8 +1714,10 @@
 
                     const transducer = document.createElement('div');
                     transducer.className = 'transducer';
+                    transducer.setAttribute('tabindex', '0');
+                    transducer.setAttribute('role', 'button');
+                    transducer.setAttribute('aria-label', `Transducer ${transducerIndex}`);
 
-                    // Center element (middle of middle row)
                     if (rowIndex === 4 && i === 4) {
                         transducer.classList.add('center');
                     }
@@ -1167,21 +1728,148 @@
                     transducer.style.top = (y - transducerSize / 2) + 'px';
                     transducer.dataset.index = transducerIndex++;
 
-                    // Click/hover effect
                     transducer.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        createLargeWave(container, x, y);
-                        transducer.classList.add('active');
-                        setTimeout(() => transducer.classList.remove('active'), 500);
+                        stopAutoDemo();
+                        toggleTransducerLock(container, transducer, x, y);
                     });
 
                     transducer.addEventListener('mouseenter', () => {
-                        createLargeWave(container, x, y);
+                        triggerTransducer(container, transducer, x, y);
+                    });
+
+                    transducer.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            triggerTransducer(container, transducer, x, y);
+                        }
                     });
 
                     container.appendChild(transducer);
                 }
             });
+
+            startAutoDemo(container);
+        }
+
+        function triggerTransducer(container, el, x, y) {
+            if (el.classList.contains('locked')) return;
+
+            createLargeWave(container, x, y);
+            el.classList.add('active');
+            setTimeout(() => el.classList.remove('active'), 500);
+            
+            updateTelemetry(el.dataset.index);
+        }
+
+        function updateTelemetry(index) {
+            // Update Telemetry Panel
+            const phase = (Math.random() * 360).toFixed(1);
+            const channelId = index.padStart(2, '0');
+            const intensity = Math.floor(Math.random() * 40) + 60; // 60-100%
+
+            const activeChannel = document.getElementById('active-channel');
+            const activePhase = document.getElementById('active-phase');
+            const intensityBar = document.getElementById('intensity-bar');
+            const intensityVal = document.getElementById('intensity-val');
+
+            if (activeChannel) {
+                activeChannel.textContent = `CH_${channelId}`;
+                activeChannel.classList.add('font-bold', 'text-off-white');
+            }
+            if (activePhase) {
+                animateNumber(activePhase, parseFloat(activePhase.textContent) || 0, parseFloat(phase), 1);
+            }
+            if (intensityBar) intensityBar.style.width = `${intensity}%`;
+            if (intensityVal) {
+                animateNumber(intensityVal, parseInt(intensityVal.textContent) || 0, intensity, 0, '%');
+            }
+        }
+
+        function animateNumber(el, start, end, decimals = 0, suffix = '') {
+            const duration = 300;
+            const startTime = performance.now();
+
+            function update(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = start + (end - start) * progress;
+                el.textContent = current.toFixed(decimals) + suffix;
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
+
+        function initFullSpecs() {
+            const btn = document.getElementById('view-full-specs');
+            const container = document.getElementById('full-specs-container');
+            if (!btn || !container) return;
+
+            btn.addEventListener('click', () => {
+                const isActive = btn.classList.toggle('active');
+                if (isActive) {
+                    container.style.maxHeight = '1000px';
+                    container.style.opacity = '1';
+                    container.style.marginTop = '24px';
+                } else {
+                    container.style.maxHeight = '0';
+                    container.style.opacity = '0';
+                    container.style.marginTop = '0';
+                }
+            });
+        }
+
+        function toggleTransducerLock(container, el, x, y) {
+            const isLocked = el.classList.toggle('locked');
+            if (isLocked) {
+                // Unlock others
+                container.querySelectorAll('.transducer.locked').forEach(t => {
+                    if (t !== el) t.classList.remove('locked');
+                });
+                stopAutoDemo();
+                updateTelemetry(el.dataset.index);
+            } else {
+                startAutoDemo(container);
+            }
+        }
+
+        function initMathToggle() {
+            const btn = document.getElementById('toggle-math');
+            const formula = document.getElementById('formula-display');
+            const controls = document.getElementById('math-controls');
+            if (!btn) return;
+
+            btn.addEventListener('click', () => {
+                const isHidden = formula.classList.contains('hidden');
+                if (isHidden) {
+                    formula.classList.remove('hidden');
+                    controls.classList.remove('hidden');
+                    btn.innerHTML = '<i class="fas fa-eye-slash mr-2"></i> Hide Technical Details';
+                } else {
+                    formula.classList.add('hidden');
+                    controls.classList.add('hidden');
+                    btn.innerHTML = '<i class="fas fa-calculator mr-2"></i> Show Math & Physics';
+                }
+            });
+        }
+
+        function startAutoDemo(container) {
+            if (autoDemoInterval) clearInterval(autoDemoInterval);
+            const transducers = container.querySelectorAll('.transducer');
+            
+            autoDemoInterval = setInterval(() => {
+                const t = transducers[Math.floor(Math.random() * transducers.length)];
+                const x = parseFloat(t.style.left) + parseFloat(t.style.width)/2;
+                const y = parseFloat(t.style.top) + parseFloat(t.style.height)/2;
+                
+                triggerTransducer(container, t, x, y);
+            }, 2000);
+        }
+
+        function stopAutoDemo() {
+            if (autoDemoInterval) {
+                clearInterval(autoDemoInterval);
+                autoDemoInterval = null;
+            }
         }
 
         function createLargeWave(container, x, y) {
@@ -1205,159 +1893,168 @@
 
             const ctx = canvas.getContext('2d');
             const container = canvas.parentElement;
+            const statusEl = document.getElementById('phase-status');
+            const phaseValEl = document.getElementById('phase-value');
+            const targetXEl = document.getElementById('target-x');
+            const targetYEl = document.getElementById('target-y');
+            const modeLabel = document.getElementById('demo-mode-label');
+
+            const isMobile = window.innerWidth < 768;
+            const dpr = window.devicePixelRatio || 1;
+            let resizeTimeout;
 
             function resize() {
-                canvas.width = container.offsetWidth;
-                canvas.height = container.offsetHeight;
+                const rect = container.getBoundingClientRect();
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                canvas.style.width = rect.width + 'px';
+                canvas.style.height = rect.height + 'px';
+                ctx.scale(dpr, dpr);
             }
             resize();
-            window.addEventListener('resize', resize);
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(resize, 250);
+            });
 
-            // Wave sources (transducers around the perimeter)
             const sources = [];
-            const numSources = 16;
+            const numSources = isMobile ? 12 : 32; // Performance fallback
             for (let i = 0; i < numSources; i++) {
                 const angle = (i / numSources) * Math.PI * 2;
                 sources.push({
-                    x: 0.5 + Math.cos(angle) * 0.4,
-                    y: 0.5 + Math.sin(angle) * 0.4,
+                    x: 0.5 + Math.cos(angle) * 0.45,
+                    y: 0.5 + Math.sin(angle) * 0.45,
                     id: i
                 });
             }
 
             let waves = [];
-            let focalPoint = null;
+            let focalPoints = []; // Support multiple focal points
             let lastClickTime = 0;
-            const waveSpeed = 0.005; // Normalized units per frame
+            const waveSpeed = isMobile ? 0.008 : 0.006;
 
-            canvas.addEventListener('click', (e) => {
+            function setFocalPoint(x, y, isTwin = false) {
                 const rect = canvas.getBoundingClientRect();
-                const xf = (e.clientX - rect.left) / canvas.width;
-                const yf = (e.clientY - rect.top) / canvas.height;
+                const xf = (x - rect.left) / canvas.width;
+                const yf = (y - rect.top) / canvas.height;
 
-                focalPoint = { x: xf, y: yf, time: 0, active: true };
-                waves = []; // Clear old waves
+                if (isTwin) {
+                    modeLabel.textContent = 'Mode: TwinTrap';
+                    // Add second point symmetrically or just a second point
+                    focalPoints = [
+                        { x: xf - 0.1, y: yf, time: 0 },
+                        { x: xf + 0.1, y: yf, time: 0 }
+                    ];
+                } else {
+                    modeLabel.textContent = 'Mode: Interactive Focus';
+                    focalPoints = [{ x: xf, y: yf, time: 0 }];
+                }
+                
+                waves = [];
+                focalPoints.forEach(fp => {
+                    const distances = sources.map(s => Math.sqrt(Math.pow(s.x - fp.x, 2) + Math.pow(s.y - fp.y, 2)));
+                    const maxDist = Math.max(...distances);
 
-                // Phased Array Logic:
-                // 1. Calculate distances from each source to focal point
-                const distances = sources.map(s => Math.sqrt(Math.pow(s.x - xf, 2) + Math.pow(s.y - yf, 2)));
-                const maxDist = Math.max(...distances);
-
-                // 2. Calculate delays so all waves reach focal point at the same time
-                // t_arrival = maxDist / waveSpeed
-                // t_emit_i = t_arrival - (dist_i / waveSpeed)
-                sources.forEach((source, i) => {
-                    const delay = (maxDist - distances[i]) / waveSpeed;
-
-                    waves.push({
-                        sourceX: source.x,
-                        sourceY: source.y,
-                        focalX: xf,
-                        focalY: yf,
-                        distToFocal: distances[i],
-                        startTime: delay,
-                        radius: 0,
-                        opacity: 0,
-                        reachedFocal: false
+                    sources.forEach((source, i) => {
+                        const delay = (maxDist - distances[i]) / waveSpeed;
+                        waves.push({
+                            sourceX: source.x,
+                            sourceY: source.y,
+                            focalX: fp.x,
+                            focalY: fp.y,
+                            distToFocal: distances[i],
+                            startTime: delay,
+                            radius: 0,
+                            opacity: 0
+                        });
                     });
                 });
 
                 lastClickTime = 0;
+                statusEl.style.opacity = '1';
+                targetXEl.textContent = Math.round(xf * 100);
+                targetYEl.textContent = Math.round(yf * 100);
+                phaseValEl.textContent = (Math.random() * Math.PI * 2).toFixed(2);
+            }
+
+            canvas.addEventListener('mousedown', (e) => setFocalPoint(e.clientX, e.clientY, e.shiftKey));
+            canvas.addEventListener('mousemove', (e) => {
+                if (e.buttons === 1) setFocalPoint(e.clientX, e.clientY, e.shiftKey);
             });
 
+            // Touch support
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                setFocalPoint(touch.clientX, touch.clientY, e.touches.length > 1);
+            }, { passive: false });
+
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                setFocalPoint(touch.clientX, touch.clientY, e.touches.length > 1);
+            }, { passive: false });
+
             function animate() {
-                ctx.fillStyle = '#050505';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                const rect = container.getBoundingClientRect();
+                ctx.fillStyle = '#0A0A0F';
+                ctx.fillRect(0, 0, rect.width, rect.height);
 
                 lastClickTime += 1;
 
-                // Draw sources
-                sources.forEach(source => {
-                    ctx.beginPath();
-                    ctx.arc(source.x * canvas.width, source.y * canvas.height, 4, 0, Math.PI * 2);
-                    ctx.fillStyle = '#1a3d1a';
-                    ctx.fill();
-                    ctx.strokeStyle = '#4ade80';
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
+                // Clean up invisible waves to prevent memory leak
+                waves = waves.filter(wave => {
+                    if (lastClickTime < wave.startTime) return true;
+                    const currentDist = wave.radius + waveSpeed;
+                    return currentDist < wave.distToFocal + 0.5;
                 });
 
-                if (focalPoint) {
-                    focalPoint.time += 1;
-
-                    waves.forEach(wave => {
-                        if (lastClickTime >= wave.startTime) {
-                            wave.radius += waveSpeed;
-
-                            // Calculate current distance from source
-                            const currentDist = wave.radius;
-
-                            // Opacity increases as it approaches focal point, then fades
-                            if (currentDist < wave.distToFocal) {
-                                wave.opacity = Math.min(0.6, currentDist / wave.distToFocal);
-                            } else {
-                                wave.reachedFocal = true;
-                                wave.opacity = Math.max(0, 1 - (currentDist - wave.distToFocal) * 2);
-                            }
-
-                            if (wave.opacity > 0) {
-                                ctx.beginPath();
-                                ctx.arc(wave.sourceX * canvas.width, wave.sourceY * canvas.height, wave.radius * canvas.width, 0, Math.PI * 2);
-                                ctx.strokeStyle = `rgba(74, 222, 128, ${wave.opacity * 0.4})`;
-                                ctx.lineWidth = 1.5;
-                                ctx.stroke();
-                            }
-                        }
-                    });
-
-                    // Draw focal point highlight when waves interfere
-                    const allReached = waves.every(w => lastClickTime >= w.startTime + (w.distToFocal / waveSpeed));
-                    const peakTime = waves[0] ? waves[0].startTime + (waves[0].distToFocal / waveSpeed) : 0;
-
-                    const timeSincePeak = Math.abs(lastClickTime - peakTime);
-                    if (timeSincePeak < 20) {
-                        const intensity = 1 - (timeSincePeak / 20);
-                        const fx = focalPoint.x * canvas.width;
-                        const fy = focalPoint.y * canvas.height;
-
-                        // Constructive interference glow
-                        const gradient = ctx.createRadialGradient(fx, fy, 0, fx, fy, 40 * intensity);
-                        gradient.addColorStop(0, `rgba(245, 245, 245, ${intensity * 0.8})`);
-                        gradient.addColorStop(0.4, `rgba(74, 222, 128, ${intensity * 0.5})`);
-                        gradient.addColorStop(1, 'transparent');
-
-                        ctx.fillStyle = gradient;
-                        ctx.beginPath();
-                        ctx.arc(fx, fy, 40 * intensity, 0, Math.PI * 2);
-                        ctx.fill();
-
-                        // Core
-                        ctx.beginPath();
-                        ctx.arc(fx, fy, 5 * intensity, 0, Math.PI * 2);
-                        ctx.fillStyle = '#fff';
-                        ctx.fill();
-                    }
-
-                    // Focal point marker
-                    const fx = focalPoint.x * canvas.width;
-                    const fy = focalPoint.y * canvas.height;
+                sources.forEach(source => {
                     ctx.beginPath();
-                    ctx.arc(fx, fy, 6, 0, Math.PI * 2);
-                    ctx.strokeStyle = '#4ade80';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
+                    ctx.arc(source.x * rect.width, source.y * rect.height, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(74, 222, 128, 0.2)';
+                    ctx.fill();
+                });
 
-                    ctx.fillStyle = '#a3a3a3';
-                    ctx.font = '10px Inter';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('TARGET', fx, fy + 20);
-                } else {
-                    // Instructions
-                    ctx.fillStyle = '#333';
-                    ctx.font = '14px Inter';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('Click to set focal point (Phased Array Demo)', canvas.width / 2, canvas.height / 2);
-                }
+                waves.forEach(wave => {
+                    if (lastClickTime >= wave.startTime) {
+                        wave.radius += waveSpeed;
+                        const currentDist = wave.radius;
+
+                        if (currentDist < wave.distToFocal) {
+                            wave.opacity = Math.min(0.6, currentDist / wave.distToFocal);
+                        } else {
+                            wave.opacity = Math.max(0, 1 - (currentDist - wave.distToFocal) * 3);
+                        }
+
+                        if (wave.opacity > 0) {
+                            ctx.beginPath();
+                            ctx.arc(wave.sourceX * rect.width, wave.sourceY * rect.height, wave.radius * rect.width, 0, Math.PI * 2);
+                            ctx.strokeStyle = `rgba(74, 222, 128, ${wave.opacity * 0.2})`;
+                            ctx.lineWidth = isMobile ? 0.5 : 1;
+                            ctx.stroke();
+                        }
+                    }
+                });
+
+                focalPoints.forEach(fp => {
+                    const fx = fp.x * rect.width;
+                    const fy = fp.y * rect.height;
+
+                    // Focal glow
+                    const gradient = ctx.createRadialGradient(fx, fy, 0, fx, fy, 40);
+                    gradient.addColorStop(0, 'rgba(74, 222, 128, 0.4)');
+                    gradient.addColorStop(1, 'transparent');
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(fx, fy, 40, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.arc(fx, fy, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = '#fff';
+                    ctx.fill();
+                });
 
                 requestAnimationFrame(animate);
             }
@@ -1366,21 +2063,167 @@
         }
 
         // ============================================
+        // INTERACTIVE FORMULA
+        // ============================================
+        function initFormula() {
+            const slider = document.getElementById('dist-slider');
+            const distVal = document.getElementById('dist-val');
+            const calcPhase = document.getElementById('calc-phase');
+            const calcTime = document.getElementById('calc-time');
+
+            if (!slider) return;
+
+            slider.addEventListener('input', () => {
+                const d = slider.value;
+                distVal.textContent = d + 'mm';
+                
+                // Mock calculation: Δφ = (2π * 40000 / 343) * (d/1000)
+                const phase = (2 * Math.PI * 40000 / 343) * (d / 1000);
+                const time = (d / 343) * 1000; // microseconds approx
+
+                calcPhase.textContent = (phase % (2 * Math.PI)).toFixed(2) + ' rad';
+                calcTime.textContent = time.toFixed(2) + ' µs';
+            });
+        }
+
+        // ============================================
+        // STICKY HEADER & FORM STEPS
+        // ============================================
+        function initStickyHeader() {
+            const stickyCta = document.getElementById('sticky-cta');
+            if (stickyCta) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 600) {
+                        stickyCta.classList.add('visible');
+                        stickyCta.classList.remove('hidden');
+                    } else {
+                        stickyCta.classList.remove('visible');
+                        stickyCta.classList.add('hidden');
+                    }
+                });
+            }
+        }
+
+        function initMobileMenu() {
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+
+            if (!menuBtn || !mobileMenu) return;
+
+            let isOpen = false;
+
+            function toggleMenu() {
+                isOpen = !isOpen;
+                if (isOpen) {
+                    mobileMenu.classList.remove('translate-x-full');
+                    document.body.style.overflow = 'hidden';
+                    // Animate hamburger to X
+                    const spans = menuBtn.querySelectorAll('span');
+                    spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                    spans[1].style.opacity = '0';
+                    spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+                    spans[2].style.width = '24px';
+                } else {
+                    mobileMenu.classList.add('translate-x-full');
+                    document.body.style.overflow = '';
+                    // Reset hamburger
+                    const spans = menuBtn.querySelectorAll('span');
+                    spans[0].style.transform = '';
+                    spans[1].style.opacity = '1';
+                    spans[2].style.transform = '';
+                    spans[2].style.width = '16px';
+                }
+            }
+
+            menuBtn.addEventListener('click', toggleMenu);
+
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    toggleMenu();
+                });
+            });
+
+            // Close menu on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && isOpen) {
+                    toggleMenu();
+                }
+            });
+        }
+
+        function validateStep1() {
+            const nameInput = document.querySelector('input[name="name"]');
+            const emailInput = document.querySelector('input[name="email"]');
+            let isValid = true;
+
+            // Reset errors
+            document.querySelectorAll('.form-error').forEach(el => el.classList.remove('visible'));
+            document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error', 'success'));
+
+            // Validate name
+            if (!nameInput.value.trim()) {
+                showError(nameInput, 'Name is required');
+                isValid = false;
+            } else {
+                nameInput.classList.add('success');
+            }
+
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailInput.value.trim()) {
+                showError(emailInput, 'Email is required');
+                isValid = false;
+            } else if (!emailRegex.test(emailInput.value)) {
+                showError(emailInput, 'Please enter a valid email');
+                isValid = false;
+            } else {
+                emailInput.classList.add('success');
+            }
+
+            return isValid;
+        }
+
+        function showError(input, message) {
+            input.classList.add('error');
+            const errorEl = input.parentElement.querySelector('.form-error');
+            if (errorEl) {
+                errorEl.querySelector('.error-text').textContent = message;
+                errorEl.classList.add('visible');
+            }
+        }
+
+        function nextStep() {
+            if (validateStep1()) {
+                document.getElementById('form-step-1').classList.add('hidden');
+                document.getElementById('form-step-2').classList.remove('hidden');
+            }
+        }
+
+        function prevStep() {
+            document.getElementById('form-step-2').classList.add('hidden');
+            document.getElementById('form-step-1').classList.remove('hidden');
+        }
+
+        // ============================================
         // i18n Translations
         // ============================================
         const translations = {
             en: {
                 'nav.product': 'Product', 'nav.modes': 'Modes', 'nav.technology': 'Technology', 'nav.usecases': 'Use Cases', 'nav.contact': 'Contact',
-                'hero.badge': 'Next-Generation Haptic Technology',
+                'hero.academic': 'Niu Lab @ Southeast University',
+                'hero.value': 'Feel virtual objects in thin air',
                 'hero.subtitle': 'High-precision acoustic radiation pressure for next-generation haptic interfaces. Experience tactile feedback without physical contact.',
-                'hero.cta1': 'Request Allocation', 'hero.cta2': 'Technical Specifications',
+                'hero.cta1': 'Request Dev Kit', 'hero.cta2': 'View Technical Specs',
                 'product.badge': 'The Dev Kit', 'product.title': 'Technical Specifications',
                 'product.description': '61-element ultrasonic phased array generating precise acoustic radiation pressure in mid-air.',
-                'product.spec1': 'Carrier Frequency', 'product.spec1detail': 'Ultrasonic wave generation',
-                'product.spec2': 'Modulation Frequency', 'product.spec2detail': 'Optimal haptic perception',
-                'product.spec3': 'Transducer Channels', 'product.spec3detail': 'Hexagonal phased array',
-                'product.spec4': 'ARM Cortex-M7', 'product.spec4detail': '480MHz real-time control',
-                'product.spec5': 'Control Loop', 'product.spec5detail': 'DMA-driven precision',
+                'product.array.hint': 'Click or hover over transducers to see wave propagation',
+                'product.viewall': 'View Full Technical Specifications',
+                'product.spec1': 'Ultrasonic Carrier', 'product.spec1detail': 'Precision wave generation',
+                'product.spec2': 'Modulation Freq', 'product.spec2detail': 'Optimal haptic perception',
+                'product.spec3': 'Transducer Channels', 'product.spec3detail': 'Phased array control',
+                'product.spec4': 'High-Speed Processing', 'product.spec4detail': '480MHz real-time control',
+                'product.spec5': 'Ultra-Low Latency', 'product.spec5detail': '3000Hz synchronization loop',
                 'product.spec6': 'Virtual Serial', 'product.spec6detail': 'High-speed communication',
                 'modes.badge': 'Stimulation Modes', 'modes.title': 'Multiple Haptic Patterns',
                 'modes.subtitle': 'UMH supports various stimulation modes for different haptic experiences.',
@@ -1388,11 +2231,9 @@
                 'modes.lm.subtitle': 'Linear Motion', 'modes.lm.desc': 'Focal point moves along linear trajectory, creating sliding haptic sensation.',
                 'modes.stm.subtitle': 'Spatio-Temporal Modulation', 'modes.stm.desc': 'High-frequency spatial modulation creates sharp, localized tactile points.',
                 'modes.twin.subtitle': 'Dual Focus', 'modes.twin.desc': 'Two counter-propagating focal points create acoustic trapping for particle manipulation.',
-                'demo.title': 'Virtual Touch Demo',
-                'demo.description': 'Click anywhere to see wave interference from multiple transducers. Waves constructively interfere at the focal point, creating acoustic radiation pressure.',
+                'demo.title': 'Virtual Touch Demo', 'demo.overlay': 'Click to feel the wave',
+                'demo.description': 'Experience the magic of phased array interference. Click or drag on the simulator to focus acoustic energy at a specific point.',
                 'tech.badge': 'How It Works', 'tech.title': 'Phased Array Technology',
-                'tech.formula.desc': 'Phase delay calculation for focal point generation',
-                'tech.formula.var1': 'Phase Delay', 'tech.formula.var2': 'Frequency', 'tech.formula.var3': 'Speed of Sound', 'tech.formula.var4': 'Distance',
                 'tech.dma.title': 'Circular DMA Mode',
                 'tech.dma.desc': 'Direct Memory Access in circular mode enables continuous waveform generation with zero CPU overhead. The DMA controller automatically transfers phase data to timer registers at 40kHz.',
                 'tech.dma.stat1': 'CPU Load', 'tech.dma.stat2': 'Channels',
@@ -1410,128 +2251,145 @@
                 'usecases.industrial.title': 'Industrial',
                 'usecases.industrial.desc': 'HMI for cleanroom environments. Operators can interact with control systems without introducing contaminants or wearing special equipment.',
                 'contact.badge': 'Priority Access', 'contact.title': 'Join the Waitlist',
-                'contact.subtitle': 'Be among the first to experience the future of haptic interfaces. Batch 1 allocation is limited.',
-                'contact.form.name': 'Full Name *', 'contact.form.email': 'Work Email *', 'contact.form.org': 'Organization *',
-                'contact.form.usecase': 'Intended Use Case *', 'contact.form.select': 'Select...',
-                'contact.form.rnd': 'R&D', 'contact.form.integration': 'Product Integration', 'contact.form.academic': 'Academic', 'contact.form.other': 'Other',
-                'contact.form.volume': 'Estimated Volume *',
-                'contact.form.vol1': '1-10 units', 'contact.form.vol2': '10-100 units', 'contact.form.vol3': '100+ units', 'contact.form.vol4': 'Unknown',
-                'contact.form.timeline': 'Timeline *',
-                'contact.form.time1': 'Immediate', 'contact.form.time2': '3 months', 'contact.form.time3': '6 months', 'contact.form.time4': '2026+',
-                'contact.form.submit': 'Request Allocation',
-                'contact.success.title': "You're on the list.", 'contact.success.message': "Batch 1 allocation pending. We'll contact you soon.",
+                'contact.subtitle': 'Get early access to our SDK and Batch 1 hardware. Join the next generation of touchless interaction.',
+                'contact.social': 'Join 500+ developers & researchers',
+                'contact.form.name': 'Full Name', 'contact.form.email': 'Work Email',
+                'contact.form.org': 'Organization', 'contact.form.usecase': 'Intended Use Case',
+                'contact.form.timeline': 'Timeline', 'contact.form.select': 'Select...',
+                'contact.form.rnd': 'R&D', 'contact.form.integration': 'Product Integration',
+                'contact.form.academic': 'Academic', 'contact.form.other': 'Other',
+                'contact.form.time1': 'Immediate', 'contact.form.time2': '3 months',
+                'contact.form.time3': '6 months', 'contact.form.time4': '2026+',
+                'contact.form.submit': 'Request Dev Kit',
+                'contact.success.title': "You're on the list.",
+                'contact.success.message': "Batch 1 allocation pending. We'll contact you soon.",
                 'footer.desc': 'Ultrasound Mid-Air Haptics technology from Niu Lab at Southeast University. Pioneering the future of touchless interfaces.',
-                'footer.links.title': 'Links', 'footer.links.privacy': 'Privacy Policy', 'footer.links.terms': 'Terms of Service', 'footer.links.contact': 'Contact',
+                'footer.links.title': 'Links',
+                'footer.links.privacy': 'Privacy Policy',
+                'footer.links.terms': 'Terms of Service',
+                'footer.links.contact': 'Contact',
                 'footer.newsletter.title': 'Newsletter'
             },
             zh: {
                 'nav.product': '产品', 'nav.modes': '模式', 'nav.technology': '技术', 'nav.usecases': '应用', 'nav.contact': '联系',
-                'hero.badge': '下一代触觉技术',
+                'hero.academic': '东南大学 · 牛实验室',
+                'hero.value': '在空气中触摸虚拟物体',
                 'hero.subtitle': '高精度声辐射压力，打造下一代触觉界面。无需物理接触即可体验触觉反馈。',
-                'hero.cta1': '申请配额', 'hero.cta2': '技术规格',
+                'hero.cta1': '申请开发套件', 'hero.cta2': '查看技术规格',
                 'product.badge': '开发套件', 'product.title': '技术规格',
                 'product.description': '61单元超声相控阵，在空中产生精确的声辐射压力。',
-                'product.spec1': '载波频率', 'product.spec1detail': '超声波生成',
+                'product.array.hint': '点击或悬停在换能器上查看波传播效果',
+                'product.viewall': '查看完整技术规格',
+                'product.spec1': '超声载波', 'product.spec1detail': '高精度波形生成',
                 'product.spec2': '调制频率', 'product.spec2detail': '最佳触觉感知',
-                'product.spec3': '换能器通道', 'product.spec3detail': '六边形相控阵',
-                'product.spec4': 'ARM Cortex-M7', 'product.spec4detail': '480MHz实时控制',
-                'product.spec5': '控制循环', 'product.spec5detail': 'DMA驱动精度',
+                'product.spec3': '换能器通道', 'product.spec3detail': '相控阵控制',
+                'product.spec4': '高速处理', 'product.spec4detail': '480MHz 实时控制',
+                'product.spec5': '极低延迟', 'product.spec5detail': '3000Hz 同步循环',
                 'product.spec6': '虚拟串口', 'product.spec6detail': '高速通信',
                 'modes.badge': '刺激模式', 'modes.title': '多种触觉模式',
-                'modes.subtitle': 'UMH支持多种刺激模式，提供不同的触觉体验。',
-                'modes.am.subtitle': '幅度调制', 'modes.am.desc': '200Hz幅度调制在焦点处产生连续触觉感受。',
+                'modes.subtitle': 'UMH 支持多种刺激模式，提供不同的触觉体验。',
+                'modes.am.subtitle': '幅度调制', 'modes.am.desc': '200Hz 幅度调制在焦点处产生连续触觉感受。',
                 'modes.lm.subtitle': '线性运动', 'modes.lm.desc': '焦点沿直线轨迹移动，产生滑动的触觉感受。',
                 'modes.stm.subtitle': '空时调制', 'modes.stm.desc': '高频空间调制产生锐利、定位精确的触觉点。',
                 'modes.twin.subtitle': '双阱模式', 'modes.twin.desc': '两个反向传播的焦点产生声阱，用于粒子操控。',
-                'demo.title': '虚拟触摸演示',
-                'demo.description': '点击任意位置查看多个换能器的波干涉效果。波在焦点处相长干涉，产生声辐射压力。',
+                'demo.title': '虚拟触摸演示', 'demo.overlay': '点击感受声波',
+                'demo.description': '体验相控阵干涉的奥秘。在模拟器上点击或拖动，将声能聚焦于特定点。',
                 'tech.badge': '工作原理', 'tech.title': '相控阵技术',
-                'tech.formula.desc': '焦点生成相位延迟计算',
-                'tech.formula.var1': '相位延迟', 'tech.formula.var2': '频率', 'tech.formula.var3': '声速', 'tech.formula.var4': '距离',
-                'tech.dma.title': '循环DMA模式',
-                'tech.dma.desc': '循环模式下的直接内存访问实现零CPU开销的连续波形生成。DMA控制器以40kHz自动将相位数据传输到定时器寄存器。',
-                'tech.dma.stat1': 'CPU负载', 'tech.dma.stat2': '通道数',
+                'tech.dma.title': '循环 DMA 模式',
+                'tech.dma.desc': '循环模式的直接内存访问实现了零 CPU 开销的连续波形生成。DMA 控制器以 40kHz 自动将相位数据传输到定时器寄存器。',
+                'tech.dma.stat1': 'CPU 负载', 'tech.dma.stat2': '通道数',
                 'tech.timing.title': '实时精度',
-                'tech.timing.desc': '3000Hz控制循环确保平滑的触觉渲染。相位更新与载波频率同步，实现精确的声学聚焦。',
+                'tech.timing.desc': '3000Hz 控制循环确保流畅的触觉渲染。相位更新与载波频率同步，实现精确的声学聚焦。',
                 'tech.timing.stat1': '控制循环', 'tech.timing.stat2': '延迟',
-                'usecases.badge': '应用', 'usecases.title': '变革行业',
+                'usecases.badge': '应用场景', 'usecases.title': '改变各行各业',
                 'usecases.subtitle': '从汽车到医疗，空中触觉正在重新定义人机交互。',
                 'usecases.auto.title': '汽车',
-                'usecases.auto.desc': '非接触手势控制。驾驶员可以通过空中触觉反馈与信息娱乐系统交互，减少视觉分心。',
+                'usecases.auto.desc': '非接触式手势控制。驾驶员可以通过空中触觉反馈与信息娱乐系统交互，减少视觉分心。',
                 'usecases.vr.title': 'VR/AR',
                 'usecases.vr.desc': '虚拟环境中的触觉反馈。无需佩戴手套或手持控制器即可感受虚拟物体、纹理和交互。',
                 'usecases.medical.title': '医疗',
                 'usecases.medical.desc': '无菌界面交互。外科医生和医护人员可以在不接触表面的情况下控制设备，保持无菌区域。',
                 'usecases.industrial.title': '工业',
-                'usecases.industrial.desc': '洁净室环境HMI。操作员可以在不引入污染物或佩戴特殊设备的情况下与控制系统交互。',
+                'usecases.industrial.desc': '洁净室环境的人机界面。操作员可以在不引入污染物或穿戴特殊设备的情况下与控制系统交互。',
                 'contact.badge': '优先访问', 'contact.title': '加入等待名单',
-                'contact.subtitle': '率先体验触觉界面的未来。第一批配额有限。',
-                'contact.form.name': '全名 *', 'contact.form.email': '工作邮箱 *', 'contact.form.org': '组织 *',
-                'contact.form.usecase': '预期用途 *', 'contact.form.select': '选择...',
-                'contact.form.rnd': '研发', 'contact.form.integration': '产品集成', 'contact.form.academic': '学术', 'contact.form.other': '其他',
-                'contact.form.volume': '预计数量 *',
-                'contact.form.vol1': '1-10台', 'contact.form.vol2': '10-100台', 'contact.form.vol3': '100+台', 'contact.form.vol4': '未知',
-                'contact.form.timeline': '时间线 *',
-                'contact.form.time1': '立即', 'contact.form.time2': '3个月', 'contact.form.time3': '6个月', 'contact.form.time4': '2026+',
-                'contact.form.submit': '申请配额',
-                'contact.success.title': '您已在名单中。', 'contact.success.message': '第一批配额待分配。我们会尽快与您联系。',
+                'contact.subtitle': '抢先获取我们的 SDK 和第一批硬件。加入下一代无接触交互的行列。',
+                'contact.social': '加入 500+ 开发者与研究者行列',
+                'contact.form.name': '姓名', 'contact.form.email': '工作邮箱',
+                'contact.form.org': '组织', 'contact.form.usecase': '预期用途',
+                'contact.form.timeline': '时间线', 'contact.form.select': '请选择...',
+                'contact.form.rnd': '研发', 'contact.form.integration': '产品集成',
+                'contact.form.academic': '学术', 'contact.form.other': '其他',
+                'contact.form.time1': '立即', 'contact.form.time2': '3个月内',
+                'contact.form.time3': '6个月内', 'contact.form.time4': '2026年以后',
+                'contact.form.submit': '申请开发套件',
+                'contact.success.title': '您已在名单中',
+                'contact.success.message': '第一批分配待定。我们将很快与您联系。',
                 'footer.desc': '东南大学牛实验室的超声空中触觉技术。开创无接触界面的未来。',
-                'footer.links.title': '链接', 'footer.links.privacy': '隐私政策', 'footer.links.terms': '服务条款', 'footer.links.contact': '联系',
-                'footer.newsletter.title': '订阅'
+                'footer.links.title': '链接',
+                'footer.links.privacy': '隐私政策',
+                'footer.links.terms': '服务条款',
+                'footer.links.contact': '联系我们',
+                'footer.newsletter.title': '订阅通讯'
             },
             ja: {
                 'nav.product': '製品', 'nav.modes': 'モード', 'nav.technology': '技術', 'nav.usecases': '用途', 'nav.contact': 'お問い合わせ',
-                'hero.badge': '次世代触覚技術',
+                'hero.academic': '東南大学 · 牛研究室',
+                'hero.value': '空中で仮想物体に触れる',
                 'hero.subtitle': '次世代触覚インターフェースのための高精度音響放射圧。物理的接触なしで触覚フィードバックを体験できます。',
-                'hero.cta1': '割り当てを申請', 'hero.cta2': '技術仕様',
+                'hero.cta1': '割り当てを申請', 'hero.cta2': '技術仕様を表示',
                 'product.badge': '開発キット', 'product.title': '技術仕様',
-                'product.description': '空中で正確な音響放射圧を生成する61要素超音波フェーズドアレイ。',
-                'product.spec1': 'キャリア周波数', 'product.spec1detail': '超音波生成',
+                'product.description': '空中で精密な音響放射圧を生成する61素子超音波フェーズドアレイ。',
+                'product.array.hint': 'トランスデューサーをクリックまたはホバーして波の伝播を確認',
+                'product.viewall': 'すべての技術仕様を表示',
+                'product.spec1': '超音波キャリア', 'product.spec1detail': '高精度な波形生成',
                 'product.spec2': '変調周波数', 'product.spec2detail': '最適な触覚感知',
-                'product.spec3': 'トランスデューサチャンネル', 'product.spec3detail': '六角形フェーズドアレイ',
-                'product.spec4': 'ARM Cortex-M7', 'product.spec4detail': '480MHzリアルタイム制御',
-                'product.spec5': '制御ループ', 'product.spec5detail': 'DMA駆動精度',
+                'product.spec3': 'トランスデューサー', 'product.spec3detail': 'フェーズドアレイ制御',
+                'product.spec4': '高速処理', 'product.spec4detail': '480MHz リアルタイム制御',
+                'product.spec5': '超低遅延', 'product.spec5detail': '3000Hz 同期ループ',
                 'product.spec6': '仮想シリアル', 'product.spec6detail': '高速通信',
                 'modes.badge': '刺激モード', 'modes.title': '複数の触覚パターン',
-                'modes.subtitle': 'UMHは様々な触覚体験のための複数の刺激モードをサポートします。',
-                'modes.am.subtitle': '振幅変調', 'modes.am.desc': '200Hz振幅変調が焦点で連続した触覚感覚を作り出します。',
+                'modes.subtitle': 'UMHは様々な触覚体験のために複数の刺激モードをサポートしています。',
+                'modes.am.subtitle': '振幅変調', 'modes.am.desc': '200Hz 振幅変調が焦点で連続した触覚感覚を作り出します。',
                 'modes.lm.subtitle': '線形運動', 'modes.lm.desc': '焦点が直線軌道を移動し、滑らかな触覚感覚を作り出します。',
                 'modes.stm.subtitle': '時空間変調', 'modes.stm.desc': '高周波空間変調が鋭く局所化された触覚点を作り出します。',
                 'modes.twin.subtitle': 'デュアルフォーカス', 'modes.twin.desc': '2つの逆方向に伝播する焦点が粒子操作のための音響トラップを作り出します。',
-                'demo.title': 'バーチャルタッチデモ',
-                'demo.description': '任意の場所をクリックして複数のトランスデューサからの波の干渉を確認してください。波は焦点で建設的に干渉し、音響放射圧を作り出します。',
+                'demo.title': 'バーチャルタッチデモ', 'demo.overlay': 'クリックして波を感じる',
+                'demo.description': 'フェーズドアレイ干渉の魔法を体験してください。シミュレーターをクリックまたはドラッグして、特定のポイントに音響エネルギーを集中させます。',
                 'tech.badge': '仕組み', 'tech.title': 'フェーズドアレイ技術',
-                'tech.formula.desc': '焦点生成のための位相遅延計算',
-                'tech.formula.var1': '位相遅延', 'tech.formula.var2': '周波数', 'tech.formula.var3': '音速', 'tech.formula.var4': '距離',
-                'tech.dma.title': '循環DMAモード',
-                'tech.dma.desc': '循環モードでのダイレクトメモリアクセスにより、CPUオーバーヘッドゼロで連続波形生成を実現。DMAコントローラは40kHzで位相データをタイマーレジスタに自動転送します。',
-                'tech.dma.stat1': 'CPU負荷', 'tech.dma.stat2': 'チャンネル数',
+                'tech.dma.title': '循環 DMA モード',
+                'tech.dma.desc': '循環モードのダイレクトメモリアクセスにより、CPU オーバーヘッドゼロで連続した波形生成が可能になります。DMA コントローラーは 40kHz で自動的に位相データをタイマーレジスタに転送します。',
+                'tech.dma.stat1': 'CPU 負荷', 'tech.dma.stat2': 'チャンネル数',
                 'tech.timing.title': 'リアルタイム精度',
-                'tech.timing.desc': '3000Hz制御ループにより、スムーズな触覚レンダリングを確保。位相更新はキャリア周波数と同期し、正確な音響フォーカシングを実現します。',
-                'tech.timing.stat1': '制御ループ', 'tech.timing.stat2': 'レイテンシ',
+                'tech.timing.desc': '3000Hz 制御ループにより、スムーズな触覚レンダリングを実現。位相更新は搬送波周波数と同期し、精密な音響フォーカシングを実現します。',
+                'tech.timing.stat1': '制御ループ', 'tech.timing.stat2': '遅延',
                 'usecases.badge': 'アプリケーション', 'usecases.title': '産業を変革する',
-                'usecases.subtitle': '自動車から医療まで、空中触覚は人間と機械の相互作用を再定義しています。',
+                'usecases.subtitle': '自動車から医療まで、空中触覚は人間と機械のインタラクションを再定義しています。',
                 'usecases.auto.title': '自動車',
-                'usecases.auto.desc': '非接触ジェスチャー制御。運転手は空中触覚フィードバックを通じてインフォテインメントシステムと対話でき、視覚的な注意散漫を減らせます。',
+                'usecases.auto.desc': '非接触ジェスチャー制御。ドライバーは空中触覚フィードバックを通じてインフォテインメントシステムとインタラクトでき、視覚的な気を散らすことを減らせます。',
                 'usecases.vr.title': 'VR/AR',
-                'usecases.vr.desc': '仮想環境での触覚フィードバック。手袋を着用したりコントローラーを持ったりすることなく、仮想物体、テクスチャ、相互作用を感じられます。',
+                'usecases.vr.desc': '仮想環境での触覚フィードバック。手袋を着用したりコントローラーを持ったりすることなく、仮想物体や質感、インタラクションを感じられます。',
                 'usecases.medical.title': '医療',
-                'usecases.medical.desc': '無菌インターフェース対話。外科医や医療スタッフは表面に触れずに機器を制御でき、無菌フィールドを維持できます。',
+                'usecases.medical.desc': '無菌インターフェースインタラクション。外科医や医療スタッフは表面に触れることなく機器を制御でき、無菌区域を維持できます。',
                 'usecases.industrial.title': '産業',
-                'usecases.industrial.desc': 'クリーンルーム環境のHMI。オペレータは汚染物質を導入したり特殊な機器を着用したりすることなく、制御システムと対話できます。',
+                'usecases.industrial.desc': 'クリーンルーム環境の HMI。作業者は汚染物質を持ち込んだり特殊な機器を着用したりすることなく、制御システムとインタラクトできます。',
                 'contact.badge': '優先アクセス', 'contact.title': 'ウェイトリストに参加',
-                'contact.subtitle': '触覚インターフェースの未来を最初に体験してください。第1回割り当ては限定されています。',
-                'contact.form.name': '氏名 *', 'contact.form.email': '勤務先メール *', 'contact.form.org': '組織 *',
-                'contact.form.usecase': '想定用途 *', 'contact.form.select': '選択...',
-                'contact.form.rnd': '研究開発', 'contact.form.integration': '製品統合', 'contact.form.academic': '学術', 'contact.form.other': 'その他',
-                'contact.form.volume': '予想数量 *',
-                'contact.form.vol1': '1-10台', 'contact.form.vol2': '10-100台', 'contact.form.vol3': '100+台', 'contact.form.vol4': '不明',
-                'contact.form.timeline': 'タイムライン *',
-                'contact.form.time1': '即時', 'contact.form.time2': '3ヶ月', 'contact.form.time3': '6ヶ月', 'contact.form.time4': '2026+',
+                'contact.subtitle': 'SDK と第1バッチのハードウェアに早期アクセス。次世代の非接触インタラクションに参加しましょう。',
+                'contact.social': '500人以上の開発者と研究者が参加中',
+                'contact.form.name': '氏名', 'contact.form.email': '勤務先メール',
+                'contact.form.org': '組織', 'contact.form.usecase': '使用目的',
+                'contact.form.timeline': 'タイムライン', 'contact.form.select': '選択...',
+                'contact.form.rnd': '研究開発', 'contact.form.integration': '製品統合',
+                'contact.form.academic': '学術', 'contact.form.other': 'その他',
+                'contact.form.time1': '即時', 'contact.form.time2': '3ヶ月以内',
+                'contact.form.time3': '6ヶ月以内', 'contact.form.time4': '2026年以降',
                 'contact.form.submit': '割り当てを申請',
-                'contact.success.title': 'リストに追加されました。', 'contact.success.message': '第1回割り当て保留中。まもなくご連絡いたします。',
+                'contact.success.title': 'リストに登録されました',
+                'contact.success.message': '第1バッチの割り当てを保留中です。まもなくご連絡いたします。',
                 'footer.desc': '東南大学牛研究室の超音波空中触覚技術。非接触インターフェースの未来を切り開く。',
-                'footer.links.title': 'リンク', 'footer.links.privacy': 'プライバシーポリシー', 'footer.links.terms': '利用規約', 'footer.links.contact': 'お問い合わせ',
+                'footer.links.title': 'リンク',
+                'footer.links.privacy': 'プライバシーポリシー',
+                'footer.links.terms': '利用規約',
+                'footer.links.contact': 'お問い合わせ',
                 'footer.newsletter.title': 'ニュースレター'
             }
         };
@@ -1559,9 +2417,6 @@
             btn.addEventListener('click', () => updateLanguage(btn.dataset.lang));
         });
 
-        // ============================================
-        // Scroll Animation
-        // ============================================
         function initScrollAnimation() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -1576,90 +2431,98 @@
             });
         }
 
-        // ============================================
-        // Form Handling
-        // ============================================
         function initForms() {
             const leadForm = document.getElementById('lead-form');
             const successState = document.getElementById('success-state');
             const submitBtn = document.getElementById('submit-btn');
 
             if (leadForm) {
+                // Real-time validation
+                leadForm.querySelectorAll('input, select').forEach(input => {
+                    input.addEventListener('blur', () => {
+                        if (input.value.trim()) {
+                            input.classList.add('success');
+                            input.classList.remove('error');
+                            const errorEl = input.parentElement.querySelector('.form-error');
+                            if (errorEl) errorEl.classList.remove('visible');
+                        }
+                    });
+                });
+
                 leadForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
-
                     const formData = new FormData(leadForm);
-                    const email = formData.get('email');
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-                    if (!emailRegex.test(email)) {
-                        alert(currentLang === 'zh' ? '请输入有效的电子邮箱地址' : 
-                              currentLang === 'ja' ? '有効なメールアドレスを入力してください' : 
-                              'Please enter a valid email address');
-                        return;
-                    }
-
-                    // Loading state
                     const originalBtnText = submitBtn.innerHTML;
                     submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Submitting...</span>';
 
                     try {
                         const response = await fetch(leadForm.action, {
                             method: 'POST',
                             body: formData,
-                            headers: {
-                                'Accept': 'application/json'
-                            }
+                            headers: { 'Accept': 'application/json' }
                         });
 
                         if (response.ok) {
                             leadForm.style.display = 'none';
                             successState.classList.remove('hidden');
+                            // Add success animation
+                            successState.classList.add('fade-in', 'visible');
                         } else {
-                            const data = await response.json();
-                            if (Object.hasOwnProperty.call(data, 'errors')) {
-                                alert(data.errors.map(error => error.message).join(", "));
-                            } else {
-                                throw new Error('Oops! There was a problem submitting your form');
-                            }
+                            throw new Error('Submission failed');
                         }
                     } catch (error) {
-                        alert(currentLang === 'zh' ? '提交时出错，请稍后再试。' : 
-                              currentLang === 'ja' ? '送信中にエラーが発生しました。後でもう一度お試しください。' : 
-                              'Oops! There was a problem submitting your form');
-                    } finally {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalBtnText;
+                        submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <span>Try Again</span>';
+                        submitBtn.classList.add('bg-red-600');
+                        setTimeout(() => {
+                            submitBtn.innerHTML = originalBtnText;
+                            submitBtn.classList.remove('bg-red-600');
+                            submitBtn.disabled = false;
+                        }, 2000);
                     }
                 });
             }
 
+            // Newsletter form
             const newsletterForm = document.getElementById('newsletter-form');
             if (newsletterForm) {
                 newsletterForm.addEventListener('submit', (e) => {
                     e.preventDefault();
-                    const email = newsletterForm.querySelector('input[type="email"]').value;
-                    if (email) {
-                        alert(currentLang === 'zh' ? '感谢您的订阅！' : 
-                              currentLang === 'ja' ? 'ご購読ありがとうございます！' : 
-                              'Thank you for subscribing!');
+                    const btn = newsletterForm.querySelector('button');
+                    const originalHTML = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i>';
+                    btn.classList.add('bg-emerald');
+                    setTimeout(() => {
+                        btn.innerHTML = originalHTML;
+                        btn.classList.remove('bg-emerald');
                         newsletterForm.reset();
-                    }
+                    }, 2000);
                 });
             }
         }
 
-        // ============================================
-        // Initialize
-        // ============================================
+        // Page loader
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('page-loader');
+            if (loader) {
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                }, 500);
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             createHexagonalArray();
             initWaveCanvas();
+            initFormula();
+            initMathToggle();
+            initStickyHeader();
+            initMobileMenu();
             initScrollAnimation();
             initForms();
+            initFullSpecs();
 
-            // Handle resize for phased array
             window.addEventListener('resize', () => {
                 setTimeout(createHexagonalArray, 100);
             });
