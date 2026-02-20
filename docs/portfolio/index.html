@@ -6,17 +6,20 @@
     <title>Lin-Han Fan | Design Researcher</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #070707;
-            --surface: #121212;
-            --border: #2a2a2a;
-            --text-main: #f0f0f0;
-            --text-muted: #888888;
-            --accent: #b3b3b3;
-            --highlight: #ffffff;
+            /* Black + Deep Green Color Palette */
+            --bg-color: #040705;
+            --surface: #0a120e;
+            --surface-hover: #101c15;
+            --border: #182e21;
+            --text-main: #e8f0eb;
+            --text-muted: #8ba394;
+            --accent: #114224;
+            --highlight: #00e676; /* Vivid neon green for emphasis */
+            
             --font-serif: 'Cormorant Garamond', serif;
             --font-sans: 'Space Grotesk', sans-serif;
             --cursor-size: 10px;
@@ -31,12 +34,13 @@
             font-family: var(--font-sans);
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
         }
 
         /* Noise Texture */
         .noise {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none; z-index: 9999; opacity: 0.05;
+            pointer-events: none; z-index: 9999; opacity: 0.03;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
@@ -45,121 +49,148 @@
             position: fixed; top: 0; left: 0; width: var(--cursor-size); height: var(--cursor-size);
             background: var(--highlight); border-radius: 50%; pointer-events: none;
             z-index: 10000; transform: translate(-50%, -50%);
-            transition: width 0.3s ease, height 0.3s ease, background 0.3s ease;
+            transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, border 0.3s ease;
             mix-blend-mode: difference;
         }
-        .cursor.hover { width: 50px; height: 50px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.5); mix-blend-mode: normal; backdrop-filter: blur(2px); }
+        .cursor.hover { 
+            width: 50px; height: 50px; 
+            background: rgba(0, 230, 118, 0.1); 
+            border: 1px solid rgba(0, 230, 118, 0.4); 
+            mix-blend-mode: normal; 
+            backdrop-filter: blur(2px); 
+        }
 
         /* Ambient Glow */
         .ambient-glow {
             position: fixed; width: 50vw; height: 50vw;
-            background: radial-gradient(circle, rgba(30,30,35,0.6) 0%, rgba(7,7,7,0) 70%);
+            background: radial-gradient(circle, rgba(0, 230, 118, 0.08) 0%, rgba(4, 7, 5, 0) 60%);
             border-radius: 50%; pointer-events: none; z-index: -1;
             transform: translate(-50%, -50%); filter: blur(80px);
         }
 
         /* Typography */
-        h1, h2, h3 { font-family: var(--font-serif); font-weight: 300; }
-        a { color: var(--text-main); text-decoration: none; position: relative; }
+        h1, h2, h3 { font-family: var(--font-serif); font-weight: 400; color: #ffffff; }
+        a { color: var(--text-main); text-decoration: none; position: relative; transition: color 0.3s ease; }
+        a:hover { color: var(--highlight); }
 
         /* Layout */
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 5vw; }
-        section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 15vh 0; position: relative; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 5vw; }
+        section { min-height: auto; display: flex; flex-direction: column; justify-content: center; padding: 12vh 0; position: relative; }
+        
         .section-header {
-            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em;
-            color: var(--text-muted); margin-bottom: 4rem; border-top: 1px solid var(--border);
-            padding-top: 1.5rem; display: flex; align-items: center; gap: 1rem;
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.2em;
+            color: var(--highlight); margin-bottom: 3rem; border-top: 1px solid var(--border);
+            padding-top: 1.5rem; display: flex; align-items: center; gap: 1rem; font-weight: 500;
         }
-        .section-header svg { width: 16px; height: 16px; stroke: var(--text-muted); }
+        .section-header svg { width: 18px; height: 18px; stroke: var(--highlight); }
 
         /* Icons & SVGs */
-        .icon-stroke { fill: none; stroke: currentColor; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
-        .draw-anim { stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: stroke-dashoffset 2s cubic-bezier(0.25, 1, 0.5, 1); }
-        .active .draw-anim { stroke-dashoffset: 0; }
+        .icon-stroke { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
         /* Reveal Animations */
-        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 1s ease-out, transform 1s ease-out; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
-        /* Highlight Tags for fast reading */
+        /* Tags */
         .tag {
             display: inline-flex; align-items: center; gap: 0.4rem;
-            padding: 0.25rem 0.75rem; border: 1px solid var(--border); border-radius: 40px;
-            font-size: 0.7rem; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.1em;
-            color: var(--text-muted); background: rgba(255,255,255,0.02);
+            padding: 0.3rem 0.8rem; border: 1px solid var(--border); border-radius: 6px;
+            font-size: 0.75rem; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.05em;
+            color: var(--text-muted); background: var(--surface);
             transition: all 0.3s ease;
         }
-        .tag.primary { border-color: rgba(255,255,255,0.4); color: var(--highlight); }
-        .tag svg { width: 10px; height: 10px; }
+        .tag.primary { border-color: rgba(0, 230, 118, 0.3); color: var(--highlight); background: rgba(0, 230, 118, 0.05); font-weight: 500; }
+        .tag svg { width: 12px; height: 12px; }
+
+        /* Author Highlight in Citations */
+        .author-me { color: var(--highlight); font-weight: 600; }
 
         /* Hero Section */
-        .hero { align-items: flex-start; }
-        .hero-meta { display: flex; gap: 2rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-muted); margin-bottom: 2rem; }
+        .hero { min-height: 90vh; justify-content: center; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 1.5rem; font-size: 0.85rem; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 2rem; }
         .hero-meta span { display: flex; align-items: center; gap: 0.5rem; }
-        .hero-title { font-size: clamp(4rem, 10vw, 8rem); line-height: 0.9; margin-bottom: 2rem; letter-spacing: -0.02em; position: relative; }
-        .hero-subtitle { font-size: clamp(1.1rem, 2vw, 1.4rem); max-width: 700px; color: var(--accent); line-height: 1.6; font-weight: 300; }
+        .hero-title { font-size: clamp(3.5rem, 8vw, 6rem); line-height: 1; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
+        .hero-subtitle { font-size: clamp(1.1rem, 2vw, 1.3rem); max-width: 800px; color: var(--text-main); line-height: 1.6; margin-bottom: 3rem; }
         
-        /* Quick Stats Bar */
+        /* Stats */
         .stats-bar {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
-            margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); width: 100%; max-width: 800px;
+            display: flex; gap: 4rem; flex-wrap: wrap;
+            padding-top: 2rem; border-top: 1px solid var(--border);
         }
-        .stat-item { display: flex; flex-direction: column; gap: 0.5rem; }
+        .stat-item { display: flex; flex-direction: column; gap: 0.2rem; }
         .stat-num { font-family: var(--font-serif); font-size: 2.5rem; color: var(--highlight); line-height: 1; }
-        .stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+        .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
 
-        /* Projects Section (Text & Image) */
-        .project-grid { display: flex; flex-direction: column; gap: 8rem; }
-        .project-item { display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: center; }
-        .project-item:nth-child(even) { direction: rtl; }
-        .project-item:nth-child(even) > * { direction: ltr; }
-        
-        /* Abstract CSS Art replacing images */
-        .project-visual {
-            width: 100%; aspect-ratio: 4/3; background: var(--surface); border-radius: 4px;
-            position: relative; overflow: hidden; border: 1px solid var(--border);
-            display: flex; justify-content: center; align-items: center;
+        /* Research Interests Section */
+        .interest-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .interest-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+            padding: 2.5rem; transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+            display: flex; flex-direction: column; gap: 1.5rem;
         }
-        .project-visual svg { width: 60%; height: 60%; opacity: 0.8; }
-        .visual-bg-1 { background: radial-gradient(circle at 50% 50%, #2a2a2a 0%, #121212 70%); }
-        .visual-bg-2 { background: linear-gradient(45deg, #0d0d0d 25%, #1a1a1a 50%, #0d0d0d 75%); background-size: 200% 200%; animation: gradientMove 10s ease infinite; }
-        .visual-bg-3 { background: repeating-linear-gradient(0deg, #121212, #121212 10px, #1a1a1a 10px, #1a1a1a 11px); }
-        @keyframes gradientMove { 0% {background-position: 0% 50%} 50% {background-position: 100% 50%} 100% {background-position: 0% 50%} }
+        .interest-card:hover {
+            transform: translateY(-8px); border-color: var(--accent);
+            box-shadow: 0 15px 30px -10px rgba(0, 230, 118, 0.08);
+        }
+        .interest-icon { width: 45px; height: 45px; border-radius: 8px; background: rgba(0,230,118,0.05); display: flex; align-items: center; justify-content: center; color: var(--highlight); }
+        .interest-icon svg { width: 24px; height: 24px; }
+        .interest-card h3 { font-size: 1.4rem; font-family: var(--font-sans); font-weight: 500; letter-spacing: -0.02em; }
+        .interest-card p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.7; }
 
-        .project-info { display: flex; flex-direction: column; gap: 1.5rem; }
-        .project-header { display: flex; align-items: center; justify-content: space-between; }
-        .project-icon { width: 40px; height: 40px; border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .project-icon svg { width: 20px; height: 20px; }
-        .project-title { font-size: clamp(2rem, 3vw, 2.5rem); }
-        .project-desc { font-size: 0.95rem; color: var(--accent); line-height: 1.7; }
-        .project-tags { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem; }
+        /* Experience Section */
+        .experience-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+        .timeline { display: flex; flex-direction: column; gap: 2.5rem; position: relative; padding-left: 2rem; border-left: 1px solid var(--border); }
+        .timeline-title { font-size: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.8rem; color: #fff; }
+        .timeline-item { position: relative; }
+        .timeline-dot {
+            position: absolute; left: -2.35rem; top: 0.3rem; width: 12px; height: 12px;
+            border-radius: 50%; background: var(--bg-color); border: 2px solid var(--text-muted);
+            transition: all 0.3s ease;
+        }
+        .timeline-item:hover .timeline-dot { border-color: var(--highlight); background: var(--highlight); box-shadow: 0 0 10px var(--highlight); }
+        .timeline-date { font-size: 0.8rem; font-family: var(--font-sans); color: var(--highlight); margin-bottom: 0.5rem; letter-spacing: 0.05em; }
+        .timeline-content h4 { font-size: 1.1rem; font-family: var(--font-sans); font-weight: 500; color: var(--text-main); margin-bottom: 0.2rem; }
+        .timeline-content h5 { font-size: 0.95rem; font-weight: 400; color: var(--text-muted); margin-bottom: 0.8rem; }
+        .timeline-content p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
 
         /* Publications Section */
-        .pub-list { display: flex; flex-direction: column; }
+        .pub-list { display: flex; flex-direction: column; gap: 1.5rem; }
         .pub-item { 
-            display: grid; grid-template-columns: auto 1fr; gap: 3rem; 
-            padding: 3rem 0; border-bottom: 1px solid var(--border); transition: background 0.4s ease;
+            background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+            padding: 2rem 2.5rem; transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative; overflow: hidden;
         }
-        .pub-item:hover { background: rgba(255,255,255,0.01); padding-left: 1rem; padding-right: 1rem; }
-        .pub-year { font-family: var(--font-serif); font-size: 1.5rem; color: var(--text-muted); font-style: italic; }
-        .pub-content h4 { font-size: 1.2rem; font-weight: 400; margin-bottom: 1rem; line-height: 1.5; }
-        .pub-meta { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem; }
+        .pub-item::before {
+            content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px;
+            background: var(--border); transition: background 0.4s ease;
+        }
+        .pub-item:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 10px 30px -10px rgba(0, 230, 118, 0.08); }
+        .pub-item:hover::before { background: var(--highlight); }
+        
+        .pub-title { font-size: 1.15rem; font-weight: 500; margin-bottom: 1rem; line-height: 1.5; color: #fff; }
+        .pub-authors { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.5rem; line-height: 1.6; }
+        .pub-journal { font-size: 0.95rem; font-style: italic; color: var(--text-main); margin-bottom: 1.5rem; }
         .pub-tags { display: flex; gap: 0.8rem; flex-wrap: wrap; }
 
-        /* Footer */
-        .footer { padding: 5vh 0; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); font-size: 0.85rem; }
-        .footer-links { display: flex; gap: 3rem; }
-        .footer-links a { display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); transition: color 0.3s; }
-        .footer-links a:hover { color: var(--highlight); }
+        /* Footer & Buttons */
+        .footer { padding: 6vh 0; display: flex; flex-direction: column; gap: 2rem; align-items: center; border-top: 1px solid var(--border); text-align: center; }
+        .link-group { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; }
+        
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.8rem 1.5rem;
+            background: var(--surface); border: 1px solid var(--border); border-radius: 40px;
+            font-size: 0.85rem; font-weight: 500; color: var(--text-main); transition: all 0.3s ease;
+        }
+        .btn svg { width: 16px; height: 16px; }
+        .btn:hover { background: rgba(0,230,118,0.1); border-color: var(--highlight); color: var(--highlight); transform: translateY(-2px); }
+        
+        .footer-copy { font-size: 0.85rem; color: var(--text-muted); }
 
         /* Responsive */
         @media (max-width: 900px) {
-            .project-item { grid-template-columns: 1fr; gap: 2rem; }
-            .project-item:nth-child(even) { direction: ltr; }
-            .stats-bar { grid-template-columns: 1fr; gap: 1.5rem; }
-            .pub-item { grid-template-columns: 1fr; gap: 1rem; padding: 2rem 0; }
-            .pub-year { font-size: 1.2rem; }
-            .hero-meta { flex-direction: column; gap: 1rem; }
+            .experience-grid { grid-template-columns: 1fr; gap: 3rem; }
+            .stats-bar { gap: 2rem; }
+            .pub-item { padding: 1.5rem; }
         }
     </style>
 </head>
@@ -175,15 +206,15 @@
         <section class="hero">
             <div class="hero-meta reveal">
                 <span>
-                    <svg class="icon-stroke" viewBox="0 0 24 24" width="14" height="14"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <svg class="icon-stroke" viewBox="0 0 24 24" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     Kannmu / 范林涵
                 </span>
                 <span>
-                    <svg class="icon-stroke" viewBox="0 0 24 24" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <svg class="icon-stroke" viewBox="0 0 24 24" width="16" height="16"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     Southeast University
                 </span>
                 <span>
-                    <svg class="icon-stroke" viewBox="0 0 24 24" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <svg class="icon-stroke" viewBox="0 0 24 24" width="16" height="16"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     Nanjing, CN
                 </span>
             </div>
@@ -191,184 +222,214 @@
             <h1 class="hero-title reveal" style="transition-delay: 0.1s;">Lin-Han Fan</h1>
             
             <p class="hero-subtitle reveal" style="transition-delay: 0.2s;">
-                Design Researcher & Scientific Consultant orchestrating the intersection of human-computer interaction, high-fidelity haptic feedback, and neural interfaces.
+                Ph.D. Student & Scientific Consultant. <br>
+                Orchestrating the intersection of human-computer interaction, high-fidelity haptic feedback (acoustic haptics), and neural interfaces.
             </p>
 
-            <!-- Quick Data Extraction -->
             <div class="stats-bar reveal" style="transition-delay: 0.3s;">
                 <div class="stat-item interactive-magnetic">
                     <span class="stat-num">6+</span>
-                    <span class="stat-label">Top-Tier Publications (SCI/SSCI)</span>
+                    <span class="stat-label">Top-Tier Publications</span>
                 </div>
                 <div class="stat-item interactive-magnetic">
                     <span class="stat-num">4</span>
-                    <span class="stat-label">Patents in Haptics & Robotics</span>
+                    <span class="stat-label">Patents</span>
                 </div>
                 <div class="stat-item interactive-magnetic">
                     <span class="stat-num">12+</span>
-                    <span class="stat-label">National Awards & Honors</span>
+                    <span class="stat-label">National Awards</span>
                 </div>
             </div>
         </section>
 
-        <!-- Projects / Visual Section -->
-        <section id="research">
+        <!-- Research Interests Section -->
+        <section id="research-interests">
             <div class="section-header reveal">
                 <svg class="icon-stroke" viewBox="0 0 24 24"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
-                Selected Engineering & Design
+                Research Focus
             </div>
             
-            <div class="project-grid">
+            <div class="interest-grid">
+                <!-- Interest 1 -->
+                <div class="interest-card reveal">
+                    <div class="interest-icon">
+                        <svg class="icon-stroke" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    </div>
+                    <h3>Human-Computer Interaction</h3>
+                    <p>Exploring novel interaction paradigms including gaze tracking, voluntary blink dynamics, and multimodal inputs to improve system accessibility, cognitive load balancing, and overall user experience.</p>
+                </div>
                 
-                <!-- Project 1: Acoustic Haptics -->
-                <div class="project-item reveal">
-                    <div class="project-visual visual-bg-1 parallax" data-speed="0.05">
-                        <svg class="icon-stroke draw-anim" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="10"/>
-                            <circle cx="50" cy="50" r="25" stroke-dasharray="4 4"/>
-                            <circle cx="50" cy="50" r="40" stroke-dasharray="2 6"/>
-                            <path d="M50 10v15M50 75v15M10 50h15M75 50h15"/>
-                        </svg>
+                <!-- Interest 2 -->
+                <div class="interest-card reveal" style="transition-delay: 0.1s;">
+                    <div class="interest-icon">
+                        <svg class="icon-stroke" viewBox="0 0 24 24"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
                     </div>
-                    <div class="project-info">
-                        <div class="project-header">
-                            <div class="tag">2025 – Present</div>
-                            <div class="project-icon interactive-magnetic"><svg class="icon-stroke" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></div>
-                        </div>
-                        <h3 class="project-title">Acoustic Haptics Array (UMH v5.0)</h3>
-                        <p class="project-desc">Architecting an ultrasonic phased array utilizing a hexagonal close-packed layout (60 elements). Designed to maximize Rayleigh wave strain on the skin, delivering high-fidelity, mid-air tactile perception for immersive VR environments.</p>
-                        <div class="project-tags">
-                            <span class="tag"><svg class="icon-stroke" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Hardware</span>
-                            <span class="tag">Phased Array</span>
-                            <span class="tag primary">Entrepreneurship Project</span>
-                        </div>
-                    </div>
+                    <h3>Acoustic / Ultrasonic Haptics</h3>
+                    <p>Architecting ultrasonic phased arrays and optimizing layout strategies (e.g., hexagonal close-packed) to maximize surface wave strain, delivering high-fidelity mid-air tactile perception.</p>
                 </div>
 
-                <!-- Project 2: BCI -->
-                <div class="project-item reveal">
-                    <div class="project-visual visual-bg-2 parallax" data-speed="0.05">
-                        <svg class="icon-stroke draw-anim" viewBox="0 0 100 100">
-                            <path d="M20 50 L40 30 L60 70 L80 50" />
-                            <circle cx="20" cy="50" r="3"/>
-                            <circle cx="40" cy="30" r="3"/>
-                            <circle cx="60" cy="70" r="3"/>
-                            <circle cx="80" cy="50" r="3"/>
-                            <path d="M40 30 L60 30 L80 50" stroke-dasharray="2 4" opacity="0.5"/>
-                            <path d="M20 50 L40 70 L60 70" stroke-dasharray="2 4" opacity="0.5"/>
-                        </svg>
+                <!-- Interest 3 -->
+                <div class="interest-card reveal" style="transition-delay: 0.2s;">
+                    <div class="interest-icon">
+                        <svg class="icon-stroke" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                     </div>
-                    <div class="project-info">
-                        <div class="project-header">
-                            <div class="tag">2023 – 2025</div>
-                            <div class="project-icon interactive-magnetic"><svg class="icon-stroke" viewBox="0 0 24 24"><path d="M9.66 16.52a2.43 2.43 0 0 0 4.68 0"/><path d="M12 2v2"/><circle cx="12" cy="10" r="6"/><path d="M18.36 6.64l1.42-1.42"/><path d="M4.22 5.22l1.42 1.42"/><path d="M2 12h2"/><path d="M20 12h2"/></svg></div>
-                        </div>
-                        <h3 class="project-title">BCI Secure Comms (BSTCM)</h3>
-                        <p class="project-desc">Pioneered a paradigm integrating Brain-Computer Interfaces with Space-Time-Coding Metasurfaces. Fusing visual stimulus encoding with physical-layer security to create highly reliable, encrypted wireless neural communication channels.</p>
-                        <div class="project-tags">
-                            <span class="tag"><svg class="icon-stroke" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Neural Interface</span>
-                            <span class="tag">Metasurface</span>
-                            <span class="tag primary">Nature Comms</span>
-                        </div>
-                    </div>
+                    <h3>Neural Interfaces (BCI)</h3>
+                    <p>Pioneering paradigms that integrate Brain-Computer Interfaces with cutting-edge metasurfaces to create highly reliable, encrypted, and secure wireless neural communication channels.</p>
                 </div>
-
-                <!-- Project 3: Eye HCI -->
-                <div class="project-item reveal">
-                    <div class="project-visual visual-bg-3 parallax" data-speed="0.05">
-                        <svg class="icon-stroke draw-anim" viewBox="0 0 100 100">
-                            <path d="M10 50 C 30 20, 70 20, 90 50 C 70 80, 30 80, 10 50 Z" />
-                            <circle cx="50" cy="50" r="15"/>
-                            <circle cx="50" cy="50" r="5"/>
-                            <path d="M50 35 L50 15" stroke-dasharray="2 4"/>
-                        </svg>
-                    </div>
-                    <div class="project-info">
-                        <div class="project-header">
-                            <div class="tag">2023 – 2024</div>
-                            <div class="project-icon interactive-magnetic"><svg class="icon-stroke" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-                        </div>
-                        <h3 class="project-title">Pressure-Sensing Blink HCI</h3>
-                        <p class="project-desc">Developed an alternative to infrared eye-tracking by utilizing pressure sensors for voluntary blink interactions. This method mitigates hardware cost and ocular hazards while establishing new ergonomic heuristics for interaction designers.</p>
-                        <div class="project-tags">
-                            <span class="tag"><svg class="icon-stroke" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> HCI Design</span>
-                            <span class="tag">Sensors</span>
-                            <span class="tag primary">First Author</span>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </section>
 
-        <!-- Highly Readable Publications Section -->
+        <!-- Experience Section -->
+        <section id="experience">
+            <div class="section-header reveal">
+                <svg class="icon-stroke" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Experience & Education
+            </div>
+
+            <div class="experience-grid">
+                <!-- Education Column -->
+                <div>
+                    <h3 class="timeline-title reveal"><svg class="icon-stroke" viewBox="0 0 24 24" width="20" height="20"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Education</h3>
+                    <div class="timeline">
+                        <div class="timeline-item reveal">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-date">2023.09 – Present (2025.03 Ph.D. Commenced)</div>
+                            <div class="timeline-content">
+                                <h4>Ph.D. Student in Design Study</h4>
+                                <h5>Southeast University, Nanjing, CN</h5>
+                                <p>MSc to PhD fast-track program at the School of Mechanical Engineering. Focusing on advanced interaction design, ergonomics, and haptic feedback.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item reveal">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-date">2019.09 – 2023.06</div>
+                            <div class="timeline-content">
+                                <h4>B.Eng. in Mechanical Engineering</h4>
+                                <h5>Sichuan University, Chengdu, CN</h5>
+                                <p>Graduated with honors under the Excellent Engineer Plan. Built a solid foundation in mechanical design, automation, and robotics.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Column -->
+                <div>
+                    <h3 class="timeline-title reveal"><svg class="icon-stroke" viewBox="0 0 24 24" width="20" height="20"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Professional</h3>
+                    <div class="timeline">
+                        <div class="timeline-item reveal">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-date">2026.01 – 2027.01</div>
+                            <div class="timeline-content">
+                                <h4>Scientific Consultant</h4>
+                                <h5>Nexo Technology Co., Limited., Shenzhen</h5>
+                                <p>Providing expert scientific advisory on human-computer interaction frameworks and cutting-edge hardware integrations.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item reveal">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-date">2021.09 – 2023.06</div>
+                            <div class="timeline-content">
+                                <h4>Hardware Team Leader</h4>
+                                <h5>Robocon Team, Sichuan University</h5>
+                                <p>Led the hardware division and served as Chief Engineer for R1 Robot. Secured multiple national-level awards in the national robotics competitions.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item reveal">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-date">2022.08 – 2023.03</div>
+                            <div class="timeline-content">
+                                <h4>Deep Learning Algorithm Intern</h4>
+                                <h5>Chengdu Luxingtong Tech</h5>
+                                <p>Developed and optimized Vision Transformer-based architectures for automotive windshield rain-detection systems.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Publications Section -->
         <section id="publications">
             <div class="section-header reveal">
                 <svg class="icon-stroke" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                Academic Output
+                Selected Publications
             </div>
             
             <div class="pub-list">
                 
                 <div class="pub-item reveal">
-                    <div class="pub-year">2025</div>
-                    <div class="pub-content">
-                        <h4>Secure wireless communication of brain-computer interface and mind control of smart devices enabled by space-time-coding metasurface.</h4>
-                        <div class="pub-meta">
-                            Qiang Xiao, <strong>Lin Han Fan (Joint First Author)</strong>, Qian Ma, et al. <br>
-                            <i>Nature Communications, 16: 7914.</i>
-                        </div>
-                        <div class="pub-tags">
-                            <span class="tag primary">IF: 15.7</span>
-                            <span class="tag">Nature Portfolio</span>
-                            <span class="tag">CAS Q1 Top</span>
-                        </div>
+                    <div class="pub-title">Clarity or Context? Rebalancing Mobile Interaction for Older Adults with Gaze-Zoom-Tap.</div>
+                    <div class="pub-authors">
+                        <span class="author-me">Linhan Fan (First Author)</span>, Ke Zhu, MingJie Li, ZhuTao Wang, Yafeng Niu*.
+                    </div>
+                    <div class="pub-journal">International Journal of Human–Computer Interaction, 2026: 1-26.</div>
+                    <div class="pub-tags">
+                        <span class="tag primary">SCI Q1</span>
+                        <span class="tag">First Author</span>
+                        <span class="tag">HCI</span>
                     </div>
                 </div>
 
                 <div class="pub-item reveal">
-                    <div class="pub-year">2024</div>
-                    <div class="pub-content">
-                        <h4>Design Recommendations for Voluntary Blink Interactions Based on Pressure Sensors.</h4>
-                        <div class="pub-meta">
-                            <strong>Lin-Han Fan (First Author)</strong>, Wei-Chi Huang, Xue-Qi Shao, Ya-feng Niu. <br>
-                            <i>Advanced Engineering Informatics, 61: 102489.</i>
-                        </div>
-                        <div class="pub-tags">
-                            <span class="tag primary">IF: 9.9</span>
-                            <span class="tag">SCI Q1</span>
-                            <span class="tag">CAS Q1 Top</span>
-                        </div>
+                    <div class="pub-title">Secure wireless communication of brain-computer interface and mind control of smart devices enabled by space-time-coding metasurface.</div>
+                    <div class="pub-authors">
+                        Qiang Xiao, <span class="author-me">Lin Han Fan (Joint First Author)</span>, Qian Ma*, Yu Ming Ning, Ze Gu, Long Chen, Lianlin Li, Jian Wei You, Ya Feng Niu*, Tie Jun Cui*.
+                    </div>
+                    <div class="pub-journal">Nature Communications, 2025, 16: 7914.</div>
+                    <div class="pub-tags">
+                        <span class="tag primary">IF: 15.7</span>
+                        <span class="tag primary">Nature Portfolio</span>
+                        <span class="tag">CAS Q1 Top</span>
                     </div>
                 </div>
 
                 <div class="pub-item reveal">
-                    <div class="pub-year">2026</div>
-                    <div class="pub-content">
-                        <h4>Clarity or Context? Rebalancing Mobile Interaction for Older Adults with Gaze-Zoom-Tap.</h4>
-                        <div class="pub-meta">
-                            <strong>Linhan Fan (First Author)</strong>, Ke Zhu, MingJie Li, ZhuTao Wang, Yafeng Niu. <br>
-                            <i>International Journal of Human–Computer Interaction, 1-26.</i>
-                        </div>
-                        <div class="pub-tags">
-                            <span class="tag">SCI Q1</span>
-                            <span class="tag">HCI</span>
-                        </div>
+                    <div class="pub-title">Visual perception and user experience Optimization: Exploring interaction design through static-triggered smooth pursuit systems.</div>
+                    <div class="pub-authors">
+                        Ya-Feng Niu*, Yun Feng, Xin Li, Wei-Chi Huang, Yi-Yan Wan, <span class="author-me">Lin-Han Fan</span>.
+                    </div>
+                    <div class="pub-journal">Displays, 2025, 90: 103121.</div>
+                    <div class="pub-tags">
+                        <span class="tag">SCI</span>
+                        <span class="tag">UX Design</span>
                     </div>
                 </div>
 
                 <div class="pub-item reveal">
-                    <div class="pub-year">2025</div>
-                    <div class="pub-content">
-                        <h4>Enhancing Gaze Interaction Performance: Design and Optimization of Perspective-Driven Fisheye View.</h4>
-                        <div class="pub-meta">
-                            Wei-Chi Huang, Yi-Yan Wang, <strong>Lin-Han Fan</strong>, Sha-Tong Yang, Ya-Feng Niu. <br>
-                            <i>Advanced Engineering Informatics, 65: 103365.</i>
-                        </div>
-                        <div class="pub-tags">
-                            <span class="tag primary">IF: 9.9</span>
-                            <span class="tag">SCI Q1</span>
-                        </div>
+                    <div class="pub-title">Enhancing Gaze Interaction Performance: Design and Optimization of Perspective-Driven Fisheye View.</div>
+                    <div class="pub-authors">
+                        Wei-Chi Huang, Yi-Yan Wang, <span class="author-me">Lin-Han Fan</span>, Sha-Tong Yang, Ya-Feng Niu*.
+                    </div>
+                    <div class="pub-journal">Advanced Engineering Informatics, 2025, 65: 103365.</div>
+                    <div class="pub-tags">
+                        <span class="tag primary">IF: 9.9</span>
+                        <span class="tag">CAS Q1 Top</span>
+                    </div>
+                </div>
+
+                <div class="pub-item reveal">
+                    <div class="pub-title">Enhancing Safety in Conditionally Automated Driving: Can More Takeover Request Visual Information Make a Difference in Hazard Scenarios with Varied Hazard Visibility.</div>
+                    <div class="pub-authors">
+                        Wei-Chi Huang, <span class="author-me">Lin-Han Fan</span>, Zi-Jian Han, Ya-feng Niu*.
+                    </div>
+                    <div class="pub-journal">Accident Analysis and Prevention, 2024, 205: 107687.</div>
+                    <div class="pub-tags">
+                        <span class="tag primary">IF: 6.2</span>
+                        <span class="tag">SSCI Q1</span>
+                        <span class="tag">CAS Q1 Top</span>
+                    </div>
+                </div>
+
+                <div class="pub-item reveal">
+                    <div class="pub-title">Design Recommendations for Voluntary Blink Interactions Based on Pressure Sensors.</div>
+                    <div class="pub-authors">
+                        <span class="author-me">Lin-Han Fan (First Author)</span>, Wei-Chi Huang, Xue-Qi Shao, Ya-feng Niu*.
+                    </div>
+                    <div class="pub-journal">Advanced Engineering Informatics, 2024, 61: 102489.</div>
+                    <div class="pub-tags">
+                        <span class="tag primary">IF: 9.9</span>
+                        <span class="tag">First Author</span>
+                        <span class="tag">CAS Q1 Top</span>
                     </div>
                 </div>
 
@@ -377,24 +438,34 @@
 
         <!-- Footer Section -->
         <footer class="footer reveal">
-            <div>© <script>document.write(new Date().getFullYear())</script> Lin-Han Fan (Kannmu). All rights reserved.</div>
-            <div class="footer-links">
-                <a href="mailto:linhanfan@seu.edu.cn" class="interactive-magnetic">
-                    <svg class="icon-stroke" viewBox="0 0 24 24" width="16" height="16"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email
+            <div class="link-group">
+                <a href="mailto:linhanfan@seu.edu.cn" class="btn interactive-magnetic">
+                    <svg class="icon-stroke" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    Email
                 </a>
-                <a href="https://orcid.org/0009-0000-8611-7194" target="_blank" class="interactive-magnetic">
-                    <svg class="icon-stroke" viewBox="0 0 24 24" width="16" height="16"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> ORCID
+                <a href="https://scholar.google.com/" target="_blank" class="btn interactive-magnetic">
+                    <svg class="icon-stroke" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    Google Scholar
                 </a>
-                <a href="https://kannmu.top" target="_blank" class="interactive-magnetic">
-                    <svg class="icon-stroke" viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Archive
+                <a href="https://orcid.org/0009-0000-8611-7194" target="_blank" class="btn interactive-magnetic">
+                    <svg class="icon-stroke" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    ORCID
                 </a>
+                <a href="https://kannmu.top" target="_blank" class="btn interactive-magnetic">
+                    <svg class="icon-stroke" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    Personal Site
+                </a>
+            </div>
+            
+            <div class="footer-copy">
+                © <script>document.write(new Date().getFullYear())</script> Lin-Han Fan (Kannmu). All rights reserved.
             </div>
         </footer>
 
     </div>
 
     <script>
-        // --- 1. Custom Cursor & Ambient Glow ---
+        // --- Custom Cursor & Ambient Glow ---
         const cursor = document.getElementById('cursor');
         const glow = document.getElementById('glow');
         let mouseX = window.innerWidth / 2;
@@ -417,56 +488,41 @@
         }
         requestAnimationFrame(renderCursor);
 
-        // --- 2. Magnetic Hover Effect for Buttons & Icons ---
+        // --- Magnetic Hover Effect for Buttons ---
         const magnetics = document.querySelectorAll('.interactive-magnetic');
         magnetics.forEach(btn => {
             btn.addEventListener('mousemove', function(e) {
                 const rect = this.getBoundingClientRect();
                 const x = e.clientX - rect.left - rect.width / 2;
                 const y = e.clientY - rect.top - rect.height / 2;
-                this.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+                this.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
                 cursor.classList.add('hover');
             });
             btn.addEventListener('mouseleave', function() {
                 this.style.transform = `translate(0px, 0px)`;
-                this.style.transition = `transform 0.3s ease-out`;
                 cursor.classList.remove('hover');
-            });
-            btn.addEventListener('mouseenter', function() {
-                this.style.transition = `none`;
             });
         });
 
         // Add cursor hover to normal links
-        document.querySelectorAll('a').forEach(link => {
-            link.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-            link.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        document.querySelectorAll('a, .interest-card, .pub-item').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
         });
 
-        // --- 3. Scroll Reveal & SVG Animation ---
+        // --- Scroll Reveal Animation ---
         const revealElements = document.querySelectorAll('.reveal');
-        const revealOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
+        const revealOptions = { threshold: 0.1, rootMargin: "0px 0px -40px 0px" };
 
         const revealOnScroll = new IntersectionObserver(function(entries, observer) {
             entries.forEach(entry => {
                 if (!entry.isIntersecting) return;
                 entry.target.classList.add('active');
-                // Unobserve after revealing for performance, or keep it for replay
                 observer.unobserve(entry.target);
             });
         }, revealOptions);
 
         revealElements.forEach(el => revealOnScroll.observe(el));
-
-        // --- 4. Parallax Effect for Abstract Art Images ---
-        const parallaxElements = document.querySelectorAll('.parallax');
-        window.addEventListener('scroll', () => {
-            let scrollY = window.pageYOffset;
-            parallaxElements.forEach(el => {
-                let speed = el.getAttribute('data-speed');
-                el.style.transform = `translateY(${scrollY * speed}px)`;
-            });
-        });
 
     </script>
 </body>
