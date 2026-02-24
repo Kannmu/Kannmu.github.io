@@ -7,12 +7,28 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'generate', payload: { prompt: string, image: string | null }): void
+  (e: 'generate', payload: { prompt: string, image: string | null, aspectRatio: string, imageSize: string }): void
 }>()
 
 const prompt = ref('')
+const aspectRatio = ref('1:1')
+const imageSize = ref('2K')
 const referenceImage = ref<string | null>(null)
 const fileInput = ref<HTMLInputElement | null>(null)
+
+const ratios = [
+  { label: 'Square (1:1)', value: '1:1' },
+  { label: 'Portrait (9:16)', value: '9:16' },
+  { label: 'Landscape (16:9)', value: '16:9' },
+  { label: 'Standard (4:3)', value: '4:3' },
+  { label: 'Tall (3:4)', value: '3:4' }
+]
+
+const resolutions = [
+  { label: '1K', value: '1K' },
+  { label: '2K', value: '2K' },
+  { label: '4K', value: '4K' }
+]
 
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -37,7 +53,7 @@ const clearImage = () => {
 
 const generate = () => {
   if (!prompt.value.trim()) return
-  emit('generate', { prompt: prompt.value, image: referenceImage.value })
+  emit('generate', { prompt: prompt.value, image: referenceImage.value, aspectRatio: aspectRatio.value, imageSize: imageSize.value })
 }
 </script>
 
@@ -53,6 +69,41 @@ const generate = () => {
       ></textarea>
       <div class="absolute bottom-4 right-4 text-xs text-gray-400 pointer-events-none">
         {{ prompt.length }} chars
+      </div>
+    </div>
+
+    <!-- Aspect Ratio and Resolution Selection -->
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex flex-wrap gap-2">
+        <button 
+          v-for="ratio in ratios" 
+          :key="ratio.value"
+          @click="aspectRatio = ratio.value"
+          :class="[
+            'px-4 py-2 rounded-xl text-sm font-medium transition-all border',
+            aspectRatio === ratio.value 
+              ? 'bg-blue-50 border-blue-200 text-blue-700 ring-2 ring-blue-100' 
+              : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+          ]"
+        >
+          {{ ratio.label }}
+        </button>
+      </div>
+
+      <div class="relative inline-block w-32">
+        <select 
+          v-model="imageSize"
+          class="block w-full px-4 py-2 text-sm font-medium bg-white border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer hover:border-gray-300 transition-all"
+        >
+          <option v-for="res in resolutions" :key="res.value" :value="res.value">
+            {{ res.label }}
+          </option>
+        </select>
+        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </div>
       </div>
     </div>
 

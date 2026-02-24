@@ -13,7 +13,7 @@ const loading = ref(false)
 const generatedImage = ref<string | null>(null)
 const error = ref<string | null>(null)
 
-const handleGenerate = async ({ prompt, image }: { prompt: string, image: string | null }) => {
+const handleGenerate = async ({ prompt, image, aspectRatio, imageSize }: { prompt: string, image: string | null, aspectRatio: string, imageSize: string }) => {
   loading.value = true
   error.value = null
   generatedImage.value = null
@@ -44,7 +44,15 @@ const handleGenerate = async ({ prompt, image }: { prompt: string, image: string
           }
         ],
         generationConfig: {
-          responseModalities: ["TEXT", "IMAGE"]
+          responseModalities: ["TEXT", "IMAGE"],
+          imageConfig: {
+            aspectRatio: aspectRatio,
+            imageSize: imageSize,
+            imageOutputOptions: {
+              mimeType: "image/jpeg",
+              compressionQuality: 75
+            }
+          }
         }
       },
       {
@@ -57,18 +65,37 @@ const handleGenerate = async ({ prompt, image }: { prompt: string, image: string
 
     // Parse response
     const candidates = response.data.candidates
-    if (candidates && candidates.length > 0) {
-      const parts = candidates[0].content.parts
-      const imagePart = parts.find((p: any) => p.inlineData || p.inline_data)
-      
-      if (imagePart) {
-        const imgData = imagePart.inlineData || imagePart.inline_data
-        generatedImage.value = `data:${imgData.mimeType || 'image/png'};base64,${imgData.data}`
-      } else {
-        throw new Error('No image generated in response')
-      }
-    } else {
+    if (!candidates || candidates.length === 0) {
       throw new Error('No candidates in response')
+    }
+
+    const candidate = candidates[0]
+    
+    // Check for safety ratings or finish reason
+    if (candidate.finishReason && candidate.finishReason !== 'STOP') {
+      // If there's content, we might still want to check it for a text explanation
+      if (!candidate.content || !candidate.content.parts) {
+         throw new Error(`Generation stopped: ${candidate.finishReason}`)
+      }
+    }
+
+    if (!candidate.content || !candidate.content.parts) {
+       throw new Error('Response content is empty')
+    }
+
+    const responseParts = candidate.content.parts
+    const imagePart = responseParts.find((p: any) => p.inlineData || p.inline_data)
+    
+    if (imagePart) {
+      const imgData = imagePart.inlineData || imagePart.inline_data
+      generatedImage.value = `data:${imgData.mimeType || 'image/png'};base64,${imgData.data}`
+    } else {
+      // Check for text part which might contain refusal reason
+      const textPart = responseParts.find((p: any) => p.text)
+      if (textPart && textPart.text) {
+        throw new Error(textPart.text)
+      }
+      throw new Error('No image generated. The model might have refused the request.')
     }
 
   } catch (err: any) {
