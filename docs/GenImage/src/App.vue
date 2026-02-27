@@ -6,14 +6,20 @@ import ApiKeyInput from './components/ApiKeyInput.vue'
 import ImageGenerator from './components/ImageGenerator.vue'
 import ImageDisplay from './components/ImageDisplay.vue'
 import LoadingSpinner from './components/LoadingSpinner.vue'
-import { AlertCircle } from 'lucide-vue-next'
+import { AlertCircle, DollarSign } from 'lucide-vue-next'
 
 const apiKey = useStorage('zenmux-api-key', '')
 const loading = ref(false)
 const generatedImage = ref<string | null>(null)
 const error = ref<string | null>(null)
+const totalCost = ref(0)
 
-const handleGenerate = async ({ prompt, image, aspectRatio, imageSize }: { prompt: string, image: string | null, aspectRatio: string, imageSize: string }) => {
+const models: Record<string, { input: number, output: number }> = {
+  'google/gemini-3.1-flash-image-preview': { input: 0.25, output: 1.5 },
+  'google/gemini-3-pro-image-preview': { input: 2.0, output: 12.0 }
+}
+
+const handleGenerate = async ({ prompt, image, aspectRatio, imageSize, model }: { prompt: string, image: string | null, aspectRatio: string, imageSize: string, model: string }) => {
   loading.value = true
   error.value = null
   generatedImage.value = null
@@ -35,7 +41,7 @@ const handleGenerate = async ({ prompt, image, aspectRatio, imageSize }: { promp
     }
 
     const response = await axios.post(
-      'https://zenmux.ai/api/vertex-ai/v1/models/google/gemini-3-pro-image-preview:generateContent',
+      `https://zenmux.ai/api/vertex-ai/v1/models/${model}:generateContent`,
       {
         contents: [
           {
@@ -62,6 +68,32 @@ const handleGenerate = async ({ prompt, image, aspectRatio, imageSize }: { promp
         }
       }
     )
+
+    // Calculate cost
+    let inputTokens = 0
+    let outputTokens = 0
+    
+    // Try to get usage metadata
+    if (response.data.usageMetadata) {
+      inputTokens = response.data.usageMetadata.promptTokenCount || 0
+      outputTokens = response.data.usageMetadata.candidatesTokenCount || 0
+    } else {
+      // Estimation fallback
+      inputTokens = Math.ceil(prompt.length / 4)
+      
+      // Rough estimation for output tokens if metadata is missing
+      // Assuming ~25k tokens for 1K, scaling by area
+      const baseTokens = 25000 
+      if (imageSize === '2K') outputTokens = baseTokens * 4
+      else if (imageSize === '4K') outputTokens = baseTokens * 16
+      else outputTokens = baseTokens
+    }
+
+    const modelPricing = models[model]
+    if (modelPricing) {
+      const cost = (inputTokens / 1_000_000 * modelPricing.input) + (outputTokens / 1_000_000 * modelPricing.output)
+      totalCost.value += cost
+    }
 
     // Parse response
     const candidates = response.data.candidates
@@ -123,13 +155,27 @@ const handleGenerate = async ({ prompt, image, aspectRatio, imageSize }: { promp
     <!-- Main Content -->
     <main class="w-full max-w-4xl mx-auto space-y-8 animate-fade-in-up">
       
-      <ApiKeyInput v-model="apiKey" />
+      <div class="flex flex-col gap-4">
+        <ApiKeyInput v-model="apiKey" />
+        
+        <!-- Cost Panel -->
+        <div v-if="apiKey" class="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 flex items-center justify-between">
+          <div class="flex items-center gap-2 text-gray-600">
+            <DollarSign class="w-5 h-5 text-green-600" />
+            <span class="font-medium">Session Cost</span>
+          </div>
+          <div class="text-xl font-bold text-gray-900">
+            ${{ totalCost.toFixed(6) }}
+          </div>
+        </div>
+      </div>
 
       <div v-if="apiKey" class="bg-white rounded-3xl shadow-xl p-8 transition-all duration-300 hover:shadow-2xl border border-gray-100">
         <ImageGenerator 
           :loading="loading" 
           @generate="handleGenerate" 
         />
+
 
         <!-- Error Message -->
         <div v-if="error" class="mt-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 text-red-700 animate-shake">
