@@ -35,7 +35,7 @@ const models = [
 const prompt = ref('')
 const aspectRatio = ref('1:1') 
 const imageSize = ref('2K')
-const selectedModel = ref(models[0].id)
+const selectedModel = ref(models[0]?.id ?? '')
 const isModelDropdownOpen = ref(false)
 const modelDropdownRef = ref(null)
 
