@@ -20,7 +20,8 @@ const fetchData = async () => {
   error.value = null
   
   try {
-    const response = await axios.get('/api/v1/management/subscription/detail', {
+    const baseUrl = import.meta.env.PROD ? 'https://zenmux.ai' : ''
+    const response = await axios.get(`${baseUrl}/api/v1/management/subscription/detail`, {
       headers: {
         'Authorization': `Bearer ${apiKey.value}`
       }
