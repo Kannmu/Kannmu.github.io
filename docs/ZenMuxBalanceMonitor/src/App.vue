@@ -20,8 +20,7 @@ const fetchData = async () => {
   error.value = null
   
   try {
-    const baseUrl = import.meta.env.PROD ? 'https://zenmux.ai' : ''
-    const response = await axios.get(`${baseUrl}/api/v1/management/subscription/detail`, {
+    const response = await axios.get('/api/v1/management/subscription/detail', {
       headers: {
         'Authorization': `Bearer ${apiKey.value}`
       }
@@ -34,7 +33,11 @@ const fetchData = async () => {
     }
   } catch (err: any) {
     console.error('Fetch failed:', err)
-    error.value = err.response?.data?.error?.message || err.message || '获取数据失败，请检查 API Key 或网络状态'
+    if (import.meta.env.PROD && err.code === 'ERR_NETWORK') {
+      error.value = '当前部署环境未正确配置 /api 代理，浏览器拦截了跨域请求。请将 /api/* 反向代理到 https://zenmux.ai。'
+    } else {
+      error.value = err.response?.data?.error?.message || err.message || '获取数据失败，请检查 API Key 或网络状态'
+    }
     data.value = null
   } finally {
     loading.value = false
