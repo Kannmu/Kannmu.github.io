@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Download, Copy, Check, ZoomIn, X } from 'lucide-vue-next'
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps<{
   imageUrl: string
@@ -56,6 +56,20 @@ const closeFullscreen = () => {
   showFullscreen.value = false
   document.body.style.overflow = ''
 }
+
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && showFullscreen.value) {
+    closeFullscreen()
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
+})
 
 const handleWheel = (e: WheelEvent) => {
   if (!showFullscreen.value) return
