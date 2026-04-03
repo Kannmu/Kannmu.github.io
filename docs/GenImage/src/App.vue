@@ -10,7 +10,7 @@ import { AlertCircle, DollarSign, Image as ImageIcon, MessageSquareText, Sparkle
 
 type GeneratePayload = {
   prompt: string
-  image: string | null
+  images: string[]
   aspectRatio: string
   imageSize: string
   model: string
@@ -173,7 +173,7 @@ const updateGeneration = (id: string, updater: (record: GenerationRecord) => voi
   target.updatedAt = new Date().toISOString()
 }
 
-const handleGenerate = async ({ prompt, image, aspectRatio, imageSize, model }: GeneratePayload) => {
+const handleGenerate = async ({ prompt, images, aspectRatio, imageSize, model }: GeneratePayload) => {
   loading.value = true
   error.value = null
   const requestId = ++activeRequestId.value
@@ -206,16 +206,18 @@ const handleGenerate = async ({ prompt, image, aspectRatio, imageSize, model }: 
   try {
     const parts: Array<Record<string, unknown>> = [{ text: prompt }]
 
-    if (image) {
-      const base64Data = extractBase64Data(image)
-      const mimeType = extractMimeType(image)
-      if (base64Data) {
-        parts.push({
-          inlineData: {
-            mimeType,
-            data: base64Data
-          }
-        })
+    if (images && images.length > 0) {
+      for (const img of images) {
+        const base64Data = extractBase64Data(img)
+        const mimeType = extractMimeType(img)
+        if (base64Data) {
+          parts.push({
+            inlineData: {
+              mimeType,
+              data: base64Data
+            }
+          })
+        }
       }
     }
 

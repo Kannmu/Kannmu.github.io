@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { X, Sparkles, Upload, ChevronDown, Check, Cpu } from 'lucide-vue-next'
+import { X, Sparkles, Upload, ChevronDown, Check, Cpu, Plus, ZoomIn } from 'lucide-vue-next'
 import { onClickOutside } from '@vueuse/core'
+import ImageDisplay from './ImageDisplay.vue'
 
 const props = defineProps<{
   loading: boolean
@@ -10,7 +11,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'generate', payload: { 
     prompt: string, 
-    image: string | null, 
+    images: string[], 
     aspectRatio: string, 
     imageSize: string,
     model: string 
@@ -50,8 +51,9 @@ const selectModel = (modelId: string) => {
   isModelDropdownOpen.value = false
 }
 
-const referenceImage = ref<string | null>(null)
+const referenceImages = ref<string[]>([])
 const fileInput = ref<HTMLInputElement | null>(null)
+const previewImage = ref<string | null>(null)
 
 const ratios = [
   { label: 'Square (1:1)', value: '1:1' },
@@ -69,21 +71,21 @@ const resolutions = [
 
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    processFile(target.files[0])
+  if (target.files && target.files.length > 0) {
+    Array.from(target.files).forEach(processFile)
   }
 }
 
 const handleDrop = (event: DragEvent) => {
-  if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
-    processFile(event.dataTransfer.files[0])
+  if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+    Array.from(event.dataTransfer.files).forEach(processFile)
   }
 }
 
 const handlePaste = (event: ClipboardEvent) => {
-  if (event.clipboardData?.files && event.clipboardData.files[0]) {
+  if (event.clipboardData?.files && event.clipboardData.files.length > 0) {
     event.preventDefault()
-    processFile(event.clipboardData.files[0])
+    Array.from(event.clipboardData.files).forEach(processFile)
   }
 }
 
@@ -92,7 +94,9 @@ const processFile = (file: File) => {
   
   const reader = new FileReader()
   reader.onload = (e) => {
-    referenceImage.value = e.target?.result as string
+    if (e.target?.result) {
+      referenceImages.value.push(e.target.result as string)
+    }
   }
   reader.readAsDataURL(file)
 }
@@ -101,16 +105,26 @@ const triggerFileInput = () => {
   fileInput.value?.click()
 }
 
-const clearImage = () => {
-  referenceImage.value = null
-  if (fileInput.value) fileInput.value.value = ''
+const removeImage = (index: number) => {
+  referenceImages.value.splice(index, 1)
+  if (referenceImages.value.length === 0 && fileInput.value) {
+    fileInput.value.value = ''
+  }
+}
+
+const viewImage = (image: string) => {
+  previewImage.value = image
+}
+
+const closePreview = () => {
+  previewImage.value = null
 }
 
 const generate = () => {
   if (!prompt.value.trim()) return
   emit('generate', { 
     prompt: prompt.value, 
-    image: referenceImage.value, 
+    images: referenceImages.value, 
     aspectRatio: aspectRatio.value, 
     imageSize: imageSize.value,
     model: selectedModel.value
@@ -242,30 +256,42 @@ const generate = () => {
 
     <!-- Image Upload -->
     <div class="flex flex-col gap-4">
-      <div v-if="!referenceImage" 
-           @click="triggerFileInput"
+      <div 
            @dragover.prevent
            @drop.prevent="handleDrop"
-           class="border-2 border-dashed border-gray-300 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all group h-32">
-        <Upload class="w-8 h-8 text-gray-400 group-hover:text-blue-500 mb-2 transition-colors" />
-        <span class="text-sm text-gray-500 group-hover:text-blue-600 transition-colors">Upload reference image (drag & drop or paste in text box)</span>
-      </div>
-
-      <div v-else 
-           @dragover.prevent
-           @drop.prevent="handleDrop"
-           class="relative w-full h-full min-h-[12rem] bg-gray-100 rounded-xl overflow-hidden group border border-gray-200">
-        <img :src="referenceImage" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
-        <button @click="clearImage" class="absolute top-2 right-2 p-1 bg-black/50 hover:bg-black/70 rounded-full text-white backdrop-blur-sm transition-all z-10">
-          <X class="w-4 h-4" />
-        </button>
-        <!-- Overlay for drag and drop indication -->
-        <div class="absolute inset-0 bg-blue-500/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
-          <p class="text-white font-medium drop-shadow-md">Drop to replace</p>
+           class="p-4 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50 hover:bg-gray-50 transition-colors flex flex-col gap-4"
+      >
+        <div v-if="referenceImages.length === 0" 
+             @click="triggerFileInput"
+             class="flex flex-col items-center justify-center cursor-pointer h-32 group">
+          <Upload class="w-8 h-8 text-gray-400 group-hover:text-blue-500 mb-2 transition-colors" />
+          <span class="text-sm text-gray-500 group-hover:text-blue-600 transition-colors">上传参考图（支持多张，可拖拽或在此处粘贴）</span>
+        </div>
+        
+        <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          <div v-for="(img, index) in referenceImages" :key="index" 
+               class="relative aspect-square bg-gray-100 rounded-xl overflow-hidden group border border-gray-200">
+            <img :src="img" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+            
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+              <button @click.stop="viewImage(img)" class="p-2 bg-white/20 hover:bg-white/40 rounded-full text-white backdrop-blur-sm transition-all" title="查看">
+                <ZoomIn class="w-4 h-4" />
+              </button>
+              <button @click.stop="removeImage(index)" class="p-2 bg-red-500/80 hover:bg-red-600 rounded-full text-white backdrop-blur-sm transition-all" title="删除">
+                <X class="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+          
+          <div @click="triggerFileInput"
+               class="aspect-square border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all group">
+            <Plus class="w-6 h-6 text-gray-400 group-hover:text-blue-500 transition-colors" />
+            <span class="text-xs text-gray-500 mt-2 group-hover:text-blue-600 transition-colors">继续添加</span>
+          </div>
         </div>
       </div>
 
-      <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/*" class="hidden" />
+      <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/*" multiple class="hidden" />
     </div>
 
     <!-- Generate Button -->
@@ -277,6 +303,21 @@ const generate = () => {
       <Sparkles class="w-5 h-5" />
       <span>{{ loading ? 'Generating...' : 'Generate Image' }}</span>
     </button>
+  </div>
+
+  <!-- Image Preview Modal -->
+  <div v-if="previewImage" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4" @click="closePreview">
+    <div class="relative w-full max-w-5xl max-h-[90vh] flex flex-col" @click.stop>
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-white text-lg font-medium">参考图预览</h3>
+        <button @click="closePreview" class="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors">
+          <X class="w-5 h-5" />
+        </button>
+      </div>
+      <div class="flex-1 overflow-hidden rounded-2xl bg-black/50 border border-white/10">
+        <ImageDisplay :image-url="previewImage" label="参考图" />
+      </div>
+    </div>
   </div>
 </template>
 
