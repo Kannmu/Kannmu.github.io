@@ -1,7 +1,7 @@
 {
-  "name": "Hux Blog",
-  "short_name": "Hux Blog",
-  "description": "About an engineer & designer who loves web.",
+  "name": "Linhan Fan · Kannmu",
+  "short_name": "Kannmu",
+  "description": "HCI research, prototypes, and technical notes by Linhan Fan.",
   "icons": [{
     "src": "icons/128.png",
     "sizes": "128x128",
@@ -11,8 +11,8 @@
     "sizes": "512x512",
     "type": "image/png"
   }],
-  "background_color": "#fff",
-  "theme_color": "#000",
+  "background_color": "#f4f6f2",
+  "theme_color": "#0d1110",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait"

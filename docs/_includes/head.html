@@ -5,6 +5,7 @@
     <meta name="google-adsense-account" content="ca-pub-7629675373716127">
     <meta name="baidu-site-verification" content="codeva-0gvzDSDpdY" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0d1110">
     {% seo %}
 
     <!-- Language Alternates -->
@@ -30,11 +31,22 @@
     <!-- Responsive Layout CSS -->
     <link rel="stylesheet" href="{{ "/css/responsive-layout.css" | prepend: site.baseurl }}">
 
+    <!-- Kannmu visual system -->
+    <link rel="stylesheet" href="{{ "/css/site-v2.css" | prepend: site.baseurl }}?v={{ site.asset_version }}">
+
     <!-- Dark Mode Inline Script (Prevent FOUC) -->
     <script>
-        (function() {
-            var currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            document.documentElement.setAttribute('data-theme', currentTheme);
+        (function () {
+            var root = document.documentElement;
+            var theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            var language = navigator.language && navigator.language.toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en';
+            try {
+                theme = localStorage.getItem('theme') || theme;
+                language = localStorage.getItem('site-language') || language;
+            } catch (error) {}
+            root.setAttribute('data-theme', theme);
+            root.setAttribute('data-language', language);
+            root.lang = language === 'zh' ? 'zh-CN' : 'en';
         })();
     </script>
 
@@ -57,8 +69,6 @@
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7629675373716127"
     crossorigin="anonymous"></script>
-    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js"></script>
-    <!-- Translate.js -->
-    <script async src="https://res.zvo.cn/translate/translate.js"></script>
+    <script defer src="{{ '/js/site-v2.js' | prepend: site.baseurl }}?v={{ site.asset_version }}"></script>
 
 </head>

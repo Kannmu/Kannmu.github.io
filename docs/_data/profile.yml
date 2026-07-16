@@ -1,0 +1,187 @@
+name:
+  zh: 范林涵
+  en: Linhan Fan
+handle: Kannmu
+role:
+  zh: 东南大学设计学博士研究生
+  en: Ph.D. researcher in Design at Southeast University
+location:
+  zh: 中国 · 南京
+  en: Nanjing, China
+tagline:
+  zh: 研究人、感知与机器之间的界面。
+  en: Studying the interfaces between people, perception, and machines.
+bio:
+  zh: 我是一名人机交互研究者与原型工程师，关注新型交互方式如何从实验室中的信号、材料和算法，转化为可理解、可使用的真实体验。
+  en: I am an HCI researcher and prototype engineer exploring how signals, materials, and algorithms can become understandable, usable experiences.
+
+links:
+  - label: Email
+    url: mailto:linhanfan@seu.edu.cn
+    icon: envelope
+  - label: ORCID
+    url: https://orcid.org/0009-0000-8611-7194
+    icon: link
+  - label: Google Scholar
+    url: https://scholar.google.com.hk/citations?hl=zh-CN&pli=1&user=i0o50FAAAAAJ
+    icon: education
+  - label: GitHub
+    url: https://github.com/Kannmu
+    icon: console
+
+research:
+  - key: haptics
+    title:
+      zh: 超声触觉
+      en: Ultrasonic haptics
+    summary:
+      zh: 研究声致触觉的感知机制、相控阵布局与聚焦策略，构建更清晰、更高效的无接触触觉反馈。
+      en: Studying perception, array layouts, and focusing strategies for clearer and more efficient contactless haptic feedback.
+  - key: gaze
+    title:
+      zh: 眼动与自然交互
+      en: Gaze and natural interaction
+    summary:
+      zh: 通过凝视、平滑追踪与自主眨眼，探索低负担、高可用的人机交互方式。
+      en: Exploring low-effort, usable interaction through gaze, smooth pursuit, and voluntary blinking.
+  - key: bci
+    title:
+      zh: 脑机接口与智能设备
+      en: BCI and smart devices
+    summary:
+      zh: 关注脑机接口的信息安全、无线通信及其与智能设备协同工作的交互范式。
+      en: Investigating secure wireless communication and interaction paradigms connecting BCIs with smart devices.
+
+current_projects:
+  - title:
+      zh: 声致触觉反馈机制
+      en: Audio-induced haptic feedback
+    period: 2025 - Present
+    detail:
+      zh: 国家自然科学基金面上项目。负责核心软硬件原型与交互系统开发，研究表面波增强和触觉工效评价。
+      en: Developing core hardware, software, and evaluation methods for a National Natural Science Foundation project on surface-wave-enhanced haptics.
+  - title:
+      zh: UMH 超声触觉设备
+      en: UMH ultrasonic haptic device
+    period: V5.0
+    detail:
+      zh: 自研 60 阵元六边形相控阵原型，用于验证高密度阵列布局与触觉聚焦策略。
+      en: A 60-element hexagonal phased-array prototype for testing dense layouts and tactile focusing strategies.
+  - title:
+      zh: 安全脑机通信
+      en: Secure BCI communication
+    period: 2023 - 2025
+    detail:
+      zh: 将脑电视觉刺激编码与时空编码超表面结合，建立脑机接口到智能设备的物理层安全链路。
+      en: Coupling visual EEG encoding with a space-time-coding metasurface to create a physical-layer secure link to smart devices.
+
+education:
+  - period: 2023 - Present
+    institution:
+      zh: 东南大学
+      en: Southeast University
+    detail:
+      zh: 机械工程学院 · 设计学 · 博士研究生
+      en: School of Mechanical Engineering · Design · Ph.D. student
+  - period: 2019 - 2023
+    institution:
+      zh: 四川大学
+      en: Sichuan University
+    detail:
+      zh: 机械工程学院 · 机械设计制造及其自动化 · 工学学士（卓越工程师计划）
+      en: Mechanical Design, Manufacturing and Automation · B.Eng. · Excellent Engineer Program
+
+experience:
+  - period: 2026 - Present
+    organization:
+      zh: 星域蔚蓝（深圳）科技有限公司
+      en: Nexo Technology Co., Limited
+    role:
+      zh: 科学顾问 · 人机交互
+      en: Scientific consultant · Human-computer interaction
+  - period: 2022 - 2023
+    organization:
+      zh: 成都路行通信息技术有限公司
+      en: Chengdu Luxingtong Information Technology Co., Ltd.
+    role:
+      zh: 深度学习算法实习生
+      en: Deep learning algorithm intern
+  - period: 2021 - 2023
+    organization:
+      zh: 四川大学川山甲 Robocon 战队
+      en: Sichuan University Robocon Team
+    role:
+      zh: R1 机器人总负责人 · 硬件组组长
+      en: R1 robot lead · Hardware team lead
+
+awards:
+  - year: 2024
+    title:
+      zh: 硕士研究生国家奖学金 · 排名第一
+      en: National Scholarship for Graduate Students · Ranked first
+  - year: 2022
+    title:
+      zh: 全国大学生机器人大赛 ROBOCON · 国家一等奖
+      en: China University Robot Competition ROBOCON · National First Prize
+  - year: 2021
+    title:
+      zh: “挑战杯”黑科技赛道 · 国家特等奖（星系级）
+      en: Challenge Cup, Black Technology Track · National Grand Prize
+
+skills:
+  - label: Research
+    items: [HCI, Eye Tracking, BCI, Haptics, User Studies]
+  - label: Software
+    items: [Python, C#, C, Unity, Blender, Figma]
+  - label: Hardware
+    items: [STM32, PCB Design, SolidWorks, 3D Printing]
+
+publications:
+  - year: 2026
+    title: "Clarity or Context? Rebalancing Mobile Interaction for Older Adults with Gaze-Zoom-Tap"
+    journal: International Journal of Human-Computer Interaction
+    authors: "Linhan Fan; Ke Zhu; Mingjie Li; Zhutao Wang; Yafeng Niu"
+    role:
+      zh: 第一作者
+      en: First author
+    doi: https://doi.org/10.1080/10447318.2026.2619925
+  - year: 2025
+    title: "Secure wireless communication of brain-computer interface and mind control of smart devices enabled by space-time-coding metasurface"
+    journal: Nature Communications
+    authors: "Qiang Xiao; Linhan Fan; Qian Ma; Yuming Ning; Ze Gu; Long Chen; Lianlin Li; Jianwei You; Yafeng Niu; Tiejun Cui"
+    role:
+      zh: 共同第一作者
+      en: Co-first author
+    doi: https://doi.org/10.1038/s41467-025-63326-0
+  - year: 2025
+    title: "Visual perception and user experience optimization: Exploring interaction design through static-triggered smooth pursuit systems"
+    journal: Displays
+    authors: "Yafeng Niu; Yun Feng; Xin Li; Weichi Huang; Yiyan Wang; Linhan Fan"
+    role:
+      zh: 共同作者
+      en: Co-author
+    doi: https://doi.org/10.1016/j.displa.2025.103121
+  - year: 2025
+    title: "Enhancing gaze interaction performance: Design and optimization of perspective-driven fisheye view"
+    journal: Advanced Engineering Informatics
+    authors: "Weichi Huang; Yiyan Wang; Linhan Fan; Shatong Yang; Yafeng Niu"
+    role:
+      zh: 共同作者
+      en: Co-author
+    doi: https://doi.org/10.1016/j.aei.2025.103365
+  - year: 2024
+    title: "Enhancing safety in conditionally automated driving: Can more takeover request visual information make a difference in hazard scenarios with varied hazard visibility?"
+    journal: Accident Analysis & Prevention
+    authors: "Weichi Huang; Linhan Fan; Zijian Han; Yafeng Niu"
+    role:
+      zh: 共同作者
+      en: Co-author
+    doi: https://doi.org/10.1016/j.aap.2024.107687
+  - year: 2024
+    title: "Design recommendations for voluntary blink interactions based on pressure sensors"
+    journal: Advanced Engineering Informatics
+    authors: "Linhan Fan; Weichi Huang; Xueqi Shao; Yafeng Niu"
+    role:
+      zh: 第一作者
+      en: First author
+    doi: https://doi.org/10.1016/j.aei.2024.102489

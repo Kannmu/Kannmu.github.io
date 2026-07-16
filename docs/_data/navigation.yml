@@ -1,0 +1,12 @@
+- label: Home
+  label_zh: 首页
+  url: /
+- label: Portfolio
+  label_zh: 作品
+  url: /portfolio/dist/
+- label: About
+  label_zh: 关于
+  url: /about/
+- label: Notes
+  label_zh: 文章
+  url: /archive/

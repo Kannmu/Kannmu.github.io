@@ -1,3 +1,6 @@
+---
+layout: null
+---
 /* ===========================================================
  * sw.js
  * ===========================================================
@@ -9,7 +12,7 @@
 // CACHE_NAMESPACE
 // CacheStorage is shared between all sites under same domain.
 // A namespace can prevent potential name conflicts and mis-deletion.
-const CACHE_NAMESPACE = 'main-'
+const CACHE_NAMESPACE = 'kannmu-v2-'
 
 const CACHE = CACHE_NAMESPACE + 'precache-then-runtime';
 const PRECACHE_LIST = [
@@ -19,13 +22,14 @@ const PRECACHE_LIST = [
   "./js/bootstrap.min.js",
   "./js/hux-blog.min.js",
   "./js/snackbar.js",
+  "./js/site-v2.js?v={{ site.asset_version }}",
   "./img/Backgrounds/404-bg.jpg",
   "./img/Backgrounds/Bg_2.jpg",
   "./css/hux-blog.min.css",
   "./css/bootstrap.min.css",
-  "//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css",
-  // "//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/fontawesome-webfont.woff2?v=4.6.3",
-  // "//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"
+  "./css/site-v2.css?v={{ site.asset_version }}",
+  "./fonts/glyphicons-halflings-regular.woff2",
+  "./search.json"
 ]
 const HOSTNAME_WHITELIST = [
   self.location.hostname,
@@ -36,13 +40,13 @@ const HOSTNAME_WHITELIST = [
   "fonts.googleapis.com",
   "fonts.gstatic.com"
 ]
-const DEPRECATED_CACHES = ['precache-v1', 'runtime', 'main-precache-v1', 'main-runtime']
+const DEPRECATED_CACHES = ['precache-v1', 'runtime', 'main-precache-v1', 'main-runtime', 'main-precache-then-runtime']
 
 
 // The Util Function to hack URLs of intercepted requests
 const getCacheBustingUrl = (req) => {
   var now = Date.now();
-  url = new URL(req.url)
+  const url = new URL(req.url)
 
   // 1. fixed http URL
   // Just keep syncing with location.protocol

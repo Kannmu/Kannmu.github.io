@@ -19,5 +19,5 @@ gem 'jekyll-seo-tag'
 
 gem "tzinfo", "~> 2.0"
 
-gem 'wdm', '>= 0.1.0' if Gem.win_platform?
-
+# Jekyll's polling watcher is sufficient for local preview and avoids a
+# Windows-only native dependency in CI and Cloudflare builds.

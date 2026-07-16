@@ -1,17 +1,13 @@
-<!-- Search -->
-<div class="search-page">
-  <div class="search-icon-close-container">
-    <span class="search-icon-close">
-      <i class="fa fa-chevron-down"></i>
-    </span>
-  </div>
+<div class="search-page" role="dialog" aria-modal="true" aria-label="Search articles" aria-hidden="true" data-search-url="{{ '/search.json' | prepend: site.baseurl }}">
+  <button class="search-icon-close" type="button" aria-label="Close search" title="Close search">
+    <i class="glyphicon glyphicon-remove" aria-hidden="true"></i>
+  </button>
   <div class="search-main container">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <form></form>
-        <input type="text" id="search-input" placeholder="$ grep...">
-        </form>
-        <div id="search-results" class="mini-post-list"></div>
+        <label class="search-label" for="search-input">Search notes</label>
+        <input type="search" id="search-input" placeholder="Type a title or keyword" autocomplete="off">
+        <div id="search-results" class="mini-post-list" aria-live="polite"></div>
       </div>
     </div>
   </div>

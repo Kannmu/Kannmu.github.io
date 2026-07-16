@@ -1,50 +1,155 @@
 ---
-layout: page
-description: "「致虚极 守静笃」<br> Embrace emptiness, embrace stillness"
-
-header-mask: 0.3
+layout: default
+title: Home
+description: "范林涵（Linhan Fan）的人机交互研究、原型项目与技术文章。"
+body-class: page-home
+multilingual: true
+hide-in-nav: true
+no-catalog: true
 ---
 
-<!-- <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=730 height=86 src="https://music.163.com/outchain/player?type=2&id=1352910518&auto=1&height=66"></iframe> -->
+{% assign profile = site.data.profile %}
 
-{% for post in paginator.posts %}
-<div class="post-preview">
-    <a href="{{ post.url | prepend: site.baseurl }}">
-        <h2 class="post-title">
-            {{ post.title }}
-        </h2>
-        {% if post.subtitle %}
-        <h3 class="post-subtitle">
-            {{ post.subtitle }}
-        </h3>
-        {% endif %}
-        <div class="post-content-preview">
-            {% if post.lang == 'en' %}
-                {{ post.content | strip_html | truncate:300 }}
-            {% else %}
-                {{ post.content | strip_html | truncate:200 }}
-            {% endif %}
+<main class="home-page" id="main-content">
+  <header class="home-hero" aria-labelledby="home-title">
+    <img class="home-hero__image" src="{{ '/img/Backgrounds/Bg_2.jpg' | prepend: site.baseurl }}" alt="A dense cactus greenhouse photographed by Linhan Fan" width="720" height="480">
+    <div class="home-hero__veil" aria-hidden="true"></div>
+    <canvas class="signal-field" id="signal-field" aria-hidden="true"></canvas>
+
+    <div class="home-hero__content site-shell">
+      <p class="eyebrow home-hero__eyebrow">
+        <span data-lang="zh">人机交互研究者 · 原型工程师</span>
+        <span data-lang="en">HCI researcher · Prototype engineer</span>
+      </p>
+      <h1 id="home-title">
+        <span class="home-hero__name">{{ profile.name.en }}</span>
+        <span class="home-hero__name-zh">{{ profile.name.zh }}</span>
+      </h1>
+      <p class="home-hero__statement">
+        <span data-lang="zh">{{ profile.tagline.zh }}</span>
+        <span data-lang="en">{{ profile.tagline.en }}</span>
+      </p>
+      <div class="home-hero__actions">
+        <a class="text-action text-action--light" href="{{ '/about/#research' | prepend: site.baseurl }}">
+          <span data-lang="zh">查看研究</span><span data-lang="en">View research</span>
+          <i class="glyphicon glyphicon-arrow-right" aria-hidden="true"></i>
+        </a>
+        <a class="text-action text-action--quiet" href="{{ '/archive/' | prepend: site.baseurl }}">
+          <span data-lang="zh">阅读文章</span><span data-lang="en">Read notes</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="home-hero__rail site-shell" aria-label="Current position">
+      <span>SEU · Nanjing</span>
+      <span><span data-lang="zh">设计学博士研究生</span><span data-lang="en">Ph.D. researcher in Design</span></span>
+      <span class="home-hero__status"><i aria-hidden="true"></i><span data-lang="zh">开放交流与合作</span><span data-lang="en">Open to collaboration</span></span>
+    </div>
+  </header>
+
+  <section class="home-intro section-band section-band--light" aria-labelledby="intro-title">
+    <div class="site-shell home-intro__grid">
+      <div class="section-heading">
+        <p class="eyebrow"><span data-lang="zh">研究实践</span><span data-lang="en">Research practice</span></p>
+        <h2 id="intro-title"><span data-lang="zh">让新型界面从信号走向体验</span><span data-lang="en">From physical signals to human experience</span></h2>
+      </div>
+      <div class="home-intro__copy">
+        <p><span data-lang="zh">{{ profile.bio.zh }}</span><span data-lang="en">{{ profile.bio.en }}</span></p>
+        <a class="inline-link" href="{{ '/about/' | prepend: site.baseurl }}">
+          <span data-lang="zh">了解我的经历与方法</span><span data-lang="en">Explore my background and approach</span>
+          <i class="glyphicon glyphicon-arrow-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="research-index section-band" id="research" aria-labelledby="research-title">
+    <div class="site-shell">
+      <div class="section-heading section-heading--row">
+        <div>
+          <p class="eyebrow"><span data-lang="zh">关注方向</span><span data-lang="en">Focus areas</span></p>
+          <h2 id="research-title"><span data-lang="zh">感知 · 交互 · 系统</span><span data-lang="en">Perception · Interaction · Systems</span></h2>
         </div>
-    </a>
-    <p class="post-meta">
-        Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}
-    </p>
-</div>
-<hr>
-{% endfor %}
+        <p class="section-index" aria-hidden="true">01 / 03</p>
+      </div>
 
-<!-- Pager -->
-{% if paginator.total_pages > 1 %}
-<ul class="pager">
-    {% if paginator.previous_page %}
-    <li class="previous">
-        <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&larr; Newer Posts</a>
-    </li>
-    {% endif %}
-    {% if paginator.next_page %}
-    <li class="next">
-        <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Older Posts &rarr;</a>
-    </li>
-    {% endif %}
-</ul>
-{% endif %}
+      <div class="research-index__list">
+        {% for item in profile.research %}
+        <article class="research-line">
+          <p class="research-line__number">0{{ forloop.index }}</p>
+          <h3><span data-lang="zh">{{ item.title.zh }}</span><span data-lang="en">{{ item.title.en }}</span></h3>
+          <p><span data-lang="zh">{{ item.summary.zh }}</span><span data-lang="en">{{ item.summary.en }}</span></p>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="featured-study section-band section-band--ink" aria-labelledby="featured-title">
+    <div class="site-shell featured-study__grid">
+      <figure class="featured-study__visual">
+        <img src="{{ '/img/Paper/Interface_Array.png' | prepend: site.baseurl }}" alt="Gaze interaction glasses and eye tracking research interface" width="1265" height="444" loading="lazy">
+        <figcaption><span data-lang="zh">眼动交互实验原型</span><span data-lang="en">Gaze interaction research prototype</span></figcaption>
+      </figure>
+      <div class="featured-study__content">
+        <p class="eyebrow"><span data-lang="zh">代表性研究</span><span data-lang="en">Featured research</span></p>
+        <p class="featured-study__journal">Nature Communications · 2025</p>
+        <h2 id="featured-title">Secure wireless communication of brain-computer interface and mind control of smart devices</h2>
+        <p><span data-lang="zh">通过时空编码超表面建立安全的脑机接口无线通信链路，将用户意图、物理层编码与智能设备控制连接起来。</span><span data-lang="en">A secure wireless BCI link coupling user intent, physical-layer encoding, and smart-device control through a space-time-coding metasurface.</span></p>
+        <a class="text-action text-action--light" href="https://doi.org/10.1038/s41467-025-63326-0" target="_blank" rel="noopener noreferrer">
+          DOI <i class="glyphicon glyphicon-new-window" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-publications section-band" aria-labelledby="publication-title">
+    <div class="site-shell">
+      <div class="section-heading section-heading--row">
+        <div>
+          <p class="eyebrow"><span data-lang="zh">近期成果</span><span data-lang="en">Recent publications</span></p>
+          <h2 id="publication-title"><span data-lang="zh">研究发表</span><span data-lang="en">Research output</span></h2>
+        </div>
+        <a class="inline-link" href="{{ '/about/#publications' | prepend: site.baseurl }}"><span data-lang="zh">全部论文</span><span data-lang="en">All publications</span><i class="glyphicon glyphicon-arrow-right" aria-hidden="true"></i></a>
+      </div>
+      <div class="publication-preview-list">
+        {% for publication in profile.publications limit:3 %}
+        <a class="publication-preview" href="{{ publication.doi }}" target="_blank" rel="noopener noreferrer">
+          <span class="publication-preview__year">{{ publication.year }}</span>
+          <span class="publication-preview__body">
+            <strong>{{ publication.title }}</strong>
+            <span>{{ publication.journal }} · <span data-lang="zh">{{ publication.role.zh }}</span><span data-lang="en">{{ publication.role.en }}</span></span>
+          </span>
+          <i class="glyphicon glyphicon-arrow-up" aria-hidden="true"></i>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="home-notes section-band section-band--soft" aria-labelledby="notes-title">
+    <div class="site-shell">
+      <div class="section-heading section-heading--row">
+        <div>
+          <p class="eyebrow"><span data-lang="zh">最近记录</span><span data-lang="en">Recent notes</span></p>
+          <h2 id="notes-title"><span data-lang="zh">研究之外，也记录制作过程</span><span data-lang="en">Notes from research and making</span></h2>
+        </div>
+        <a class="inline-link" href="{{ '/archive/' | prepend: site.baseurl }}"><span data-lang="zh">进入文章归档</span><span data-lang="en">Browse the archive</span><i class="glyphicon glyphicon-arrow-right" aria-hidden="true"></i></a>
+      </div>
+
+      <div class="notes-list">
+        {% for post in site.posts limit:4 %}
+        <article class="note-row">
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
+          <div>
+            <p class="note-row__tags">{% if post.tags %}{{ post.tags | join: ' · ' }}{% else %}Note{% endif %}</p>
+            <h3><a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></h3>
+            {% if post.subtitle %}<p class="note-row__subtitle">{{ post.subtitle }}</p>{% endif %}
+          </div>
+          <a class="icon-link" href="{{ post.url | prepend: site.baseurl }}" aria-label="Read {{ post.title }}" title="Read article"><i class="glyphicon glyphicon-arrow-right" aria-hidden="true"></i></a>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</main>
