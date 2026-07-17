@@ -52,7 +52,7 @@ const resetViewer = () => {
 const downloadImage = () => {
   const link = document.createElement('a')
   link.href = props.imageUrl
-  link.download = `zenmux-generated-${Date.now()}.${fileExtension.value}`
+  link.download = `generated-image-${Date.now()}.${fileExtension.value}`
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

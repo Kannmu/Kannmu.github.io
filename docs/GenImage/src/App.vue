@@ -1,42 +1,30 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useStorage } from '@vueuse/core'
-import axios from 'axios'
+import {
+  AlertCircle,
+  CheckCircle2,
+  Cloud,
+  DollarSign,
+  Image as ImageIcon,
+  MessageSquareText,
+  Server,
+  Sparkles
+} from 'lucide-vue-next'
 import ApiKeyInput from './components/ApiKeyInput.vue'
-import ImageGenerator from './components/ImageGenerator.vue'
 import ImageDisplay from './components/ImageDisplay.vue'
+import ImageGenerator from './components/ImageGenerator.vue'
 import LoadingSpinner from './components/LoadingSpinner.vue'
-import { AlertCircle, DollarSign, Image as ImageIcon, MessageSquareText, Sparkles } from 'lucide-vue-next'
-
-type GeneratePayload = {
-  prompt: string
-  images: string[]
-  aspectRatio: string
-  imageSize: string
-  model: string
-}
-
-type RawPart = {
-  text?: string
-  thought?: boolean
-  thoughtSignature?: string
-  inlineData?: {
-    mimeType?: string
-    data?: string
-  }
-  inline_data?: {
-    mimeType?: string
-    data?: string
-  }
-}
-
-type Candidate = {
-  content?: {
-    role?: string
-    parts?: RawPart[]
-  }
-  finishReason?: string
-}
+import {
+  GPT_IMAGE_BASE_URL,
+  generateImage,
+  getApiErrorMessage,
+  providerMeta,
+  type GeneratePayload,
+  type OutputFormat,
+  type ProviderId,
+  type ProviderTimelineItem
+} from './services/imageProviders'
 
 type TimelineTextItem = {
   id: string
@@ -59,10 +47,14 @@ type TimelineItem = TimelineTextItem | TimelineImageItem
 
 type GenerationRecord = {
   id: string
+  provider: ProviderId
   prompt: string
   model: string
   aspectRatio: string
   imageSize: string
+  quality?: string
+  outputFormat?: OutputFormat
+  operation: 'generate' | 'edit'
   status: 'streaming' | 'completed' | 'failed'
   items: TimelineItem[]
   error: string | null
@@ -74,396 +66,300 @@ type GenerationRecord = {
   usageMetadata?: Record<string, unknown> | null
 }
 
-const apiKey = useStorage('zenmux-api-key', '')
+const selectedProvider = useStorage<ProviderId>('genimage-provider', 'zenmux')
+const zenMuxApiKey = useStorage('zenmux-api-key', '')
+const gptImageApiKey = useStorage('gpt-image-2-api-key', '')
+const providerOptions: ProviderId[] = ['zenmux', 'gpt-image-2']
 const loading = ref(false)
+const loadingProvider = ref<ProviderId | null>(null)
 const error = ref<string | null>(null)
-const totalCost = ref(0)
-const activeRequestId = ref(0)
+const zenMuxTotalCost = ref(0)
 const generations = ref<GenerationRecord[]>([])
 
-const models: Record<string, { input: number, output: number }> = {
-  'google/gemini-3.1-flash-image-preview': { input: 0.25, output: 1.5 },
-  'google/gemini-3-pro-image-preview': { input: 2.0, output: 12.0 }
-}
+const activeApiKey = computed({
+  get: () => selectedProvider.value === 'zenmux' ? zenMuxApiKey.value : gptImageApiKey.value,
+  set: (value: string) => {
+    if (selectedProvider.value === 'zenmux') zenMuxApiKey.value = value
+    else gptImageApiKey.value = value
+  }
+})
 
-const latestGeneration = computed(() => generations.value[0] ?? null)
+const activeProviderMeta = computed(() => providerMeta[selectedProvider.value])
+const apiReady = computed(() => Boolean(activeApiKey.value.trim()))
+const visibleGenerations = computed(() => generations.value.filter((record) => record.provider === selectedProvider.value))
+const latestGeneration = computed(() => visibleGenerations.value[0] || null)
 const latestFinalImage = computed(() => {
-  const generation = latestGeneration.value
-  if (!generation) return null
-  const images = generation.items.filter((item): item is TimelineImageItem => item.kind === 'image')
+  const images = latestGeneration.value?.items.filter((item): item is TimelineImageItem => item.kind === 'image') || []
   return images.length > 0 ? images[images.length - 1] : null
+})
+
+watch(selectedProvider, () => {
+  error.value = null
 })
 
 const createId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
 
-const extractMimeType = (dataUrl: string) => dataUrl.split(';')[0]?.split(':')[1] || 'image/jpeg'
-const extractBase64Data = (dataUrl: string) => dataUrl.split(',')[1] || ''
-
-const buildImageUrl = (mimeType: string | undefined, data: string | undefined) => {
-  if (!data) return null
-  return `data:${mimeType || 'image/png'};base64,${data}`
-}
-
-const markLastImageAsFinal = (items: TimelineItem[]) => {
-  let latestImageIndex = -1
-
-  items.forEach((item, index) => {
-    if (item.kind === 'image') {
-      latestImageIndex = index
-      item.isFinal = false
-    }
-  })
-
-  if (latestImageIndex >= 0) {
-    const target = items[latestImageIndex]
-    if (target && target.kind === 'image') {
-      target.isFinal = true
-    }
-  }
-}
-
-const buildTimelineItems = (parts: RawPart[]) => {
-  const items: TimelineItem[] = []
-
-  parts.forEach((part) => {
-    const text = typeof part.text === 'string' ? part.text : ''
-    if (text.trim()) {
-      items.push({
+const normalizeTimelineItems = (providerItems: ProviderTimelineItem[]) => {
+  const items: TimelineItem[] = providerItems.map((item) => item.kind === 'text'
+    ? {
         id: createId('text'),
         kind: 'text',
-        text,
-        isThought: Boolean(part.thought),
-        thoughtSignature: part.thoughtSignature
-      })
-    }
-
-    const imagePart = part.inlineData || part.inline_data
-    if (imagePart?.data) {
-      const imageUrl = buildImageUrl(imagePart.mimeType, imagePart.data)
-      if (imageUrl) {
-        items.push({
-          id: createId('image'),
-          kind: 'image',
-          imageUrl,
-          mimeType: imagePart.mimeType || 'image/png',
-          isThought: Boolean(part.thought),
-          isFinal: false
-        })
+        text: item.text,
+        isThought: item.isThought,
+        thoughtSignature: item.thoughtSignature
       }
-    }
-  })
+    : {
+        id: createId('image'),
+        kind: 'image',
+        imageUrl: item.imageUrl,
+        mimeType: item.mimeType,
+        isThought: item.isThought,
+        isFinal: false
+      })
 
-  markLastImageAsFinal(items)
+  const lastImage = [...items].reverse().find((item): item is TimelineImageItem => item.kind === 'image')
+  if (lastImage) lastImage.isFinal = true
   return items
 }
 
-const estimateFallbackOutputTokens = (imageSize: string) => {
-  const baseTokens = 25000
-  if (imageSize === '2K') return baseTokens * 4
-  if (imageSize === '4K') return baseTokens * 16
-  return baseTokens
-}
-
-const buildErrorMessage = (err: any) => err?.response?.data?.error?.message || err?.message || 'Failed to generate image'
-
 const updateGeneration = (id: string, updater: (record: GenerationRecord) => void) => {
-  const target = generations.value.find((item) => item.id === id)
+  const target = generations.value.find((record) => record.id === id)
   if (!target) return
   updater(target)
   target.updatedAt = new Date().toISOString()
 }
 
-const handleGenerate = async ({ prompt, images, aspectRatio, imageSize, model }: GeneratePayload) => {
-  loading.value = true
-  error.value = null
-  const requestId = ++activeRequestId.value
+const handleGenerate = async (payload: GeneratePayload) => {
+  const provider = selectedProvider.value
+  const apiKey = activeApiKey.value.trim()
 
+  if (!apiKey) {
+    error.value = `请先填写 ${providerMeta[provider].keyLabel}`
+    return
+  }
+
+  loading.value = true
+  loadingProvider.value = provider
+  error.value = null
+
+  const now = new Date().toISOString()
   const recordId = createId('generation')
   generations.value.unshift({
     id: recordId,
-    prompt,
-    model,
-    aspectRatio,
-    imageSize,
+    provider,
+    prompt: payload.prompt,
+    model: payload.model,
+    aspectRatio: payload.aspectRatio,
+    imageSize: payload.imageSize,
+    quality: payload.quality,
+    outputFormat: payload.outputFormat,
+    operation: payload.images.length > 0 ? 'edit' : 'generate',
     status: 'streaming',
-    items: [],
+    items: [{
+      id: createId('text'),
+      kind: 'text',
+      text: provider === 'zenmux' ? '正在等待 Gemini 返回内容…' : '正在等待 GPT Image 2 完成图片处理…',
+      isThought: true
+    }],
     error: null,
     finishReason: null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: now,
+    updatedAt: now,
     usageMetadata: null
   })
 
-  updateGeneration(recordId, (record) => {
-    record.items.push({
-      id: createId('text'),
-      kind: 'text',
-      text: '正在等待模型返回内容…',
-      isThought: true
-    })
-  })
-
   try {
-    const parts: Array<Record<string, unknown>> = [{ text: prompt }]
-
-    if (images && images.length > 0) {
-      for (const img of images) {
-        const base64Data = extractBase64Data(img)
-        const mimeType = extractMimeType(img)
-        if (base64Data) {
-          parts.push({
-            inlineData: {
-              mimeType,
-              data: base64Data
-            }
-          })
-        }
-      }
+    const result = await generateImage(provider, { apiKey, payload })
+    const items = normalizeTimelineItems(result.items)
+    if (!items.some((item) => item.kind === 'image')) {
+      throw new Error('API 响应中没有可显示的图片')
     }
 
-    const response = await axios.post(
-      `https://zenmux.ai/api/vertex-ai/v1/models/${model}:generateContent`,
-      {
-        contents: [
-          {
-            role: 'user',
-            parts
-          }
-        ],
-        generationConfig: {
-          responseModalities: ['text', 'image'],
-          imageConfig: {
-            aspectRatio,
-            imageSize
-          }
-        }
-      },
-      {
-        headers: {
-          'x-goog-api-key': apiKey.value,
-          'Content-Type': 'application/json'
-        }
-      }
-    )
-
-    const usageMetadata = response.data?.usageMetadata
-    const inputTokens = usageMetadata?.promptTokenCount || Math.ceil(prompt.length / 4)
-    const outputTokens = usageMetadata?.candidatesTokenCount || estimateFallbackOutputTokens(imageSize)
-    const modelPricing = models[model]
-
-    if (modelPricing) {
-      const cost = (inputTokens / 1_000_000 * modelPricing.input) + (outputTokens / 1_000_000 * modelPricing.output)
-      totalCost.value += cost
-    }
-
-    const candidates = Array.isArray(response.data?.candidates) ? response.data.candidates as Candidate[] : []
-    if (candidates.length === 0) {
-      throw new Error('No candidates in response')
-    }
-
-    const candidate = candidates[0]
-    if (!candidate) {
-      throw new Error('Candidate is empty')
-    }
-    const responseParts = Array.isArray(candidate.content?.parts) ? candidate.content?.parts : []
-    if (!responseParts.length) {
-      throw new Error('Response content is empty')
-    }
-
-    const timelineItems = buildTimelineItems(responseParts)
-    const hasImage = timelineItems.some((item) => item.kind === 'image')
-    if (!hasImage) {
-      const textMessage = timelineItems.find((item): item is TimelineTextItem => item.kind === 'text' && Boolean(item.text.trim()))
-      throw new Error(textMessage?.text || 'No image generated. The model might have refused the request.')
+    if (provider === 'zenmux' && result.estimatedCost) {
+      zenMuxTotalCost.value += result.estimatedCost
     }
 
     updateGeneration(recordId, (record) => {
-      record.items = timelineItems
+      record.items = items
       record.status = 'completed'
+      record.operation = result.operation
       record.error = null
-      record.finishReason = candidate.finishReason || null
-      record.responseId = response.data?.responseId
-      record.modelVersion = response.data?.modelVersion
-      record.usageMetadata = usageMetadata || null
+      record.finishReason = result.finishReason
+      record.responseId = result.responseId
+      record.modelVersion = result.modelVersion
+      record.usageMetadata = result.usageMetadata || null
     })
-  } catch (err: any) {
-    const message = buildErrorMessage(err)
+  } catch (caughtError) {
+    let message = getApiErrorMessage(caughtError)
+    if (message === 'Network Error') {
+      message = `无法连接 ${providerMeta[provider].shortName} API，请检查网络或服务端 CORS 配置。`
+    }
+
     updateGeneration(recordId, (record) => {
-      const existingText = record.items.filter((item): item is TimelineTextItem => item.kind === 'text' && item.text !== '正在等待模型返回内容…')
-      record.items = existingText.length > 0 ? existingText : [{
-        id: createId('text'),
-        kind: 'text',
-        text: message,
-        isThought: false
-      }]
+      record.items = [{ id: createId('text'), kind: 'text', text: message, isThought: false }]
       record.status = 'failed'
       record.error = message
     })
     error.value = message
   } finally {
-    if (requestId === activeRequestId.value) {
-      loading.value = false
-    }
+    loading.value = false
+    loadingProvider.value = null
   }
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 font-sans text-gray-900 selection:bg-blue-100 selection:text-blue-900">
-    <header class="text-center mb-12 animate-fade-in-down">
-      <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl mb-2 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
-        Google Nanobanana Pro
-      </h1>
-      <p class="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-        Experience the next generation of AI image creation.
-      </p>
+  <div class="min-h-screen bg-[#f6f7f8] text-gray-950 selection:bg-blue-100 selection:text-blue-950">
+    <header class="border-b border-gray-200 bg-white">
+      <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-5 sm:px-6 lg:px-8">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-950">Kannmu Image Studio</h1>
+          <p class="mt-1 text-sm text-gray-500">AI 图片生成与编辑</p>
+        </div>
+        <div v-if="loadingProvider" class="flex items-center gap-2 text-sm font-medium text-gray-600">
+          <LoadingSpinner />
+          <span class="hidden sm:inline">{{ providerMeta[loadingProvider].shortName }} 正在处理</span>
+        </div>
+      </div>
     </header>
 
-    <main class="w-full max-w-5xl mx-auto space-y-8 animate-fade-in-up">
-      <div class="flex flex-col gap-4">
-        <ApiKeyInput v-model="apiKey" />
-
-        <div v-if="apiKey" class="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 flex items-center justify-between">
-          <div class="flex items-center gap-2 text-gray-600">
-            <DollarSign class="w-5 h-5 text-green-600" />
-            <span class="font-medium">Session Cost</span>
-          </div>
-          <div class="text-xl font-bold text-gray-900">
-            ${{ totalCost.toFixed(6) }}
-          </div>
+    <main class="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
+      <section aria-label="API 提供商" class="space-y-3">
+        <div class="text-sm font-medium text-gray-700">API 提供商</div>
+        <div class="grid grid-cols-2 gap-2 rounded-lg border border-gray-200 bg-white p-1.5" role="tablist">
+          <button
+            v-for="provider in providerOptions"
+            :key="provider"
+            type="button"
+            role="tab"
+            :aria-selected="selectedProvider === provider"
+            :class="[
+              'flex min-h-14 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition sm:text-base',
+              selectedProvider === provider
+                ? (provider === 'zenmux' ? 'bg-blue-600 text-white shadow-sm' : 'bg-emerald-700 text-white shadow-sm')
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            ]"
+            @click="selectedProvider = provider"
+          >
+            <Cloud v-if="provider === 'zenmux'" class="h-5 w-5 shrink-0" />
+            <Sparkles v-else class="h-5 w-5 shrink-0" />
+            <span>{{ providerMeta[provider].name }}</span>
+          </button>
         </div>
-      </div>
+      </section>
 
-      <div v-if="apiKey" class="bg-white rounded-3xl shadow-xl p-8 transition-all duration-300 hover:shadow-2xl border border-gray-100">
-        <ImageGenerator
-          :loading="loading"
-          @generate="handleGenerate"
+      <section class="grid gap-5 border-y border-gray-200 py-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.8fr)]">
+        <ApiKeyInput
+          v-model="activeApiKey"
+          :label="activeProviderMeta.keyLabel"
+          :placeholder="activeProviderMeta.keyPlaceholder"
+          description="API Key 仅保存在当前浏览器的本地存储中，不会写入项目文件。"
         />
 
-        <div v-if="error" class="mt-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 text-red-700 animate-shake">
-          <AlertCircle class="w-5 h-5 flex-shrink-0 mt-0.5" />
-          <span class="text-sm font-medium">{{ error }}</span>
+        <div class="flex min-h-24 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4">
+          <div :class="['rounded-lg p-2.5', selectedProvider === 'zenmux' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700']">
+            <DollarSign v-if="selectedProvider === 'zenmux'" class="h-5 w-5" />
+            <Server v-else class="h-5 w-5" />
+          </div>
+          <div class="min-w-0">
+            <template v-if="selectedProvider === 'zenmux'">
+              <div class="text-xs font-medium uppercase text-gray-400">本次会话预估</div>
+              <div class="mt-1 text-xl font-bold text-gray-950">${{ zenMuxTotalCost.toFixed(6) }}</div>
+            </template>
+            <template v-else>
+              <div class="text-xs font-medium uppercase text-gray-400">Base URL</div>
+              <div class="mt-1 break-all text-sm font-semibold text-gray-800">{{ GPT_IMAGE_BASE_URL }}</div>
+            </template>
+          </div>
+          <CheckCircle2 v-if="apiReady" class="ml-auto h-5 w-5 shrink-0 text-emerald-600" aria-label="API Key 已填写" />
         </div>
+      </section>
 
-        <div v-if="loading" class="mt-12 flex flex-col items-center justify-center space-y-4">
-          <LoadingSpinner />
-          <p class="text-gray-400 text-sm font-medium animate-pulse">正在接收模型生成内容…</p>
-        </div>
+      <section class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
+        <ImageGenerator
+          :key="selectedProvider"
+          :loading="loading"
+          :provider="selectedProvider"
+          :ready="apiReady"
+          @generate="handleGenerate"
+        />
+      </section>
 
-        <section v-if="latestGeneration" class="mt-10 space-y-5">
-          <div class="flex items-center justify-between gap-4 flex-wrap">
-            <div>
-              <h2 class="text-xl font-semibold text-gray-900">生成时间线</h2>
-              <p class="text-sm text-gray-500 mt-1">按模型返回顺序展示思考文本、中间图片与最终结果。</p>
-            </div>
-            <div class="flex items-center gap-2 text-xs font-medium">
-              <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-600">{{ latestGeneration.model }}</span>
-              <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700">{{ latestGeneration.imageSize }}</span>
-              <span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700">{{ latestGeneration.aspectRatio }}</span>
-            </div>
-          </div>
-
-          <div class="rounded-3xl border border-gray-200 bg-gray-50/70 overflow-hidden">
-            <div class="max-h-[70vh] overflow-y-auto p-4 sm:p-6 space-y-4">
-              <div class="rounded-2xl border border-blue-100 bg-blue-50/80 p-4">
-                <div class="flex items-center gap-2 text-blue-800 font-medium text-sm">
-                  <Sparkles class="w-4 h-4" />
-                  <span>Prompt</span>
-                </div>
-                <p class="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-blue-950">{{ latestGeneration.prompt }}</p>
-              </div>
-
-              <template v-for="item in latestGeneration.items" :key="item.id">
-                <article
-                  v-if="item.kind === 'text'"
-                  :class="[
-                    'rounded-2xl border p-4 shadow-sm',
-                    item.isThought ? 'border-amber-100 bg-amber-50/90' : 'border-gray-200 bg-white'
-                  ]"
-                >
-                  <div class="flex items-center gap-2 text-sm font-medium" :class="item.isThought ? 'text-amber-800' : 'text-gray-700'">
-                    <MessageSquareText class="w-4 h-4" />
-                    <span>{{ item.isThought ? '模型思考' : '模型文本' }}</span>
-                    <span v-if="item.thoughtSignature" class="text-[11px] px-2 py-0.5 rounded-full bg-white/80 text-gray-500">{{ item.thoughtSignature }}</span>
-                  </div>
-                  <div class="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-gray-800">{{ item.text }}</div>
-                </article>
-
-                <article v-else class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm space-y-4">
-                  <div class="flex items-center justify-between gap-3 flex-wrap">
-                    <div class="flex items-center gap-2 text-sm font-medium text-gray-700">
-                      <ImageIcon class="w-4 h-4" />
-                      <span>{{ item.isFinal ? '最终结果' : (item.isThought ? '中间图片（思考阶段）' : '中间图片') }}</span>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs font-medium flex-wrap">
-                      <span v-if="item.isFinal" class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">Final</span>
-                      <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-600">{{ item.mimeType }}</span>
-                    </div>
-                  </div>
-
-                  <ImageDisplay
-                    :image-url="item.imageUrl"
-                    :label="item.isFinal ? '最终结果' : '中间结果'"
-                  />
-                </article>
-              </template>
-            </div>
-          </div>
-
-          <div v-if="latestGeneration.usageMetadata || latestGeneration.finishReason || latestGeneration.modelVersion || latestGeneration.responseId" class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <div v-if="latestGeneration.finishReason" class="rounded-2xl border border-gray-200 bg-white p-4">
-              <div class="text-xs uppercase tracking-wide text-gray-400">Finish Reason</div>
-              <div class="mt-2 text-sm font-medium text-gray-800">{{ latestGeneration.finishReason }}</div>
-            </div>
-            <div v-if="latestGeneration.modelVersion" class="rounded-2xl border border-gray-200 bg-white p-4">
-              <div class="text-xs uppercase tracking-wide text-gray-400">Model Version</div>
-              <div class="mt-2 text-sm font-medium text-gray-800 break-all">{{ latestGeneration.modelVersion }}</div>
-            </div>
-            <div v-if="latestGeneration.responseId" class="rounded-2xl border border-gray-200 bg-white p-4">
-              <div class="text-xs uppercase tracking-wide text-gray-400">Response ID</div>
-              <div class="mt-2 text-sm font-medium text-gray-800 break-all">{{ latestGeneration.responseId }}</div>
-            </div>
-            <div v-if="latestGeneration.usageMetadata" class="rounded-2xl border border-gray-200 bg-white p-4">
-              <div class="text-xs uppercase tracking-wide text-gray-400">Usage</div>
-              <pre class="mt-2 text-xs leading-5 text-gray-700 whitespace-pre-wrap break-words">{{ JSON.stringify(latestGeneration.usageMetadata, null, 2) }}</pre>
-            </div>
-          </div>
-
-          <div v-if="latestFinalImage" class="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 text-sm text-emerald-800">
-            当前已自动将最后一张图片标记为最终结果，下载和复制都会基于该图片的原始分辨率进行处理。
-          </div>
-        </section>
+      <div v-if="error" class="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800" role="alert">
+        <AlertCircle class="mt-0.5 h-5 w-5 shrink-0" />
+        <span class="break-words text-sm font-medium">{{ error }}</span>
       </div>
+
+      <section v-if="latestGeneration" class="space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-4 border-b border-gray-200 pb-4">
+          <div>
+            <h2 class="text-xl font-semibold text-gray-950">最近一次结果</h2>
+            <p class="mt-1 text-sm text-gray-500">{{ latestGeneration.operation === 'edit' ? '图片编辑' : '图片生成' }}</p>
+          </div>
+          <div class="flex flex-wrap gap-2 text-xs font-medium">
+            <span class="rounded-full bg-gray-200 px-3 py-1 text-gray-700">{{ latestGeneration.model }}</span>
+            <span class="rounded-full bg-blue-50 px-3 py-1 text-blue-700">{{ latestGeneration.imageSize }}</span>
+            <span v-if="latestGeneration.quality" class="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">{{ latestGeneration.quality }}</span>
+            <span v-if="latestGeneration.outputFormat" class="rounded-full bg-amber-50 px-3 py-1 uppercase text-amber-800">{{ latestGeneration.outputFormat }}</span>
+          </div>
+        </div>
+
+        <article class="rounded-lg border border-blue-100 bg-blue-50 p-4">
+          <div class="flex items-center gap-2 text-sm font-semibold text-blue-800">
+            <Sparkles class="h-4 w-4" />
+            <span>Prompt</span>
+          </div>
+          <p class="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-blue-950">{{ latestGeneration.prompt }}</p>
+        </article>
+
+        <template v-for="item in latestGeneration.items" :key="item.id">
+          <article v-if="item.kind === 'text'" :class="['rounded-lg border p-4', item.isThought ? 'border-amber-200 bg-amber-50' : 'border-gray-200 bg-white']">
+            <div :class="['flex items-center gap-2 text-sm font-semibold', item.isThought ? 'text-amber-800' : 'text-gray-700']">
+              <MessageSquareText class="h-4 w-4" />
+              <span>{{ item.isThought ? '处理状态' : '模型文本' }}</span>
+            </div>
+            <div class="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-gray-800">{{ item.text }}</div>
+          </article>
+
+          <article v-else class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                <ImageIcon class="h-4 w-4" />
+                <span>{{ item.isFinal ? '最终结果' : '中间图片' }}</span>
+              </div>
+              <div class="flex flex-wrap gap-2 text-xs font-medium">
+                <span v-if="item.isFinal" class="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">Final</span>
+                <span class="rounded-full bg-gray-100 px-3 py-1 text-gray-600">{{ item.mimeType }}</span>
+              </div>
+            </div>
+            <ImageDisplay :image-url="item.imageUrl" :label="item.isFinal ? '最终结果' : '中间结果'" />
+          </article>
+        </template>
+
+        <div v-if="latestGeneration.usageMetadata || latestGeneration.responseId || latestGeneration.modelVersion" class="grid gap-3 md:grid-cols-3">
+          <div v-if="latestGeneration.modelVersion" class="rounded-lg border border-gray-200 bg-white p-4">
+            <div class="text-xs font-medium uppercase text-gray-400">Model</div>
+            <div class="mt-2 break-all text-sm font-medium text-gray-800">{{ latestGeneration.modelVersion }}</div>
+          </div>
+          <div v-if="latestGeneration.responseId" class="rounded-lg border border-gray-200 bg-white p-4">
+            <div class="text-xs font-medium uppercase text-gray-400">Request ID</div>
+            <div class="mt-2 break-all text-sm font-medium text-gray-800">{{ latestGeneration.responseId }}</div>
+          </div>
+          <div v-if="latestGeneration.usageMetadata" class="rounded-lg border border-gray-200 bg-white p-4">
+            <div class="text-xs font-medium uppercase text-gray-400">Usage</div>
+            <pre class="mt-2 whitespace-pre-wrap break-words text-xs leading-5 text-gray-700">{{ JSON.stringify(latestGeneration.usageMetadata, null, 2) }}</pre>
+          </div>
+        </div>
+
+        <div v-if="latestFinalImage" class="flex items-center gap-2 text-sm text-emerald-800">
+          <CheckCircle2 class="h-4 w-4" />
+          <span>图片已准备好，可下载、复制或全屏查看。</span>
+        </div>
+      </section>
     </main>
 
-    <footer class="mt-auto py-8 text-center text-gray-400 text-sm">
-      <p>&copy; {{ new Date().getFullYear() }} Kannmu. Powered by ZenMux & Google Gemini.</p>
+    <footer class="border-t border-gray-200 bg-white py-6 text-center text-xs text-gray-500">
+      Kannmu · ZenMux 与 GPT Image 2 双提供商
     </footer>
   </div>
 </template>
-
-<style>
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
-  20%, 40%, 60%, 80% { transform: translateX(4px); }
-}
-
-.animate-fade-in-down {
-  animation: fadeInDown 0.8s ease-out;
-}
-.animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out 0.2s backwards;
-}
-.animate-shake {
-  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-}
-</style>

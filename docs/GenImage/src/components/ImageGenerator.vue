@@ -1,320 +1,407 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { X, Sparkles, Upload, ChevronDown, Check, Cpu, Plus, ZoomIn } from 'lucide-vue-next'
+import { computed, ref, watch } from 'vue'
 import { onClickOutside } from '@vueuse/core'
+import {
+  Check,
+  ChevronDown,
+  Cpu,
+  ImagePlus,
+  Plus,
+  RectangleHorizontal,
+  RectangleVertical,
+  Sparkles,
+  Square,
+  Upload,
+  X,
+  ZoomIn
+} from 'lucide-vue-next'
 import ImageDisplay from './ImageDisplay.vue'
+import {
+  gptImageModels,
+  zenMuxModels,
+  type GeneratePayload,
+  type ImageQuality,
+  type OutputFormat,
+  type ProviderId
+} from '../services/imageProviders'
 
 const props = defineProps<{
   loading: boolean
+  provider: ProviderId
+  ready: boolean
 }>()
 
 const emit = defineEmits<{
-  (e: 'generate', payload: { 
-    prompt: string, 
-    images: string[], 
-    aspectRatio: string, 
-    imageSize: string,
-    model: string 
-  }): void
+  (event: 'generate', payload: GeneratePayload): void
 }>()
 
-const models = [
-  {
-    id: 'google/gemini-3.1-flash-image-preview',
-    name: 'Nanobanana 2',
-    inputPrice: 0.25,
-    outputPrice: 1.5,
-  },
-  {
-    id: 'google/gemini-3-pro-image-preview',
-    name: 'Nanobanana Pro',
-    inputPrice: 2.0,
-    outputPrice: 12.0,
-  }
-]
+type ModelOption = {
+  id: string
+  name: string
+  inputPrice?: number
+  outputPrice?: number
+}
 
 const prompt = ref('')
-const aspectRatio = ref('1:1') 
-const imageSize = ref('2K')
-const selectedModel = ref(models[0]?.id ?? '')
+const selectedZenMuxModel = ref(zenMuxModels[0].id as string)
+const zenMuxAspectRatio = ref('1:1')
+const zenMuxImageSize = ref('2K')
+const gptImageSize = ref('1024x1024')
+const gptQuality = ref<ImageQuality>('auto')
+const gptOutputFormat = ref<OutputFormat>('png')
 const isModelDropdownOpen = ref(false)
-const modelDropdownRef = ref(null)
+const modelDropdownRef = ref<HTMLElement | null>(null)
+const referenceImages = ref<string[]>([])
+const fileInput = ref<HTMLInputElement | null>(null)
+const previewImage = ref<string | null>(null)
+const uploadError = ref<string | null>(null)
 
-const currentModel = computed(() => models.find(m => m.id === selectedModel.value))
+const zenMuxRatios = [
+  { label: '方形', value: '1:1' },
+  { label: '竖屏', value: '9:16' },
+  { label: '横屏', value: '16:9' },
+  { label: '标准横版', value: '4:3' },
+  { label: '标准竖版', value: '3:4' }
+]
+
+const zenMuxResolutions = ['1K', '2K', '4K']
+
+const gptSizes = [
+  { label: '方形', value: '1024x1024', ratio: '1:1', icon: Square },
+  { label: '竖版', value: '1024x1536', ratio: '2:3', icon: RectangleVertical },
+  { label: '横版', value: '1536x1024', ratio: '3:2', icon: RectangleHorizontal }
+]
+
+const qualityOptions: Array<{ label: string, value: ImageQuality }> = [
+  { label: '自动', value: 'auto' },
+  { label: '低', value: 'low' },
+  { label: '中', value: 'medium' },
+  { label: '高', value: 'high' }
+]
+
+const formatOptions: Array<{ label: string, value: OutputFormat }> = [
+  { label: 'PNG', value: 'png' },
+  { label: 'JPEG', value: 'jpeg' },
+  { label: 'WebP', value: 'webp' }
+]
+
+const models = computed<ModelOption[]>(() => props.provider === 'zenmux'
+  ? zenMuxModels.map((model) => ({ ...model }))
+  : gptImageModels.map((model) => ({ ...model })))
+
+const selectedModel = computed(() => props.provider === 'zenmux'
+  ? selectedZenMuxModel.value
+  : gptImageModels[0].id)
+
+const currentModel = computed(() => models.value.find((model) => model.id === selectedModel.value) || models.value[0])
+const isGptImage = computed(() => props.provider === 'gpt-image-2')
+const operationLabel = computed(() => referenceImages.value.length > 0 ? '编辑图片' : '生成图片')
 
 onClickOutside(modelDropdownRef, () => {
   isModelDropdownOpen.value = false
 })
 
+watch(() => props.provider, () => {
+  isModelDropdownOpen.value = false
+  uploadError.value = null
+})
+
 const selectModel = (modelId: string) => {
-  selectedModel.value = modelId
+  selectedZenMuxModel.value = modelId
   isModelDropdownOpen.value = false
 }
 
-const referenceImages = ref<string[]>([])
-const fileInput = ref<HTMLInputElement | null>(null)
-const previewImage = ref<string | null>(null)
-
-const ratios = [
-  { label: 'Square (1:1)', value: '1:1' },
-  { label: 'Portrait (9:16)', value: '9:16' },
-  { label: 'Landscape (16:9)', value: '16:9' },
-  { label: 'Standard (4:3)', value: '4:3' },
-  { label: 'Tall (3:4)', value: '3:4' }
-]
-
-const resolutions = [
-  { label: '1K', value: '1K' },
-  { label: '2K', value: '2K' },
-  { label: '4K', value: '4K' }
-]
-
-const handleFileUpload = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files.length > 0) {
-    Array.from(target.files).forEach(processFile)
-  }
-}
-
-const handleDrop = (event: DragEvent) => {
-  if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
-    Array.from(event.dataTransfer.files).forEach(processFile)
-  }
-}
-
-const handlePaste = (event: ClipboardEvent) => {
-  if (event.clipboardData?.files && event.clipboardData.files.length > 0) {
-    event.preventDefault()
-    Array.from(event.clipboardData.files).forEach(processFile)
-  }
-}
-
 const processFile = (file: File) => {
-  if (!file.type.startsWith('image/')) return
-  
+  uploadError.value = null
+
+  if (!file.type.startsWith('image/')) {
+    uploadError.value = '只能上传图片文件。'
+    return
+  }
+
+  if (file.size > 20 * 1024 * 1024) {
+    uploadError.value = '单张参考图不能超过 20 MB。'
+    return
+  }
+
+  if (referenceImages.value.length >= 16) {
+    uploadError.value = '最多可添加 16 张参考图。'
+    return
+  }
+
   const reader = new FileReader()
-  reader.onload = (e) => {
-    if (e.target?.result) {
-      referenceImages.value.push(e.target.result as string)
+  reader.onload = (event) => {
+    if (event.target?.result) {
+      referenceImages.value.push(event.target.result as string)
     }
   }
   reader.readAsDataURL(file)
 }
 
-const triggerFileInput = () => {
-  fileInput.value?.click()
+const addFiles = (files: FileList | File[]) => Array.from(files).forEach(processFile)
+
+const handleFileUpload = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files?.length) addFiles(target.files)
+  target.value = ''
 }
 
-const removeImage = (index: number) => {
-  referenceImages.value.splice(index, 1)
-  if (referenceImages.value.length === 0 && fileInput.value) {
-    fileInput.value.value = ''
+const handleDrop = (event: DragEvent) => {
+  if (event.dataTransfer?.files.length) addFiles(event.dataTransfer.files)
+}
+
+const handlePaste = (event: ClipboardEvent) => {
+  if (event.clipboardData?.files.length) {
+    event.preventDefault()
+    addFiles(event.clipboardData.files)
   }
 }
 
-const viewImage = (image: string) => {
-  previewImage.value = image
-}
+const triggerFileInput = () => fileInput.value?.click()
 
-const closePreview = () => {
-  previewImage.value = null
+const removeImage = (index: number) => {
+  referenceImages.value.splice(index, 1)
+  uploadError.value = null
 }
 
 const generate = () => {
   if (!prompt.value.trim()) return
-  emit('generate', { 
-    prompt: prompt.value, 
-    images: referenceImages.value, 
-    aspectRatio: aspectRatio.value, 
-    imageSize: imageSize.value,
-    model: selectedModel.value
+
+  const selectedGptSize = gptSizes.find((option) => option.value === gptImageSize.value)
+  emit('generate', {
+    prompt: prompt.value.trim(),
+    images: [...referenceImages.value],
+    aspectRatio: isGptImage.value ? (selectedGptSize?.ratio || '1:1') : zenMuxAspectRatio.value,
+    imageSize: isGptImage.value ? gptImageSize.value : zenMuxImageSize.value,
+    model: selectedModel.value,
+    quality: isGptImage.value ? gptQuality.value : undefined,
+    outputFormat: isGptImage.value ? gptOutputFormat.value : undefined
   })
 }
 </script>
 
 <template>
-  <div class="w-full max-w-2xl mx-auto space-y-6">
-    <!-- Model Selection -->
-    <div class="space-y-2" ref="modelDropdownRef">
-      <label class="text-sm font-medium text-gray-700 ml-1">Model</label>
-      <div class="relative">
-        <button 
-          @click="isModelDropdownOpen = !isModelDropdownOpen"
+  <div class="w-full space-y-6">
+    <div ref="modelDropdownRef" class="space-y-2">
+      <label class="text-sm font-medium text-gray-700">模型</label>
+
+      <div v-if="isGptImage" class="flex min-h-16 items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3">
+        <div class="rounded-lg bg-emerald-50 p-2 text-emerald-700">
+          <Cpu class="h-5 w-5" />
+        </div>
+        <div class="min-w-0">
+          <div class="font-medium text-gray-900">{{ currentModel?.name }}</div>
+          <div class="mt-0.5 text-xs text-gray-500">OpenAI 兼容 Images API</div>
+        </div>
+      </div>
+
+      <div v-else class="relative">
+        <button
           type="button"
-          class="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-200 rounded-2xl hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-sm text-left"
+          class="flex min-h-16 w-full items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3 text-left shadow-sm transition hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          @click="isModelDropdownOpen = !isModelDropdownOpen"
         >
-          <div class="flex items-center gap-3">
-            <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
-              <Cpu class="w-5 h-5" />
+          <div class="flex min-w-0 items-center gap-3">
+            <div class="rounded-lg bg-blue-50 p-2 text-blue-700">
+              <Cpu class="h-5 w-5" />
             </div>
-            <div>
-              <div class="font-medium text-gray-900">{{ currentModel?.name }}</div>
-              <div class="text-xs text-gray-500 flex gap-2">
-                <span>Input: ${{ currentModel?.inputPrice }}/M</span>
-                <span>Output: ${{ currentModel?.outputPrice }}/M</span>
+            <div class="min-w-0">
+              <div class="truncate font-medium text-gray-900">{{ currentModel?.name }}</div>
+              <div class="mt-0.5 text-xs text-gray-500">
+                输入 ${{ currentModel?.inputPrice }}/M · 输出 ${{ currentModel?.outputPrice }}/M
               </div>
             </div>
           </div>
-          <ChevronDown :class="['w-5 h-5 text-gray-400 transition-transform duration-200', isModelDropdownOpen ? 'rotate-180' : '']" />
+          <ChevronDown :class="['h-5 w-5 shrink-0 text-gray-400 transition-transform', isModelDropdownOpen ? 'rotate-180' : '']" />
         </button>
 
         <Transition name="dropdown">
-          <div 
-            v-if="isModelDropdownOpen"
-            class="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl overflow-hidden origin-top"
-          >
-            <div class="max-h-64 overflow-y-auto p-1.5 space-y-1">
-              <button
-                v-for="model in models"
-                :key="model.id"
-                @click="selectModel(model.id)"
-                :class="[
-                  'w-full flex items-center justify-between p-3 rounded-xl transition-all text-left group',
-                  selectedModel === model.id ? 'bg-blue-50 border-blue-100 ring-1 ring-blue-100' : 'hover:bg-gray-50'
-                ]"
-              >
-                <div class="flex items-center gap-3">
-                  <div :class="[
-                    'p-2 rounded-lg transition-colors',
-                    selectedModel === model.id ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200'
-                  ]">
-                    <Cpu class="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div :class="['font-medium', selectedModel === model.id ? 'text-blue-900' : 'text-gray-900']">
-                      {{ model.name }}
-                    </div>
-                    <div class="text-xs text-gray-500 mt-0.5 flex items-center gap-3">
-                      <span class="flex items-center gap-1">
-                        <span class="text-gray-400">In:</span>
-                        <span class="font-medium text-gray-700">${{ model.inputPrice }}</span>
-                      </span>
-                      <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-                      <span class="flex items-center gap-1">
-                        <span class="text-gray-400">Out:</span>
-                        <span class="font-medium text-gray-700">${{ model.outputPrice }}</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <Check v-if="selectedModel === model.id" class="w-5 h-5 text-blue-600" />
-              </button>
-            </div>
+          <div v-if="isModelDropdownOpen" class="absolute z-30 mt-2 w-full rounded-lg border border-gray-200 bg-white p-1.5 shadow-xl">
+            <button
+              v-for="model in models"
+              :key="model.id"
+              type="button"
+              :class="[
+                'flex w-full items-center justify-between rounded-lg p-3 text-left transition',
+                selectedModel === model.id ? 'bg-blue-50 text-blue-950' : 'text-gray-800 hover:bg-gray-50'
+              ]"
+              @click="selectModel(model.id)"
+            >
+              <div>
+                <div class="font-medium">{{ model.name }}</div>
+                <div class="mt-1 text-xs text-gray-500">输入 ${{ model.inputPrice }}/M · 输出 ${{ model.outputPrice }}/M</div>
+              </div>
+              <Check v-if="selectedModel === model.id" class="h-5 w-5 text-blue-600" />
+            </button>
           </div>
         </Transition>
       </div>
     </div>
 
-    <!-- Prompt Input -->
-    <div class="relative group">
-      <textarea
-        v-model="prompt"
-        @paste="handlePaste"
-        rows="4"
-        class="w-full p-4 text-base bg-white border border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none resize-none"
-        placeholder="Describe the image you want to generate... (You can also paste an image here)"
-      ></textarea>
-      <div class="absolute bottom-4 right-4 text-xs text-gray-400 pointer-events-none">
-        {{ prompt.length }} chars
+    <div class="space-y-2">
+      <label for="image-prompt" class="text-sm font-medium text-gray-700">提示词</label>
+      <div class="relative">
+        <textarea
+          id="image-prompt"
+          v-model="prompt"
+          rows="5"
+          class="w-full resize-y rounded-lg border border-gray-200 bg-white p-4 pb-9 text-base leading-7 outline-none transition focus:border-transparent focus:ring-2 focus:ring-blue-500"
+          placeholder="描述你希望生成的画面，也可以粘贴参考图…"
+          @paste="handlePaste"
+        />
+        <div class="pointer-events-none absolute bottom-3 right-3 text-xs text-gray-400">{{ prompt.length }} 字符</div>
       </div>
     </div>
 
-    <!-- Aspect Ratio and Resolution Selection -->
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div class="flex flex-wrap gap-2">
-        <button 
-          v-for="ratio in ratios" 
-          :key="ratio.value"
-          @click="aspectRatio = ratio.value"
-          :class="[
-            'px-4 py-2 rounded-xl text-sm font-medium transition-all border',
-            aspectRatio === ratio.value 
-              ? 'bg-blue-50 border-blue-200 text-blue-700 ring-2 ring-blue-100' 
-              : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-          ]"
+    <div v-if="isGptImage" class="grid gap-5 lg:grid-cols-[1fr_160px_160px]">
+      <fieldset class="space-y-2">
+        <legend class="text-sm font-medium text-gray-700">尺寸</legend>
+        <div class="grid grid-cols-3 gap-2">
+          <button
+            v-for="option in gptSizes"
+            :key="option.value"
+            type="button"
+            :class="[
+              'flex min-h-16 flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2 text-sm font-medium transition',
+              gptImageSize === option.value
+                ? 'border-emerald-300 bg-emerald-50 text-emerald-800 ring-2 ring-emerald-100'
+                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+            ]"
+            @click="gptImageSize = option.value"
+          >
+            <component :is="option.icon" class="h-5 w-5" />
+            <span>{{ option.label }}</span>
+            <span class="text-[11px] font-normal text-gray-500">{{ option.value }}</span>
+          </button>
+        </div>
+      </fieldset>
+
+      <label class="space-y-2 text-sm font-medium text-gray-700">
+        <span>画质</span>
+        <span class="relative block">
+          <select v-model="gptQuality" class="h-16 w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 pr-9 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+            <option v-for="option in qualityOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+          </select>
+          <ChevronDown class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        </span>
+      </label>
+
+      <label class="space-y-2 text-sm font-medium text-gray-700">
+        <span>格式</span>
+        <span class="relative block">
+          <select v-model="gptOutputFormat" class="h-16 w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 pr-9 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+            <option v-for="option in formatOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+          </select>
+          <ChevronDown class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        </span>
+      </label>
+    </div>
+
+    <div v-else class="grid gap-5 md:grid-cols-[1fr_200px]">
+      <fieldset class="space-y-2">
+        <legend class="text-sm font-medium text-gray-700">画幅</legend>
+        <div class="flex flex-wrap gap-2">
+          <button
+            v-for="ratio in zenMuxRatios"
+            :key="ratio.value"
+            type="button"
+            :class="[
+              'rounded-lg border px-3 py-2 text-sm font-medium transition',
+              zenMuxAspectRatio === ratio.value
+                ? 'border-blue-300 bg-blue-50 text-blue-800 ring-2 ring-blue-100'
+                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+            ]"
+            @click="zenMuxAspectRatio = ratio.value"
+          >
+            {{ ratio.label }} {{ ratio.value }}
+          </button>
+        </div>
+      </fieldset>
+
+      <fieldset class="space-y-2">
+        <legend class="text-sm font-medium text-gray-700">分辨率</legend>
+        <div class="grid grid-cols-3 gap-2">
+          <button
+            v-for="size in zenMuxResolutions"
+            :key="size"
+            type="button"
+            :class="[
+              'rounded-lg border px-3 py-2 text-sm font-medium transition',
+              zenMuxImageSize === size
+                ? 'border-blue-300 bg-blue-50 text-blue-800 ring-2 ring-blue-100'
+                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+            ]"
+            @click="zenMuxImageSize = size"
+          >
+            {{ size }}
+          </button>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="space-y-2">
+      <div class="flex items-center justify-between gap-3">
+        <label class="text-sm font-medium text-gray-700">参考图</label>
+        <span class="text-xs text-gray-500">{{ referenceImages.length }}/16</span>
+      </div>
+
+      <div class="rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 p-4 transition hover:border-gray-300" @dragover.prevent @drop.prevent="handleDrop">
+        <button
+          v-if="referenceImages.length === 0"
+          type="button"
+          class="flex h-28 w-full flex-col items-center justify-center gap-2 text-gray-500 transition hover:text-blue-700"
+          @click="triggerFileInput"
         >
-          {{ ratio.label }}
+          <Upload class="h-7 w-7" />
+          <span class="text-sm">上传、拖入或粘贴参考图</span>
+          <span v-if="isGptImage" class="text-xs text-gray-400">添加后将调用 GPT Image 2 图片编辑接口</span>
         </button>
-      </div>
 
-      <div class="relative inline-block w-32">
-        <select 
-          v-model="imageSize"
-          class="block w-full px-4 py-2 text-sm font-medium bg-white border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer hover:border-gray-300 transition-all"
-        >
-          <option v-for="res in resolutions" :key="res.value" :value="res.value">
-            {{ res.label }}
-          </option>
-        </select>
-        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Image Upload -->
-    <div class="flex flex-col gap-4">
-      <div 
-           @dragover.prevent
-           @drop.prevent="handleDrop"
-           class="p-4 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50 hover:bg-gray-50 transition-colors flex flex-col gap-4"
-      >
-        <div v-if="referenceImages.length === 0" 
-             @click="triggerFileInput"
-             class="flex flex-col items-center justify-center cursor-pointer h-32 group">
-          <Upload class="w-8 h-8 text-gray-400 group-hover:text-blue-500 mb-2 transition-colors" />
-          <span class="text-sm text-gray-500 group-hover:text-blue-600 transition-colors">上传参考图（支持多张，可拖拽或在此处粘贴）</span>
-        </div>
-        
-        <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          <div v-for="(img, index) in referenceImages" :key="index" 
-               class="relative aspect-square bg-gray-100 rounded-xl overflow-hidden group border border-gray-200">
-            <img :src="img" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
-            
-            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-              <button @click.stop="viewImage(img)" class="p-2 bg-white/20 hover:bg-white/40 rounded-full text-white backdrop-blur-sm transition-all" title="查看">
-                <ZoomIn class="w-4 h-4" />
+        <div v-else class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+          <div v-for="(image, index) in referenceImages" :key="`${index}-${image.slice(-12)}`" class="group relative aspect-square overflow-hidden rounded-lg border border-gray-200 bg-white">
+            <img :src="image" alt="参考图" class="h-full w-full object-cover" />
+            <div class="absolute inset-0 flex items-center justify-center gap-2 bg-black/55 opacity-0 transition group-hover:opacity-100">
+              <button type="button" class="rounded-full bg-white/20 p-2 text-white backdrop-blur-sm hover:bg-white/30" title="查看" @click.stop="previewImage = image">
+                <ZoomIn class="h-4 w-4" />
               </button>
-              <button @click.stop="removeImage(index)" class="p-2 bg-red-500/80 hover:bg-red-600 rounded-full text-white backdrop-blur-sm transition-all" title="删除">
-                <X class="w-4 h-4" />
+              <button type="button" class="rounded-full bg-red-500/85 p-2 text-white hover:bg-red-600" title="删除" @click.stop="removeImage(index)">
+                <X class="h-4 w-4" />
               </button>
             </div>
           </div>
-          
-          <div @click="triggerFileInput"
-               class="aspect-square border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all group">
-            <Plus class="w-6 h-6 text-gray-400 group-hover:text-blue-500 transition-colors" />
-            <span class="text-xs text-gray-500 mt-2 group-hover:text-blue-600 transition-colors">继续添加</span>
-          </div>
+
+          <button type="button" class="flex aspect-square flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 text-gray-500 transition hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700" @click="triggerFileInput">
+            <Plus class="h-5 w-5" />
+            <span class="mt-1 text-xs">继续添加</span>
+          </button>
         </div>
       </div>
 
-      <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/*" multiple class="hidden" />
+      <p v-if="uploadError" class="text-sm text-red-600">{{ uploadError }}</p>
+      <input ref="fileInput" type="file" accept="image/*" multiple class="hidden" @change="handleFileUpload" />
     </div>
 
-    <!-- Generate Button -->
     <button
+      type="button"
+      :disabled="loading || !ready || !prompt.trim()"
+      class="flex min-h-14 w-full items-center justify-center gap-2 rounded-lg bg-gray-950 px-5 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:shadow-none"
       @click="generate"
-      :disabled="loading || !prompt.trim()"
-      class="w-full py-4 bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-full font-medium text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2"
     >
-      <Sparkles class="w-5 h-5" />
-      <span>{{ loading ? 'Generating...' : 'Generate Image' }}</span>
+      <ImagePlus v-if="referenceImages.length > 0" class="h-5 w-5" />
+      <Sparkles v-else class="h-5 w-5" />
+      <span>{{ !ready ? '请先填写 API Key' : (loading ? '正在处理…' : operationLabel) }}</span>
     </button>
   </div>
 
-  <!-- Image Preview Modal -->
-  <div v-if="previewImage" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4" @click="closePreview">
-    <div class="relative w-full max-w-5xl max-h-[90vh] flex flex-col" @click.stop>
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-white text-lg font-medium">参考图预览</h3>
-        <button @click="closePreview" class="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors">
-          <X class="w-5 h-5" />
+  <div v-if="previewImage" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm" @click="previewImage = null">
+    <div class="flex max-h-[90vh] w-full max-w-5xl flex-col" @click.stop>
+      <div class="mb-3 flex items-center justify-between">
+        <h3 class="text-base font-medium text-white">参考图预览</h3>
+        <button type="button" class="rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20" title="关闭" @click="previewImage = null">
+          <X class="h-5 w-5" />
         </button>
       </div>
-      <div class="flex-1 overflow-hidden rounded-2xl bg-black/50 border border-white/10">
+      <div class="overflow-hidden rounded-lg border border-white/10 bg-black/50">
         <ImageDisplay :image-url="previewImage" label="参考图" />
       </div>
     </div>
@@ -324,12 +411,12 @@ const generate = () => {
 <style scoped>
 .dropdown-enter-active,
 .dropdown-leave-active {
-  transition: all 0.2s ease;
+  transition: opacity 0.16s ease, transform 0.16s ease;
 }
 
 .dropdown-enter-from,
 .dropdown-leave-to {
   opacity: 0;
-  transform: translateY(-10px) scale(0.95);
+  transform: translateY(-6px);
 }
 </style>
