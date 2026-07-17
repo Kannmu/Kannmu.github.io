@@ -3,6 +3,9 @@ import axios from 'axios'
 export type ProviderId = 'zenmux' | 'gpt-image-2'
 export type OutputFormat = 'png' | 'jpeg' | 'webp'
 export type ImageQuality = 'auto' | 'low' | 'medium' | 'high'
+export type ImageBackground = 'auto' | 'opaque' | 'transparent'
+export type ImageModeration = 'auto' | 'low'
+export type ImageInputFidelity = 'low' | 'high'
 
 export type GeneratePayload = {
   prompt: string
@@ -12,6 +15,13 @@ export type GeneratePayload = {
   model: string
   quality?: ImageQuality
   outputFormat?: OutputFormat
+  outputCount?: number
+  background?: ImageBackground
+  outputCompression?: number
+  moderation?: ImageModeration
+  inputFidelity?: ImageInputFidelity
+  userId?: string
+  mask?: string
 }
 
 export type ProviderTimelineItem =
@@ -26,6 +36,7 @@ export type ProviderTimelineItem =
       imageUrl: string
       mimeType: string
       isThought: boolean
+      isFinal?: boolean
     }
 
 export type ProviderGenerationResult = {
@@ -130,6 +141,34 @@ const dataUrlToFile = async (dataUrl: string, index: number) => {
   return new File([blob], `reference-${index + 1}.${extension}`, { type: mimeType })
 }
 
+const appendFormValue = (formData: FormData, key: string, value: string | number | undefined) => {
+  if (value === undefined || value === '') return
+  formData.append(key, String(value))
+}
+
+const getGptImageRequestParameters = (payload: GeneratePayload, operation: 'generate' | 'edit') => {
+  const outputFormat = payload.outputFormat || 'png'
+  const parameters: Record<string, string | number> = {
+    model: payload.model,
+    prompt: payload.prompt,
+    size: payload.imageSize,
+    quality: payload.quality || 'auto',
+    output_format: outputFormat,
+    n: payload.outputCount || 1,
+    background: payload.background || 'auto'
+  }
+
+  if (outputFormat !== 'png' && payload.outputCompression !== undefined) {
+    parameters.output_compression = payload.outputCompression
+  }
+
+  if (payload.userId?.trim()) parameters.user = payload.userId.trim()
+  if (operation === 'generate' && payload.moderation) parameters.moderation = payload.moderation
+  if (operation === 'edit' && payload.inputFidelity) parameters.input_fidelity = payload.inputFidelity
+
+  return parameters
+}
+
 export const getApiErrorMessage = (error: unknown) => {
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as {
@@ -228,18 +267,17 @@ export const generateWithZenMux = async ({ apiKey, payload }: GenerateOptions): 
 
 export const generateWithGptImage = async ({ apiKey, payload }: GenerateOptions): Promise<ProviderGenerationResult> => {
   const headers = { Authorization: `Bearer ${apiKey}` }
+  const operation = payload.images.length > 0 ? 'edit' : 'generate'
+  const parameters = getGptImageRequestParameters(payload, operation)
   let response
 
-  if (payload.images.length > 0) {
+  if (operation === 'edit') {
     const formData = new FormData()
-    formData.append('model', payload.model)
-    formData.append('prompt', payload.prompt)
-    formData.append('size', payload.imageSize)
-    formData.append('quality', payload.quality || 'auto')
-    formData.append('output_format', payload.outputFormat || 'png')
+    Object.entries(parameters).forEach(([key, value]) => appendFormValue(formData, key, value))
 
     const files = await Promise.all(payload.images.map(dataUrlToFile))
     files.forEach((file) => formData.append('image[]', file))
+    if (payload.mask) formData.append('mask', await dataUrlToFile(payload.mask, 0))
 
     response = await axios.post(`${GPT_IMAGE_REQUEST_BASE_URL}/v1/images/edits`, formData, {
       headers,
@@ -248,14 +286,7 @@ export const generateWithGptImage = async ({ apiKey, payload }: GenerateOptions)
   } else {
     response = await axios.post(
       `${GPT_IMAGE_REQUEST_BASE_URL}/v1/images/generations`,
-      {
-        model: payload.model,
-        prompt: payload.prompt,
-        size: payload.imageSize,
-        quality: payload.quality || 'auto',
-        output_format: payload.outputFormat || 'png',
-        n: 1
-      },
+      parameters,
       {
         headers: {
           ...headers,
@@ -278,7 +309,7 @@ export const generateWithGptImage = async ({ apiKey, payload }: GenerateOptions)
 
     const imageUrl = item.b64_json ? buildImageUrl(mimeType, item.b64_json) : item.url
     if (imageUrl) {
-      items.push({ kind: 'image', imageUrl, mimeType, isThought: false })
+      items.push({ kind: 'image', imageUrl, mimeType, isThought: false, isFinal: true })
     }
   })
 
@@ -292,7 +323,7 @@ export const generateWithGptImage = async ({ apiKey, payload }: GenerateOptions)
     responseId: response.headers['x-request-id'] || response.data?.id,
     modelVersion: payload.model,
     usageMetadata: response.data?.usage || null,
-    operation: payload.images.length > 0 ? 'edit' : 'generate'
+    operation
   }
 }
 

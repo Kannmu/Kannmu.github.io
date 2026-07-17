@@ -30,3 +30,17 @@ VITE_GPT_IMAGE_PROXY_URL=/gpt-image-api
 ```
 
 如已有其他同源后端，可将 `VITE_GPT_IMAGE_PROXY_URL` 改为该代理地址，并保持 OpenAI Images API 路径不变。
+
+## GPT Image 2 参数
+
+GPT Image 2 模式支持以下交互参数：
+
+- 输出尺寸：`auto`、三种标准尺寸、2K/4K 兼容预设，以及 256-8192 px 范围内的自定义宽高
+- 画质：`auto`、`low`、`medium`、`high`
+- 输出：1-10 张、PNG/JPEG/WebP、不透明/透明/自动背景
+- JPEG/WebP 压缩率：0-100
+- 图片生成：`auto` 或 `low` 内容审核强度
+- 图片编辑：`low` 或 `high` 输入保真度、最多 16 张参考图和可选蒙版
+- 可选 `user` 标识
+
+标准尺寸遵循 OpenAI Images 兼容接口的通用取值。2K、4K 和自定义尺寸属于兼容层扩展能力，是否可用由当前上游接口决定；接口不接受时会直接显示服务端返回的参数错误。

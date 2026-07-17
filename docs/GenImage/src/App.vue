@@ -21,6 +21,9 @@ import {
   getApiErrorMessage,
   providerMeta,
   type GeneratePayload,
+  type ImageBackground,
+  type ImageInputFidelity,
+  type ImageModeration,
   type OutputFormat,
   type ProviderId,
   type ProviderTimelineItem
@@ -54,6 +57,11 @@ type GenerationRecord = {
   imageSize: string
   quality?: string
   outputFormat?: OutputFormat
+  outputCount?: number
+  background?: ImageBackground
+  outputCompression?: number
+  moderation?: ImageModeration
+  inputFidelity?: ImageInputFidelity
   operation: 'generate' | 'edit'
   status: 'streaming' | 'completed' | 'failed'
   items: TimelineItem[]
@@ -114,11 +122,12 @@ const normalizeTimelineItems = (providerItems: ProviderTimelineItem[]) => {
         imageUrl: item.imageUrl,
         mimeType: item.mimeType,
         isThought: item.isThought,
-        isFinal: false
+        isFinal: item.isFinal || false
       })
 
-  const lastImage = [...items].reverse().find((item): item is TimelineImageItem => item.kind === 'image')
-  if (lastImage) lastImage.isFinal = true
+  const images = items.filter((item): item is TimelineImageItem => item.kind === 'image')
+  const lastImage: TimelineImageItem | undefined = images.length > 0 ? images[images.length - 1] : undefined
+  if (lastImage && !images.some((item) => item.isFinal)) lastImage.isFinal = true
   return items
 }
 
@@ -153,6 +162,11 @@ const handleGenerate = async (payload: GeneratePayload) => {
     imageSize: payload.imageSize,
     quality: payload.quality,
     outputFormat: payload.outputFormat,
+    outputCount: payload.outputCount,
+    background: payload.background,
+    outputCompression: payload.outputCompression,
+    moderation: payload.moderation,
+    inputFidelity: payload.inputFidelity,
     operation: payload.images.length > 0 ? 'edit' : 'generate',
     status: 'streaming',
     items: [{
@@ -301,6 +315,11 @@ const handleGenerate = async (payload: GeneratePayload) => {
             <span class="rounded-full bg-blue-50 px-3 py-1 text-blue-700">{{ latestGeneration.imageSize }}</span>
             <span v-if="latestGeneration.quality" class="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">{{ latestGeneration.quality }}</span>
             <span v-if="latestGeneration.outputFormat" class="rounded-full bg-amber-50 px-3 py-1 uppercase text-amber-800">{{ latestGeneration.outputFormat }}</span>
+            <span v-if="latestGeneration.outputCount" class="rounded-full bg-gray-100 px-3 py-1 text-gray-700">{{ latestGeneration.outputCount }} 张</span>
+            <span v-if="latestGeneration.background && latestGeneration.background !== 'auto'" class="rounded-full bg-cyan-50 px-3 py-1 text-cyan-800">背景 {{ latestGeneration.background }}</span>
+            <span v-if="latestGeneration.outputCompression !== undefined" class="rounded-full bg-fuchsia-50 px-3 py-1 text-fuchsia-800">压缩 {{ latestGeneration.outputCompression }}%</span>
+            <span v-if="latestGeneration.moderation" class="rounded-full bg-lime-50 px-3 py-1 text-lime-800">审核 {{ latestGeneration.moderation }}</span>
+            <span v-if="latestGeneration.inputFidelity" class="rounded-full bg-indigo-50 px-3 py-1 text-indigo-800">保真 {{ latestGeneration.inputFidelity }}</span>
           </div>
         </div>
 

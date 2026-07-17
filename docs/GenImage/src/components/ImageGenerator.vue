@@ -6,9 +6,11 @@ import {
   ChevronDown,
   Cpu,
   ImagePlus,
+  Maximize2,
   Plus,
   RectangleHorizontal,
   RectangleVertical,
+  SlidersHorizontal,
   Sparkles,
   Square,
   Upload,
@@ -20,6 +22,9 @@ import {
   gptImageModels,
   zenMuxModels,
   type GeneratePayload,
+  type ImageBackground,
+  type ImageInputFidelity,
+  type ImageModeration,
   type ImageQuality,
   type OutputFormat,
   type ProviderId
@@ -46,15 +51,26 @@ const prompt = ref('')
 const selectedZenMuxModel = ref(zenMuxModels[0].id as string)
 const zenMuxAspectRatio = ref('1:1')
 const zenMuxImageSize = ref('2K')
-const gptImageSize = ref('1024x1024')
+const gptImageSizePreset = ref('1024x1024')
+const gptCustomWidth = ref(2048)
+const gptCustomHeight = ref(2048)
 const gptQuality = ref<ImageQuality>('auto')
 const gptOutputFormat = ref<OutputFormat>('png')
+const gptOutputCount = ref(1)
+const gptBackground = ref<ImageBackground>('auto')
+const gptOutputCompression = ref(100)
+const gptModeration = ref<ImageModeration>('auto')
+const gptInputFidelity = ref<ImageInputFidelity>('low')
+const gptUserId = ref('')
 const isModelDropdownOpen = ref(false)
 const modelDropdownRef = ref<HTMLElement | null>(null)
 const referenceImages = ref<string[]>([])
 const fileInput = ref<HTMLInputElement | null>(null)
+const maskImage = ref<string | null>(null)
+const maskInput = ref<HTMLInputElement | null>(null)
 const previewImage = ref<string | null>(null)
 const uploadError = ref<string | null>(null)
+const maskError = ref<string | null>(null)
 
 const zenMuxRatios = [
   { label: '方形', value: '1:1' },
@@ -67,10 +83,19 @@ const zenMuxRatios = [
 const zenMuxResolutions = ['1K', '2K', '4K']
 
 const gptSizes = [
-  { label: '方形', value: '1024x1024', ratio: '1:1', icon: Square },
-  { label: '竖版', value: '1024x1536', ratio: '2:3', icon: RectangleVertical },
-  { label: '横版', value: '1536x1024', ratio: '3:2', icon: RectangleHorizontal }
+  { label: '自动选择', value: 'auto', ratio: 'auto', group: '标准', icon: Maximize2 },
+  { label: '方形', value: '1024x1024', ratio: '1:1', group: '标准', icon: Square },
+  { label: '竖版', value: '1024x1536', ratio: '2:3', group: '标准', icon: RectangleVertical },
+  { label: '横版', value: '1536x1024', ratio: '3:2', group: '标准', icon: RectangleHorizontal },
+  { label: '2K 方形', value: '2048x2048', ratio: '1:1', group: '高分辨率', icon: Square },
+  { label: '2K 竖版', value: '2048x3072', ratio: '2:3', group: '高分辨率', icon: RectangleVertical },
+  { label: '2K 横版', value: '3072x2048', ratio: '3:2', group: '高分辨率', icon: RectangleHorizontal },
+  { label: '4K 方形', value: '4096x4096', ratio: '1:1', group: '超高分辨率', icon: Square },
+  { label: '4K 竖版', value: '4096x6144', ratio: '2:3', group: '超高分辨率', icon: RectangleVertical },
+  { label: '4K 横版', value: '6144x4096', ratio: '3:2', group: '超高分辨率', icon: RectangleHorizontal }
 ]
+
+const gptSizeGroups = ['标准', '高分辨率', '超高分辨率']
 
 const qualityOptions: Array<{ label: string, value: ImageQuality }> = [
   { label: '自动', value: 'auto' },
@@ -85,6 +110,22 @@ const formatOptions: Array<{ label: string, value: OutputFormat }> = [
   { label: 'WebP', value: 'webp' }
 ]
 
+const backgroundOptions: Array<{ label: string, value: ImageBackground }> = [
+  { label: '自动', value: 'auto' },
+  { label: '不透明', value: 'opaque' },
+  { label: '透明', value: 'transparent' }
+]
+
+const moderationOptions: Array<{ label: string, value: ImageModeration }> = [
+  { label: '自动', value: 'auto' },
+  { label: '较宽松', value: 'low' }
+]
+
+const inputFidelityOptions: Array<{ label: string, value: ImageInputFidelity }> = [
+  { label: '标准', value: 'low' },
+  { label: '高保真', value: 'high' }
+]
+
 const models = computed<ModelOption[]>(() => props.provider === 'zenmux'
   ? zenMuxModels.map((model) => ({ ...model }))
   : gptImageModels.map((model) => ({ ...model })))
@@ -96,6 +137,30 @@ const selectedModel = computed(() => props.provider === 'zenmux'
 const currentModel = computed(() => models.value.find((model) => model.id === selectedModel.value) || models.value[0])
 const isGptImage = computed(() => props.provider === 'gpt-image-2')
 const operationLabel = computed(() => referenceImages.value.length > 0 ? '编辑图片' : '生成图片')
+const isCustomGptSize = computed(() => gptImageSizePreset.value === 'custom')
+const selectedGptSize = computed(() => gptSizes.find((option) => option.value === gptImageSizePreset.value))
+const resolvedGptImageSize = computed(() => isCustomGptSize.value
+  ? `${gptCustomWidth.value}x${gptCustomHeight.value}`
+  : gptImageSizePreset.value)
+const gptSizeError = computed(() => {
+  if (!isCustomGptSize.value) return null
+  const values = [gptCustomWidth.value, gptCustomHeight.value]
+  return values.every((value) => Number.isInteger(value) && value >= 256 && value <= 8192)
+    ? null
+    : '宽度和高度需为 256 到 8192 之间的整数。'
+})
+const gptCountError = computed(() => Number.isInteger(gptOutputCount.value) && gptOutputCount.value >= 1 && gptOutputCount.value <= 10
+  ? null
+  : '生成数量需为 1 到 10 之间的整数。')
+
+const getAspectRatio = (size: string) => {
+  if (size === 'auto') return 'auto'
+  const [width, height] = size.split('x').map(Number)
+  if (!width || !height) return 'custom'
+  const divisor = (a: number, b: number): number => b === 0 ? a : divisor(b, a % b)
+  const gcd = divisor(width, height)
+  return `${width / gcd}:${height / gcd}`
+}
 
 onClickOutside(modelDropdownRef, () => {
   isModelDropdownOpen.value = false
@@ -104,6 +169,17 @@ onClickOutside(modelDropdownRef, () => {
 watch(() => props.provider, () => {
   isModelDropdownOpen.value = false
   uploadError.value = null
+})
+
+watch(gptOutputFormat, (format) => {
+  if (format === 'jpeg' && gptBackground.value === 'transparent') gptBackground.value = 'auto'
+})
+
+watch(() => referenceImages.value.length, (count) => {
+  if (count === 0) {
+    maskImage.value = null
+    maskError.value = null
+  }
 })
 
 const selectModel = (modelId: string) => {
@@ -158,6 +234,31 @@ const handlePaste = (event: ClipboardEvent) => {
 }
 
 const triggerFileInput = () => fileInput.value?.click()
+const triggerMaskInput = () => maskInput.value?.click()
+
+const handleMaskUpload = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  target.value = ''
+  maskError.value = null
+  if (!file) return
+
+  if (!file.type.startsWith('image/')) {
+    maskError.value = '蒙版必须是图片文件。'
+    return
+  }
+
+  if (file.size > 20 * 1024 * 1024) {
+    maskError.value = '蒙版文件不能超过 20 MB。'
+    return
+  }
+
+  const reader = new FileReader()
+  reader.onload = (readerEvent) => {
+    if (readerEvent.target?.result) maskImage.value = readerEvent.target.result as string
+  }
+  reader.readAsDataURL(file)
+}
 
 const removeImage = (index: number) => {
   referenceImages.value.splice(index, 1)
@@ -165,17 +266,24 @@ const removeImage = (index: number) => {
 }
 
 const generate = () => {
-  if (!prompt.value.trim()) return
+  if (!prompt.value.trim() || (isGptImage.value && (gptSizeError.value || gptCountError.value))) return
 
-  const selectedGptSize = gptSizes.find((option) => option.value === gptImageSize.value)
+  const gptSize = resolvedGptImageSize.value
   emit('generate', {
     prompt: prompt.value.trim(),
     images: [...referenceImages.value],
-    aspectRatio: isGptImage.value ? (selectedGptSize?.ratio || '1:1') : zenMuxAspectRatio.value,
-    imageSize: isGptImage.value ? gptImageSize.value : zenMuxImageSize.value,
+    aspectRatio: isGptImage.value ? getAspectRatio(gptSize) : zenMuxAspectRatio.value,
+    imageSize: isGptImage.value ? gptSize : zenMuxImageSize.value,
     model: selectedModel.value,
     quality: isGptImage.value ? gptQuality.value : undefined,
-    outputFormat: isGptImage.value ? gptOutputFormat.value : undefined
+    outputFormat: isGptImage.value ? gptOutputFormat.value : undefined,
+    outputCount: isGptImage.value ? gptOutputCount.value : undefined,
+    background: isGptImage.value ? gptBackground.value : undefined,
+    outputCompression: isGptImage.value && gptOutputFormat.value !== 'png' ? gptOutputCompression.value : undefined,
+    moderation: isGptImage.value && referenceImages.value.length === 0 ? gptModeration.value : undefined,
+    inputFidelity: isGptImage.value && referenceImages.value.length > 0 ? gptInputFidelity.value : undefined,
+    userId: isGptImage.value ? gptUserId.value.trim() || undefined : undefined,
+    mask: isGptImage.value && referenceImages.value.length > 0 ? maskImage.value || undefined : undefined
   })
 }
 </script>
@@ -253,48 +361,129 @@ const generate = () => {
       </div>
     </div>
 
-    <div v-if="isGptImage" class="grid gap-5 lg:grid-cols-[1fr_160px_160px]">
-      <fieldset class="space-y-2">
-        <legend class="text-sm font-medium text-gray-700">尺寸</legend>
-        <div class="grid grid-cols-3 gap-2">
-          <button
-            v-for="option in gptSizes"
-            :key="option.value"
-            type="button"
-            :class="[
-              'flex min-h-16 flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2 text-sm font-medium transition',
-              gptImageSize === option.value
-                ? 'border-emerald-300 bg-emerald-50 text-emerald-800 ring-2 ring-emerald-100'
-                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-            ]"
-            @click="gptImageSize = option.value"
-          >
-            <component :is="option.icon" class="h-5 w-5" />
-            <span>{{ option.label }}</span>
-            <span class="text-[11px] font-normal text-gray-500">{{ option.value }}</span>
-          </button>
+    <div v-if="isGptImage" class="space-y-5">
+      <fieldset class="space-y-3">
+        <legend class="text-sm font-medium text-gray-700">输出尺寸</legend>
+        <div class="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px]">
+          <label class="relative block">
+            <span class="sr-only">分辨率预设</span>
+            <select
+              v-model="gptImageSizePreset"
+              class="h-16 w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 pr-10 text-sm font-medium outline-none focus:ring-2 focus:ring-emerald-600"
+            >
+              <optgroup v-for="group in gptSizeGroups" :key="group" :label="group">
+                <option v-for="option in gptSizes.filter((item) => item.group === group)" :key="option.value" :value="option.value">
+                  {{ option.label }} · {{ option.value }}
+                </option>
+              </optgroup>
+              <option value="custom">自定义尺寸</option>
+            </select>
+            <ChevronDown class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          </label>
+
+          <div class="flex h-16 items-center gap-3 rounded-lg border border-emerald-100 bg-emerald-50 px-4 text-emerald-900">
+            <component :is="selectedGptSize?.icon || Maximize2" class="h-5 w-5 shrink-0" />
+            <div class="min-w-0">
+              <div class="truncate text-xs font-medium text-emerald-700">{{ selectedGptSize?.label || '自定义' }}</div>
+              <div class="mt-0.5 truncate text-sm font-semibold">{{ resolvedGptImageSize }}</div>
+            </div>
+          </div>
         </div>
+
+        <div v-if="isCustomGptSize" class="grid gap-3 sm:grid-cols-2">
+          <label class="space-y-2 text-sm font-medium text-gray-700">
+            <span>宽度（px）</span>
+            <input v-model.number="gptCustomWidth" type="number" min="256" max="8192" step="64" class="h-12 w-full rounded-lg border border-gray-200 bg-white px-4 outline-none focus:ring-2 focus:ring-emerald-600" />
+          </label>
+          <label class="space-y-2 text-sm font-medium text-gray-700">
+            <span>高度（px）</span>
+            <input v-model.number="gptCustomHeight" type="number" min="256" max="8192" step="64" class="h-12 w-full rounded-lg border border-gray-200 bg-white px-4 outline-none focus:ring-2 focus:ring-emerald-600" />
+          </label>
+        </div>
+        <p v-if="gptSizeError" class="text-sm text-red-600">{{ gptSizeError }}</p>
+        <p v-else-if="isCustomGptSize || (selectedGptSize && selectedGptSize.group !== '标准')" class="text-xs text-amber-700">
+          高分辨率预设依赖当前兼容接口支持；不支持时请改用标准尺寸或自定义值。
+        </p>
       </fieldset>
 
-      <label class="space-y-2 text-sm font-medium text-gray-700">
-        <span>画质</span>
-        <span class="relative block">
-          <select v-model="gptQuality" class="h-16 w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 pr-9 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-            <option v-for="option in qualityOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
-          </select>
-          <ChevronDown class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-        </span>
-      </label>
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <label class="space-y-2 text-sm font-medium text-gray-700">
+          <span>画质</span>
+          <span class="relative block">
+            <select v-model="gptQuality" class="h-12 w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 pr-9 outline-none focus:ring-2 focus:ring-emerald-600">
+              <option v-for="option in qualityOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+            </select>
+            <ChevronDown class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          </span>
+        </label>
 
-      <label class="space-y-2 text-sm font-medium text-gray-700">
-        <span>格式</span>
-        <span class="relative block">
-          <select v-model="gptOutputFormat" class="h-16 w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 pr-9 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-            <option v-for="option in formatOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
-          </select>
-          <ChevronDown class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-        </span>
-      </label>
+        <label class="space-y-2 text-sm font-medium text-gray-700">
+          <span>格式</span>
+          <span class="relative block">
+            <select v-model="gptOutputFormat" class="h-12 w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 pr-9 outline-none focus:ring-2 focus:ring-emerald-600">
+              <option v-for="option in formatOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+            </select>
+            <ChevronDown class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          </span>
+        </label>
+
+        <label class="space-y-2 text-sm font-medium text-gray-700">
+          <span>背景</span>
+          <span class="relative block">
+            <select v-model="gptBackground" class="h-12 w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 pr-9 outline-none focus:ring-2 focus:ring-emerald-600">
+              <option v-for="option in backgroundOptions" :key="option.value" :value="option.value" :disabled="option.value === 'transparent' && gptOutputFormat === 'jpeg'">
+                {{ option.label }}
+              </option>
+            </select>
+            <ChevronDown class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          </span>
+        </label>
+
+        <label class="space-y-2 text-sm font-medium text-gray-700">
+          <span>生成数量</span>
+          <input v-model.number="gptOutputCount" type="number" min="1" max="10" step="1" class="h-12 w-full rounded-lg border border-gray-200 bg-white px-4 outline-none focus:ring-2 focus:ring-emerald-600" />
+          <span v-if="gptCountError" class="block text-xs font-normal text-red-600">{{ gptCountError }}</span>
+        </label>
+      </div>
+
+      <details class="group border-y border-gray-200 py-1">
+        <summary class="flex min-h-12 cursor-pointer list-none items-center gap-2 py-2 text-sm font-semibold text-gray-700">
+          <SlidersHorizontal class="h-4 w-4" />
+          <span>高级参数</span>
+          <ChevronDown class="ml-auto h-4 w-4 text-gray-400 transition group-open:rotate-180" />
+        </summary>
+        <div class="grid gap-5 pb-4 pt-2 md:grid-cols-2">
+          <label v-if="referenceImages.length === 0" class="space-y-2 text-sm font-medium text-gray-700">
+            <span>内容审核</span>
+            <span class="relative block">
+              <select v-model="gptModeration" class="h-12 w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 pr-9 outline-none focus:ring-2 focus:ring-emerald-600">
+                <option v-for="option in moderationOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+              </select>
+              <ChevronDown class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            </span>
+          </label>
+
+          <label v-else class="space-y-2 text-sm font-medium text-gray-700">
+            <span>输入保真度</span>
+            <span class="relative block">
+              <select v-model="gptInputFidelity" class="h-12 w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 pr-9 outline-none focus:ring-2 focus:ring-emerald-600">
+                <option v-for="option in inputFidelityOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+              </select>
+              <ChevronDown class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            </span>
+          </label>
+
+          <label v-if="gptOutputFormat !== 'png'" class="space-y-2 text-sm font-medium text-gray-700">
+            <span class="flex items-center justify-between gap-3"><span>输出压缩率</span><output>{{ gptOutputCompression }}%</output></span>
+            <input v-model.number="gptOutputCompression" type="range" min="0" max="100" step="1" class="h-12 w-full accent-emerald-700" />
+          </label>
+
+          <label class="space-y-2 text-sm font-medium text-gray-700">
+            <span>用户标识（可选）</span>
+            <input v-model="gptUserId" type="text" maxlength="128" autocomplete="off" placeholder="user" class="h-12 w-full rounded-lg border border-gray-200 bg-white px-4 outline-none focus:ring-2 focus:ring-emerald-600" />
+          </label>
+        </div>
+      </details>
     </div>
 
     <div v-else class="grid gap-5 md:grid-cols-[1fr_200px]">
@@ -381,9 +570,42 @@ const generate = () => {
       <input ref="fileInput" type="file" accept="image/*" multiple class="hidden" @change="handleFileUpload" />
     </div>
 
+    <div v-if="isGptImage && referenceImages.length > 0" class="space-y-2 border-t border-gray-200 pt-5">
+      <div class="flex items-center justify-between gap-3">
+        <label class="text-sm font-medium text-gray-700">编辑蒙版（可选）</label>
+        <span class="text-xs text-gray-500">PNG 透明区域将被重绘</span>
+      </div>
+
+      <button
+        v-if="!maskImage"
+        type="button"
+        class="flex min-h-20 w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 text-sm text-gray-600 transition hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-800"
+        @click="triggerMaskInput"
+      >
+        <Upload class="h-5 w-5" />
+        <span>上传蒙版</span>
+      </button>
+
+      <div v-else class="flex items-center gap-4 rounded-lg border border-gray-200 bg-gray-50 p-3">
+        <button type="button" class="h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white" title="查看蒙版" @click="previewImage = maskImage">
+          <img :src="maskImage" alt="编辑蒙版" class="h-full w-full object-cover" />
+        </button>
+        <div class="min-w-0 flex-1">
+          <div class="text-sm font-medium text-gray-800">蒙版已添加</div>
+          <div class="mt-1 text-xs text-gray-500">将随图片编辑请求一并发送</div>
+        </div>
+        <button type="button" class="rounded-full p-2 text-gray-500 transition hover:bg-red-50 hover:text-red-600" title="移除蒙版" @click="maskImage = null">
+          <X class="h-5 w-5" />
+        </button>
+      </div>
+
+      <p v-if="maskError" class="text-sm text-red-600">{{ maskError }}</p>
+      <input ref="maskInput" type="file" accept="image/png,image/webp,image/jpeg" class="hidden" @change="handleMaskUpload" />
+    </div>
+
     <button
       type="button"
-      :disabled="loading || !ready || !prompt.trim()"
+      :disabled="loading || !ready || !prompt.trim() || (isGptImage && !!(gptSizeError || gptCountError))"
       class="flex min-h-14 w-full items-center justify-center gap-2 rounded-lg bg-gray-950 px-5 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:shadow-none"
       @click="generate"
     >
