@@ -128,7 +128,10 @@ img { display: block; }
 .export-panel { margin-top: auto; padding-top: 8px; }
 .format-control { margin-top: 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 4px; border-radius: 8px; background: rgba(255,255,255,.04); }
 .format-control button { min-width: 0; height: 40px; border-radius: 5px; background: transparent; color: var(--text-secondary); font-size: 12px; font-weight: 650; }.format-control button:hover { color: var(--text); }.format-control button.selected { background: rgba(255,255,255,.1); color: var(--text); box-shadow: inset 0 1px rgba(255,255,255,.08); }
-.download-action { width: 100%; min-height: 48px; margin-top: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: var(--accent-ink); font-size: 15px; font-weight: 700; transition: filter 150ms ease, transform 150ms ease; }.download-action:hover { filter: brightness(1.06); }.download-action:active { transform: scale(.985); }
+.export-resolution { margin-top: 16px; }.export-resolution .select-trigger { font-size: 13px; font-variant-numeric: tabular-nums; }
+.export-actions { margin-top: 12px; display: grid; grid-template-columns: minmax(0,1fr) 48px; gap: 8px; }
+.download-action { width: 100%; min-height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: var(--accent-ink); font-size: 15px; font-weight: 700; transition: filter 150ms ease, transform 150ms ease; }.download-action:hover { filter: brightness(1.06); }.download-action:active { transform: scale(.985); }
+.copy-action { width: 48px; min-height: 48px; display: grid; place-items: center; border-radius: 8px; background: rgba(255,255,255,.075); color: var(--text); transition: background 150ms ease, transform 150ms ease; }.copy-action:hover { background: rgba(255,255,255,.13); }.copy-action:active { transform: scale(.96); }
 
 .inspector-panel { position: absolute; z-index: 25; top: 16px; right: 328px; width: 304px; padding: 20px; border-radius: 8px; background: rgba(27,29,27,.82); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); box-shadow: inset 0 1px rgba(255,255,255,.08), var(--shadow); }
 .metric-list { margin-top: 16px; display: grid; gap: 4px; }.metric-list div { min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }.metric-list dt { color: var(--text-secondary); font-size: 14px; font-weight: 550; }.metric-list dd { font-variant-numeric: tabular-nums; font-size: 15px; font-weight: 650; }
@@ -174,7 +177,7 @@ img { display: block; }
   .tool-heading h2 { font-size: 17px; }.control-fields { margin-top: 20px; }
   .scrubber { display: block; }.scrubber-desktop { display: none; }.scrubber-mobile { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 16px; margin-top: 10px; }.scrubber-mobile strong { min-width: 64px; color: var(--text); font-size: 16px; font-weight: 650; }.scrubber-mobile input { width: 100%; min-height: 44px; margin: 0; accent-color: var(--accent); }
   .scrubber-label, .select-field > span { font-size: 16px; }.select-trigger { min-height: 48px; font-size: 16px; }.select-option { min-height: 44px; font-size: 15px; }.advanced-control summary { min-height: 48px; font-size: 15px; }
-  .export-panel { margin-top: 24px; }.format-control button { height: 44px; font-size: 13px; }.download-action { min-height: 52px; font-size: 16px; }
+  .export-panel { margin-top: 24px; }.format-control button { height: 44px; font-size: 13px; }.download-action, .copy-action { min-height: 52px; }.download-action { font-size: 16px; }.copy-action { width: 52px; }.export-actions { grid-template-columns: minmax(0,1fr) 52px; }
   .toast-stack { top: 72px; right: 8px; left: 8px; }.toast { max-width: none; font-size: 15px; }
   .app-tooltip { display: none; }
 }

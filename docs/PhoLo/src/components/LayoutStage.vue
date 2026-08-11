@@ -72,7 +72,7 @@ onBeforeUnmount(() => observer?.disconnect())
     </button>
 
     <div v-else-if="enabled.length === 1" class="single-stage">
-      <img :src="enabled[0]!.src" :alt="enabled[0]!.name" draggable="false" />
+      <img :src="enabled[0]!.src" :alt="enabled[0]!.name" decoding="async" draggable="false" />
       <button type="button" @click="emit('choose')"><ImagePlus :size="25" /><span>{{ t('needAnother') }}</span></button>
     </div>
 
@@ -83,11 +83,17 @@ onBeforeUnmount(() => observer?.disconnect())
     </div>
 
     <div v-else-if="result" class="layout-frame" :style="{ width: `${frame.width}px`, height: `${frame.height}px` }">
-      <img v-for="rect in result.rects" :key="rect.id" class="layout-photo" :class="{ compositing: animating }" :src="assetMap.get(rect.id)?.src" :alt="assetMap.get(rect.id)?.name || ''" draggable="false" :style="rectStyle(rect)" />
+      <img v-for="rect in result.rects" :key="rect.id" class="layout-photo" :class="{ compositing: animating }" :src="assetMap.get(rect.id)?.src" :alt="assetMap.get(rect.id)?.name || ''" decoding="async" draggable="false" :style="rectStyle(rect)" />
       <span v-if="pending || running" class="pending-outline"></span>
     </div>
 
-    <div v-else class="stage-loading" aria-live="polite"><span></span></div>
+    <div v-else-if="running || pending" class="stage-loading" aria-live="polite"><span></span></div>
+
+    <div v-else class="selection-empty" role="alert">
+      <span class="upload-glyph"><ImageOff :size="28" /></span>
+      <strong>{{ t('layoutFailed') }}</strong>
+      <button type="button" class="stage-primary" @click="emit('alternative')"><RefreshCw :size="19" /><span>{{ t('retry') }}</span></button>
+    </div>
 
     <div v-if="result" class="stage-tools">
       <span v-tooltip="running || pending ? t('searching') : t('ready')" class="search-state" :class="{ active: running || pending }" :aria-label="running || pending ? t('searching') : t('ready')" role="status"><span></span></span>

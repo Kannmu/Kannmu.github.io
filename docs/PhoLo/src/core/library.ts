@@ -11,6 +11,11 @@ export function fileKey(file: Pick<File, 'name' | 'size' | 'lastModified'>): str
   return `${file.name}:${file.size}:${file.lastModified}`
 }
 
+export function previewEdgeForCount(imageCount: number): number {
+  const count = Math.max(1, imageCount)
+  return Math.max(640, Math.min(1600, Math.round(3200 / Math.sqrt(count))))
+}
+
 export function mergeUploadedAssets(current: AssetImage[], incoming: AssetImage[], mode: LibraryMode): MergeResult {
   if (incoming.length === 0) return { assets: current, mode, ignored: 0, replacedDemo: false }
   const base = mode === 'demo' ? [] : current

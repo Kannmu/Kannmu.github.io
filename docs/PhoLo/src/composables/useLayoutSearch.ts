@@ -4,7 +4,6 @@ import { isCurrentRequest } from '../core/library'
 import type { LayoutImage, LayoutResult, SearchConfig, WorkerResponse } from '../types'
 
 export function useLayoutSearch(images: ComputedRef<LayoutImage[]>, config: ComputedRef<SearchConfig>) {
-  const worker = new Worker(new URL('../workers/layout.worker.ts', import.meta.url), { type: 'module' })
   const bestResult = ref<LayoutResult | null>(null)
   const displayResult = ref<LayoutResult | null>(null)
   const running = ref(false)
@@ -20,6 +19,7 @@ export function useLayoutSearch(images: ComputedRef<LayoutImage[]>, config: Comp
   let animationTimer = 0
   let frame = 0
   let queuedMessage: WorkerResponse | null = null
+  let worker: Worker | null = null
 
   const markAnimating = () => {
     animating.value = true
@@ -49,7 +49,7 @@ export function useLayoutSearch(images: ComputedRef<LayoutImage[]>, config: Comp
     }
   }
 
-  worker.addEventListener('message', (event: MessageEvent<WorkerResponse>) => {
+  const handleMessage = (event: MessageEvent<WorkerResponse>) => {
     if (!isCurrentRequest(activeRequestId, event.data.requestId)) return
     queuedMessage = event.data
     if (frame) return
@@ -58,12 +58,39 @@ export function useLayoutSearch(images: ComputedRef<LayoutImage[]>, config: Comp
       if (queuedMessage) commitMessage(queuedMessage)
       queuedMessage = null
     })
-  })
+  }
+
+  const failWorker = (failedWorker: Worker) => {
+    if (worker !== failedWorker) return
+    failedWorker.terminate()
+    worker = null
+    activeRequestId += 1
+    queuedMessage = null
+    running.value = false
+    pending.value = false
+    error.value = 'layout-worker-unavailable'
+  }
+
+  const ensureWorker = (): Worker | null => {
+    if (worker) return worker
+    try {
+      const nextWorker = new Worker(new URL('../workers/layout.worker.ts', import.meta.url), { type: 'module' })
+      nextWorker.addEventListener('message', handleMessage)
+      nextWorker.addEventListener('error', () => failWorker(nextWorker))
+      worker = nextWorker
+      return nextWorker
+    } catch {
+      error.value = 'layout-worker-unavailable'
+      running.value = false
+      pending.value = false
+      return null
+    }
+  }
 
   const cancel = () => {
     const previous = activeRequestId
     activeRequestId += 1
-    worker.postMessage({ type: 'cancel', requestId: previous })
+    worker?.postMessage({ type: 'cancel', requestId: previous })
     window.clearTimeout(debounceTimer)
     running.value = false
     pending.value = false
@@ -79,14 +106,16 @@ export function useLayoutSearch(images: ComputedRef<LayoutImage[]>, config: Comp
     }
     const previous = activeRequestId
     activeRequestId += 1
-    worker.postMessage({ type: 'cancel', requestId: previous })
+    worker?.postMessage({ type: 'cancel', requestId: previous })
     if (alternate) seedOffset += 1
     const requestConfig = { ...config.value, seed: config.value.seed + seedOffset * 9973 }
+    const activeWorker = ensureWorker()
+    if (!activeWorker) return
     running.value = true
     pending.value = false
     progress.value = 0
     error.value = ''
-    worker.postMessage({ type: 'search', requestId: activeRequestId, images: images.value, config: requestConfig })
+    activeWorker.postMessage({ type: 'search', requestId: activeRequestId, images: images.value, config: requestConfig })
   }
 
   const previewCurrentTree = () => {
@@ -100,7 +129,7 @@ export function useLayoutSearch(images: ComputedRef<LayoutImage[]>, config: Comp
     if (immediatePreview) previewCurrentTree()
     const previous = activeRequestId
     activeRequestId += 1
-    worker.postMessage({ type: 'cancel', requestId: previous })
+    worker?.postMessage({ type: 'cancel', requestId: previous })
     running.value = false
     pending.value = true
     window.clearTimeout(debounceTimer)
@@ -121,7 +150,7 @@ export function useLayoutSearch(images: ComputedRef<LayoutImage[]>, config: Comp
     window.clearTimeout(debounceTimer)
     window.clearTimeout(animationTimer)
     if (frame) cancelAnimationFrame(frame)
-    worker.terminate()
+    worker?.terminate()
   })
 
   return { bestResult, displayResult, running, pending, animating, progress, evaluations, elapsed, error, start, schedule, cancel, reset }

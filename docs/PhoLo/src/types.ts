@@ -72,4 +72,24 @@ export type WorkerResponse =
   | { type: 'complete'; requestId: number; result: LayoutResult; evaluations: number; elapsed: number }
   | { type: 'error'; requestId: number; message: string }
 
+export interface PreviewWorkerRequest {
+  requestId: number
+  file: File
+  maxEdge: number
+}
+
+export type PreviewWorkerResponse =
+  | { type: 'complete'; requestId: number; width: number; height: number; preview: Blob | null }
+  | { type: 'unsupported'; requestId: number }
+  | { type: 'error'; requestId: number }
+
 export type ExportFormat = 'png' | 'jpeg' | 'webp' | 'svg'
+export type ExportResolution = 'original' | 'eight-k' | 'four-k' | 'two-k' | 'full-hd' | 'hd' | 'small'
+export type ExportAction = 'download' | 'copy'
+
+export interface ExportSize {
+  id: ExportResolution
+  width: number
+  height: number
+  native: boolean
+}

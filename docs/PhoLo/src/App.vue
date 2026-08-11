@@ -11,13 +11,15 @@ import { useAssetLibrary } from './composables/useAssetLibrary'
 import { useExport } from './composables/useExport'
 import { useLayoutSearch } from './composables/useLayoutSearch'
 import { useLocale } from './composables/useLocale'
-import type { ExportFormat, LayoutImage, PanelMode, SearchConfig } from './types'
+import { exportSizes } from './core/exportSizing'
+import type { ExportAction, ExportFormat, ExportResolution, LayoutImage, PanelMode, SearchConfig } from './types'
 
 const gap = ref(24)
 const balance = ref(0.62)
 const targetAspect = ref('auto')
 const iterations = ref(7600)
 const exportFormat = ref<ExportFormat>('png')
+const exportResolution = ref<ExportResolution>('original')
 const activePanel = ref<PanelMode>(null)
 const inspectorOpen = ref(false)
 const interacting = ref(false)
@@ -43,7 +45,8 @@ const config = computed<SearchConfig>(() => ({
   seed: 90117 + layoutImages.value.length * 31 + Math.round(balance.value * 100),
 }))
 const { bestResult, displayResult, running, pending, animating, progress, evaluations, elapsed, error, start, schedule, reset } = useLayoutSearch(layoutImages, config)
-const { exporting, exportLayout } = useExport(assets)
+const exportResolutions = computed(() => bestResult.value ? exportSizes(bestResult.value, assets.value) : [])
+const { exporting, activeAction, exportLayout } = useExport(assets)
 const effectsPaused = computed(() => interacting.value || decoding.value || animating.value)
 
 function notify(text: string, type: 'info' | 'error' = 'info'): void {
@@ -82,13 +85,15 @@ function manageAssets(): void {
   void nextTick(() => document.querySelector<HTMLButtonElement>('.asset-state')?.focus())
 }
 
-async function handleExport(): Promise<void> {
+async function handleExport(action: ExportAction): Promise<void> {
   if (!bestResult.value) return
+  const size = exportResolutions.value.find((item) => item.id === exportResolution.value)
+  if (!size) return
   try {
-    await exportLayout(bestResult.value, exportFormat.value)
-    notify(t('exportReady'))
+    await exportLayout(bestResult.value, exportFormat.value, size, action)
+    notify(t(action === 'copy' ? 'copyReady' : 'exportReady'))
   } catch {
-    notify(t('exportFailed'), 'error')
+    notify(t(action === 'copy' ? 'copyFailed' : 'exportFailed'), 'error')
   }
 }
 
@@ -104,7 +109,8 @@ watch(() => layoutImages.value.map((image) => `${image.id}:${image.width}:${imag
 watch(gap, () => schedule(true))
 watch(targetAspect, () => schedule(true))
 watch([balance, iterations], () => schedule(false))
-watch(error, (message) => { if (message) notify(message, 'error') })
+watch(exportResolutions, (options) => { if (!options.some((option) => option.id === exportResolution.value)) exportResolution.value = 'original' })
+watch(error, (message) => { if (message) notify(message === 'layout-worker-unavailable' ? t('layoutFailed') : message, 'error') })
 watch(locale, (value) => { document.documentElement.lang = value })
 
 onMounted(() => {
@@ -137,7 +143,7 @@ onBeforeUnmount(() => { if (mediaQuery && viewportListener) mediaQuery.removeEve
 
       <aside v-if="!isMobile" class="control-dock glass-surface">
         <ControlPanel v-model:gap="gap" v-model:balance="balance" v-model:target-aspect="targetAspect" v-model:iterations="iterations" @interaction="interacting = $event" />
-        <ExportPanel v-model:format="exportFormat" :exporting="exporting" :disabled="!bestResult || running || pending" @export="handleExport" />
+        <ExportPanel v-model:format="exportFormat" v-model:resolution="exportResolution" :resolutions="exportResolutions" :exporting="exporting" :active-action="activeAction" :disabled="!bestResult || running || pending" @download="handleExport('download')" @copy="handleExport('copy')" />
       </aside>
 
       <InspectorPanel :open="inspectorOpen" :result="bestResult" :elapsed="elapsed" :evaluations="evaluations" @close="inspectorOpen = false" />
@@ -152,7 +158,7 @@ onBeforeUnmount(() => { if (mediaQuery && viewportListener) mediaQuery.removeEve
     <MobileSheet v-if="isMobile" :open="activePanel !== null" :title="activePanel ? t(activePanel) : ''" @close="activePanel = null">
       <AssetPanel v-if="activePanel === 'assets'" :assets="assets" :mode="mode" :decoding="decoding" @choose="openPicker" @demo="loadDemo" @clear="handleClear" @remove="remove" @toggle="toggle" />
       <ControlPanel v-else-if="activePanel === 'adjust'" v-model:gap="gap" v-model:balance="balance" v-model:target-aspect="targetAspect" v-model:iterations="iterations" @interaction="interacting = $event" />
-      <ExportPanel v-else-if="activePanel === 'export'" v-model:format="exportFormat" :exporting="exporting" :disabled="!bestResult || running || pending" @export="handleExport" />
+      <ExportPanel v-else-if="activePanel === 'export'" v-model:format="exportFormat" v-model:resolution="exportResolution" :resolutions="exportResolutions" :exporting="exporting" :active-action="activeAction" :disabled="!bestResult || running || pending" @download="handleExport('download')" @copy="handleExport('copy')" />
     </MobileSheet>
 
     <input ref="fileInput" type="file" accept="image/*" multiple hidden @change="onFileChange" />

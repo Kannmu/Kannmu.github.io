@@ -8,6 +8,8 @@ npm test
 npm run build
 ```
 
-Publish the contents of `dist/` as a static site. The default asset base is `/PhoLo/`, so it is suitable for the repository's existing GitHub Pages path when the build output is copied to the `PhoLo` site root. For a different path, set `VITE_BASE_PATH` before building, for example `VITE_BASE_PATH=/tools/pholo/ npm run build`.
+Commit and publish the complete `dist/` directory. With this repository's `docs/` GitHub Pages source, the application is then available at `https://kannmu.top/PhoLo/dist/`. The default asset base is relative, so the entry script, stylesheet, favicon, and generated workers remain under that directory and no generated file needs manual path replacement.
 
-Do not deploy the Vite source `index.html` as the production entry without building first. The generated `dist/index.html` contains the hashed worker and application assets.
+For a fixed absolute deployment path, set `VITE_BASE_PATH` before building, for example `VITE_BASE_PATH=/tools/pholo/ npm run build`. The value must be the URL directory that contains the generated `index.html`, including its trailing slash.
+
+Do not deploy the Vite source `index.html` as the production entry without building first, and do not edit `dist/index.html` after building. Vite writes the same base into the entry document and the worker URLs embedded in the application bundle; changing only the entry document breaks layout and image processing even when the interface itself loads.

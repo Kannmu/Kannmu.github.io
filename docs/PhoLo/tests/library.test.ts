@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { fileKey, isCurrentRequest, mergeUploadedAssets } from '../src/core/library'
+import { fileKey, isCurrentRequest, mergeUploadedAssets, previewEdgeForCount } from '../src/core/library'
 import type { AssetImage } from '../src/types'
 
 function asset(id: string, origin: 'demo' | 'user', key?: string): AssetImage {
@@ -28,6 +28,13 @@ describe('asset library transitions', () => {
 
   it('creates stable file fingerprints', () => {
     expect(fileKey({ name: 'frame.jpg', size: 1200, lastModified: 42 })).toBe('frame.jpg:1200:42')
+  })
+
+  it('scales preview resolution with the number of visible images', () => {
+    expect(previewEdgeForCount(1)).toBe(1600)
+    expect(previewEdgeForCount(4)).toBe(1600)
+    expect(previewEdgeForCount(16)).toBe(800)
+    expect(previewEdgeForCount(100)).toBe(640)
   })
 
   it('rejects stale worker messages', () => {

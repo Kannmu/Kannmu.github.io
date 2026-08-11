@@ -21,7 +21,7 @@ const { t } = useLocale()
 
     <div v-if="assets.length" class="asset-grid" :aria-label="mode === 'demo' ? t('demoLabel') : t('userLabel')">
       <article v-for="asset in assets" :key="asset.id" class="asset-tile" :class="{ excluded: !asset.enabled }">
-        <img :src="asset.src" :alt="asset.name" draggable="false" />
+        <img :src="asset.src" :alt="asset.name" loading="lazy" decoding="async" draggable="false" />
         <button v-tooltip="asset.enabled ? t('exclude') : t('include')" type="button" class="asset-state" :class="{ active: asset.enabled }" :aria-label="`${asset.enabled ? t('exclude') : t('include')}: ${asset.name}`" :aria-pressed="asset.enabled" @click="emit('toggle', asset.id)"><Check v-if="asset.enabled" :size="15" stroke-width="3" /></button>
         <button v-tooltip="t('remove')" type="button" class="asset-remove" :aria-label="`${t('remove')}: ${asset.name}`" @click="emit('remove', asset.id)"><X :size="16" /></button>
         <span>{{ asset.name }}</span>

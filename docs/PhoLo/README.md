@@ -16,7 +16,7 @@ npm test
 npm run build
 ```
 
-The default Vite base path is `/PhoLo/`, matching deployment at `https://kannmu.github.io/PhoLo/`. Set `VITE_BASE_PATH=/` for root hosting.
+The default Vite base path is relative, so the complete `dist/` directory can be published at any URL without editing generated files. In this repository it is served at `https://kannmu.top/PhoLo/dist/`. For a fixed absolute deployment path, set `VITE_BASE_PATH` before building.
 
 ## Algorithm
 

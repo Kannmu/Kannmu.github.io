@@ -16,7 +16,7 @@ npm test
 npm run build
 ```
 
-`dist/` 是可发布的静态站点产物。默认资源基路径是 `/PhoLo/`；部署到其他路径时设置 `VITE_BASE_PATH` 后再构建。
+`dist/` 是可发布的静态站点产物。默认使用相对资源路径，因此可以把整个 `dist/` 发布到任意 URL，无须修改生成文件。本仓库中的访问地址为 `https://kannmu.top/PhoLo/dist/`。如需固定的绝对部署路径，请在构建前设置 `VITE_BASE_PATH`。
 
 ## 算法要点
 
