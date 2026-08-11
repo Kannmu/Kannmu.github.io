@@ -1,13 +1,12 @@
 # Site settings
-title: Linhan Fan · Kannmu
-SEOTitle: 范林涵 | Linhan Fan · HCI Researcher
+title: Kannmu Blog
+SEOTitle: 涵无的博客 | Kannmu Blog
 header-img: img/Backgrounds/Bg_2.jpg
 email: Kannmu@163.com
-description: "范林涵（Kannmu）的人机交互研究、原型项目与技术文章。"
-keyword: "范林涵,Linhan Fan,Kannmu,人机交互,HCI,超声触觉,眼动交互,脑机接口,设计学"
+description: "这里是 @Kannmu 涵无 的个人博客 | 一个杂食者"
+keyword: "Kannmu,涵无, Kannmu涵无,涵无,涵无的博客,Kannmu Blog, 博客, 个人网站, 硬件, 交互, 设计, 摄影, 技术,文章"
 url: "https://kannmu.top/" # your host, for absolute URL
 baseurl: "" # for example, '/blog' if your blog hosted on 'host/blog'
-asset_version: "2026-07-16.4"
 
 author:
   name: kannmu
@@ -33,10 +32,6 @@ exclude:
   [
     "less",
     "node_modules",
-    "GenImage/node_modules",
-    "portfolio/node_modules",
-    "UMH/node_modules",
-    "ZenMuxBalanceMonitor/node_modules",
     "Gruntfile.js",
     "package.json",
     "README.md",
@@ -107,7 +102,7 @@ giscus:
 
 # Sidebar settings
 sidebar: true # whether or not using Sidebar.
-sidebar-about-description: "范林涵 · Linhan Fan <br> HCI researcher and prototype engineer"
+sidebar-about-description: "涵无Kannmu <br> Nature does not hurry, yet everything is accomplished"
 sidebar-avatar: /img/Kannmu-Avatar.jpg # use absolute URL, seeing it's used in both `/` and `/about/`
 
 # Featured Tags

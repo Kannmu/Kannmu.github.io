@@ -1,39 +1,110 @@
-<nav class="site-nav" aria-label="Primary navigation" data-site-nav>
-  <div class="site-nav__inner">
-    <a class="site-nav__brand" href="{{ '/' | prepend: site.baseurl }}" aria-label="Linhan Fan home">
-      <span class="site-nav__mark" aria-hidden="true">K</span>
-      <span class="site-nav__wordmark">LINHAN FAN</span>
-    </a>
-
-    <button class="site-nav__menu-button" type="button" aria-expanded="false" aria-controls="site-nav-panel" data-nav-toggle title="Open menu">
-      <span class="sr-only">Open menu</span>
-      <i class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></i>
-    </button>
-
-    <div class="site-nav__panel" id="site-nav-panel" data-nav-panel>
-      <ul class="site-nav__links">
-        {% for item in site.data.navigation %}
-        <li>
-          <a href="{{ item.url | prepend: site.baseurl }}"{% if page.url == item.url %} aria-current="page"{% endif %}>
-            <span data-lang="zh">{{ item.label_zh }}</span><span data-lang="en">{{ item.label }}</span>
-          </a>
-        </li>
-        {% endfor %}
-      </ul>
-
-      <div class="site-nav__tools">
-        {% if page.multilingual %}
-        <button class="site-nav__language" type="button" data-language-toggle aria-label="Switch language" title="Switch language">
-          <span data-language-label>EN</span>
-        </button>
+<!-- Navigation -->
+{% if page.nav-style == "invert" or page.header-style == "text" %}
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top invert">
+    {% else %}
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
         {% endif %}
-        <button class="site-nav__icon" type="button" data-theme-toggle aria-label="Switch color theme" title="Switch color theme">
-          <i class="glyphicon glyphicon-adjust" aria-hidden="true" data-theme-icon></i>
-        </button>
-        <button class="site-nav__icon search-icon" type="button" aria-label="Search articles" title="Search articles">
-          <i class="glyphicon glyphicon-search" aria-hidden="true"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-</nav>
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ site.baseurl }}/">{{ site.title }}</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div id="huxblog_navbar">
+                <div class="navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="{{ site.baseurl }}/">Home</a>
+                        </li>
+                        {% for page in site.pages %}
+                        {% if page.title and page.hide-in-nav != true %}
+                        <li>
+                            <a href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                        <!-- 多语言选择器 -->
+                        <li class="multilingual-nav-item">
+                            {% include multilingual-sel.html %}
+                        </li>
+                        <li>
+                            <a id="dark-mode-toggle" class="dark-mode-toggle">
+                                <i class="fa fa-sun-o"></i>
+                                <i class="fa fa-moon-o"></i>
+                            </a>
+                        </li>
+                        <li class="search-icon">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-search"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <script>
+        // Drop Bootstarp low-performance Navbar
+        // Use customize navbar with high-quality material design animation
+        // in high-perf jank-free CSS3 implementation
+        var $body = document.body;
+        var $toggle = document.querySelector('.navbar-toggle');
+        var $navbar = document.querySelector('#huxblog_navbar');
+        var $collapse = document.querySelector('.navbar-collapse');
+
+        var __HuxNav__ = {
+            close: function () {
+                $navbar.className = " ";
+                // wait until animation end.
+                setTimeout(function () {
+                    // prevent frequently toggle
+                    if ($navbar.className.indexOf('in') < 0) {
+                        $collapse.style.height = "0px"
+                    }
+                }, 400)
+            },
+            open: function () {
+                $collapse.style.height = "auto"
+                $navbar.className += " in";
+            }
+        }
+
+        // Bind Event
+        $toggle.addEventListener('click', function (e) {
+            if ($navbar.className.indexOf('in') > 0) {
+                __HuxNav__.close()
+            } else {
+                __HuxNav__.open()
+            }
+        })
+
+        /**
+         * Since Fastclick is used to delegate 'touchstart' globally
+         * to hack 300ms delay in iOS by performing a fake 'click',
+         * Using 'e.stopPropagation' to stop 'touchstart' event from 
+         * $toggle/$collapse will break global delegation.
+         * 
+         * Instead, we use a 'e.target' filter to prevent handler
+         * added to document close HuxNav.  
+         *
+         * Also, we use 'click' instead of 'touchstart' as compromise
+         */
+        document.addEventListener('click', function (e) {
+            if (e.target == $toggle) return;
+            if (e.target.className == 'icon-bar') return;
+            __HuxNav__.close();
+        })
+    </script>
+    
+    <!-- Dark Mode Switcher -->
+    <script src="{{ "/js/dark-mode.js" | prepend: site.baseurl }}"></script>

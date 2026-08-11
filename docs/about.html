@@ -1,176 +1,46 @@
 ---
-layout: default
-title: About
-description: "范林涵（Linhan Fan）的人机交互研究、学术成果与项目经历。"
-body-class: page-about
+layout: page
+title: "About"
+description: "「这个人」"
+header-img: "img/Backgrounds/Bg_1.jpg"
+header-mask: 0.3
 multilingual: true
-no-catalog: true
 ---
 
-{% assign profile = site.data.profile %}
+<!-- Chinese Version -->
+<div class="zh post-container">
+    {% capture about_zh %}{% include about/zh.md %}{% endcapture %}
+    {{ about_zh | markdownify }}
+</div>
 
-<main class="about-page" id="main-content">
-  <header class="profile-masthead">
-    <div class="site-shell profile-masthead__grid">
-      <div class="profile-masthead__identity">
-        <p class="eyebrow"><span data-lang="zh">个人学术档案</span><span data-lang="en">Academic profile</span></p>
-        <h1>{{ profile.name.en }}<span>{{ profile.name.zh }}</span></h1>
-        <p class="profile-masthead__role"><span data-lang="zh">{{ profile.role.zh }}</span><span data-lang="en">{{ profile.role.en }}</span></p>
-      </div>
-      <div class="profile-masthead__statement">
-        <p><span data-lang="zh">{{ profile.tagline.zh }}</span><span data-lang="en">{{ profile.tagline.en }}</span></p>
-        <span>{{ profile.location.en }} · @{{ profile.handle }}</span>
-      </div>
-    </div>
-    <div class="site-shell profile-links" aria-label="Profile links">
-      {% for link in profile.links %}
-      <a href="{{ link.url }}"{% unless link.url contains 'mailto:' %} target="_blank" rel="noopener noreferrer"{% endunless %}>
-        <i class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></i>{{ link.label }}
-      </a>
-      {% endfor %}
-    </div>
-  </header>
+<!-- English Version -->
+<div class="en post-container">
+    {% capture about_en %}{% include about/en.md %}{% endcapture %}
+    {{ about_en | markdownify }}
+</div>
 
-  <section class="profile-overview section-band" aria-labelledby="overview-title">
-    <div class="site-shell profile-overview__grid">
-      <figure class="profile-portrait">
-        <img src="{{ '/img/Kannmu-Avatar.jpg' | prepend: site.baseurl }}" alt="Linhan Fan standing in a mountain landscape" width="320" height="401">
-        <figcaption>Field note · Western Sichuan</figcaption>
-      </figure>
-      <div class="profile-overview__copy">
-        <p class="eyebrow"><span data-lang="zh">关于我</span><span data-lang="en">About me</span></p>
-        <h2 id="overview-title"><span data-lang="zh">在研究、设计与工程之间工作</span><span data-lang="en">Working across research, design, and engineering</span></h2>
-        <p><span data-lang="zh">{{ profile.bio.zh }}</span><span data-lang="en">{{ profile.bio.en }}</span></p>
-        <p><span data-lang="zh">我目前在东南大学机械工程学院攻读设计学博士学位，研究重点包括超声触觉、眼动交互与脑机接口。工程背景让我倾向于通过可运行的软硬件原型来提出问题，并通过用户研究验证设计判断。</span><span data-lang="en">I am pursuing a Ph.D. in Design at Southeast University, with current work spanning ultrasonic haptics, gaze interaction, and brain-computer interfaces. My engineering background shapes a prototype-led approach: build the system, frame the question, then test the design with people.</span></p>
-        <dl class="profile-facts">
-          <div><dt>6</dt><dd><span data-lang="zh">同行评审论文</span><span data-lang="en">Peer-reviewed papers</span></dd></div>
-          <div><dt>3</dt><dd><span data-lang="zh">核心研究方向</span><span data-lang="en">Research themes</span></dd></div>
-          <div><dt>5+</dt><dd><span data-lang="zh">年原型制作经验</span><span data-lang="en">Years of making</span></dd></div>
-        </dl>
-      </div>
-    </div>
-  </section>
 
-  <section class="about-research section-band section-band--soft" id="research" aria-labelledby="about-research-title">
-    <div class="site-shell">
-      <div class="section-heading section-heading--row">
-        <div>
-          <p class="eyebrow"><span data-lang="zh">研究议题</span><span data-lang="en">Research themes</span></p>
-          <h2 id="about-research-title"><span data-lang="zh">人的感知，是系统设计的起点</span><span data-lang="en">Human perception as a starting point for systems</span></h2>
-        </div>
-        <p class="section-index" aria-hidden="true">Research / 03</p>
-      </div>
-      <div class="research-index__list">
-        {% for item in profile.research %}
-        <article class="research-line">
-          <p class="research-line__number">0{{ forloop.index }}</p>
-          <h3><span data-lang="zh">{{ item.title.zh }}</span><span data-lang="en">{{ item.title.en }}</span></h3>
-          <p><span data-lang="zh">{{ item.summary.zh }}</span><span data-lang="en">{{ item.summary.en }}</span></p>
-        </article>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
+{% if site.disqus_username %}
+<!-- disqus 评论框 start -->
+<div class="comment">
+    <div id="disqus_thread" class="disqus-thread">
 
-  <section class="current-work section-band section-band--ink" id="projects" aria-labelledby="projects-title">
-    <div class="site-shell current-work__grid">
-      <div class="current-work__visual">
-        <img src="{{ '/img/Paper/Interface_Array.png' | prepend: site.baseurl }}" alt="Experimental gaze interaction interface and eye tracking glasses" width="1265" height="444" loading="lazy">
-        <p><span data-lang="zh">从物理原型到交互实验</span><span data-lang="en">From physical prototypes to interaction studies</span></p>
-      </div>
-      <div class="current-work__content">
-        <p class="eyebrow"><span data-lang="zh">正在进行</span><span data-lang="en">Current work</span></p>
-        <h2 id="projects-title"><span data-lang="zh">研究项目</span><span data-lang="en">Research projects</span></h2>
-        <div class="project-list">
-          {% for project in profile.current_projects %}
-          <article class="project-entry">
-            <p>{{ project.period }}</p>
-            <h3><span data-lang="zh">{{ project.title.zh }}</span><span data-lang="en">{{ project.title.en }}</span></h3>
-            <p><span data-lang="zh">{{ project.detail.zh }}</span><span data-lang="en">{{ project.detail.en }}</span></p>
-          </article>
-          {% endfor %}
-        </div>
-      </div>
     </div>
-  </section>
+</div>
+<!-- disqus 评论框 end -->
 
-  <section class="publications-section section-band" id="publications" aria-labelledby="publications-title">
-    <div class="site-shell">
-      <div class="section-heading section-heading--row">
-        <div>
-          <p class="eyebrow"><span data-lang="zh">学术成果</span><span data-lang="en">Selected output</span></p>
-          <h2 id="publications-title"><span data-lang="zh">论文发表</span><span data-lang="en">Publications</span></h2>
-        </div>
-        <p class="section-index" aria-hidden="true">2024 — 2026</p>
-      </div>
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script async type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "{{site.disqus_username}}";
+    var disqus_identifier = "{{site.disqus_username}}/{{page.url}}";
+    var disqus_url = "{{site.url}}{{page.url}}";
 
-      <div class="publication-list">
-        {% for publication in profile.publications %}
-        <article class="publication-entry">
-          <p class="publication-entry__year">{{ publication.year }}</p>
-          <div class="publication-entry__body">
-            <p class="publication-entry__meta">{{ publication.journal }} · <span data-lang="zh">{{ publication.role.zh }}</span><span data-lang="en">{{ publication.role.en }}</span></p>
-            <h3>{{ publication.title }}</h3>
-            <p class="publication-entry__authors">{{ publication.authors }}</p>
-          </div>
-          <a class="icon-link" href="{{ publication.doi }}" target="_blank" rel="noopener noreferrer" aria-label="Open DOI for {{ publication.title }}" title="Open DOI"><i class="glyphicon glyphicon-new-window" aria-hidden="true"></i></a>
-        </article>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
-
-  <section class="cv-section section-band section-band--soft" id="experience" aria-labelledby="experience-title">
-    <div class="site-shell">
-      <div class="section-heading">
-        <p class="eyebrow"><span data-lang="zh">经历</span><span data-lang="en">Background</span></p>
-        <h2 id="experience-title"><span data-lang="zh">教育与实践</span><span data-lang="en">Education and practice</span></h2>
-      </div>
-      <div class="cv-columns">
-        <section class="cv-column" aria-labelledby="education-title">
-          <h3 id="education-title"><span data-lang="zh">教育</span><span data-lang="en">Education</span></h3>
-          {% for item in profile.education %}
-          <article class="timeline-entry">
-            <p>{{ item.period }}</p>
-            <h4><span data-lang="zh">{{ item.institution.zh }}</span><span data-lang="en">{{ item.institution.en }}</span></h4>
-            <p><span data-lang="zh">{{ item.detail.zh }}</span><span data-lang="en">{{ item.detail.en }}</span></p>
-          </article>
-          {% endfor %}
-        </section>
-        <section class="cv-column" aria-labelledby="practice-title">
-          <h3 id="practice-title"><span data-lang="zh">实践</span><span data-lang="en">Practice</span></h3>
-          {% for item in profile.experience %}
-          <article class="timeline-entry">
-            <p>{{ item.period }}</p>
-            <h4><span data-lang="zh">{{ item.organization.zh }}</span><span data-lang="en">{{ item.organization.en }}</span></h4>
-            <p><span data-lang="zh">{{ item.role.zh }}</span><span data-lang="en">{{ item.role.en }}</span></p>
-          </article>
-          {% endfor %}
-        </section>
-      </div>
-    </div>
-  </section>
-
-  <section class="awards-skills section-band" aria-labelledby="awards-title">
-    <div class="site-shell awards-skills__grid">
-      <section>
-        <p class="eyebrow"><span data-lang="zh">荣誉</span><span data-lang="en">Recognition</span></p>
-        <h2 id="awards-title"><span data-lang="zh">部分奖项</span><span data-lang="en">Selected awards</span></h2>
-        <div class="award-list">
-          {% for award in profile.awards %}
-          <p><span>{{ award.year }}</span><strong><span data-lang="zh">{{ award.title.zh }}</span><span data-lang="en">{{ award.title.en }}</span></strong></p>
-          {% endfor %}
-        </div>
-      </section>
-      <section>
-        <p class="eyebrow"><span data-lang="zh">能力</span><span data-lang="en">Capabilities</span></p>
-        <h2><span data-lang="zh">工具与方法</span><span data-lang="en">Tools and methods</span></h2>
-        <div class="skill-list">
-          {% for skill in profile.skills %}
-          <div><strong>{{ skill.label }}</strong><p>{{ skill.items | join: ' · ' }}</p></div>
-          {% endfor %}
-        </div>
-      </section>
-    </div>
-  </section>
-</main>
+    (function () {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+{% endif %}
