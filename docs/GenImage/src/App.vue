@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useStorage } from '@vueuse/core'
 import {
   AlertCircle,
@@ -80,6 +80,8 @@ const gptImageApiKey = useStorage('gpt-image-2-api-key', '')
 const providerOptions: ProviderId[] = ['zenmux', 'gpt-image-2']
 const loading = ref(false)
 const loadingProvider = ref<ProviderId | null>(null)
+const loadingElapsedSeconds = ref(0)
+let loadingTimer: ReturnType<typeof setInterval> | undefined
 const error = ref<string | null>(null)
 const zenMuxTotalCost = ref(0)
 const generations = ref<GenerationRecord[]>([])
@@ -104,6 +106,27 @@ const latestFinalImage = computed(() => {
 watch(selectedProvider, () => {
   error.value = null
 })
+
+const stopLoadingTimer = () => {
+  if (loadingTimer !== undefined) clearInterval(loadingTimer)
+  loadingTimer = undefined
+}
+
+const startLoadingTimer = () => {
+  stopLoadingTimer()
+  loadingElapsedSeconds.value = 0
+  loadingTimer = setInterval(() => {
+    loadingElapsedSeconds.value += 1
+  }, 1_000)
+}
+
+const loadingElapsedLabel = computed(() => {
+  const minutes = Math.floor(loadingElapsedSeconds.value / 60)
+  const seconds = loadingElapsedSeconds.value % 60
+  return minutes > 0 ? `${minutes} 分 ${seconds} 秒` : `${seconds} 秒`
+})
+
+onBeforeUnmount(stopLoadingTimer)
 
 const createId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
 
@@ -149,6 +172,7 @@ const handleGenerate = async (payload: GeneratePayload) => {
 
   loading.value = true
   loadingProvider.value = provider
+  startLoadingTimer()
   error.value = null
 
   const now = new Date().toISOString()
@@ -204,10 +228,7 @@ const handleGenerate = async (payload: GeneratePayload) => {
       record.usageMetadata = result.usageMetadata || null
     })
   } catch (caughtError) {
-    let message = getApiErrorMessage(caughtError)
-    if (message === 'Network Error') {
-      message = `无法连接 ${providerMeta[provider].shortName} API，请检查网络或服务端 CORS 配置。`
-    }
+    const message = getApiErrorMessage(caughtError, providerMeta[provider].shortName)
 
     updateGeneration(recordId, (record) => {
       record.items = [{ id: createId('text'), kind: 'text', text: message, isThought: false }]
@@ -216,6 +237,7 @@ const handleGenerate = async (payload: GeneratePayload) => {
     })
     error.value = message
   } finally {
+    stopLoadingTimer()
     loading.value = false
     loadingProvider.value = null
   }
@@ -232,7 +254,7 @@ const handleGenerate = async (payload: GeneratePayload) => {
         </div>
         <div v-if="loadingProvider" class="flex items-center gap-2 text-sm font-medium text-gray-600">
           <LoadingSpinner />
-          <span class="hidden sm:inline">{{ providerMeta[loadingProvider].shortName }} 正在处理</span>
+          <span class="hidden sm:inline">{{ providerMeta[loadingProvider].shortName }} 正在处理 · {{ loadingElapsedLabel }}</span>
         </div>
       </div>
     </header>
@@ -298,6 +320,14 @@ const handleGenerate = async (payload: GeneratePayload) => {
           @generate="handleGenerate"
         />
       </section>
+
+      <div v-if="loadingProvider === 'gpt-image-2'" class="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-emerald-900" role="status" aria-live="polite">
+        <LoadingSpinner />
+        <div class="min-w-0">
+          <div class="text-sm font-semibold">GPT Image 2 正在生成 · {{ loadingElapsedLabel }}</div>
+          <div class="mt-1 text-xs leading-5 text-emerald-800">高分辨率图片需要更长时间。请保持当前页面打开，完成后结果会自动显示。</div>
+        </div>
+      </div>
 
       <div v-if="error" class="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800" role="alert">
         <AlertCircle class="mt-0.5 h-5 w-5 shrink-0" />

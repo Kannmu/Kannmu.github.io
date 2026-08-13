@@ -74,9 +74,25 @@ type GptImageData = {
   revised_prompt?: string
 }
 
+type ApiErrorPayload = {
+  error?: {
+    message?: string
+  } | string
+  message?: string
+  detail?: string
+}
+
 const ZENMUX_BASE_URL = 'https://zenmux.ai/api/vertex-ai/v1'
 export const GPT_IMAGE_BASE_URL = (import.meta.env.VITE_GPT_IMAGE_BASE_URL || 'https://xkj.jisuanyun.vip').replace(/\/+$/, '')
 const GPT_IMAGE_REQUEST_BASE_URL = (import.meta.env.VITE_GPT_IMAGE_PROXY_URL || '/gpt-image-api').replace(/\/+$/, '')
+const GPT_IMAGE_REQUEST_CONFIG = {
+  // GPT Image responds only after generation. 4K requests can legitimately take
+  // longer than five minutes, so the browser must not impose a fixed deadline.
+  timeout: 0,
+  headers: {
+    Accept: 'application/json'
+  }
+} as const
 
 export const providerMeta: Record<ProviderId, {
   name: string
@@ -169,14 +185,27 @@ const getGptImageRequestParameters = (payload: GeneratePayload, operation: 'gene
   return parameters
 }
 
-export const getApiErrorMessage = (error: unknown) => {
+export const getApiErrorMessage = (error: unknown, providerName = 'API') => {
   if (axios.isAxiosError(error)) {
-    const data = error.response?.data as {
-      error?: { message?: string }
-      message?: string
-      detail?: string
-    } | undefined
-    return data?.error?.message || data?.message || data?.detail || error.message
+    const data = error.response?.data as ApiErrorPayload | undefined
+    const apiMessage = typeof data?.error === 'string' ? data.error : data?.error?.message
+    if (apiMessage || data?.message || data?.detail) {
+      return apiMessage || data?.message || data?.detail || error.message
+    }
+
+    if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
+      return `${providerName} 请求等待超时。图片可能仍在服务端生成，请稍后重试。`
+    }
+
+    if (!error.response && (error.code === 'ERR_NETWORK' || error.message === 'Network Error')) {
+      return `未收到 ${providerName} 的响应。请求可能被网络或反向代理中断，并不表示图片生成失败。`
+    }
+
+    if (error.response?.status) {
+      return `${providerName} 请求失败（HTTP ${error.response.status}）。`
+    }
+
+    return error.message
   }
 
   return error instanceof Error ? error.message : '图片生成失败'
@@ -266,7 +295,10 @@ export const generateWithZenMux = async ({ apiKey, payload }: GenerateOptions): 
 }
 
 export const generateWithGptImage = async ({ apiKey, payload }: GenerateOptions): Promise<ProviderGenerationResult> => {
-  const headers = { Authorization: `Bearer ${apiKey}` }
+  const headers = {
+    ...GPT_IMAGE_REQUEST_CONFIG.headers,
+    Authorization: `Bearer ${apiKey}`
+  }
   const operation = payload.images.length > 0 ? 'edit' : 'generate'
   const parameters = getGptImageRequestParameters(payload, operation)
   let response
@@ -281,7 +313,7 @@ export const generateWithGptImage = async ({ apiKey, payload }: GenerateOptions)
 
     response = await axios.post(`${GPT_IMAGE_REQUEST_BASE_URL}/v1/images/edits`, formData, {
       headers,
-      timeout: 300_000
+      timeout: GPT_IMAGE_REQUEST_CONFIG.timeout
     })
   } else {
     response = await axios.post(
@@ -292,7 +324,7 @@ export const generateWithGptImage = async ({ apiKey, payload }: GenerateOptions)
           ...headers,
           'Content-Type': 'application/json'
         },
-        timeout: 300_000
+        timeout: GPT_IMAGE_REQUEST_CONFIG.timeout
       }
     )
   }

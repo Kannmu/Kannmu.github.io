@@ -14,6 +14,8 @@ const corsHeaders = (origin) => ({
   'Vary': 'Origin'
 })
 
+const requestIdHeaders = (requestId) => requestId ? { 'X-Request-Id': requestId } : {}
+
 const jsonError = (message, status, headers = {}) => new Response(
   JSON.stringify({ error: { message } }),
   {
@@ -58,12 +60,23 @@ export default {
     requestHeaders.delete('origin')
     requestHeaders.delete('referer')
 
-    const upstreamResponse = await fetch(targetUrl.toString(), {
-      method: request.method,
-      headers: requestHeaders,
-      body: request.method === 'GET' ? undefined : request.body,
-      redirect: 'follow'
-    })
+    let upstreamResponse
+    try {
+      upstreamResponse = await fetch(targetUrl.toString(), {
+        method: request.method,
+        headers: requestHeaders,
+        body: request.method === 'GET' ? undefined : request.body,
+        redirect: 'follow'
+      })
+    } catch (error) {
+      const requestId = request.headers.get('cf-ray')
+      console.error('GPT Image upstream request failed', error)
+      return jsonError(
+        'GPT Image 上游连接在生成完成前中断。图片可能仍在上游处理，请稍后重试。',
+        502,
+        { ...cors, ...requestIdHeaders(requestId) }
+      )
+    }
 
     const responseHeaders = new Headers(upstreamResponse.headers)
     Object.entries(cors).forEach(([key, value]) => responseHeaders.set(key, value))
