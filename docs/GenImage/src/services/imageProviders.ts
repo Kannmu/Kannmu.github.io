@@ -82,6 +82,13 @@ type ApiErrorPayload = {
   detail?: string
 }
 
+const getApiPayloadError = (data: unknown) => {
+  if (!data || typeof data !== 'object') return null
+  const payload = data as ApiErrorPayload
+  const apiMessage = typeof payload.error === 'string' ? payload.error : payload.error?.message
+  return apiMessage || payload.message || payload.detail || null
+}
+
 const ZENMUX_BASE_URL = 'https://zenmux.ai/api/vertex-ai/v1'
 export const GPT_IMAGE_BASE_URL = (import.meta.env.VITE_GPT_IMAGE_BASE_URL || 'https://xkj.jisuanyun.vip').replace(/\/+$/, '')
 const GPT_IMAGE_REQUEST_BASE_URL = (import.meta.env.VITE_GPT_IMAGE_PROXY_URL || '/gpt-image-api').replace(/\/+$/, '')
@@ -188,10 +195,8 @@ const getGptImageRequestParameters = (payload: GeneratePayload, operation: 'gene
 export const getApiErrorMessage = (error: unknown, providerName = 'API') => {
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as ApiErrorPayload | undefined
-    const apiMessage = typeof data?.error === 'string' ? data.error : data?.error?.message
-    if (apiMessage || data?.message || data?.detail) {
-      return apiMessage || data?.message || data?.detail || error.message
-    }
+    const apiMessage = getApiPayloadError(data)
+    if (apiMessage) return apiMessage
 
     if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
       return `${providerName} 请求等待超时。图片可能仍在服务端生成，请稍后重试。`
@@ -208,6 +213,8 @@ export const getApiErrorMessage = (error: unknown, providerName = 'API') => {
     return error.message
   }
 
+  const apiMessage = getApiPayloadError(error)
+  if (apiMessage) return apiMessage
   return error instanceof Error ? error.message : '图片生成失败'
 }
 
@@ -328,6 +335,9 @@ export const generateWithGptImage = async ({ apiKey, payload }: GenerateOptions)
       }
     )
   }
+
+  const responseError = getApiPayloadError(response.data)
+  if (responseError) throw new Error(responseError)
 
   const format = payload.outputFormat || 'png'
   const mimeType = format === 'jpeg' ? 'image/jpeg' : `image/${format}`
