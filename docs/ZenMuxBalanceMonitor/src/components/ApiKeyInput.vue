@@ -42,7 +42,7 @@ const inputValue = computed({
       </button>
     </div>
     <p class="mt-2 text-xs text-gray-400">
-      Your API key is stored locally in your browser. Used to fetch your subscription details.
+      Management Key 仅保存在当前浏览器，用于读取账户余额、配额和统计数据。
     </p>
   </div>
 </template>
