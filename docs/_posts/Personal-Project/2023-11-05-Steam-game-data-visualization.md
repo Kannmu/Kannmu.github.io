@@ -2,6 +2,7 @@
 layout: post
 title: "[Report] Steam 游戏数据可视化报告"
 subtitle: "Steam Game Data Visualization"
+description: "基于 71544 款 Steam 游戏数据的数据清洗与可视化报告，分析发行数量、价格、评价、开发商和标签之间的分布、趋势与关联。"
 author: "Kannmu"
 # header-style: text
 header-img: "/img/UserManual/Library_BG_5.jpg"

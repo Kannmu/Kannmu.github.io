@@ -2,6 +2,7 @@
 layout: post
 title: "[Tch] 语音关键词识别"
 subtitle: "Voice Key Word Recognition"
+description: "针对生僻关键词与离线运行需求，记录语音关键词识别方案的探索，比较 PyAudioAnalysis，并实现梅尔频谱图加 ResNet18 的多分类流程。"
 author: "Kannmu"
 mathjax: true
 header-img: "/img/Backgrounds/Bg (12).jpg"

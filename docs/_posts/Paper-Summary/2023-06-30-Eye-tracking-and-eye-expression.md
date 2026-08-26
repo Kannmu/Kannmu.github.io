@@ -2,6 +2,7 @@
 layout: post
 title: "[Paper Reading] Eye tracking and eye expression decoding"
 subtitle: "Paper reading"
+description: "眼动追踪与眼部表情解码论文研读笔记，梳理眼动信号、注视行为、眨眼与眼部交互的研究问题、实验方法和潜在应用。"
 author: "Kannmu"
 # header-style: text
 header-img: "/img/Photography/Art/DSC3948.jpg"

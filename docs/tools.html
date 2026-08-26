@@ -1,0 +1,36 @@
+---
+layout: page
+title: "在线工具与交互实验"
+nav-title: "Tools"
+description: "涵无（Kannmu）开发的在线工具与交互实验合集，包含节点计算、无裁剪图片排版、AI 图像生成、程序化植物、API 用量监控和超声空中触觉演示。"
+permalink: /tools/
+header-img: "/img/Backgrounds/Bg (13).jpg"
+header-mask: 0.55
+---
+
+<section class="tool-directory" aria-labelledby="tool-directory-title">
+    <div class="tool-directory__intro">
+        <p class="tool-directory__eyebrow">Build · Test · Use</p>
+        <h2 id="tool-directory-title">可以直接打开使用的项目</h2>
+        <p>这里集中收录我在研究和日常工作中做出的浏览器工具。每个项目保持独立运行，集合页负责提供稳定入口与简明索引。</p>
+    </div>
+
+    <div class="tool-directory__grid">
+        {% for tool in site.data.tools %}
+        <article class="tool-card">
+            <a href="{{ tool.url | prepend: site.baseurl }}" aria-label="打开 {{ tool.name }}">
+                <div class="tool-card__topline">
+                    <span class="tool-card__icon" aria-hidden="true">{{ tool.mark }}</span>
+                    <span class="tool-card__category">{{ tool.category }}</span>
+                </div>
+                <h3>{{ tool.name }}</h3>
+                <p>{{ tool.description }}</p>
+                <div class="tool-card__footer">
+                    <span>{{ tool.technology }}</span>
+                    <span aria-hidden="true">&rarr;</span>
+                </div>
+            </a>
+        </article>
+        {% endfor %}
+    </div>
+</section>

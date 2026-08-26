@@ -2,6 +2,7 @@
 layout: post
 title: "[作品集:硬件] [持续更新]"
 subtitle: "Portfolio of Hardware works"
+description: "范林涵的硬件设计作品集，收录 STM32 机器人主控板、电源与通信接口、传感器电路、PCB 设计和 Robocon 项目中的硬件实践。"
 author: "Kannmu"
 header-style: text
 tags:

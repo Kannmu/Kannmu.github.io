@@ -2,6 +2,7 @@
 layout: post
 title: "[Project] 桌面磁吸灯"
 subtitle: "Desktop magnetic light"
+description: "记录桌面磁吸暖光灯的设计与制作，包含 18650 电池与 TP4056 充电电路、LED 灯板、Type-C 供电、磁吸结构和 3D 打印外壳。"
 author: "Kannmu"
 # header-style: text
 # header-img: "/img/Backgrounds/Bg (1).jpg"

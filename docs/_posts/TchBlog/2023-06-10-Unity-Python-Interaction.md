@@ -2,6 +2,7 @@
 layout: post
 title: "[Tch] Unity C# 对 Python 调用与通信"
 subtitle: "Run and communicate with Python Script from Unity C#"
+description: "讲解在 Unity C# 中启动 Anaconda 环境下的 Python 程序，并通过 UDP 发送指令、标准输出返回结果，实现语音交互项目中的双向通信。"
 author: "Kannmu"
 # header-style: text
 header-img: "/img/Photography/Architecture/P1230474.jpg"

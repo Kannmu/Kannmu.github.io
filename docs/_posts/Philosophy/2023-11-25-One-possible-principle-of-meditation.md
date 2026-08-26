@@ -2,6 +2,7 @@
 layout: post
 title: "[Philosophy] 一种可能的冥想的原理"
 subtitle: "One possible principle of meditation"
+description: "从语言、认知与情绪经验出发，讨论专注观察内在感受为何可能缓解焦虑与不安全感，并尝试解释冥想中的观察机制。"
 author: "Kannmu"
 # header-style: text
 header-img: "/img/Backgrounds/Bg (9).jpg"

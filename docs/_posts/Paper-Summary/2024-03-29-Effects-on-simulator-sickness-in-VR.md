@@ -2,6 +2,7 @@
 layout: post
 title: "Effects of VR technology locomotive multi-sensory motion stimuli"
 subtitle: "Paper reading"
+description: "论文研读笔记：比较 TiltChair、全向跑步机、VRNChair 与摇杆等 VR 运动控制器，梳理其对模拟器眩晕、控制直觉性及性别差异的影响。"
 author: "Kannmu"
 # header-style: text
 header-img: "/img/Photography/Art/DSC3948.jpg"

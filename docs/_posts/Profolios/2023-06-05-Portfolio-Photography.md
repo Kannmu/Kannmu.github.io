@@ -2,6 +2,7 @@
 layout: post
 title: "[作品集:摄影] [持续更新]"
 subtitle: "Portfolio of Photography works"
+description: "涵无（Kannmu）的摄影作品集，持续收录建筑、人文、风景、动物与艺术主题照片，展示个人拍摄实践和视觉观察。"
 author: "Kannmu"
 header-style: text
 tags:

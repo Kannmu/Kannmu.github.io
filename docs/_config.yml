@@ -1,12 +1,15 @@
 # Site settings
-title: Kannmu Blog
+title: 涵无的博客 | Kannmu Blog
+brand: Kannmu Blog
+tagline: 人机交互、技术与项目实践
 SEOTitle: 涵无的博客 | Kannmu Blog
 header-img: img/Backgrounds/Bg_2.jpg
 email: Kannmu@163.com
-description: "这里是 @Kannmu 涵无 的个人博客 | 一个杂食者"
+description: "涵无（Kannmu）的个人博客，记录人机交互、人工智能、脑机接口、硬件开发与交互设计研究，也分享开源工具、项目实践和摄影作品。"
 keyword: "Kannmu,涵无, Kannmu涵无,涵无,涵无的博客,Kannmu Blog, 博客, 个人网站, 硬件, 交互, 设计, 摄影, 技术,文章"
-url: "https://kannmu.top/" # your host, for absolute URL
+url: "https://kannmu.top" # your host, for absolute URL
 baseurl: "" # for example, '/blog' if your blog hosted on 'host/blog'
+lang: zh-CN
 
 author:
   name: kannmu
@@ -32,11 +35,34 @@ exclude:
   [
     "less",
     "node_modules",
+    "**/node_modules",
     "Gruntfile.js",
     "package.json",
     "README.md",
     "README.zh.md",
   ]
+
+defaults:
+  - scope:
+      path: "CalcFlow/index.html"
+    values:
+      sitemap: false
+  - scope:
+      path: "GenImage/index.html"
+    values:
+      sitemap: false
+  - scope:
+      path: "GenPlant/dist/index.html"
+    values:
+      sitemap: false
+  - scope:
+      path: "PhoLo/index.html"
+    values:
+      sitemap: false
+  - scope:
+      path: "ZenMuxBalanceMonitor/index.html"
+    values:
+      sitemap: false
 anchorjs: true # if you want to customize anchor. check out line:181 of `post.html`
 # If you have timezone issue (e.g. #68) in China, uncomment to use this:
 # timezone: CN

@@ -2,6 +2,7 @@
 layout: post
 title: "[Tch] OpenGL初见!"
 subtitle: "The first meet with OpenGL"
+description: "从 Blender 火箭模型开始学习 OpenGL 图形渲染，记录 Assimp 模型导入、纹理与着色器、相机控制、光照和基础渲染管线的实现过程。"
 author: "Kannmu"
 # header-style: text
 header-img: "/img/Backgrounds/Bg(18).jpg"

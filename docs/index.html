@@ -1,11 +1,27 @@
 ---
 layout: page
-description: "「致虚极 守静笃」<br> Embrace emptiness, embrace stillness"
+description: "涵无（Kannmu）的个人博客，记录人机交互、人工智能、脑机接口、硬件开发与交互设计研究，也分享开源工具、项目实践和摄影作品。"
 
 header-mask: 0.3
 ---
 
 <!-- <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=730 height=86 src="https://music.163.com/outchain/player?type=2&id=1352910518&auto=1&height=66"></iframe> -->
+
+<section class="home-tools-entry" aria-labelledby="home-tools-title">
+    <div>
+        <p class="home-tools-entry__eyebrow">Kannmu Tools</p>
+        <h2 id="home-tools-title">浏览器里的实验与小工具</h2>
+        <p>从节点计算、图片排版到程序化生成，这些项目都可以直接在线使用。</p>
+    </div>
+    <div class="home-tools-entry__links" aria-label="精选工具">
+        {% for tool in site.data.tools limit:3 %}
+        <a href="{{ tool.url | prepend: site.baseurl }}">{{ tool.name }}</a>
+        {% endfor %}
+    </div>
+    <a class="home-tools-entry__all" href="{{ '/tools/' | prepend: site.baseurl }}">
+        查看全部工具 <span aria-hidden="true">&rarr;</span>
+    </a>
+</section>
 
 {% for post in paginator.posts %}
 <div class="post-preview">

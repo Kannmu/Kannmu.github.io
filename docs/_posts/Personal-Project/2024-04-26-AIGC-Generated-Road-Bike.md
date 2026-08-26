@@ -2,6 +2,7 @@
 layout: post
 title: "使用AIGC工具进行概念设计（以自行车设计为例）"
 subtitle: "AI Generated Road Bike"
+description: "以公路自行车为案例展示 AIGC 概念设计流程，从设计定位、文本提示与草图迭代，到产品造型、结构细节、场景图和最终展示版面。"
 author: "Kannmu"
 header-style: post
 header-img: "/img/Backgrounds/Bg (12).jpg"

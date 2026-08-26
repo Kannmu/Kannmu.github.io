@@ -1,0 +1,41 @@
+- name: CalcFlow
+  category: 可视化计算
+  description: 将表达式拆成可引用的计算节点，依赖关系与结果会随输入实时更新，适合组织多步骤公式和参数推演。
+  technology: Vue · math.js · KaTeX
+  url: /CalcFlow/dist/
+  mark: CF
+
+- name: PhoLo
+  category: 图片排版
+  description: 在浏览器本地把多张照片排成规整画布，只做平移与等比例缩放，不裁剪、不拉伸，也不会上传图片。
+  technology: Vue · Web Worker · Canvas
+  url: /PhoLo/dist/
+  mark: PL
+
+- name: Kannmu Image Studio
+  category: 图像生成
+  description: 面向 Gemini 图像模型的生成与编辑工作台，可组合提示词、参考图和局部蒙版，并管理最近一次生成结果。
+  technology: Vue · Gemini · ZenMux
+  url: /GenImage/dist/
+  mark: AI
+
+- name: GenPlant
+  category: 程序化生成
+  description: 用确定性种子和形态基因生成可重复的三维植物，在浏览器中实时观察、调整并保存不同植株。
+  technology: Three.js · WebGL · Procedural
+  url: /GenPlant/GenPlant/
+  mark: GP
+
+- name: ZenMux Balance Monitor
+  category: API 用量
+  description: 读取 ZenMux 管理接口中的滚动额度、月度订阅与模型用量，集中查看余额、趋势和供应商分布。
+  technology: Vue · ZenMux API · Charts
+  url: /ZenMuxBalanceMonitor/dist/
+  mark: ZM
+
+- name: UMH Lab
+  category: 交互实验
+  description: 超声空中触觉研究展示与交互模拟器，介绍相控阵硬件、聚焦原理、触觉模式和相关研究成果。
+  technology: Ultrasound · Haptics · Simulator
+  url: /UMH/
+  mark: UM

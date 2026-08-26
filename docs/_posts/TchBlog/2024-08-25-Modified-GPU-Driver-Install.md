@@ -2,6 +2,7 @@
 layout: post
 title: "[Tch] 使用笔记本核心魔改的桌面端显卡无法通过小蓝熊，以及黑神话悟空没有DLSS的解决方法"
 subtitle: "GPU Driver Installation Guidance"
+description: "记录笔记本核心魔改桌面显卡的驱动安装与设备 ID 修改方法，解决 Easy Anti-Cheat 检测失败及《黑神话：悟空》缺少 DLSS 选项的问题。"
 author: "Kannmu"
 header-img: "/img/Tch/GPU/GPU_Face.jpg"
 header-mask: 0.4

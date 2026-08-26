@@ -2,6 +2,7 @@
 layout: post
 title: "[Tch] 反射式屏幕挂灯"
 subtitle: "Reflective screen hanging lamp"
+description: "一款反射式屏幕挂灯的 DIY 记录，介绍抛物线反射光路、LED 与 USB 扩展电路、PCB 制造、3D 打印结构和最终装配效果。"
 author: "Kannmu"
 # header-style: text
 header-img: "/img/Photography/Humanistic/DSC3869.jpg"

@@ -2,6 +2,7 @@
 layout: post
 title: "[Tch] Unity Shader 2D UI边缘发光效果 [学习笔记]"
 subtitle: "2D UI Edge glowing effect using Unity Shader"
+description: "记录 Unity Shader 实现 2D UI 边缘发光效果的方法，包括纹理采样、透明区域边缘检测、发光颜色叠加、参数控制与完整着色器代码。"
 author: "Kannmu"
 mathjax: true
 # header-style: text

@@ -26,7 +26,7 @@ https://github.com/kitian616/jekyll-TeXt-theme
   }
 
   var setUrlQuery = (function() {
-    var baseUrl =  window.location.href.split('?')[0];
+    var baseUrl = window.location.href.split(/[?#]/)[0];
     return function(query) {
       if (typeof query === 'string') {
         window.history.replaceState(null, '', baseUrl + query);
@@ -122,15 +122,19 @@ https://github.com/kitian616/jekyll-TeXt-theme
         if (_tag === '' || typeof _tag !== 'string') {
           setUrlQuery();
         } else {
-          setUrlQuery('?tag=' + _tag);
+          setUrlQuery('#' + _tag);
         }
       } else {
         buttonFocus(searchButtonsByTag(tag));
       }
     }
 
-    var query = queryString(), 
-        _tag = query.tag;
+    var query = queryString(),
+        _tag = window.location.hash.substring(1) || query.tag;
+
+    if (_tag && query.tag) {
+      setUrlQuery('#' + _tag);
+    }
 
     init(); 
     tagSelect(_tag);

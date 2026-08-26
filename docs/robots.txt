@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
-Sitemap: https://kannmu.top/Data/sitemap.xml
+Sitemap: https://kannmu.top/sitemap.xml
 Allow: /ads.txt

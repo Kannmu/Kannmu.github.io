@@ -2,6 +2,7 @@
 layout: post
 title: "[作品集:机械] [持续更新]"
 subtitle: "Portfolio of Mechanical works"
+description: "范林涵的机械与结构设计作品集，收录 MRI 环境气动步进马达、行星减速机构、机器人结构及其他原型的设计要求、材料和实现细节。"
 author: "Kannmu"
 header-style: text
 tags:

@@ -2,6 +2,7 @@
 layout: post
 title: "二手相机历史价格趋势查询"
 subtitle: "Second hand camera price trends"
+description: "查询佳能、尼康、索尼等品牌二手相机的历史价格走势。数据来自闲鱼市场行情，按每日样本四分位区间计算均价，用于观察机型价格变化趋势。"
 author: "Kannmu"
 header-img: "/img/Photography/Humanistic/DSC3869.jpg"
 header-mask: 0.4
@@ -27,32 +28,28 @@ tags:
 
 ## 价格走势 Price trends
 
-<head>
-    <title>二手相机价格走势</title>
-    <!-- 引入Chart.js -->
-    <script async src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- 引入zoom插件 -->
-    <script async src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
-    <style>
-        .chart-container {
-            position: relative; /* 设置相对定位 */
-            width: 700px; /* 设置容器宽度 */
-            margin: 0 auto; /* 居中容器 */
-        }
-        #brandSelect {
-            position: absolute; /* 使用绝对定位相对于容器 */
-            bottom: 10;       /* 菜单距离容器顶部的距离 */
-            right: 0;      /* 菜单距离容器左侧的距离 */
-            z-index: 100; /* 确保菜单在图表之上 */
-        }
-        canvas {
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
-</head>
+<!-- 引入Chart.js -->
+<script async src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- 引入zoom插件 -->
+<script async src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+<style>
+    .chart-container {
+        position: relative; /* 设置相对定位 */
+        width: 700px; /* 设置容器宽度 */
+        margin: 0 auto; /* 居中容器 */
+    }
+    #brandSelect {
+        position: absolute; /* 使用绝对定位相对于容器 */
+        bottom: 10;       /* 菜单距离容器顶部的距离 */
+        right: 0;      /* 菜单距离容器左侧的距离 */
+        z-index: 100; /* 确保菜单在图表之上 */
+    }
+    canvas {
+        max-width: 100%;
+        height: auto;
+    }
+</style>
 
-<body>
 <div class="chart-container">
     <canvas id="cameraChart" width="1920" height="1080"></canvas>
     <select id="brandSelect"></select>
@@ -204,6 +201,5 @@ function getPairedColor() {
   return `hsl(${lastHue},${saturation}%, ${lightness}%)`;
 }
 </script>
-</body>
 
 

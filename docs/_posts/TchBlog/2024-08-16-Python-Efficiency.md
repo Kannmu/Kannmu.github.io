@@ -2,6 +2,7 @@
 layout: post
 title: "Python解释器直接运行与打包为.exe可执行文件的运行效率对比"
 subtitle: "Efficiency Comparison of Python Interpreter and Packaged .exe Executable"
+description: "在同一台 Windows 设备上对比 Python 3.11 解释器与 PyInstaller 打包 EXE 的运行效率，分别测试基础循环和 NumPy 矩阵运算并分析结果。"
 author: "Kannmu"
 header-img: "/img/Photography/Humanistic/DSC3869.jpg"
 header-mask: 0.4

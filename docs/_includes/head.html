@@ -4,13 +4,20 @@
     <meta name="google-site-verification" content="pmu1kqultL62F58MPIP5I-_4G15QehP0HAywIr1qWzA" />
     <meta name="google-adsense-account" content="ca-pub-7629675373716127">
     <meta name="baidu-site-verification" content="codeva-0gvzDSDpdY" />
+    <meta name="msvalidate.01" content="39DBA1088E4D102A5E0F2E461D60227E" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     {% seo %}
 
-    <!-- Language Alternates -->
-    <link rel="alternate" hreflang="zh-CN" href="{{ site.url }}{{ page.url }}">
-    <link rel="alternate" hreflang="en-US" href="{{ site.url }}{{ page.url }}">
-    <link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ page.url }}">
+    <!-- Baidu Analytics -->
+    <script async>
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?1f681335bb8c58643c8ed990ab06f8cc";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
 
     <!-- Web App Manifest -->
     <link rel="manifest" href="{{ site.baseurl }}/pwa/manifest.json">
@@ -29,6 +36,9 @@
 
     <!-- Responsive Layout CSS -->
     <link rel="stylesheet" href="{{ "/css/responsive-layout.css" | prepend: site.baseurl }}">
+
+    <!-- Tool directory -->
+    <link rel="stylesheet" href="{{ "/css/tools.css" | prepend: site.baseurl }}">
 
     <!-- Dark Mode Inline Script (Prevent FOUC) -->
     <script>

@@ -2,6 +2,7 @@
 layout: post
 title: "[Tch] OpenMonitor 命令行系统资源监视器"
 subtitle: "OpenMonitor command line resource monitoring tool"
+description: "介绍使用 Python 开发的 OpenMonitor 命令行系统资源监视器，可实时显示 CPU、内存、GPU、功耗与 Wi-Fi 信息，并支持行模式和表格模式。"
 author: "Kannmu"
 # header-style: text
 header-img: "/img/Photography/Humanistic/DSC3869.jpg"

@@ -2,21 +2,7 @@
 layout: compress
 ---
 <!DOCTYPE html>
-<html lang="en">
-
-<!-- Add Bing Analysis -->
-<meta name="msvalidate.01" content="39DBA1088E4D102A5E0F2E461D60227E" />
-
-<!-- Add Baidu Analysis -->
-<script async>
-    var _hmt = _hmt || [];
-    (function() {
-      var hm = document.createElement("script");
-      hm.src = "https://hm.baidu.com/hm.js?1f681335bb8c58643c8ed990ab06f8cc";
-      var s = document.getElementsByTagName("script")[0]; 
-      s.parentNode.insertBefore(hm, s);
-    })();
-</script>
+<html lang="{{ page.lang | default: site.lang | default: 'zh-CN' }}">
     
 
 {% include head.html %}
@@ -36,7 +22,7 @@ layout: compress
 
 
 <!-- Image to hack wechat -->
-<img src="/img/icon_wechat.png" width="0" height="0" />
+<img src="/img/icon_wechat.png" width="0" height="0" alt="" aria-hidden="true" />
 <!-- Migrate from head to bottom, no longer block render and still work -->
 
 </body>

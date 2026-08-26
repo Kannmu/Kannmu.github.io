@@ -2,6 +2,7 @@
 layout: post
 title: "[Tch] 进入AI辅助写作：使用Trae+Latex+Zotero来加速学术写作"
 subtitle: "Entering the AI Era: Accelerate Academic Writing with Trae+Latex+Zotero" 
+description: "介绍如何组合 Trae、LaTeX 与 Zotero 构建 AI 辅助学术写作工作流，覆盖论文项目组织、上下文协作、文献管理、引用与专业排版。"
 author: "Kannmu"
 header-img: "/img/Photography/Humanistic/DSC3869.jpg"
 header-mask: 0.4
