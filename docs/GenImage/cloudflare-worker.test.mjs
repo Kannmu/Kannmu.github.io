@@ -30,6 +30,7 @@ test('opens the response stream before the upstream request finishes', async () 
   const firstChunk = await reader.read()
 
   assert.equal(response.status, 200)
+  assert.equal(finishUpstream !== undefined, true)
   assert.equal(new TextDecoder().decode(firstChunk.value).trim(), '')
 
   finishUpstream(new Response(JSON.stringify({ data: [{ b64_json: 'image-data' }] }), {
@@ -44,6 +45,28 @@ test('opens the response stream before the upstream request finishes', async () 
   }
 
   assert.deepEqual(JSON.parse(responseText), { data: [{ b64_json: 'image-data' }] })
+})
+
+test('forwards requests to the configured GPT Image upstream', async () => {
+  let requestedUrl
+  globalThis.fetch = async (requestUrl) => {
+    requestedUrl = requestUrl
+    return new Response(JSON.stringify({ data: [{ b64_json: 'image-data' }] }), {
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+
+  await worker.fetch(new Request(endpoint, {
+    method: 'POST',
+    headers: {
+      Origin: 'https://kannmu.top',
+      Authorization: 'Bearer test',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ prompt: 'test' })
+  }))
+
+  assert.equal(requestedUrl, 'https://bya.re/v1/images/generations')
 })
 
 test('returns an API error as JSON after streaming has started', async () => {

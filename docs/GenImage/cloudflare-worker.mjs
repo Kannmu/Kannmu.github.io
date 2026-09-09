@@ -1,5 +1,5 @@
 const PROXY_PREFIX = '/gpt-image-api'
-const TARGET_ORIGIN = 'https://xkj.jisuanyun.vip'
+const TARGET_ORIGIN = 'https://bya.re'
 const HEARTBEAT_INTERVAL_MS = 15_000
 const ALLOWED_PATHS = new Set([
   '/v1/models',

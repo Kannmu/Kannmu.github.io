@@ -92,6 +92,7 @@ const getApiPayloadError = (data: unknown) => {
 
 const ZENMUX_BASE_URL = 'https://zenmux.ai/api/vertex-ai/v1'
 export const GPT_IMAGE_BASE_URL = 'https://bya.re'
+const GPT_IMAGE_PROXY_URL = '/gpt-image-api'
 const GPT_IMAGE_REQUEST_CONFIG = {
   // GPT Image responds only after generation. 4K requests can legitimately take
   // longer than five minutes, so the browser must not impose a fixed deadline.
@@ -308,6 +309,7 @@ export const generateWithGptImage = async ({ apiKey, payload, baseUrl = GPT_IMAG
   }
   const operation = payload.images.length > 0 ? 'edit' : 'generate'
   const parameters = getGptImageRequestParameters(payload, operation)
+  const requestBaseUrl = baseUrl === GPT_IMAGE_BASE_URL ? GPT_IMAGE_PROXY_URL : baseUrl.replace(/\/+$/, '')
   let response
 
   if (operation === 'edit') {
@@ -318,13 +320,13 @@ export const generateWithGptImage = async ({ apiKey, payload, baseUrl = GPT_IMAG
     files.forEach((file) => formData.append('image[]', file))
     if (payload.mask) formData.append('mask', await dataUrlToFile(payload.mask, 0))
 
-    response = await axios.post(`${baseUrl.replace(/\/+$/, '')}/v1/images/edits`, formData, {
+    response = await axios.post(`${requestBaseUrl}/v1/images/edits`, formData, {
       headers,
       timeout: GPT_IMAGE_REQUEST_CONFIG.timeout
     })
   } else {
     response = await axios.post(
-      `${baseUrl.replace(/\/+$/, '')}/v1/images/generations`,
+      `${requestBaseUrl}/v1/images/generations`,
       parameters,
       {
         headers: {
