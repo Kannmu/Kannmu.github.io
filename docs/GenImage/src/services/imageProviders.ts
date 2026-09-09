@@ -52,6 +52,7 @@ export type ProviderGenerationResult = {
 type GenerateOptions = {
   apiKey: string
   payload: GeneratePayload
+  baseUrl?: string
 }
 
 type RawGeminiPart = {
@@ -90,8 +91,7 @@ const getApiPayloadError = (data: unknown) => {
 }
 
 const ZENMUX_BASE_URL = 'https://zenmux.ai/api/vertex-ai/v1'
-export const GPT_IMAGE_BASE_URL = (import.meta.env.VITE_GPT_IMAGE_BASE_URL || 'https://xkj.jisuanyun.vip').replace(/\/+$/, '')
-const GPT_IMAGE_REQUEST_BASE_URL = (import.meta.env.VITE_GPT_IMAGE_PROXY_URL || '/gpt-image-api').replace(/\/+$/, '')
+export const GPT_IMAGE_BASE_URL = 'https://bya.re'
 const GPT_IMAGE_REQUEST_CONFIG = {
   // GPT Image responds only after generation. 4K requests can legitimately take
   // longer than five minutes, so the browser must not impose a fixed deadline.
@@ -301,7 +301,7 @@ export const generateWithZenMux = async ({ apiKey, payload }: GenerateOptions): 
   }
 }
 
-export const generateWithGptImage = async ({ apiKey, payload }: GenerateOptions): Promise<ProviderGenerationResult> => {
+export const generateWithGptImage = async ({ apiKey, payload, baseUrl = GPT_IMAGE_BASE_URL }: GenerateOptions): Promise<ProviderGenerationResult> => {
   const headers = {
     ...GPT_IMAGE_REQUEST_CONFIG.headers,
     Authorization: `Bearer ${apiKey}`
@@ -318,13 +318,13 @@ export const generateWithGptImage = async ({ apiKey, payload }: GenerateOptions)
     files.forEach((file) => formData.append('image[]', file))
     if (payload.mask) formData.append('mask', await dataUrlToFile(payload.mask, 0))
 
-    response = await axios.post(`${GPT_IMAGE_REQUEST_BASE_URL}/v1/images/edits`, formData, {
+    response = await axios.post(`${baseUrl.replace(/\/+$/, '')}/v1/images/edits`, formData, {
       headers,
       timeout: GPT_IMAGE_REQUEST_CONFIG.timeout
     })
   } else {
     response = await axios.post(
-      `${GPT_IMAGE_REQUEST_BASE_URL}/v1/images/generations`,
+      `${baseUrl.replace(/\/+$/, '')}/v1/images/generations`,
       parameters,
       {
         headers: {

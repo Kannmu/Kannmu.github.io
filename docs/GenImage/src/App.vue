@@ -77,6 +77,7 @@ type GenerationRecord = {
 const selectedProvider = useStorage<ProviderId>('genimage-provider', 'zenmux')
 const zenMuxApiKey = useStorage('zenmux-api-key', '')
 const gptImageApiKey = useStorage('gpt-image-2-api-key', '')
+const gptImageBaseUrl = useStorage('gpt-image-2-base-url', GPT_IMAGE_BASE_URL)
 const providerOptions: ProviderId[] = ['zenmux', 'gpt-image-2']
 const loading = ref(false)
 const loadingProvider = ref<ProviderId | null>(null)
@@ -96,6 +97,7 @@ const activeApiKey = computed({
 
 const activeProviderMeta = computed(() => providerMeta[selectedProvider.value])
 const apiReady = computed(() => Boolean(activeApiKey.value.trim()))
+const normalizedGptImageBaseUrl = computed(() => gptImageBaseUrl.value.trim().replace(/\/+$/, ''))
 const visibleGenerations = computed(() => generations.value.filter((record) => record.provider === selectedProvider.value))
 const latestGeneration = computed(() => visibleGenerations.value[0] || null)
 const latestFinalImage = computed(() => {
@@ -170,6 +172,16 @@ const handleGenerate = async (payload: GeneratePayload) => {
     return
   }
 
+  if (provider === 'gpt-image-2') {
+    try {
+      const parsedUrl = new URL(normalizedGptImageBaseUrl.value)
+      if (!['http:', 'https:'].includes(parsedUrl.protocol)) throw new Error('invalid protocol')
+    } catch {
+      error.value = '请填写有效的 GPT Image 2 Base URL'
+      return
+    }
+  }
+
   loading.value = true
   loadingProvider.value = provider
   startLoadingTimer()
@@ -207,7 +219,11 @@ const handleGenerate = async (payload: GeneratePayload) => {
   })
 
   try {
-    const result = await generateImage(provider, { apiKey, payload })
+    const result = await generateImage(provider, {
+      apiKey,
+      payload,
+      baseUrl: provider === 'gpt-image-2' ? normalizedGptImageBaseUrl.value : undefined
+    })
     const items = normalizeTimelineItems(result.items)
     if (!items.some((item) => item.kind === 'image')) {
       throw new Error('API 响应中没有可显示的图片')
@@ -285,12 +301,26 @@ const handleGenerate = async (payload: GeneratePayload) => {
       </section>
 
       <section class="grid gap-5 border-y border-gray-200 py-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.8fr)]">
-        <ApiKeyInput
-          v-model="activeApiKey"
-          :label="activeProviderMeta.keyLabel"
-          :placeholder="activeProviderMeta.keyPlaceholder"
-          description="API Key 仅保存在当前浏览器的本地存储中，不会写入项目文件。"
-        />
+        <div class="space-y-4">
+          <ApiKeyInput
+            v-model="activeApiKey"
+            :label="activeProviderMeta.keyLabel"
+            :placeholder="activeProviderMeta.keyPlaceholder"
+            description="API Key 仅保存在当前浏览器的本地存储中，不会写入项目文件。"
+          />
+          <label v-if="selectedProvider === 'gpt-image-2'" class="block space-y-2">
+            <span class="text-sm font-medium text-gray-700">GPT Image 2 Base URL</span>
+            <input
+              v-model="gptImageBaseUrl"
+              type="url"
+              inputmode="url"
+              autocomplete="url"
+              placeholder="https://bya.re"
+              class="block w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            />
+            <span class="block text-xs leading-5 text-gray-500">Base URL 仅保存在当前浏览器的本地存储中，请填写 API 根地址。</span>
+          </label>
+        </div>
 
         <div class="flex min-h-24 items-center gap-4 rounded-lg border border-gray-200 bg-white p-4">
           <div :class="['rounded-lg p-2.5', selectedProvider === 'zenmux' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700']">
@@ -304,7 +334,7 @@ const handleGenerate = async (payload: GeneratePayload) => {
             </template>
             <template v-else>
               <div class="text-xs font-medium uppercase text-gray-400">Base URL</div>
-              <div class="mt-1 break-all text-sm font-semibold text-gray-800">{{ GPT_IMAGE_BASE_URL }}</div>
+              <div class="mt-1 break-all text-sm font-semibold text-gray-800">{{ normalizedGptImageBaseUrl || GPT_IMAGE_BASE_URL }}</div>
             </template>
           </div>
           <CheckCircle2 v-if="apiReady" class="ml-auto h-5 w-5 shrink-0 text-emerald-600" aria-label="API Key 已填写" />
