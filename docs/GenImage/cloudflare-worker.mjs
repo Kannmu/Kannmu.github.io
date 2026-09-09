@@ -1,6 +1,6 @@
 const PROXY_PREFIX = '/gpt-image-api'
 const TARGET_ORIGIN = 'https://bya.re'
-const HEARTBEAT_INTERVAL_MS = 15_000
+const HEARTBEAT_INTERVAL_MS = 5_000
 const ALLOWED_PATHS = new Set([
   '/v1/models',
   '/v1/images/generations',
@@ -43,10 +43,30 @@ const streamUpstreamJson = (request, targetUrl, requestHeaders, cors) => {
   let upstreamReader
   let heartbeatTimer
   let cancelled = false
+  let controllerClosed = false
 
   const body = new ReadableStream({
     start(controller) {
-      const enqueueText = (text) => controller.enqueue(encoder.encode(text))
+      const enqueueText = (text) => {
+        if (cancelled || controllerClosed) return false
+        try {
+          controller.enqueue(encoder.encode(text))
+          return true
+        } catch {
+          cancelled = true
+          return false
+        }
+      }
+      const enqueueChunk = (chunk) => {
+        if (cancelled || controllerClosed) return false
+        try {
+          controller.enqueue(chunk)
+          return true
+        } catch {
+          cancelled = true
+          return false
+        }
+      }
       const stopHeartbeat = () => {
         if (heartbeatTimer !== undefined) clearInterval(heartbeatTimer)
         heartbeatTimer = undefined
@@ -99,7 +119,7 @@ const streamUpstreamJson = (request, targetUrl, requestHeaders, cors) => {
           while (!cancelled) {
             const { done, value } = await upstreamReader.read()
             if (done) break
-            controller.enqueue(value)
+            if (!enqueueChunk(value)) break
           }
         } catch (error) {
           if (cancelled) return
@@ -113,7 +133,14 @@ const streamUpstreamJson = (request, targetUrl, requestHeaders, cors) => {
           }))
         } finally {
           stopHeartbeat()
-          if (!cancelled) controller.close()
+          if (!cancelled && !controllerClosed) {
+            controllerClosed = true
+            try {
+              controller.close()
+            } catch {
+              // The client may have closed the response while the upstream finished.
+            }
+          }
         }
       })()
     },
@@ -121,6 +148,7 @@ const streamUpstreamJson = (request, targetUrl, requestHeaders, cors) => {
       cancelled = true
       if (heartbeatTimer !== undefined) clearInterval(heartbeatTimer)
       abortController.abort(reason)
+      controllerClosed = true
       return upstreamReader?.cancel(reason)
     }
   })
