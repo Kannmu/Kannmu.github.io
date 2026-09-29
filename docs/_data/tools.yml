@@ -39,3 +39,10 @@
   technology: Ultrasound · Haptics · Simulator
   url: /UMH/
   mark: UM
+
+- name: T-Sim 做T训练场
+  category: 交易训练
+  description: 用真实 A 股与 ETF 的分钟级历史行情做逐根回放，未来不可见，训练做T的择时直觉、仓位纪律与成本意识，收盘后逐笔复盘评级。
+  technology: Vue · Canvas · A股行情
+  url: /T-Sim%20Game/dist/
+  mark: TS

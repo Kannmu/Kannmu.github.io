@@ -63,6 +63,10 @@ defaults:
       path: "ZenMuxBalanceMonitor/index.html"
     values:
       sitemap: false
+  - scope:
+      path: "T-Sim Game/dist/index.html"
+    values:
+      sitemap: false
 anchorjs: true # if you want to customize anchor. check out line:181 of `post.html`
 # If you have timezone issue (e.g. #68) in China, uncomment to use this:
 # timezone: CN

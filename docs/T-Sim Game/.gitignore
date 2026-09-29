@@ -1,0 +1,8 @@
+node_modules/
+*.log
+.tmp/
+
+# Raw quote responses from tools/fetch-data.mjs. Regenerable, and large — the
+# normalised output that actually ships lives in public/data/.
+tools/.cache/
+tools/__pycache__/
