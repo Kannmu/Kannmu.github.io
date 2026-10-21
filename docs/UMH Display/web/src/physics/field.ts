@@ -52,7 +52,7 @@ export interface DriveField {
   im: Float64Array;
 }
 
-/** Firmware-rendered complex drive per element (calibration aside), |q| <= 1. */
+/** Firmware-rendered complex drive per element (phase corrections aside), |q| <= 1. */
 export function elementDrive(
   trapMode: number,
   focus: readonly [number, number, number],

@@ -192,3 +192,12 @@ export function formatFixed(value: number, digits: number): string {
   if (!Number.isFinite(value)) return '—';
   return value.toFixed(digits);
 }
+
+/** Human readable duration for plan periods from 1 ms to hours. */
+export function formatDuration(ms: number): string {
+  if (!Number.isFinite(ms) || ms < 0) return '—';
+  if (ms < 1000) return `${ms < 10 ? ms.toFixed(2) : ms.toFixed(0)} ms`;
+  if (ms < 60000) return `${(ms / 1000).toFixed(ms < 10000 ? 2 : 1)} s`;
+  if (ms < 3600000) return `${(ms / 60000).toFixed(2)} min`;
+  return `${(ms / 3600000).toFixed(2)} h`;
+}

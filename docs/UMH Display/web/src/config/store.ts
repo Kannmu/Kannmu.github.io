@@ -3,7 +3,7 @@
  *
  * Old Python config files can be imported from the UI; the snake_case keys and
  * the v1 -> v3 migrations from ``config.py`` are honoured so a user keeps their
- * calibrated lateral strength.
+ * spin-tested lateral strength.
  */
 import { CONFIG_KEY, CONFIG_VERSION, createDefaultConfig } from './defaults.ts';
 import type { AppConfig, ColorScheme, CornerMode, FieldKind, Interpolation, Mount, RGB } from './types.ts';
@@ -117,28 +117,10 @@ export function normalizeConfig(raw: unknown): AppConfig {
   cfg.display.evenLines = num(display.even_lines ?? display.evenLines, cfg.display.evenLines, 0, 1);
   cfg.display.hoverBrightness = num(display.hover_brightness ?? display.hoverBrightness, cfg.display.hoverBrightness, 0, 1);
 
-  const gg = isObject(raw.gravity_gun) ? raw.gravity_gun : isObject(raw.gravityGun) ? raw.gravityGun : {};
-  cfg.gravityGun.level = int(gg.level, cfg.gravityGun.level, 1, 128);
-  cfg.gravityGun.heightMm = num(gg.height_mm ?? gg.heightMm, cfg.gravityGun.heightMm, 20, 130);
-  cfg.gravityGun.splitMm = num(gg.split_mm ?? gg.splitMm, cfg.gravityGun.splitMm, 20, 45);
-  cfg.gravityGun.sensitivityMmS = num(gg.sensitivity_mm_s ?? gg.sensitivityMmS, cfg.gravityGun.sensitivityMmS, 1, 500);
-  cfg.gravityGun.zSpeedMmS = num(gg.z_speed_mm_s ?? gg.zSpeedMmS, cfg.gravityGun.zSpeedMmS, 1, 500);
-  cfg.gravityGun.speedLimitMmS = num(gg.speed_limit_mm_s ?? gg.speedLimitMmS, cfg.gravityGun.speedLimitMmS, 1, 1000);
-  cfg.gravityGun.updateHz = num(gg.update_hz ?? gg.updateHz, cfg.gravityGun.updateHz, 2, 500);
-  cfg.gravityGun.deadzone = num(gg.deadzone, cfg.gravityGun.deadzone, 0, 0.9);
-  cfg.gravityGun.smoothingMs = num(gg.smoothing_ms ?? gg.smoothingMs, cfg.gravityGun.smoothingMs, 1, 2000);
-  const bounds = gg.bounds_mm ?? gg.boundsMm;
-  if (Array.isArray(bounds) && bounds.length >= 3) {
-    cfg.gravityGun.boundsMm = [
-      num(bounds[0], cfg.gravityGun.boundsMm[0], 5, 200),
-      num(bounds[1], cfg.gravityGun.boundsMm[1], 5, 200),
-      num(bounds[2], cfg.gravityGun.boundsMm[2], 20, 300)
-    ];
-  }
-  cfg.gravityGun.bottomMm = num(gg.bottom_mm ?? gg.bottomMm, cfg.gravityGun.bottomMm, 10, 200);
-  cfg.gravityGun.heightMaxMm = num(gg.height_max_mm ?? gg.heightMaxMm, cfg.gravityGun.heightMaxMm, 20, 300);
-  cfg.gravityGun.phaseSign = num(gg.phase_sign ?? gg.phaseSign, cfg.gravityGun.phaseSign, -1, 1);
-  cfg.gravityGun.useCalibration = bool(gg.use_calibration ?? gg.useCalibration, cfg.gravityGun.useCalibration);
+  const unlimited = isObject(raw.unlimited) ? raw.unlimited : {};
+  cfg.unlimited.enabled = bool(unlimited.enabled, cfg.unlimited.enabled);
+  cfg.unlimited.loopMs = int(unlimited.loop_ms ?? unlimited.loopMs, cfg.unlimited.loopMs, 1, 60000);
+  cfg.unlimited.rate = num(unlimited.rate, cfg.unlimited.rate, 0.001, 1);
 
   // migrations from config.py
   const version = int(raw.config_version ?? raw.configVersion, 1, 1, 999);

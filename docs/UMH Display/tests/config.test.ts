@@ -31,7 +31,7 @@ describe('configuration', () => {
         color_a: [10, 20, 30],
         refresh_hz: 15
       },
-      gravity_gun: { level: 96, split_mm: 33, bounds_mm: [40, 42, 110] }
+      unlimited: { enabled: true, loop_ms: 60000, rate: 0.001 }
     });
     expect(cfg.port).toBe('COM7');
     expect(cfg.trap.field).toBe('vortex');
@@ -42,8 +42,9 @@ describe('configuration', () => {
     expect(cfg.display.colorScheme).toBe('gradient');
     expect(cfg.display.colorA).toEqual([10, 20, 30]);
     expect(cfg.display.refreshHz).toBe(15);
-    expect(cfg.gravityGun.splitMm).toBe(33);
-    expect(cfg.gravityGun.boundsMm).toEqual([40, 42, 110]);
+    expect(cfg.unlimited.enabled).toBe(true);
+    expect(cfg.unlimited.loopMs).toBe(60000);
+    expect(cfg.unlimited.rate).toBe(0.001);
   });
 
   it('applies the v1 -> v2 -> v3 migrations', () => {
@@ -63,13 +64,14 @@ describe('configuration', () => {
     const cfg = normalizeConfig({
       trap: { level: -20, table_distance_mm: 9999 },
       display: { size_mm: 500, gamma: 100, color_scheme: 'cartoon' },
-      gravity_gun: { split_mm: 999 }
+      unlimited: { loop_ms: 0, rate: 2 }
     });
     expect(cfg.trap.level).toBe(1);
     expect(cfg.trap.tableDistanceMm).toBe(400);
     expect(cfg.display.sizeMm).toBe(80);
     expect(cfg.display.gamma).toBe(4);
     expect(cfg.display.colorScheme).toBe('wheel');
-    expect(cfg.gravityGun.splitMm).toBe(45);
+    expect(cfg.unlimited.loopMs).toBe(1);
+    expect(cfg.unlimited.rate).toBe(1);
   });
 });

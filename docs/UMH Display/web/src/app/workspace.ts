@@ -1,9 +1,7 @@
 import type { AppConfig } from '../config/types.ts';
-import type { FieldMap } from '../ui/charts.ts';
 import type { LinkState } from './DeviceManager.ts';
 
 export interface UiState {
-  workspace: 'display' | 'gun';
   displayShape: string;
   displayView: 'scene' | 'plan' | 'field';
   speed: number;
@@ -17,15 +15,3 @@ export interface AppHost {
   saveConfig(): void;
   saveUiState(): void;
 }
-
-export interface Workspace {
-  mount(): void;
-  activate(): void;
-  deactivate(): void;
-  onDeviceChanged(): void;
-  setFpsListener(): void;
-  dispose(): void;
-}
-
-export type { FieldMap };
-

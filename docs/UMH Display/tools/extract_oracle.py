@@ -27,7 +27,6 @@ from umh_display.geometry.elements import element_positions_m  # noqa: E402
 from umh_display.motion import color, plan as make_plan  # noqa: E402
 from umh_display.motion.path import build_dense  # noqa: E402
 from umh_display.physics import dynamics  # noqa: E402
-from umh_display.physics.bottle import FreeSpace, bottle_phase, clamp_split, core_radius  # noqa: E402
 from umh_display.physics.field import FieldModel, axial_wells, field_shape, lateral_law  # noqa: E402
 from umh_display.physics.trap import TrapModel, spin_fold_accel, spin_fold_hz  # noqa: E402
 from umh_display.shapes import make, place  # noqa: E402
@@ -242,10 +241,6 @@ def protocol_fixtures() -> None:
     points = [P.MotionPoint(i * 1000.0, -i * 500.0, 102000.0, 255 - i, (i * 16) & 0xFF)
               for i in range(3)]
     big = [P.MotionPoint(i * 10.0, i * -10.0, 102000.0, 255, i & 0xFF) for i in range(300)]
-    holo_cfg = P.HologramConfig(flags=P.HOLOGRAM_FLAG_HOLD_LAST, output_rate_hz=200,
-                                transition_ms=50, level=128, keyframes=2)
-    phases = bytes(range(84))
-    levels = bytes([128] * 84)
     status_bytes = struct.pack("<BBHHHiiiBBHHHHHHHIIII", 2, 3, 2000, 212, 53,
                                -12500, 8000, 102000, 255, 0, 32768, 10, 20, 30, 40, 50, 60,
                                123456, 7, 2, 199990)
@@ -254,18 +249,10 @@ def protocol_fixtures() -> None:
     profile[16:32] = b"7.4.0\0\0\0\0\0\0\0\0\0\0\0"
     struct.pack_into("<H", profile, 64, 84)
     struct.pack_into("<II", profile, 80, 40000, 343000000)
-    struct.pack_into("<I", profile, 106, (1 << 12) | (1 << 13) | (1 << 11))
+    struct.pack_into("<I", profile, 106, (1 << 12) | (1 << 13))
     coords = np.column_stack([np.zeros(84), np.zeros(84), np.full(84, 7000)])
     for i, (x, y, z) in enumerate(coords):
         struct.pack_into("<iii", profile, 110 + 12 * i, int(x), int(y), int(z))
-    cal = bytearray(323)
-    legacy = struct.pack("<84sBBBBBBBHH10f", bytes([(i * 3) & 0xFF for i in range(84)]),
-                         100, 4, 0, 0, 5, 12, 34, 220, 47,
-                         1.0, 0.5, 0.0, 3.0, 0.047, 0.25, -0.1, 2.5, 0.0, 1.2)
-    ext = struct.pack("<3fHBBBBBB84s84s", 3.2, 0.7, 1.3, 210, 80, 0, 2, 2, 1, 2,
-                      bytes([128] * 84), bytes([3] * 84))
-    cal[0:len(legacy)] = legacy
-    cal[len(legacy):len(legacy) + len(ext)] = ext
     write("protocol.json", {
         "frame": P.encode_frame(P.MSG_MOTION_START, b"", 0x12345678).hex(),
         "motion_config": cfg.pack().hex(),
@@ -275,8 +262,6 @@ def protocol_fixtures() -> None:
         "chunk_lengths": [len(c) for c in P.upload_chunks(big)],
         "target": P.target_payload(points[1]).hex(),
         "rate": P.rate_payload(0.42, 600).hex(),
-        "hologram_config": holo_cfg.pack().hex(),
-        "hologram_payload": P.hologram_payload([(phases, levels)], 0).hex(),
         "motion_status": status_bytes.hex(),
         "motion_status_expected": {
             "state": 2, "flags": 3, "output_rate_hz": 2000, "path_points": 212, "loop_ms": 53,
@@ -289,31 +274,10 @@ def protocol_fixtures() -> None:
         "profile_expected": {
             "model": "UMH-84", "firmware": "7.4.0", "channels": 84, "carrier_hz": 40000,
             "sound_speed_um_s": 343000000,
-            "caps": (1 << 12) | (1 << 13) | (1 << 11),
+            "caps": (1 << 12) | (1 << 13),
             "max_path_points": 1024,
             "first_coord": [0, 0, 7000],
         },
-        "cal": bytes(cal).hex(),
-        "cal_expected": {"state": 5, "progress": 100, "good_mics": 4, "fault": 0,
-                         "quality_flags": 0, "table_mm": 47.0, "pairs": 210, "covered": 80,
-                         "dead": 0, "committed": True, "method": 2},
-        "gui_level_none": P.gui_levitation_level(None),
-        "gui_level_47": P.gui_levitation_level(47),
-    })
-
-
-# ------------------------------------------------------------------ bottle
-def bottle_fixtures() -> None:
-    space = FreeSpace()
-    drive = bottle_phase(space, -10.0, 5.0, 70.0, 32.0)
-    write("bottle.json", {
-        "positions": arr(space.positions), "radii": arr(space.radii),
-        "aperture_radius_mm": space.aperture_radius_mm,
-        "phase_angle": arr(np.angle(drive)),
-        "clamp_20": clamp_split(space, 20.0), "clamp_32": clamp_split(space, 32.0),
-        "clamp_50": clamp_split(space, 50.0),
-        "core_29": core_radius(29.0), "core_32": core_radius(32.0), "core_35": core_radius(35.0),
-        "height_z": space.z_of(70.0),
     })
 
 
@@ -326,7 +290,6 @@ def main() -> None:
     dynamics_fixtures()
     emulation_fixtures()
     protocol_fixtures()
-    bottle_fixtures()
     print("fixtures ->", OUT)
 
 

@@ -59,21 +59,15 @@ export interface DisplayConfig {
   hoverBrightness: number;
 }
 
-export interface GravityGunConfig {
-  level: number;
-  heightMm: number;
-  splitMm: number;
-  sensitivityMmS: number;
-  zSpeedMmS: number;
-  speedLimitMmS: number;
-  updateHz: number;
-  deadzone: number;
-  smoothingMs: number;
-  boundsMm: [number, number, number];
-  bottomMm: number;
-  heightMaxMm: number;
-  phaseSign: number;
-  useCalibration: boolean;
+/**
+ * "No limits" playback.  The geometry is uploaded as-is and the firmware
+ * follows it linearly; loopMs is the device loop and rate scales it down.
+ * The effective loop is loopMs / rate (up to 16.7 h at the device limits).
+ */
+export interface UnlimitedConfig {
+  enabled: boolean;
+  loopMs: number;
+  rate: number;
 }
 
 export interface AppConfig {
@@ -83,5 +77,5 @@ export interface AppConfig {
   trap: TrapConfig;
   planner: PlannerConfig;
   display: DisplayConfig;
-  gravityGun: GravityGunConfig;
+  unlimited: UnlimitedConfig;
 }

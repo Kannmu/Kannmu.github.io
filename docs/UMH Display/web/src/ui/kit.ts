@@ -77,6 +77,45 @@ export function slider(options: SliderOptions): SliderHandle {
   };
 }
 
+export interface ToggleHandle {
+  root: HTMLElement;
+  input: HTMLInputElement;
+  setChecked(checked: boolean): void;
+}
+
+export function toggle(options: {
+  label: string;
+  checked: boolean;
+  hint?: string;
+  onChange: (checked: boolean) => void;
+}): ToggleHandle {
+  const input = el('input', {
+    type: 'checkbox',
+    class: 'switch-input',
+    attrs: { 'aria-label': options.label }
+  }) as HTMLInputElement;
+  input.checked = options.checked;
+  input.addEventListener('change', () => options.onChange(input.checked));
+  const root = el(
+    'div',
+    { class: 'control switch-control' },
+    el(
+      'div',
+      { class: 'switch-copy' },
+      el('span', { class: 'control-label', text: options.label }),
+      options.hint ? el('p', { class: 'section-note', text: options.hint }) : null
+    ),
+    el('label', { class: 'switch' }, input, el('span', { class: 'switch-track' }))
+  );
+  return {
+    root,
+    input,
+    setChecked(checked: boolean) {
+      input.checked = checked;
+    }
+  };
+}
+
 export interface SegmentedOption<T extends string> {
   value: T;
   label: string;
@@ -391,11 +430,11 @@ function localizeWarning(warning: string): string {
   return warning;
 }
 
-export function renderWarnings(container: HTMLElement, warnings: string[]): void {
+export function renderWarnings(container: HTMLElement, warnings: string[], emptyText = '模型检查通过：轨迹在陷阱能力范围内'): void {
   container.innerHTML = '';
   if (warnings.length === 0) {
     container.append(
-      el('div', { class: 'warning-empty' }, icon('check', 13), el('span', { text: '模型检查通过：轨迹在陷阱能力范围内' }))
+      el('div', { class: 'warning-empty' }, icon('check', 13), el('span', { text: emptyText }))
     );
     mountIcons(container);
     return;
@@ -457,17 +496,6 @@ export function setLoading(loading: HTMLElement, textEl: HTMLElement | null, loa
   if (textEl && text) textEl.textContent = text;
 }
 
-export function progressBar(): { root: HTMLElement; set(value: number): void } {
-  const fill = el('i');
-  const root = el('div', { class: 'progress-bar', attrs: { role: 'progressbar' } }, fill);
-  return {
-    root,
-    set(value: number) {
-      fill.style.width = `${Math.max(0, Math.min(100, value))}%`;
-      root.setAttribute('aria-valuenow', String(Math.round(value)));
-    }
-  };
-}
 
 export function mount(root: HTMLElement = document.body): void {
   mountIcons(root);

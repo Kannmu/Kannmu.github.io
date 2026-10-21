@@ -3,10 +3,10 @@
  * array, so drawing is a few strokes and one ImageData blit.
  */
 import type { Plan } from '../motion/planner.ts';
+import { formatDuration } from '../core/math.ts';
 
 const CYAN = '#65d8e7';
 const AMBER = '#ffb648';
-const MAGENTA = '#ff6f9f';
 const GRID = 'rgba(255,255,255,0.075)';
 const TEXT = 'rgba(183,196,207,0.62)';
 const DIM = 'rgba(127,142,156,0.8)';
@@ -98,8 +98,9 @@ export function drawSpeedChart(canvas: HTMLCanvasElement, plan: Plan | null, pro
     if (plan.speed[i] > speedMax) speedMax = plan.speed[i];
     if (plan.accel[i] > accelMax) accelMax = plan.accel[i];
   }
-  speedMax = Math.max(speedMax * 1e3 * 1.12, 1);
-  accelMax = Math.max(accelMax * 1.12, 1);
+  const floor = plan.raw ? 1e-9 : 1;
+  speedMax = Math.max(speedMax * 1e3 * 1.12, floor);
+  accelMax = Math.max(accelMax * 1.12, floor);
   const n = plan.speed.length;
   const periodMs = plan.periodS * 1e3;
   const xs = new Float64Array(n);
@@ -129,18 +130,21 @@ export function drawSpeedChart(canvas: HTMLCanvasElement, plan: Plan | null, pro
   ctx.fillStyle = TEXT;
   ctx.textAlign = 'right';
   ctx.textBaseline = 'top';
-  ctx.fillText(`${speedMax.toFixed(0)}`, left - 6, top);
+  const speedLabel =
+    speedMax >= 10 ? speedMax.toFixed(0) : speedMax >= 0.1 ? speedMax.toFixed(2) : speedMax.toExponential(1);
+  ctx.fillText(speedLabel, left - 6, top);
   ctx.fillStyle = 'rgba(101,216,231,0.75)';
   ctx.fillText('mm/s', left - 6, top + 11);
   ctx.textAlign = 'left';
   ctx.fillStyle = 'rgba(255,182,72,0.78)';
-  ctx.fillText(`${accelMax.toFixed(0)} m/s²`, left + plotW + 5, top);
+  const accelLabel = plan.raw ? '0' : accelMax >= 1 ? accelMax.toFixed(0) : accelMax.toExponential(1);
+  ctx.fillText(plan.raw ? 'a 0' : `${accelLabel} m/s²`, left + plotW + 5, top);
   ctx.fillStyle = TEXT;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
   ctx.fillText('0', left, top + plotH + 4);
-  ctx.fillText(`${(periodMs / 2).toFixed(0)}`, left + plotW / 2, top + plotH + 4);
-  ctx.fillText(`${periodMs.toFixed(0)} ms`, left + plotW, top + plotH + 4);
+  ctx.fillText(plan.raw ? formatDuration(periodMs / 2) : `${(periodMs / 2).toFixed(0)}`, left + plotW / 2, top + plotH + 4);
+  ctx.fillText(plan.raw ? formatDuration(periodMs) : `${periodMs.toFixed(0)} ms`, left + plotW, top + plotH + 4);
 
   // cursor
   const cx = left + plotW * Math.max(0, Math.min(1, progress));
@@ -343,156 +347,4 @@ export interface FieldMap {
   yMin: number;
   yMax: number;
   unit?: string;
-}
-
-function fieldColor(t: number): [number, number, number] {
-  // dark plasma: deep blue -> cyan -> amber -> warm white
-  const stops: Array<[number, [number, number, number]]> = [
-    [0, [4, 8, 12]],
-    [0.28, [16, 54, 74]],
-    [0.55, [55, 170, 190]],
-    [0.78, [255, 166, 60]],
-    [1, [255, 238, 210]]
-  ];
-  for (let i = 1; i < stops.length; i++) {
-    if (t <= stops[i][0]) {
-      const [a, ca] = stops[i - 1];
-      const [b, cb] = stops[i];
-      const u = (t - a) / (b - a);
-      return [ca[0] + (cb[0] - ca[0]) * u, ca[1] + (cb[1] - ca[1]) * u, ca[2] + (cb[2] - ca[2]) * u];
-    }
-  }
-  return stops[stops.length - 1][1];
-}
-
-/** Pressure/potential slice, drawn as a heat map with axes. */
-export function drawFieldMap(
-  canvas: HTMLCanvasElement,
-  map: FieldMap | null,
-  marker?: { x: number; y: number } | null
-): void {
-  const surfaceData = surface(canvas);
-  if (!surfaceData) return;
-  const { ctx, width, height } = surfaceData;
-  const padLeft = 46;
-  const padBottom = 20;
-  const padTop = 8;
-  const padRight = 10;
-  const plotW = width - padLeft - padRight;
-  const plotH = height - padTop - padBottom;
-  if (plotW < 8 || plotH < 8) return;
-
-  ctx.fillStyle = '#04070a';
-  ctx.fillRect(padLeft, padTop, plotW, plotH);
-
-  if (!map) {
-    ctx.fillStyle = DIM;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('等待声场截面…', padLeft + plotW / 2, padTop + plotH / 2);
-    return;
-  }
-
-  const off = document.createElement('canvas');
-  off.width = map.width;
-  off.height = map.height;
-  const octx = off.getContext('2d')!;
-  const image = octx.createImageData(map.width, map.height);
-  for (let y = 0; y < map.height; y++) {
-    for (let x = 0; x < map.width; x++) {
-      const value = map.values[(map.height - 1 - y) * map.width + x];
-      const [r, g, b] = fieldColor(Math.max(0, Math.min(1, value)));
-      const at = (y * map.width + x) * 4;
-      image.data[at] = r;
-      image.data[at + 1] = g;
-      image.data[at + 2] = b;
-      image.data[at + 3] = 255;
-    }
-  }
-  octx.putImageData(image, 0, 0);
-  ctx.imageSmoothingEnabled = true;
-  ctx.drawImage(off, padLeft, padTop, plotW, plotH);
-
-  ctx.strokeStyle = 'rgba(255,255,255,0.14)';
-  ctx.lineWidth = 1;
-  ctx.strokeRect(padLeft + 0.5, padTop + 0.5, plotW - 1, plotH - 1);
-
-  ctx.fillStyle = TEXT;
-  ctx.font = MONO;
-  ctx.textAlign = 'right';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(`${Math.round(map.yMin)} mm`, padLeft - 5, padTop + plotH);
-  ctx.fillText(`${Math.round(map.yMax)} mm`, padLeft - 5, padTop + 2);
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'bottom';
-  ctx.fillText('y', 12, padTop + 8);
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  ctx.fillText(`${Math.round(map.xMin)} mm`, padLeft, padTop + plotH + 4);
-  ctx.fillText(`${Math.round(map.xMax)} mm`, padLeft + plotW, padTop + plotH + 4);
-
-  if (marker) {
-    const mx = padLeft + ((marker.x - map.xMin) / (map.xMax - map.xMin)) * plotW;
-    const my = padTop + (1 - (marker.y - map.yMin) / (map.yMax - map.yMin)) * plotH;
-    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(mx - 5, my);
-    ctx.lineTo(mx + 5, my);
-    ctx.moveTo(mx, my - 5);
-    ctx.lineTo(mx, my + 5);
-    ctx.stroke();
-    ctx.fillStyle = 'rgba(255,255,255,0.92)';
-    ctx.beginPath();
-    ctx.arc(mx, my, 1.8, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
-
-/** Rolling trap speed trace for the gravity gun. */
-export function drawSpeedTrace(
-  canvas: HTMLCanvasElement,
-  history: Array<{ t: number; v: number }>,
-  limit: number
-): void {
-  const surfaceData = surface(canvas);
-  if (!surfaceData) return;
-  const { ctx, width, height } = surfaceData;
-  const pad = 10;
-  const plotW = width - pad * 2;
-  const plotH = height - pad * 2;
-  ctx.fillStyle = 'rgba(255,255,255,0.016)';
-  ctx.fillRect(pad, pad, plotW, plotH);
-  ctx.strokeStyle = GRID;
-  ctx.beginPath();
-  for (let i = 0; i <= 3; i++) {
-    const y = pad + (plotH * i) / 3;
-    ctx.moveTo(pad, y);
-    ctx.lineTo(pad + plotW, y);
-  }
-  ctx.stroke();
-  if (history.length < 2) {
-    ctx.fillStyle = DIM;
-    ctx.font = MONO;
-    ctx.textAlign = 'center';
-    ctx.fillText('移动声瓶后显示速度', width / 2, height / 2);
-    return;
-  }
-  const t0 = history[0].t;
-  const span = Math.max(history[history.length - 1].t - t0, 1);
-  const maxV = Math.max(limit * 1.1, ...history.map((entry) => entry.v), 1);
-  ctx.beginPath();
-  ctx.strokeStyle = MAGENTA;
-  ctx.lineWidth = 1.4;
-  for (let i = 0; i < history.length; i++) {
-    const x = pad + ((history[i].t - t0) / span) * plotW;
-    const y = pad + plotH - (history[i].v / maxV) * plotH;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-  ctx.fillStyle = TEXT;
-  ctx.font = MONO;
-  ctx.textAlign = 'right';
-  ctx.fillText(`${maxV.toFixed(0)}`, width - pad, pad + 8);
 }

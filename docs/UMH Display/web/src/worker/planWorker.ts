@@ -6,7 +6,6 @@
 import { plan } from '../motion/planner.ts';
 import type { AppConfig } from '../config/types.ts';
 import { fieldShape, FieldModel } from '../physics/field.ts';
-import { FreeSpace, bottlePhase } from '../physics/bottle.ts';
 
 interface PlanRequest {
   type: 'plan';
@@ -29,21 +28,7 @@ interface DisplayFieldRequest {
   bead: { diameterMm: number; densityKgM3: number };
 }
 
-interface GunSliceRequest {
-  type: 'gun-slice';
-  id: number;
-  coordinatesUm: Array<[number, number, number]>;
-  xMm: number;
-  yMm: number;
-  heightMm: number;
-  splitMm: number;
-  xHalfMm: number;
-  zMaxMm: number;
-  gridX: number;
-  gridZ: number;
-}
-
-type Request = PlanRequest | DisplayFieldRequest | GunSliceRequest | { type: 'warmup'; id: number };
+type Request = PlanRequest | DisplayFieldRequest | { type: 'warmup'; id: number };
 
 interface FieldMapResponse {
   width: number;
@@ -99,45 +84,6 @@ function displayField(request: DisplayFieldRequest): FieldMapResponse {
   return { width: n, height: n, values, xMin: -half, xMax: half, yMin: -half, yMax: half };
 }
 
-function gunSlice(request: GunSliceRequest): FieldMapResponse {
-  const space = new FreeSpace(request.coordinatesUm);
-  const drive = bottlePhase(space, request.xMm, request.yMm, request.heightMm, request.splitMm);
-  const nx = request.gridX;
-  const nz = request.gridZ;
-  const xHalf = request.xHalfMm;
-  const zMax = request.zMaxMm;
-  const values = new Float32Array(nx * nz);
-  const k = (2 * Math.PI * 40000) / 343;
-  const planeZ = space.planeZ;
-  for (let iz = 0; iz < nz; iz++) {
-    const height = (zMax * iz) / (nz - 1);
-    const z = planeZ + height * 1e-3;
-    for (let ix = 0; ix < nx; ix++) {
-      const x = (-xHalf + (2 * xHalf * ix) / (nx - 1)) * 1e-3;
-      let re = 0;
-      let im = 0;
-      for (let j = 0; j < space.channels; j++) {
-        const dx = x - space.positions[j * 3];
-        const dy = -space.positions[j * 3 + 1];
-        const dz = z - space.positions[j * 3 + 2];
-        const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (r < 1e-9) continue;
-        const angle = k * r;
-        const c = Math.cos(angle);
-        const s = Math.sin(angle);
-        const amp = 1 / r;
-        // drive * exp(i k r) / r
-        re += (drive.re[j] * c - drive.im[j] * s) * amp;
-        im += (drive.re[j] * s + drive.im[j] * c) * amp;
-      }
-      values[iz * nx + ix] = re * re + im * im;
-    }
-  }
-  const range = percentileRange(values);
-  normalize(values, range.lo, range.hi);
-  return { width: nx, height: nz, values, xMin: -xHalf, xMax: xHalf, yMin: 0, yMax: zMax };
-}
-
 function reply(message: Record<string, unknown>, transfer?: Transferable[]): void {
   (self as unknown as DedicatedWorkerGlobalScope).postMessage(message, transfer ?? []);
 }
@@ -169,11 +115,6 @@ function reply(message: Record<string, unknown>, transfer?: Transferable[]): voi
     if (request.type === 'display-field') {
       const result = displayField(request);
       reply({ type: 'field-result', id: request.id, map: result }, [result.values.buffer]);
-      return;
-    }
-    if (request.type === 'gun-slice') {
-      const result = gunSlice(request);
-      reply({ type: 'slice-result', id: request.id, map: result }, [result.values.buffer]);
       return;
     }
   } catch (error) {

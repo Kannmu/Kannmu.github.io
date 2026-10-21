@@ -82,20 +82,6 @@ export class PlanClient {
     return this.request<FieldMap>({ type: 'display-field', ...options });
   }
 
-  async gunSlice(options: {
-    coordinatesUm: Array<[number, number, number]>;
-    xMm: number;
-    yMm: number;
-    heightMm: number;
-    splitMm: number;
-    xHalfMm: number;
-    zMaxMm: number;
-    gridX: number;
-    gridZ: number;
-  }): Promise<FieldMap> {
-    return this.request<FieldMap>({ type: 'gun-slice', ...options });
-  }
-
   dispose(): void {
     this.worker.terminate();
     for (const pending of this.pending.values()) pending.reject(new Error('planning worker disposed'));

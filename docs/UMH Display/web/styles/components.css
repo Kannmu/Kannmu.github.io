@@ -1012,42 +1012,6 @@ input[type="range"]:active::-webkit-slider-thumb {
 }
 
 @media (max-width: 760px) {
-  :root {
-    --topbar-h: 116px;
-  }
-  .topbar {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: 64px 42px;
-    height: var(--topbar-h);
-    align-items: center;
-    padding: 0 12px;
-  }
-  .workspace-tabs {
-    position: static;
-    display: flex;
-    grid-column: 1 / -1;
-    order: 3;
-    width: 100%;
-    height: 38px;
-    padding: 3px;
-    border-radius: 11px;
-  }
-  .workspace-tab {
-    flex: 1;
-    justify-content: center;
-    padding: 3px 8px;
-    gap: 6px;
-  }
-  .workspace-tab .tab-copy strong {
-    font-size: 11.5px;
-  }
-  .workspace-tab .tab-copy small,
-  .workspace-tab .tab-key {
-    display: none;
-  }
-  .workspace-tab.is-active::after {
-    display: none;
-  }
   .main {
     padding-top: 2px;
   }
@@ -1060,23 +1024,8 @@ input[type="range"]:active::-webkit-slider-thumb {
 }
 
 /* progress + meters */
-.progress-bar {
-  position: relative;
-  height: 3px;
-  margin: 9px 0 6px;
-  border-radius: 99px;
-  background: rgba(255, 255, 255, 0.1);
-  overflow: hidden;
-}
 
-.progress-bar i {
-  display: block;
-  width: 0%;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--amber), var(--magenta));
-  transition: width 0.35s var(--ease);
-}
+
 
 .level-meter {
   position: relative;
@@ -1105,26 +1054,10 @@ input[type="range"]:active::-webkit-slider-thumb {
   color: var(--dim);
 }
 
-.cal-block {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px dashed var(--line);
-}
 
-.cal-status {
-  font-size: 10px;
-  line-height: 1.55;
-  color: var(--muted);
-  word-break: break-word;
-}
 
-.cal-status.is-good {
-  color: var(--green);
-}
 
-.cal-status.is-bad {
-  color: var(--red);
-}
+
 
 .pad-row {
   display: flex;
@@ -1188,99 +1121,6 @@ input[type="range"]:active::-webkit-slider-thumb {
   flex: 1;
 }
 
-.gun-status-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.gun-status-cell {
-  padding: 7px 9px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.gun-status-cell span {
-  display: block;
-  font-size: 8px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-
-.gun-status-cell strong {
-  display: block;
-  margin-top: 2px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-2);
-}
-
-.btn.is-armed {
-  border-color: rgba(255, 93, 108, 0.6);
-  background: rgba(255, 93, 108, 0.2);
-  color: #ffd0d4;
-  animation: live-pulse 1.2s ease-in-out infinite;
-}
-
-.section-sub {
-  margin: -4px 0 9px;
-  font-size: 9.5px;
-  line-height: 1.55;
-  color: var(--dim);
-}
-
-@media (max-width: 760px) {
-  .metric-strip {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .metric-value {
-    font-size: 15px;
-  }
-}
-
-@media (max-width: 520px) {
-  .metric-strip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.palette-strip {
-  display: flex;
-  gap: 2px;
-  height: 7px;
-  margin-top: 10px;
-  border-radius: 99px;
-  overflow: hidden;
-  box-shadow: 0 0 0 1px var(--line) inset;
-}
-
-.palette-strip span {
-  flex: 1;
-  min-width: 0;
-}
-
-.rail-actions {
-  display: flex;
-  gap: 6px;
-  padding: 10px 14px;
-  border-top: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(8, 12, 16, 0.4), rgba(8, 12, 16, 0.85));
-}
-
-.rail-actions .btn {
-  flex: 1;
-  min-width: 0;
-  padding: 0 10px;
-}
-
-.rail-actions .btn-primary {
-  flex: 1.15;
-}
-
 /* --------------------------------------------------------- compact HUD / mobile */
 @media (max-width: 760px) {
   .main {
@@ -1311,8 +1151,7 @@ input[type="range"]:active::-webkit-slider-thumb {
     justify-content: flex-end;
     max-width: calc(100% - 20px);
   }
-  .hud-tr .icon-btn#displayResetView,
-  .hud-tr .icon-btn#gunResetView {
+  .hud-tr .icon-btn#displayResetView {
     display: none;
   }
   .hud-tl {
@@ -1375,4 +1214,103 @@ input[type="range"]:active::-webkit-slider-thumb {
   .mini-select {
     display: none;
   }
+}
+
+/* -------------------------------------------------------------- switch */
+.switch-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.switch-copy {
+  min-width: 0;
+}
+
+.switch-copy .control-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 550;
+  color: var(--text-2);
+}
+
+.switch-copy .section-note {
+  margin: 4px 0 0;
+}
+
+.switch {
+  position: relative;
+  flex: none;
+  width: 40px;
+  height: 22px;
+  cursor: pointer;
+}
+
+.switch-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.switch-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  transition: background 0.18s var(--ease), border-color 0.18s var(--ease);
+}
+
+.switch-track::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(220, 230, 240, 0.7);
+  transition: transform 0.18s var(--ease), background 0.18s var(--ease);
+}
+
+.switch-input:checked + .switch-track {
+  border-color: rgba(255, 182, 72, 0.55);
+  background: rgba(255, 182, 72, 0.2);
+}
+
+.switch-input:checked + .switch-track::after {
+  transform: translateX(18px);
+  background: var(--amber);
+}
+
+.switch-input:focus-visible + .switch-track {
+  outline: 2px solid rgba(255, 182, 72, 0.6);
+  outline-offset: 2px;
+}
+
+.raw-group[hidden],
+.normal-motion[hidden] {
+  display: none;
+}
+
+.raw-summary {
+  margin: 8px 0 4px;
+  padding: 8px 10px;
+  border: 1px solid rgba(101, 216, 231, 0.18);
+  border-radius: 8px;
+  background: rgba(101, 216, 231, 0.045);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+
+.raw-summary strong {
+  color: var(--cyan);
+  font-weight: 550;
 }

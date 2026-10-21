@@ -47,6 +47,12 @@ export type RGB = [number, number, number];
 
 export interface Plan {
   name: string;
+  /** True when the path is a plain geometric trajectory (no dynamics). */
+  raw?: boolean;
+  /** Firmware loop period before the playback-rate divider. */
+  deviceLoopS?: number;
+  /** Firmware path rate factor (0.001..1). */
+  playbackRate?: number;
   periodS: number;
   points: MotionPoint[];
   palette: RGB[];
@@ -965,12 +971,138 @@ function falloff_A(model: TrapModel, x: number, y: number): number {
   return Math.exp(-(x * x + y * y) / (model.offaxisR0 * model.offaxisR0));
 }
 
+
+/**
+ * Plain trajectory: sample the shape, keep every visible LED/color sample, and
+ * upload the points as-is.  No TOPP, jerk filter, anti-resonance prefilter,
+ * feedforward or bead simulation is involved.
+ *
+ * The firmware already supports arbitrary slow loops: loop_ms is 1..60000 and
+ * the Q0.10 rate divider is 0.001..1, so the effective loop can be as long as
+ * 60000 s (16.7 h) for a 50 mm circle at ~0.0008 mm/s.
+ */
+export function planRaw(cfg: AppConfig, planar: Planar, maxPoints: number): Plan {
+  const pc = cfg.planner;
+  const dc = cfg.display;
+  const uc = cfg.unlimited;
+  const level = drawLevel(cfg);
+  const model = trapModelFromConfig(cfg, level);
+  // radius 0 keeps vertices sharp; the per-vertex glyph radius (if any) is
+  // still honoured by buildDense.
+  const path = buildDense(planar, 0, Math.max(0.01, pc.sampleStepMm), 'round');
+  const loopS = Math.max(1, Math.min(60000, Math.round(uc.loopMs))) / 1000;
+  const rate = Math.max(0.001, Math.min(1, uc.rate));
+  const periodS = loopS / rate;
+  const nPath = path.x.length;
+  const n = Math.min(4096, nPath);
+  const sampleX = new Float64Array(n);
+  const sampleY = new Float64Array(n);
+  const sampleHue = new Float64Array(n);
+  const sampleLit = new Uint8Array(n);
+  for (let i = 0; i < n; i++) {
+    const at = n === 1 ? 0 : Math.round((i * (nPath - 1)) / (n - 1));
+    sampleX[i] = path.x[at];
+    sampleY[i] = path.y[at];
+    sampleHue[i] = path.hue[at];
+    sampleLit[i] = path.visible[at];
+  }
+  const intensity = new Float64Array(n);
+  for (let i = 0; i < n; i++) intensity[i] = sampleLit[i] * dc.brightness ** dc.gamma;
+  const color = encodeColor(cfg, sampleHue, intensity);
+  const speedValue = path.length / periodS;
+  const speed = new Float64Array(n).fill(speedValue);
+  const accel = new Float64Array(n);
+  const t = new Float64Array(n);
+  for (let i = 0; i < n; i++) t[i] = (i / n) * periodS;
+
+  const npts = Math.max(1, Math.min(maxPoints, n));
+  const points: MotionPoint[] = [];
+  for (let i = 0; i < npts; i++) {
+    const at = npts === 1 ? 0 : Math.round((i * (n - 1)) / (npts - 1));
+    points.push(new MotionPoint(sampleX[at] * 1e6, sampleY[at] * 1e6, focusZmmOf(cfg) * 1000, color.level[at], color.paletteByte[at]));
+  }
+  const led = previewRgb(color.palette, color.paletteByte, color.level);
+  const ledR = new Float64Array(n);
+  const ledG = new Float64Array(n);
+  const ledB = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    ledR[i] = led[i][0];
+    ledG[i] = led[i][1];
+    ledB[i] = led[i][2];
+  }
+
+  const targetX: number[] = [];
+  const targetY: number[] = [];
+  for (let i = 0; i < n; i++) {
+    if (!sampleLit[i]) continue;
+    targetX.push(sampleX[i]);
+    targetY.push(sampleY[i]);
+  }
+  let litLength = 0;
+  for (let i = 0; i < nPath; i++) if (path.visible[i]) litLength += path.ds[i];
+
+  const metrics: Record<string, number> = {
+    periodMs: periodS * 1e3,
+    refreshHz: 1 / periodS,
+    lengthMm: path.length * 1e3,
+    litMm: litLength * 1e3,
+    vMaxMmS: speedValue * 1e3,
+    vLitMeanMmS: speedValue * 1e3,
+    aMaxMS2: 0,
+    jerkMaxMS3: 0,
+    forceUse: 0,
+    leadMaxMm: 0,
+    refErrMm: 0,
+    shapePredMm: 0,
+    points: npts,
+    level,
+    deviceLoopMs: loopS * 1e3,
+    playbackRate: rate,
+    pathSamples: n
+  };
+
+  return {
+    name: planar.name,
+    raw: true,
+    deviceLoopS: loopS,
+    playbackRate: rate,
+    periodS,
+    points,
+    palette: color.palette,
+    paletteSpinX10: color.spinX10,
+    focusZUm: focusZmmOf(cfg) * 1000,
+    rateHz: pc.outputRateHz,
+    rampMs: 0,
+    level,
+    t,
+    beadX: sampleX,
+    beadY: sampleY,
+    trapX: sampleX,
+    trapY: sampleY,
+    ledR,
+    ledG,
+    ledB,
+    speed,
+    accel,
+    simBeadX: null,
+    simBeadY: null,
+    targetX: Float64Array.from(targetX),
+    targetY: Float64Array.from(targetY),
+    beadLit: sampleLit,
+    metrics,
+    warnings: [],
+    path,
+    trapModel: model
+  };
+}
+
 export function plan(cfg: AppConfig, name: string, options: PlanOptions = {}): Plan {
   const planar = options.planar ?? placeShape(cfg, name);
   const budget = Math.min(
     Math.trunc(cfg.planner.maxPoints),
     Math.trunc(options.maxPoints ?? cfg.planner.maxPoints)
   );
+  if (cfg.unlimited.enabled) return planRaw(cfg, planar, budget);
   return planOnce(cfg, planar, options.verify ?? true, budget, options.periodS);
 }
 

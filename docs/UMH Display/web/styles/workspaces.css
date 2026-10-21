@@ -40,8 +40,7 @@
 
 /* Mobile HUD: keep the title clear, put view controls above the playback bar. */
 @media (max-width: 760px) {
-  #workspace-display .hud-tr,
-  #workspace-gun .hud-tr {
+  #workspace-display .hud-tr {
     top: auto;
     right: auto;
     left: 12px;
@@ -67,8 +66,7 @@
     content: attr(data-short);
     font-size: 9.5px;
   }
-  #workspace-display .hud-tl,
-  #workspace-gun .hud-tl {
+  #workspace-display .hud-tl {
     max-width: calc(100% - 24px);
   }
 }

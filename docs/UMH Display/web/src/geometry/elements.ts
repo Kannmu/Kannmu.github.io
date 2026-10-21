@@ -51,7 +51,7 @@ export function elementPositionsM(coordinatesUm?: ReadonlyArray<readonly [number
   return { xyz, count: n };
 }
 
-/** Aperture radius (m) around the array centre, for the bottle beam. */
+/** Aperture radius (m) around the array centre. */
 export function apertureRadiusM(coordinatesUm?: ReadonlyArray<readonly [number, number, number]> | null): number {
   const pos = elementPositionsM(coordinatesUm);
   let cx = 0;

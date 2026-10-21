@@ -67,21 +67,10 @@ export function createDefaultConfig(): AppConfig {
       evenLines: 0.8,
       hoverBrightness: 0.15
     },
-    gravityGun: {
-      level: 128,
-      heightMm: 70.0,
-      splitMm: 32.0,
-      sensitivityMmS: 60.0,
-      zSpeedMmS: 30.0,
-      speedLimitMmS: 150.0,
-      updateHz: 20.0,
-      deadzone: 0.12,
-      smoothingMs: 60.0,
-      boundsMm: [45.0, 45.0, 120.0],
-      bottomMm: 40.0,
-      heightMaxMm: 115.0,
-      phaseSign: 1.0,
-      useCalibration: true
+    unlimited: {
+      enabled: false,
+      loopMs: 2000,
+      rate: 1
     }
   };
 }

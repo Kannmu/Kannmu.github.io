@@ -14,7 +14,6 @@ import {
   MotionPoint,
   SYS_VORTEX_ALT,
   SYS_VORTEX_STEADY,
-  type CalResult,
   type MotionStatus
 } from './protocol.ts';
 import type { DeviceLike } from './types.ts';
@@ -59,6 +58,7 @@ export class Session {
   hoverYUm: number;
   readonly abort = { value: false };
   private runSince = 0;
+  playbackRate = 1;
 
   constructor(
     readonly dev: DeviceLike,
@@ -160,20 +160,36 @@ export class Session {
 
   private pathConfig(plan: Plan, rateInitial: number, rateTarget: number, rampMs: number): MotionConfig {
     let flags = FLAG_DIRECT | FLAG_LOOP | FLAG_RGB;
-    if (this.cfg.planner.interpolation === 'linear') flags |= FLAG_LINEAR;
+    if (plan.raw || this.cfg.planner.interpolation === 'linear') flags |= FLAG_LINEAR;
+    const loopS = plan.deviceLoopS ?? plan.periodS;
+    const rawRate = plan.playbackRate ?? 1;
     return new MotionConfig({
       mode: MODE_PATH,
       flags,
       outputRateHz: plan.rateHz,
-      loopMs: Math.round(plan.periodS * 1000),
+      loopMs: Math.max(1, Math.min(60000, Math.round(loopS * 1000))),
+      maxSpeedMmS: plan.raw ? 10000 : undefined,
+      maxAccelMmS2: plan.raw ? 65535 : undefined,
       level: this.level,
       trapMode: trapModeOf(this.cfg),
       palette: plan.palette,
       paletteSpinX10: plan.paletteSpinX10,
-      rateInitial,
-      rateTarget,
-      rateRampMs: rampMs
+      rateInitial: plan.raw ? rawRate : rateInitial,
+      rateTarget: plan.raw ? rawRate : rateTarget,
+      rateRampMs: plan.raw ? 0 : rampMs
     });
+  }
+
+  /** Change the raw-trajectory rate live; the firmware divides the loop rate. */
+  async setPlaybackRate(rate: number): Promise<number> {
+    if (!this.plan?.raw) throw new SessionError('playback rate is only adjustable in raw mode');
+    if (this.state !== SessionState.Running) throw new SessionError('nothing is running');
+    const factor = Math.max(0.001, Math.min(1, rate));
+    await this.dev.rate(factor, 0);
+    this.playbackRate = factor;
+    this.plan.playbackRate = factor;
+    this.plan.periodS = (this.plan.deviceLoopS ?? this.plan.periodS) / factor;
+    return this.plan.periodS;
   }
 
   async play(plan: Plan): Promise<void> {
@@ -189,6 +205,7 @@ export class Session {
     this.hoverYUm = start.yUm;
     this.hoverLevel = this.level;
     this.level = plan.level;
+    this.playbackRate = plan.playbackRate ?? 1;
     await this.dev.configure(this.pathConfig(plan, 0, 1, plan.rampMs));
     this.plan = plan;
     this.runSince = performance.now() / 1000;
@@ -197,7 +214,7 @@ export class Session {
 
   async stopDrawing(): Promise<void> {
     if (this.state !== SessionState.Running) return;
-    const ramp = this.cfg.planner.rampMs;
+    const ramp = this.plan?.raw ? 0 : this.cfg.planner.rampMs;
     await this.dev.rate(0, ramp);
     await sleep(ramp + 80);
     const status = await this.dev.motionStatus();
@@ -220,7 +237,7 @@ export class Session {
           Math.abs(point.yUm - this.plan!.points[i].yUm) < 10
       );
     if (!same) throw new SessionError('geometry changed: stop and play the new plan instead');
-    const wait = this.cfg.planner.rampMs - (performance.now() / 1000 - this.runSince) * 1000;
+    const wait = (this.plan?.raw ? 0 : this.cfg.planner.rampMs) - (performance.now() / 1000 - this.runSince) * 1000;
     if (wait > 0) await sleep(wait);
     await this.dev.upload(plan.points, true);
     await this.dev.configure(this.pathConfig(plan, 1, 1, 0));
@@ -236,17 +253,6 @@ export class Session {
     this.abort.value = true;
     await this.dev.clear();
     this.state = SessionState.Idle;
-  }
-
-  async calibrate(progress?: (result: CalResult) => void): Promise<CalResult> {
-    if ((await this.dev.systemFlags()) & (SYS_VORTEX_STEADY | SYS_VORTEX_ALT)) {
-      throw new SessionError('a defoam vortex program is running; stop it on the device first');
-    }
-    if (this.state !== SessionState.Idle || (await this.dev.motionStatus()).running) {
-      await this.drop();
-      await sleep(300);
-    }
-    return this.dev.calibrate(progress);
   }
 
   /** Lower the trap level in steps while hovering until `fell` is set. */

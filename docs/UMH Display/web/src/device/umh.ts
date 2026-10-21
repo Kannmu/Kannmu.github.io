@@ -4,18 +4,10 @@
  */
 import {
   MAX_POINTS,
-  MSG_CAL_RESULT,
-  MSG_CAL_START,
   MSG_CLEAR_PLAN,
-  MSG_EEPROM_READ,
   MSG_ACK,
   MSG_GET_PROFILE,
   MSG_GET_STATUS,
-  MSG_HOLOGRAM_CONFIG,
-  MSG_HOLOGRAM_START,
-  MSG_HOLOGRAM_STATUS,
-  MSG_HOLOGRAM_STOP,
-  MSG_HOLOGRAM_UPLOAD,
   MSG_MOTION_CONFIG,
   MSG_MOTION_RATE,
   MSG_MOTION_START,
@@ -25,13 +17,8 @@ import {
   MSG_MOTION_UPLOAD,
   MSG_PROFILE,
   MSG_STATUS,
-  HologramConfig,
   MotionConfig,
   MotionPoint,
-  hologramPayload,
-  parseCalResult,
-  parseEepromCalLevel,
-  parseHologramStatus,
   parseMotionStatus,
   parseProfile,
   parseSystemFlags,
@@ -39,16 +26,12 @@ import {
   targetPayload,
   uploadChunks,
   uploadPayload,
-  type CalResult,
-  type HologramStatus,
   type MotionStatus,
   type Profile
 } from './protocol.ts';
 import { SerialLink } from './link.ts';
 import type { SerialPort } from './webSerial.ts';
 import type { DeviceLike } from './types.ts';
-
-const sleep = (ms: number): Promise<void> => new Promise((resolve) => window.setTimeout(resolve, ms));
 
 export class UmhDevice implements DeviceLike {
   readonly profile: Profile;
@@ -94,30 +77,6 @@ export class UmhDevice implements DeviceLike {
     return parseMotionStatus(await this.link.request(MSG_MOTION_STATUS, new Uint8Array(0), MSG_MOTION_STATUS));
   }
 
-  async eepromCalLevel(): Promise<number | null> {
-    return parseEepromCalLevel(await this.link.request(MSG_EEPROM_READ, new Uint8Array(0), MSG_EEPROM_READ));
-  }
-
-  async eepromRead(): Promise<Uint8Array> {
-    return this.link.request(MSG_EEPROM_READ, new Uint8Array(0), MSG_EEPROM_READ);
-  }
-
-  async calibrationResult(): Promise<CalResult> {
-    return parseCalResult(await this.link.request(MSG_CAL_RESULT, new Uint8Array(0), MSG_CAL_RESULT, 2));
-  }
-
-  async calibrate(progress?: (result: CalResult) => void, timeoutS = 240): Promise<CalResult> {
-    await this.link.request(MSG_CAL_START, new Uint8Array(0), MSG_ACK, 2);
-    const deadline = Date.now() + timeoutS * 1000;
-    while (Date.now() < deadline) {
-      await sleep(1000);
-      const result = await this.calibrationResult();
-      progress?.(result);
-      if (result.done) return result;
-    }
-    throw new Error('校准超时');
-  }
-
   async upload(points: MotionPoint[], keepPhase = false): Promise<void> {
     if (points.length > this.profile.maxPathPoints) {
       throw new Error(`${points.length} path points, firmware ${this.profile.firmware} holds ${this.profile.maxPathPoints}`);
@@ -155,26 +114,4 @@ export class UmhDevice implements DeviceLike {
     await this.link.request(MSG_CLEAR_PLAN, new Uint8Array(0), MSG_ACK, 2);
   }
 
-  async holoUpload(frames: Array<readonly [Uint8Array, Uint8Array]>, firstIndex = 0): Promise<void> {
-    await this.link.request(MSG_HOLOGRAM_UPLOAD, hologramPayload(frames, firstIndex), MSG_ACK, 2);
-  }
-
-  async holoConfigure(config: HologramConfig): Promise<void> {
-    await this.link.request(MSG_HOLOGRAM_CONFIG, config.pack(), MSG_ACK, 2);
-  }
-
-  async holoStart(): Promise<void> {
-    await this.link.request(MSG_HOLOGRAM_START, new Uint8Array(0), MSG_ACK, 2);
-  }
-
-  async holoStop(): Promise<void> {
-    await this.link.request(MSG_HOLOGRAM_STOP, new Uint8Array(0), MSG_ACK, 2);
-  }
-
-  async holoStatus(): Promise<HologramStatus> {
-    return parseHologramStatus(
-      await this.link.request(MSG_HOLOGRAM_STATUS, new Uint8Array(0), MSG_HOLOGRAM_STATUS)
-    );
-  }
 }
-

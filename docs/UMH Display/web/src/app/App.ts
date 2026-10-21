@@ -1,10 +1,9 @@
-/** Shell: workspaces, link UI, help dialog, drawers, boot sequence. */
+/** Shell: link UI, help dialog, drawers and boot sequence. */
 import type { AppConfig } from '../config/types.ts';
 import { loadConfig, saveConfig as persistConfig } from '../config/store.ts';
 import { DeviceManager, type LinkState } from './DeviceManager.ts';
 import { PlanClient } from './PlanClient.ts';
 import { DisplayWorkspace } from './DisplayWorkspace.ts';
-import { GunWorkspace } from './GunWorkspace.ts';
 import type { AppHost, UiState } from './workspace.ts';
 import { UI_KEY } from '../config/defaults.ts';
 import { toast } from '../ui/toast.ts';
@@ -20,16 +19,15 @@ function loadUi(): UiState {
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<UiState>;
       return {
-        workspace: parsed.workspace === 'gun' ? 'gun' : 'display',
         displayShape: typeof parsed.displayShape === 'string' ? parsed.displayShape : 'circle',
         displayView: parsed.displayView === 'plan' || parsed.displayView === 'field' ? parsed.displayView : 'scene',
-        speed: [1, 0.5, 0.25].includes(Number(parsed.speed)) ? Number(parsed.speed) : 1
+        speed: [10000, 1000, 100, 10, 1, 0.5, 0.25].includes(Number(parsed.speed)) ? Number(parsed.speed) : 1
       };
     }
   } catch {
     /* ignore corrupt UI state */
   }
-  return { workspace: 'display', displayShape: 'circle', displayView: 'scene', speed: 1 };
+  return { displayShape: 'circle', displayView: 'scene', speed: 1 };
 }
 
 export class App implements AppHost {
@@ -38,8 +36,6 @@ export class App implements AppHost {
   private readonly client = new PlanClient();
   private readonly ui: UiState;
   private display!: DisplayWorkspace;
-  private gun!: GunWorkspace;
-  private active: 'display' | 'gun';
   private lastLinkVersion = -1;
   private readonly saveUi = debounce(() => {
     try {
@@ -52,7 +48,6 @@ export class App implements AppHost {
   constructor() {
     this.cfg = loadConfig();
     this.ui = loadUi();
-    this.active = this.ui.workspace;
   }
 
   async boot(): Promise<void> {
@@ -68,9 +63,8 @@ export class App implements AppHost {
       mountIcons(document);
       progress(8, '读取配置与界面状态');
       await nextFrame();
-      progress(22, '装配光绘 / 重力枪工作区');
+      progress(22, '装配光绘工作区');
       this.display = new DisplayWorkspace(this, this.devices, this.client, this.ui);
-      this.gun = new GunWorkspace(this, this.devices, this.client);
       mountIcons(document);
       await nextFrame();
 
@@ -79,18 +73,18 @@ export class App implements AppHost {
       await Promise.race([warm, sleep(8000)]);
       progress(58, '规划初始图形');
       await this.display.start();
-      progress(78, '合成瓶状声场截面');
-      await this.gun.start();
       progress(94, '就绪');
       await nextFrame();
 
-      this.display.deactivate();
-      this.gun.deactivate();
+      this.display.activate();
       this.bindShell();
       this.devices.subscribe((state) => this.onLink(state));
       this.onLink(this.devices.state);
-      this.switchWorkspace(this.active, false);
-      this.setHint('规划在 Web Worker 中运行 · 拖动三维视图可旋转');
+      this.setHint(
+        this.cfg.unlimited.enabled
+          ? '原始轨迹模式：无动力学提前量 · 基础周期与播放速度可调'
+          : '规划在 Web Worker 中运行 · 拖动三维视图可旋转'
+      );
       await sleep(260);
       boot?.classList.add('is-done');
       window.setTimeout(() => boot?.remove(), 700);
@@ -133,13 +127,6 @@ export class App implements AppHost {
 
   // -------------------------------------------------------------------- shell
   private bindShell(): void {
-    for (const tab of document.querySelectorAll<HTMLElement>('[data-workspace]')) {
-      tab.addEventListener('click', () => {
-        const workspace = tab.dataset.workspace === 'gun' ? 'gun' : 'display';
-        this.switchWorkspace(workspace, true);
-      });
-    }
-
     const connect = document.getElementById('connectBtn');
     connect?.addEventListener('click', () => void this.toggleConnection());
 
@@ -155,21 +142,13 @@ export class App implements AppHost {
     });
 
     for (const drawer of document.querySelectorAll<HTMLElement>('[data-open-rail]')) {
-      drawer.addEventListener('click', () => {
-        const workspace = drawer.dataset.openRail;
-        document.getElementById(workspace === 'gun' ? 'gunRail' : 'displayRail')?.classList.add('is-open');
-      });
+      drawer.addEventListener('click', () => document.getElementById('displayRail')?.classList.add('is-open'));
     }
     for (const closer of document.querySelectorAll<HTMLElement>('[data-close-rail]')) {
       closer.addEventListener('click', () => closer.closest('.rail')?.classList.remove('is-open'));
     }
     for (const drawer of document.querySelectorAll<HTMLElement>('[data-open-inspector]')) {
-      drawer.addEventListener('click', () => {
-        const workspace = drawer.dataset.openInspector;
-        document
-          .getElementById(workspace === 'gun' ? 'gunInspector' : 'displayInspector')
-          ?.classList.add('is-open');
-      });
+      drawer.addEventListener('click', () => document.getElementById('displayInspector')?.classList.add('is-open'));
     }
     for (const closer of document.querySelectorAll<HTMLElement>('[data-close-inspector]')) {
       closer.addEventListener('click', () => closer.closest('.inspector')?.classList.remove('is-open'));
@@ -179,9 +158,7 @@ export class App implements AppHost {
       const target = event.target;
       if (target instanceof HTMLElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
       if (document.querySelector('dialog[open]')) return;
-      if (event.key === '1') this.switchWorkspace('display', true);
-      else if (event.key === '2') this.switchWorkspace('gun', true);
-      else if (event.key === '?' || (event.key === 'h' && !event.ctrlKey && !event.metaKey)) {
+      if (event.key === '?' || (event.key === 'h' && !event.ctrlKey && !event.metaKey)) {
         if (help && !help.open) help.showModal();
       } else if (event.key === 'Escape') {
         document.querySelectorAll('.rail.is-open, .inspector.is-open').forEach((node) => node.classList.remove('is-open'));
@@ -198,37 +175,6 @@ export class App implements AppHost {
     window.addEventListener('pagehide', () => {
       this.saveUi();
     });
-  }
-
-  private switchWorkspace(workspace: 'display' | 'gun', persist: boolean): void {
-    if (workspace === this.active && document.querySelector('.workspace.is-active')) {
-      // still make sure the right one is visible on first boot
-    }
-    const previous = this.active;
-    if (previous !== workspace) {
-      if (previous === 'display') this.display.deactivate();
-      else this.gun.deactivate();
-    }
-    this.active = workspace;
-    this.ui.workspace = workspace;
-    if (persist) this.saveUiState();
-
-    for (const tab of document.querySelectorAll<HTMLElement>('[data-workspace]')) {
-      const isActive = tab.dataset.workspace === workspace;
-      tab.classList.toggle('is-active', isActive);
-      tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
-    }
-    for (const panel of document.querySelectorAll<HTMLElement>('[data-workspace-panel]')) {
-      panel.classList.toggle('is-active', panel.dataset.workspacePanel === workspace);
-    }
-    document.querySelectorAll('.rail.is-open, .inspector.is-open').forEach((node) => node.classList.remove('is-open'));
-    if (workspace === 'display') {
-      this.display.activate();
-      this.setHint('光绘：规划在后台完成 · 1/2 切换工作区 · 拖动三维视图旋转');
-    } else {
-      this.gun.activate();
-      this.setHint('重力枪：WASD / 方向键移动 · R·F 升降 · Space 回中 · Esc 急停');
-    }
   }
 
   private onLink(state: LinkState): void {
@@ -252,7 +198,6 @@ export class App implements AppHost {
     if (state.version !== this.lastLinkVersion) {
       this.lastLinkVersion = state.version;
       this.display?.onDeviceChanged();
-      this.gun?.onDeviceChanged();
       if (state.mode === 'serial') {
         toast(`已连接 ${state.device.profile.model} · ${state.device.profile.firmware}`, 'ok');
         this.setHint('设备已连接 · Web Serial 2 Mbaud');
@@ -274,7 +219,7 @@ export class App implements AppHost {
       }
       return;
     }
-    const fieldActive = this.display.isFieldActive() || this.gun.isFieldActive();
+    const fieldActive = this.display.isFieldActive();
     if (fieldActive && !window.confirm('声场正在运行。断开设备后阵列会保持最后一帧，可能需要先在设备上急停。确定断开？')) {
       return;
     }
@@ -283,7 +228,6 @@ export class App implements AppHost {
 
   async dispose(): Promise<void> {
     this.display?.dispose();
-    this.gun?.dispose();
     this.client.dispose();
     await this.devices.dispose();
   }
@@ -292,4 +236,3 @@ export class App implements AppHost {
 export function createApp(): App {
   return new App();
 }
-

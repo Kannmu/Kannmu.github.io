@@ -1,5 +1,6 @@
 /** The down-firing display page: controls, plan pipeline, 3D view, playback. */
 import { clear, el, formatNumber, icon } from '../core/dom.ts';
+import { formatDuration } from '../core/math.ts';
 import type { AppConfig } from '../config/types.ts';
 import { acousticPower } from '../physics/trap.ts';
 import { lateralAccelOf, setLateralAccel, trapModeOf } from '../config/defaults.ts';
@@ -17,7 +18,6 @@ import {
   colorField,
   EventLog,
   MetricBar,
-  progressBar,
   renderReadout,
   renderWarnings,
   section,
@@ -26,7 +26,9 @@ import {
   shapeGrid,
   slider,
   textInput,
-  type SliderHandle
+  toggle,
+  type SliderHandle,
+  type ToggleHandle
 } from '../ui/kit.ts';
 import { drawPlanChart, drawSpeedChart, type FieldMap } from '../ui/charts.ts';
 import { toast } from '../ui/toast.ts';
@@ -52,10 +54,33 @@ function must<T extends HTMLElement>(id: string): T {
   return node as T;
 }
 
+const RAW_LOOP_MIN_MS = 1;
+const RAW_LOOP_MAX_MS = 60000;
+const RAW_RATE_MIN = 0.001;
+const RAW_RATE_MAX = 1;
+const RAW_LOOP_DECADES = Math.log10(RAW_LOOP_MAX_MS);
+const RAW_RATE_DECADES = Math.log10(RAW_RATE_MAX / RAW_RATE_MIN);
+
+function posToRawLoop(pos: number): number {
+  return Math.max(RAW_LOOP_MIN_MS, Math.min(RAW_LOOP_MAX_MS, 10 ** ((pos / 1000) * RAW_LOOP_DECADES)));
+}
+
+function rawLoopToPos(ms: number): number {
+  return (1000 * Math.log10(Math.max(RAW_LOOP_MIN_MS, Math.min(RAW_LOOP_MAX_MS, ms)))) / RAW_LOOP_DECADES;
+}
+
+function posToRawRate(pos: number): number {
+  return Math.max(RAW_RATE_MIN, Math.min(RAW_RATE_MAX, 10 ** (Math.log10(RAW_RATE_MIN) + (pos / 1000) * RAW_RATE_DECADES)));
+}
+
+function rawRateToPos(rate: number): number {
+  return (1000 * (Math.log10(Math.max(RAW_RATE_MIN, Math.min(RAW_RATE_MAX, rate))) - Math.log10(RAW_RATE_MIN))) / RAW_RATE_DECADES;
+}
+
 export class DisplayWorkspace {
   private readonly cfg: AppConfig;
   private readonly log: EventLog;
-  private readonly metrics: MetricBar;
+  private metrics: MetricBar;
   private readonly scene: DisplayScene;
   private plan: Plan | null = null;
   private session: Session | null = null;
@@ -77,12 +102,18 @@ export class DisplayWorkspace {
   private fieldCache = new Map<string, FieldMap>();
   private fieldSeq = 0;
   private spinArmed = false;
-  private calibrating = false;
   private lastDeviceVersion = -1;
   private visible = false;
   private readonly levelSlider: SliderHandle;
   private readonly lateralSlider: SliderHandle;
   private readonly refreshSlider: SliderHandle;
+  private readonly normalMotion: HTMLElement;
+  private readonly motionRoot: HTMLElement;
+  private readonly rawMotion: HTMLElement;
+  private readonly rawLoop: SliderHandle;
+  private readonly rawRate: SliderHandle;
+  private readonly rawActual: HTMLElement;
+  private readonly unlimitedToggle: ToggleHandle;
   private readonly spanEl: HTMLElement;
   private readonly textRow: HTMLElement;
   private readonly textField: HTMLInputElement;
@@ -97,9 +128,6 @@ export class DisplayWorkspace {
   private readonly stageError: HTMLElement;
   private readonly loopFill: HTMLElement;
   private readonly clock: HTMLElement;
-  private readonly calButton: HTMLElement;
-  private readonly calBar: ReturnType<typeof progressBar>;
-  private readonly calText: HTMLElement;
   private readonly paletteStrip: HTMLElement;
   private readonly resizeObserver: ResizeObserver;
 
@@ -115,14 +143,7 @@ export class DisplayWorkspace {
     this.speed = ui.speed || 1;
 
     this.log = new EventLog(must('displayLog'));
-    this.metrics = new MetricBar(must('displayMetrics'), [
-      { key: 'refresh', label: '刷新率', unit: 'Hz', digits: 1, accent: true },
-      { key: 'speed', label: '峰值速度', unit: 'mm/s', digits: 0 },
-      { key: 'accel', label: '峰值加速度', unit: 'm/s²', digits: 0 },
-      { key: 'force', label: '力用', unit: '%', digits: 0 },
-      { key: 'lead', label: '前馈前导', unit: 'mm', digits: 2 },
-      { key: 'points', label: '设备点', unit: 'pts', digits: 0 }
-    ]);
+    this.metrics = this.createMetrics();
 
     this.scene = new DisplayScene(must<HTMLCanvasElement>('displayCanvas'), must('displayStage'));
     this.scene.onStats = (fps) => this.host.setFps(fps);
@@ -139,18 +160,25 @@ export class DisplayWorkspace {
     this.resizeObserver.observe(must('displayMetrics'));
     this.resizeObserver.observe(must('speedChart').parentElement!);
 
+    const mode = this.buildModeSection();
     const trap = this.buildTrapSection();
     const shape = this.buildShapeSection();
     const colour = this.buildColourSection();
     const motion = this.buildMotionSection();
-    const calibration = this.buildCalibrationSection();
     const config = this.buildConfigSection();
-    must('displayControls').append(trap.root, shape.root, colour.root, motion.root, calibration.root, config);
+    must('displayControls').append(mode.root, trap.root, shape.root, colour.root, motion.root, config);
     mountIcons(must('displayControls'));
 
     this.levelSlider = trap.level;
     this.lateralSlider = motion.lateral;
     this.refreshSlider = motion.refresh;
+    this.normalMotion = motion.normal;
+    this.motionRoot = motion.root;
+    this.rawMotion = mode.raw;
+    this.rawLoop = mode.rawLoop;
+    this.rawRate = mode.rawRate;
+    this.rawActual = mode.rawActual;
+    this.unlimitedToggle = mode.toggle;
     this.spanEl = shape.span;
     this.textRow = shape.textRow;
     this.textField = shape.textField;
@@ -165,10 +193,8 @@ export class DisplayWorkspace {
       el('div', { class: 'rail-actions' }, stickyPlan, this.stickyPlay, stickyStop),
       rail.querySelector('.rail-foot')
     );
-    this.calButton = calibration.button;
-    this.calBar = calibration.bar;
-    this.calText = calibration.text;
 
+    this.syncUnlimitedUi();
     this.bindHud();
     this.bindPlayback();
     this.syncShapeUi();
@@ -441,10 +467,88 @@ export class DisplayWorkspace {
     return { root };
   }
 
+  private buildModeSection(): {
+    root: HTMLElement;
+    raw: HTMLElement;
+    rawLoop: SliderHandle;
+    rawRate: SliderHandle;
+    rawActual: HTMLElement;
+    toggle: ToggleHandle;
+  } {
+    const cfg = this.cfg;
+    const rawToggle = toggle({
+      label: '解除所有限制',
+      checked: cfg.unlimited.enabled,
+      hint: '原始轨迹：不提前规划、不做动力学仿真。关闭后恢复速度规划与校验。',
+      onChange: (checked) => void this.setUnlimited(checked).catch((error) => this.fail(error))
+    });
+    rawToggle.input.id = 'unlimitedToggle';
+    const rawActual = el('div', { class: 'raw-summary' });
+    const rawLoop = slider({
+      label: '基础周期',
+      min: 0,
+      max: 1000,
+      step: 1,
+      value: rawLoopToPos(cfg.unlimited.loopMs),
+      format: (pos) => formatDuration(posToRawLoop(pos)),
+      hint: '固件循环长度：1 ms – 60 s。',
+      onInput: (pos) => {
+        cfg.unlimited.loopMs = Math.round(posToRawLoop(pos));
+        this.updateRawSummary();
+      },
+      onChange: (pos) => {
+        cfg.unlimited.loopMs = Math.round(posToRawLoop(pos));
+        this.host.saveConfig();
+        this.updateRawSummary();
+        if (this.playing) toast('基础周期在下次播放生效', 'info');
+        else this.schedulePlan(true);
+      }
+    });
+    rawLoop.input.id = 'rawLoop';
+    const rawRate = slider({
+      label: '播放速度',
+      min: 0,
+      max: 1000,
+      step: 1,
+      value: rawRateToPos(cfg.unlimited.rate),
+      format: (pos) => `${posToRawRate(pos).toFixed(3)}×`,
+      hint: '固件速率分频 0.001× – 1×；播放中也可实时调整。',
+      onInput: (pos) => {
+        cfg.unlimited.rate = posToRawRate(pos);
+        this.updateRawSummary();
+      },
+      onChange: (pos) => {
+        const rate = posToRawRate(pos);
+        cfg.unlimited.rate = rate;
+        this.host.saveConfig();
+        if (this.playing && this.plan?.raw) void this.applyRawRate(rate);
+        else {
+          this.updateRawSummary();
+          this.schedulePlan(true);
+        }
+      }
+    });
+    rawRate.input.id = 'rawRate';
+    const raw = el(
+      'div',
+      { class: 'raw-group' },
+      rawLoop.root,
+      rawRate.root,
+      rawActual,
+      el('p', {
+        class: 'section-note',
+        text: '固件按上传点线性插值循环播放：无前馈、无速度/加速度约束、无共振滤波、无仿真校验。硬边界只有固件点数和 60 s 循环。'
+      })
+    );
+    const root = section({ title: '模式', eyebrow: 'MODE' }, rawToggle.root, raw);
+    return { root, raw, rawLoop, rawRate, rawActual, toggle: rawToggle };
+  }
+
   private buildMotionSection(): {
     root: HTMLElement;
     lateral: SliderHandle;
     refresh: SliderHandle;
+    normal: HTMLElement;
   } {
     const cfg = this.cfg;
     const refresh = slider({
@@ -522,8 +626,9 @@ export class DisplayWorkspace {
       },
       'seg-wide'
     );
-    const root = section(
-      { title: '运动与预览', eyebrow: 'MOTION' },
+    const normal = el(
+      'div',
+      { class: 'normal-motion' },
       refresh.root,
       lateral.root,
       smoothing.root,
@@ -531,7 +636,114 @@ export class DisplayWorkspace {
       interpolation.root,
       el('p', { class: 'section-note', text: '规划器做时间最优速度、抗共振滤波与前馈；仿真只给提示，不限制播放。' })
     );
-    return { root, lateral, refresh };
+    const root = section({ title: '运动与预览', eyebrow: 'MOTION' }, normal);
+    return { root, lateral, refresh, normal };
+  }
+
+  private createMetrics(): MetricBar {
+    if (this.cfg.unlimited.enabled) {
+      return new MetricBar(must('displayMetrics'), [
+        { key: 'period', label: '一圈用时', digits: 0, accent: true },
+        { key: 'speed', label: '平均速度', unit: 'mm/s', digits: 3 },
+        { key: 'length', label: '路径总长', unit: 'mm', digits: 1 },
+        { key: 'loop', label: '基础周期', digits: 0 },
+        { key: 'rate', label: '速度倍率', unit: '×', digits: 3 },
+        { key: 'points', label: '设备点', unit: 'pts', digits: 0 }
+      ]);
+    }
+    return new MetricBar(must('displayMetrics'), [
+      { key: 'refresh', label: '刷新率', unit: 'Hz', digits: 1, accent: true },
+      { key: 'speed', label: '峰值速度', unit: 'mm/s', digits: 0 },
+      { key: 'accel', label: '峰值加速度', unit: 'm/s²', digits: 0 },
+      { key: 'force', label: '力用', unit: '%', digits: 0 },
+      { key: 'lead', label: '前馈前导', unit: 'mm', digits: 2 },
+      { key: 'points', label: '设备点', unit: 'pts', digits: 0 }
+    ]);
+  }
+
+  private syncUnlimitedUi(): void {
+    const raw = this.cfg.unlimited.enabled;
+    this.normalMotion.hidden = raw;
+    this.motionRoot.hidden = raw;
+    this.rawMotion.hidden = !raw;
+    this.unlimitedToggle.setChecked(raw);
+    if (this.rawLoop) this.rawLoop.setValue(rawLoopToPos(this.cfg.unlimited.loopMs), true);
+    if (this.rawRate) this.rawRate.setValue(rawRateToPos(this.cfg.unlimited.rate), true);
+    this.metrics = this.createMetrics();
+    must('displayHudEyebrow').textContent = raw ? 'LIGHT PAINTING · RAW TRAJECTORY' : 'LIGHT PAINTING · STANDING WAVE';
+    this.updateRawSummary();
+  }
+
+  private updateRawSummary(): void {
+    if (!this.rawActual) return;
+    const effectiveMs =
+      this.playing && this.plan?.raw
+        ? this.plan.periodS * 1000
+        : (this.cfg.unlimited.loopMs / 1000 / Math.max(this.cfg.unlimited.rate, 0.001)) * 1000;
+    const lengthMm = this.plan?.raw ? this.plan.metrics.lengthMm : 0;
+    const speed = lengthMm > 0 ? lengthMm / (effectiveMs / 1000) : 0;
+    clear(this.rawActual);
+    this.rawActual.append(
+      el('span', { text: '实际一圈 ' }),
+      el('strong', { text: formatDuration(effectiveMs) }),
+      el('span', { text: ' · 平均 ' }),
+      el('strong', { text: speed > 0 ? `${formatNumber(speed, speed < 1 ? 3 : 1)} mm/s` : '—' })
+    );
+  }
+
+  private async setUnlimited(enabled: boolean): Promise<void> {
+    if (enabled === this.cfg.unlimited.enabled) return;
+    if (this.playing) await this.stopPlayback();
+    this.cfg.unlimited.enabled = enabled;
+    this.host.saveConfig();
+    this.syncUnlimitedUi();
+    this.log.add(enabled ? '已解除限制：使用原始轨迹' : '已恢复速度规划与动力学校验', 'warn');
+    this.host.setHint(
+      enabled
+        ? '原始轨迹模式：无前馈、无速度/加速度规划；播放速度可实时调整'
+        : '规划模式：时间最优速度、抗共振滤波与仿真校验'
+    );
+    await this.replan(true);
+  }
+
+  private async applyRawRate(rate: number): Promise<void> {
+    try {
+      await this.ensureSession().setPlaybackRate(rate);
+      const plan = this.plan;
+      if (!plan?.raw) return;
+      this.updateRawPlanSpeed();
+      const m = plan.metrics;
+      this.metrics.update({
+        period: formatDuration(m.periodMs),
+        speed: m.vMaxMmS,
+        length: m.lengthMm,
+        loop: formatDuration(m.deviceLoopMs),
+        rate: m.playbackRate,
+        points: plan.points.length
+      });
+      must('displayPlanSub').textContent =
+        `一圈 ${formatDuration(m.periodMs)} · ${plan.points.length} 点 · 平均 ${formatNumber(m.vMaxMmS, m.vMaxMmS < 1 ? 4 : 2)} mm/s`;
+      must('planChartNote').textContent = `${formatDuration(m.periodMs)} · ${plan.points.length} pts`;
+      this.host.setHint(`原始轨迹 · 一圈 ${formatDuration(m.periodMs)} · 速度倍率 ${m.playbackRate.toFixed(3)}×`);
+      this.renderReadout();
+      this.drawCharts(this.phase);
+    } catch (error) {
+      this.fail(error);
+    }
+  }
+
+  private updateRawPlanSpeed(): void {
+    const plan = this.plan;
+    if (!plan?.raw) return;
+    const periodS = Math.max(plan.periodS, 1e-9);
+    const speedMmS = plan.metrics.lengthMm / periodS;
+    plan.metrics.periodMs = periodS * 1000;
+    plan.metrics.refreshHz = 1 / periodS;
+    plan.metrics.vMaxMmS = speedMmS;
+    plan.metrics.vLitMeanMmS = speedMmS;
+    plan.metrics.playbackRate = plan.playbackRate ?? this.cfg.unlimited.rate;
+    plan.speed.fill(speedMmS * 1e-3);
+    this.updateRawSummary();
   }
 
   private buildConfigSection(): HTMLElement {
@@ -563,7 +775,7 @@ export class DisplayWorkspace {
       icon: 'rotate-ccw',
       variant: 'small',
       onClick: () => {
-        if (!window.confirm('恢复默认配置并重载？当前校准参数与会话设置会丢失。')) return;
+        if (!window.confirm('恢复默认配置并重载？当前参数与会话设置会丢失。')) return;
         clearConfig();
         window.location.reload();
       }
@@ -578,44 +790,6 @@ export class DisplayWorkspace {
         text: '配置保存在浏览器 localStorage，可导出备份；也可以直接导入原 Python 程序的 ~/.umh_display.json。'
       })
     );
-  }
-
-  private buildCalibrationSection(): {
-    root: HTMLElement;
-    button: HTMLElement;
-    bar: ReturnType<typeof progressBar>;
-    text: HTMLElement;
-  } {
-    const buttonEl = button('开始相位校准', {
-      icon: 'crosshair',
-      block: true,
-      onClick: () => void this.runCalibration()
-    });
-    const bar = progressBar();
-    const text = el('div', { class: 'cal-status', text: '未运行。阵列朝向桌面，中心下方约 10 cm 内保持空旷。' });
-    const last = button('读取上次结果', {
-      variant: 'small',
-      onClick: async () => {
-        try {
-          const session = this.ensureSession();
-          const result = await session.dev.calibrationResult();
-          this.calText.textContent = result.summary;
-          this.calText.className = `cal-status ${result.ok ? 'is-good' : 'is-bad'}`;
-          toast(result.summary, result.ok ? 'ok' : 'error', 5000);
-        } catch (error) {
-          this.fail(error);
-        }
-      }
-    });
-    const root = section(
-      { title: '桌面回波校准', eyebrow: 'PHASE CAL' },
-      buttonEl,
-      bar.root,
-      text,
-      el('div', { class: 'btn-row' }, last),
-      el('p', { class: 'section-note', text: '约一分钟；会先落球、关场。设备只在自己的聚焦测试更好时才写入 EEPROM。' })
-    );
-    return { root, button: buttonEl, bar, text };
   }
 
   private bindHud(): void {
@@ -721,7 +895,12 @@ export class DisplayWorkspace {
     this.planning = true;
     this.pendingPlan = false;
     const seq = ++this.planSeq;
-    setLoading(this.loading, this.loadingText, true, '正在规划：速度 / 滤波 / 前馈…');
+    setLoading(
+      this.loading,
+      this.loadingText,
+      true,
+      this.cfg.unlimited.enabled ? '正在生成原始轨迹…' : '正在规划：速度 / 滤波 / 前馈…'
+    );
     this.stageError.hidden = true;
     try {
       const plan = await this.client.plan(
@@ -731,7 +910,14 @@ export class DisplayWorkspace {
       );
       if (seq !== this.planSeq) return null;
       this.applyPlan(plan);
-      if (manual) this.log.add(`规划 ${plan.name}: ${plan.metrics.refreshHz.toFixed(1)} Hz · ${plan.points.length} 点`, 'ok');
+      if (manual) {
+        this.log.add(
+          plan.raw
+            ? `原始轨迹 ${plan.name}: 一圈 ${formatDuration(plan.metrics.periodMs)} · ${plan.points.length} 点`
+            : `规划 ${plan.name}: ${plan.metrics.refreshHz.toFixed(1)} Hz · ${plan.points.length} 点`,
+          'ok'
+        );
+      }
       return plan;
     } catch (error) {
       this.stageError.hidden = false;
@@ -753,35 +939,60 @@ export class DisplayWorkspace {
     this.phase = 0;
     this.scene.setPlan(plan);
     this.scene.setProgress(0, false);
-    this.metrics.update(
-      {
-        refresh: plan.metrics.refreshHz,
-        speed: plan.metrics.vMaxMmS,
-        accel: plan.metrics.aMaxMS2,
-        force: plan.metrics.forceUse * 100,
-        lead: plan.metrics.leadMaxMm,
+    const badge = must('displayRefreshBadge');
+    if (plan.raw) {
+      const m = plan.metrics;
+      this.metrics.update({
+        period: formatDuration(m.periodMs),
+        speed: m.vMaxMmS,
+        length: m.lengthMm,
+        loop: formatDuration(m.deviceLoopMs),
+        rate: m.playbackRate,
         points: plan.points.length
-      },
-      plan.metrics.forceUse > 0.85 ? ['force'] : [],
-      plan.metrics.forceUse > 1 ? ['force'] : []
-    );
+      });
+      badge.textContent = '原始轨迹';
+      badge.style.borderColor = 'rgba(101,216,231,.42)';
+      badge.style.color = '#9be7f0';
+      must('displayPlanSub').textContent =
+        `一圈 ${formatDuration(m.periodMs)} · ${plan.points.length} 点 · 平均 ${formatNumber(m.vMaxMmS, m.vMaxMmS < 1 ? 4 : 2)} mm/s`;
+      must('planChartNote').textContent = `${formatDuration(m.periodMs)} · ${plan.points.length} pts`;
+      renderWarnings(
+        must('displayWarnings'),
+        plan.warnings,
+        '原始轨迹：无前馈、无速度/加速度约束、无共振滤波、无仿真校验'
+      );
+      this.host.setHint(`原始轨迹 · 一圈 ${formatDuration(m.periodMs)} · 速度倍率 ${m.playbackRate.toFixed(3)}×`);
+    } else {
+      this.metrics.update(
+        {
+          refresh: plan.metrics.refreshHz,
+          speed: plan.metrics.vMaxMmS,
+          accel: plan.metrics.aMaxMS2,
+          force: plan.metrics.forceUse * 100,
+          lead: plan.metrics.leadMaxMm,
+          points: plan.points.length
+        },
+        plan.metrics.forceUse > 0.85 ? ['force'] : [],
+        plan.metrics.forceUse > 1 ? ['force'] : []
+      );
+      badge.textContent = plan.warnings.some((warning) => warning.startsWith('LOST'))
+        ? 'LOST'
+        : `${plan.metrics.refreshHz.toFixed(1)} Hz`;
+      badge.style.borderColor = plan.warnings.some((warning) => warning.startsWith('LOST'))
+        ? 'rgba(255,93,108,.5)'
+        : '';
+      badge.style.color = plan.warnings.some((warning) => warning.startsWith('LOST')) ? '#ff8d96' : '';
+      must('displayPlanSub').textContent =
+        `周期 ${plan.metrics.periodMs.toFixed(0)} ms · 力用 ${Math.round(plan.metrics.forceUse * 100)}% · ` +
+        `形状误差 ${plan.metrics.shapeErrMm.toFixed(2)} mm · 前导 ${plan.metrics.leadMaxMm.toFixed(2)} mm`;
+      must('planChartNote').textContent = `${plan.metrics.periodMs.toFixed(0)} ms · ${plan.points.length} pts`;
+      renderWarnings(must('displayWarnings'), plan.warnings);
+    }
     must('displayPlanTitle').textContent = plan.name.startsWith('text:')
       ? `文字 · ${plan.name.slice(5)}`
       : `${SHAPE_LABELS[plan.name] ?? plan.name}`;
-    const badge = must('displayRefreshBadge');
-    badge.textContent = plan.warnings.some((warning) => warning.startsWith('LOST'))
-      ? 'LOST'
-      : `${plan.metrics.refreshHz.toFixed(1)} Hz`;
-    badge.style.borderColor = plan.warnings.some((warning) => warning.startsWith('LOST'))
-      ? 'rgba(255,93,108,.5)'
-      : '';
-    badge.style.color = plan.warnings.some((warning) => warning.startsWith('LOST')) ? '#ff8d96' : '';
-    must('displayPlanSub').textContent =
-      `周期 ${plan.metrics.periodMs.toFixed(0)} ms · 力用 ${Math.round(plan.metrics.forceUse * 100)}% · ` +
-      `形状误差 ${plan.metrics.shapeErrMm.toFixed(2)} mm · 前导 ${plan.metrics.leadMaxMm.toFixed(2)} mm`;
-    must('planChartNote').textContent = `${plan.metrics.periodMs.toFixed(0)} ms · ${plan.points.length} pts`;
-    renderWarnings(must('displayWarnings'), plan.warnings);
     this.renderPalette(plan);
+    this.updateRawSummary();
     this.renderReadout();
     this.drawCharts(0);
     if (this.view === 'field') void this.requestField();
@@ -919,7 +1130,12 @@ export class DisplayWorkspace {
       this.lastChart = 0;
       this.setPlayIcon(true);
       this.updatePlayUi();
-      this.log.add(`开始绘制 ${plan.name} @ ${plan.metrics.refreshHz.toFixed(1)} Hz`, 'ok');
+      this.log.add(
+        plan.raw
+          ? `开始原始轨迹 ${plan.name}：一圈 ${formatDuration(plan.metrics.periodMs)}`
+          : `开始绘制 ${plan.name} @ ${plan.metrics.refreshHz.toFixed(1)} Hz`,
+        'ok'
+      );
       this.animate();
     } catch (error) {
       this.fail(error);
@@ -931,7 +1147,7 @@ export class DisplayWorkspace {
     try {
       if (this.session?.state === SessionState.Running) {
         await this.session.stopDrawing();
-        this.log.add('沿路径减速，停在当前位置悬停', 'info');
+        this.log.add(this.plan?.raw ? '原始轨迹已停止，停在当前位置悬停' : '沿路径减速，停在当前位置悬停', 'info');
       }
       this.updatePlayUi();
       this.renderReadout();
@@ -959,7 +1175,7 @@ export class DisplayWorkspace {
     this.phase = (this.phase + (dt * this.speed) / this.plan.periodS) % 1;
     this.scene.setProgress(this.phase, true);
     this.loopFill.style.width = `${this.phase * 100}%`;
-    this.clock.textContent = `${(this.phase * this.plan.periodS * 1000).toFixed(1)} ms`;
+    this.clock.textContent = formatDuration(this.phase * this.plan.periodS * 1000);
     if (now - this.lastChart > 120) {
       this.lastChart = now;
       this.drawCharts(this.phase);
@@ -983,7 +1199,7 @@ export class DisplayWorkspace {
     this.stickyPlay.classList.toggle('is-live', this.playing);
   }
 
-  // ------------------------------------------------------------------ spin/cal
+  // --------------------------------------------------------------------- spin
   private async onSpin(): Promise<void> {
     if (this.spinArmed) {
       this.spinArmed = false;
@@ -1029,39 +1245,6 @@ export class DisplayWorkspace {
     }
   }
 
-  private async runCalibration(): Promise<void> {
-    if (this.calibrating) return;
-    if (!window.confirm('相位校准会让阵列朝下、对桌面回波测量约一分钟；任何悬浮小球都会先落下。中心正下方约 10 cm 内请保持空旷。是否开始？')) {
-      return;
-    }
-    this.calibrating = true;
-    this.calButton.setAttribute('disabled', '');
-    this.calBar.set(0);
-    this.calText.className = 'cal-status';
-    this.calText.textContent = '开始校准…';
-    this.stopPlaybackLocal();
-    try {
-      const result = await this.ensureSession().calibrate((progress) => {
-        this.calBar.set(progress.progress);
-        this.calText.textContent = `${progress.stateName} ${progress.progress}%${
-          progress.tableMm > 0 ? ` · 桌面 ${progress.tableMm.toFixed(1)} mm` : ''
-        }`;
-      });
-      this.calBar.set(100);
-      this.calText.textContent = result.summary;
-      this.calText.className = `cal-status ${result.ok ? 'is-good' : 'is-bad'}`;
-      this.log.add(result.summary, result.ok ? 'ok' : 'error');
-      toast(result.ok ? '相位校准完成并已写入 EEPROM' : '相位校准未通过，EEPROM 未改动', result.ok ? 'ok' : 'error', 5000);
-    } catch (error) {
-      this.calText.textContent = `校准失败：${error instanceof Error ? error.message : String(error)}`;
-      this.calText.className = 'cal-status is-bad';
-      this.fail(error);
-    } finally {
-      this.calibrating = false;
-      this.calButton.removeAttribute('disabled');
-    }
-  }
-
   private readonly fell = { value: false };
 
   // ------------------------------------------------------------------- status
@@ -1074,8 +1257,9 @@ export class DisplayWorkspace {
       this.renderReadout();
       if (this.visible) {
         this.host.setHint(
-        `${status.stateName} · (${(status.xUm / 1000).toFixed(2)}, ${(status.yUm / 1000).toFixed(2)}) mm · ` +
-          `${status.fps.toFixed(0)} fps · 服务 ${status.serviceAvgUs}/${status.serviceMaxUs} µs`
+          `${this.plan?.raw ? '原始轨迹' : '规划'} · ${status.stateName} · ` +
+            `(${(status.xUm / 1000).toFixed(2)}, ${(status.yUm / 1000).toFixed(2)}) mm · ` +
+            `${status.fps.toFixed(0)} fps · 服务 ${status.serviceAvgUs}/${status.serviceMaxUs} µs`
         );
       }
     } catch {
@@ -1092,7 +1276,24 @@ export class DisplayWorkspace {
     const fmt = (value: number | undefined, digits = 1): string =>
       value === undefined || !Number.isFinite(value) ? '—' : formatNumber(value, digits);
     const rows: Parameters<typeof renderReadout>[1] = [];
-    if (plan) {
+    if (plan?.raw) {
+      const m = plan.metrics;
+      rows.push({
+        title: '原始轨迹',
+        meta: 'NO LIMITS',
+        rows: [
+          { label: '一圈用时', value: formatDuration(m.periodMs) },
+          { label: '基础周期', value: formatDuration(m.deviceLoopMs) },
+          { label: '速度倍率', value: `${m.playbackRate.toFixed(3)}×` },
+          { label: '平均速度', value: `${fmt(m.vMaxMmS, m.vMaxMmS < 1 ? 4 : 2)} mm/s` },
+          { label: '路径总长', value: `${fmt(m.lengthMm, 1)} mm` },
+          { label: '点亮长度', value: `${fmt(m.litMm, 1)} mm` },
+          { label: '设备点', value: `${m.points}` },
+          { label: '路径采样', value: `${m.pathSamples}` },
+          { label: '控制器', value: '线性插值 · 循环', state: 'good' }
+        ]
+      });
+    } else if (plan) {
       const m = plan.metrics;
       rows.push({
         title: '规划',
@@ -1210,7 +1411,7 @@ export class DisplayWorkspace {
     if (session && session.state !== SessionState.Idle) {
       session
         .drop()
-        .then(() => this.log.add('切换到重力枪：光绘声场已关闭', 'info'))
+        .then(() => this.log.add('工作区隐藏：光绘声场已关闭', 'info'))
         .catch(() => undefined);
     }
   }

@@ -5,26 +5,19 @@ import {
   MotionConfig,
   MotionPoint,
   encodeFrame,
-  parseCalResult,
-  parseEepromCalLevel,
-  parseHologramStatus,
   parseMotionStatus,
   parseProfile,
   parseSystemFlags,
-  HologramConfig,
-  hologramPayload,
   ratePayload,
   targetPayload,
   uploadChunks,
   uploadPayload,
-  guiLevitationLevel,
   MSG_MOTION_START,
   MSG_MOTION_STOP,
   FLAG_DIRECT,
   FLAG_LOOP,
   FLAG_RGB,
   MODE_PATH,
-  HOLOGRAM_FLAG_HOLD_LAST
 } from '../web/src/device/protocol.ts';
 
 interface ProtocolFixture {
@@ -36,8 +29,6 @@ interface ProtocolFixture {
   chunk_lengths: number[];
   target: string;
   rate: string;
-  hologram_config: string;
-  hologram_payload: string;
   motion_status: string;
   motion_status_expected: Record<string, number>;
   profile: string;
@@ -50,10 +41,6 @@ interface ProtocolFixture {
     first_coord: number[];
     caps: number;
   };
-  cal: string;
-  cal_expected: Record<string, number | boolean>;
-  gui_level_none: number;
-  gui_level_47: number;
 }
 
 function unhex(value: string): Uint8Array {
@@ -103,21 +90,7 @@ describe('UMH v7 protocol', () => {
     expect(hex(ratePayload(0.42, 600))).toBe(f.rate);
   });
 
-  it('packs hologram messages', () => {
-    const cfg = new HologramConfig({
-      flags: HOLOGRAM_FLAG_HOLD_LAST,
-      outputRateHz: 200,
-      transitionMs: 50,
-      level: 128,
-      keyframes: 2
-    });
-    expect(hex(cfg.pack())).toBe(f.hologram_config);
-    const phase = Uint8Array.from({ length: 84 }, (_, i) => i);
-    const level = new Uint8Array(84).fill(128);
-    expect(hex(hologramPayload([[phase, level]], 0))).toBe(f.hologram_payload);
-  });
-
-  it('parses motion status, profile and calibration results', () => {
+  it('parses motion status and the device profile', () => {
     const status = parseMotionStatus(unhex(f.motion_status));
     const want = f.motion_status_expected;
     expect(status.state).toBe(want.state);
@@ -137,34 +110,13 @@ describe('UMH v7 protocol', () => {
     expect(profile.maxPathPoints).toBe(f.profile_expected.max_path_points);
     expect(profile.coordinatesUm[0]).toEqual(f.profile_expected.first_coord);
     expect(profile.hasDisplay).toBe(true);
-    expect(profile.hasHologram).toBe(true);
 
-    const cal = parseCalResult(unhex(f.cal));
-    const cw = f.cal_expected;
-    expect(cal.state).toBe(cw.state);
-    expect(cal.progress).toBe(cw.progress);
-    expect(cal.tableMm).toBeCloseTo(cw.table_mm as number, 4);
-    expect(cal.pairs).toBe(cw.pairs);
-    expect(cal.covered).toBe(cw.covered);
-    expect(cal.committed).toBe(cw.committed);
-    expect(cal.method).toBe(cw.method);
-    expect(cal.ok).toBe(true);
-    expect(cal.done).toBe(true);
-    expect(cal.amplitude.length).toBe(84);
-    expect(cal.summary).toContain('Calibration OK');
   });
 
   it('parses small replies and GUI level helper', () => {
     const flags = new Uint8Array(8);
     new DataView(flags.buffer).setUint32(0, 0x12345678, true);
     expect(parseSystemFlags(flags)).toBe(0x12345678);
-    const eeprom = new Uint8Array(320);
-    expect(parseEepromCalLevel(eeprom)).toBeNull();
-    eeprom[291] = 1;
-    new DataView(eeprom.buffer).setUint16(297, 47, true);
-    expect(parseEepromCalLevel(eeprom)).toBe(47);
-    expect(guiLevitationLevel(null)).toBe(f.gui_level_none);
-    expect(guiLevitationLevel(47)).toBe(f.gui_level_47);
   });
 
   it('extracts frames from a noisy stream', () => {
@@ -179,25 +131,5 @@ describe('UMH v7 protocol', () => {
     expect(got!.messageType).toBe(MSG_MOTION_STOP);
     expect(got!.transactionId).toBe(7);
     expect(Array.from(got!.payload)).toEqual([1, 2, 3]);
-  });
-});
-
-describe('hologram status', () => {
-  it('parses the 42-byte wire record', () => {
-    const body = new Uint8Array(42);
-    const view = new DataView(body.buffer);
-    body[0] = 2;
-    body[1] = 1;
-    view.setUint16(2, 200, true);
-    view.setUint16(4, 2, true);
-    view.setUint16(6, 1, true);
-    view.setUint16(8, 500, true);
-    view.setUint32(22, 1000, true);
-    view.setUint32(38, 12345, true);
-    const status = parseHologramStatus(body);
-    expect(status.stateName).toBe('RUNNING');
-    expect(status.alpha).toBe(0.5);
-    expect(status.fps).toBe(123.45);
-    expect(status.running).toBe(true);
   });
 });

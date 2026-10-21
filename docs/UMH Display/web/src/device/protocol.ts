@@ -17,7 +17,6 @@ export const MSG_STATUS = 0x04;
 export const MSG_STOP_PLAN = 0x22;
 export const MSG_CLEAR_PLAN = 0x23;
 export const MSG_FPGA_STATUS = 0x30;
-export const MSG_EEPROM_READ = 0x40;
 export const MSG_MOTION_UPLOAD = 0x62;
 export const MSG_MOTION_CONFIG = 0x63;
 export const MSG_MOTION_START = 0x64;
@@ -27,13 +26,6 @@ export const MSG_MOTION_STATUS = 0x67;
 export const MSG_MOTION_RATE = 0x68;
 export const MSG_ACK = 0x70;
 export const MSG_NACK = 0x71;
-export const MSG_CAL_RESULT = 0x81;
-export const MSG_CAL_START = 0x82;
-export const MSG_HOLOGRAM_UPLOAD = 0xa0;
-export const MSG_HOLOGRAM_CONFIG = 0xa1;
-export const MSG_HOLOGRAM_START = 0xa2;
-export const MSG_HOLOGRAM_STOP = 0xa3;
-export const MSG_HOLOGRAM_STATUS = 0xa5;
 
 export const FLAG_ACK_REQUIRED = 0x01;
 export const FLAG_RESPONSE = 0x08;
@@ -55,10 +47,8 @@ export const STATUS_NAMES: Record<number, string> = {
 export const CAP_MOTION = 1 << 9;
 export const CAP_MOTION_DISPLAY = 1 << 12;
 export const CAP_MOTION_LONG_PATH = 1 << 13;
-export const CAP_HOLOGRAM = 1 << 11;
 
 export const SYS_FPGA_READY = 1 << 2;
-export const SYS_CALIBRATION_VALID = 1 << 4;
 export const SYS_LEVITATION = 1 << 7;
 export const SYS_VORTEX_STEADY = 1 << 8;
 export const SYS_VORTEX_ALT = 1 << 9;
@@ -394,7 +384,6 @@ export interface Profile {
   capabilityFlags: number;
   coordinatesUm: Array<[number, number, number]>;
   hasDisplay: boolean;
-  hasHologram: boolean;
   maxPathPoints: number;
 }
 
@@ -426,7 +415,6 @@ export function parseProfile(body: Uint8Array): Profile {
     capabilityFlags,
     coordinatesUm,
     hasDisplay: (capabilityFlags & CAP_MOTION_DISPLAY) !== 0,
-    hasHologram: (capabilityFlags & CAP_HOLOGRAM) !== 0,
     maxPathPoints: capabilityFlags & CAP_MOTION_LONG_PATH ? MAX_LONG_POINTS : MAX_POINTS
   };
 }
@@ -435,304 +423,3 @@ export function parseSystemFlags(body: Uint8Array): number {
   if (body.length !== 8) throw new Error(`status length ${body.length}`);
   return new DataView(body.buffer, body.byteOffset, body.byteLength).getUint32(0, true);
 }
-
-export const EEPROM_CAL_META_VALID_OFFSET = 291;
-export const EEPROM_CAL_LEVEL_OFFSET = 297;
-
-export function parseEepromCalLevel(body: Uint8Array): number | null {
-  if (body.length < EEPROM_CAL_LEVEL_OFFSET + 2 || body[EEPROM_CAL_META_VALID_OFFSET] === 0) return null;
-  const level = new DataView(body.buffer, body.byteOffset, body.byteLength).getUint16(EEPROM_CAL_LEVEL_OFFSET, true);
-  return level || null;
-}
-
-// ----------------------------------------------------------------- hologram
-export const HOLOGRAM_MAX_KEYFRAMES = 10;
-export const HOLOGRAM_UPLOAD_MAX_PER_MSG = 11;
-export const HOLOGRAM_FULL_LEVEL = 128;
-export const HOLOGRAM_MIN_RATE_HZ = 10;
-export const HOLOGRAM_MAX_RATE_HZ = 500;
-export const HOLOGRAM_FLAG_RUNNING = 1 << 0;
-export const HOLOGRAM_FLAG_HOLD_LAST = 1 << 1;
-export const HOLOGRAM_FLAG_GAMMA = 1 << 2;
-export const HOLOGRAM_FLAG_STATIC = 1 << 3;
-export const HOLOGRAM_STATE_NAMES: Record<number, string> = { 0: 'OFF', 1: 'READY', 2: 'RUNNING', 3: 'STOPPING', 4: 'FAULT' };
-
-export interface HologramConfigInit {
-  flags?: number;
-  outputRateHz?: number;
-  loopMs?: number;
-  transitionMs?: number;
-  level?: number;
-  keyframes?: number;
-}
-
-export class HologramConfig {
-  flags: number;
-  outputRateHz: number;
-  loopMs: number;
-  transitionMs: number;
-  level: number;
-  keyframes: number;
-
-  constructor(init: HologramConfigInit = {}) {
-    this.flags = init.flags ?? HOLOGRAM_FLAG_HOLD_LAST;
-    this.outputRateHz = init.outputRateHz ?? 200;
-    this.loopMs = init.loopMs ?? 0;
-    this.transitionMs = init.transitionMs ?? 100;
-    this.level = init.level ?? HOLOGRAM_FULL_LEVEL;
-    this.keyframes = init.keyframes ?? 1;
-  }
-
-  pack(): Uint8Array {
-    if (this.outputRateHz < HOLOGRAM_MIN_RATE_HZ || this.outputRateHz > HOLOGRAM_MAX_RATE_HZ) {
-      throw new Error(`hologram rate ${this.outputRateHz} Hz out of range`);
-    }
-    if (this.level < 0 || this.level > HOLOGRAM_FULL_LEVEL) throw new Error(`hologram level ${this.level} out of range`);
-    if (this.keyframes < 1 || this.keyframes > HOLOGRAM_MAX_KEYFRAMES) throw new Error(`hologram keyframes ${this.keyframes} out of range`);
-    const out = new Uint8Array(12);
-    const view = new DataView(out.buffer);
-    out[0] = 1;
-    out[1] = this.flags & 0x0f;
-    view.setUint16(2, this.outputRateHz, true);
-    view.setUint16(4, Math.max(0, Math.min(60000, this.loopMs)), true);
-    view.setUint16(6, Math.max(0, Math.min(60000, this.transitionMs)), true);
-    out[8] = this.level;
-    out[9] = this.keyframes;
-    return out;
-  }
-}
-
-export function hologramPayload(frames: Array<readonly [Uint8Array, Uint8Array]>, firstIndex = 0): Uint8Array {
-  const n = frames.length;
-  if (n < 1 || n > HOLOGRAM_UPLOAD_MAX_PER_MSG) throw new Error(`${n} keyframes in one message`);
-  if (firstIndex < 0 || firstIndex + n > HOLOGRAM_MAX_KEYFRAMES) {
-    throw new Error(`keyframes ${firstIndex}..${firstIndex + n} out of range`);
-  }
-  const out = new Uint8Array(12 + n * 168);
-  const view = new DataView(out.buffer);
-  out[0] = 1;
-  out[1] = 0;
-  view.setUint16(2, firstIndex, true);
-  view.setUint16(4, n, true);
-  let at = 12;
-  for (const [phase, level] of frames) {
-    out.set(phase, at);
-    out.set(level, at + 84);
-    at += 168;
-  }
-  return out;
-}
-
-export interface HologramStatus {
-  state: number;
-  flags: number;
-  outputRateHz: number;
-  keyframes: number;
-  currentKeyframe: number;
-  alpha: number;
-  serviceMaxUs: number;
-  serviceAvgUs: number;
-  renderMaxUs: number;
-  renderAvgUs: number;
-  submitMaxUs: number;
-  submitAvgUs: number;
-  frames: number;
-  skipped: number;
-  missedDeadlines: number;
-  frameErrors: number;
-  fps: number;
-  stateName: string;
-  running: boolean;
-}
-
-export function parseHologramStatus(body: Uint8Array): HologramStatus {
-  if (body.length !== 42) throw new Error(`hologram status length ${body.length}`);
-  const v = new DataView(body.buffer, body.byteOffset, body.byteLength);
-  const state = body[0];
-  const get16 = (o: number) => v.getUint16(o, true);
-  const get32 = (o: number) => v.getUint32(o, true);
-  return {
-    state,
-    flags: body[1],
-    outputRateHz: get16(2),
-    keyframes: get16(4),
-    currentKeyframe: get16(6),
-    alpha: get16(8) / 1000,
-    serviceMaxUs: get16(10),
-    serviceAvgUs: get16(12),
-    renderMaxUs: get16(14),
-    renderAvgUs: get16(16),
-    submitMaxUs: get16(18),
-    submitAvgUs: get16(20),
-    frames: get32(22),
-    skipped: get32(26),
-    missedDeadlines: get32(30),
-    frameErrors: get32(34),
-    fps: get32(38) / 100,
-    stateName: HOLOGRAM_STATE_NAMES[state] ?? String(state),
-    running: state === 2 || state === 3
-  };
-}
-
-// ---------------------------------------------------------------- calibration
-export const CHANNELS = 84;
-const CAL_LEGACY_SIZE = 135;
-export const CAL_RESULT_SIZE = 323;
-export const CAL_STATE_NAMES: Record<number, string> = {
-  0: 'IDLE',
-  1: 'WAIT',
-  2: 'MEASURE',
-  3: 'SOLVE',
-  4: 'VERIFY',
-  5: 'OK',
-  6: 'FAIL'
-};
-export const CAL_STATE_OK = 5;
-export const CAL_STATE_FAIL = 6;
-export const CAL_QUALITY_NAMES = [
-  'coverage',
-  'microphones',
-  'fit',
-  'consistency',
-  'dead channels',
-  'no reflector / geometry',
-  'focus verify',
-  'measurement'
-];
-export const CAL_DEAD = 0xff;
-
-export interface CalResult {
-  state: number;
-  progress: number;
-  fault: number;
-  qualityFlags: number;
-  goodMics: number;
-  phase: Uint8Array;
-  tableMm: number;
-  tiltXDeg: number;
-  tiltYDeg: number;
-  staticRmsDeg: number;
-  pairSdDeg: number;
-  verifyGainDb: number;
-  echoMag: number;
-  saturated: number;
-  correctionRmsDeg: number;
-  ampP10: number;
-  ampP90: number;
-  pairs: number;
-  covered: number;
-  dead: number;
-  verifyWins: number;
-  verifySets: number;
-  committed: boolean;
-  method: number;
-  amplitude: Uint8Array;
-  coverage: Uint8Array;
-  done: boolean;
-  ok: boolean;
-  stateName: string;
-  phaseDeg: number[];
-  deadChannels: number[];
-  qualityProblems: string[];
-  summary: string;
-}
-
-export function parseCalResult(body: Uint8Array): CalResult {
-  if (body.length < CAL_LEGACY_SIZE) throw new Error(`CAL_RESULT payload ${body.length} < ${CAL_LEGACY_SIZE}`);
-  const v = new DataView(body.buffer, body.byteOffset, body.byteLength);
-  const phase = body.slice(0, 84);
-  const progress = body[84];
-  const goodMics = body[85];
-  const fault = body[86];
-  const qualityFlags = body[87];
-  const state = body[88];
-  const f32 = (o: number) => v.getFloat32(o, true);
-  const base = {
-    state,
-    progress,
-    fault,
-    qualityFlags,
-    goodMics,
-    phase,
-    staticRmsDeg: f32(95),
-    pairSdDeg: f32(99),
-    saturated: Math.trunc(f32(107)),
-    tableMm: f32(111) * 1000,
-    tiltXDeg: f32(115),
-    tiltYDeg: f32(119),
-    echoMag: f32(123),
-    verifyGainDb: f32(131),
-    correctionRmsDeg: 0,
-    ampP10: 0,
-    ampP90: 0,
-    pairs: 0,
-    covered: 0,
-    dead: 0,
-    verifyWins: 0,
-    verifySets: 0,
-    committed: false,
-    method: 0,
-    amplitude: new Uint8Array(0),
-    coverage: new Uint8Array(0)
-  };
-  if (body.length >= CAL_RESULT_SIZE) {
-    const e = CAL_LEGACY_SIZE;
-    base.correctionRmsDeg = f32(e);
-    base.ampP10 = f32(e + 4);
-    base.ampP90 = f32(e + 8);
-    base.pairs = v.getUint16(e + 12, true);
-    base.covered = body[e + 14];
-    base.dead = body[e + 15];
-    base.verifyWins = body[e + 16];
-    base.verifySets = body[e + 17];
-    base.committed = body[e + 18] !== 0;
-    base.method = body[e + 19];
-    base.amplitude = body.slice(e + 20, e + 104);
-    base.coverage = body.slice(e + 104, e + 188);
-  }
-  const phaseDeg = Array.from(phase, (b) => ((b > 127 ? b - 256 : b) * 360) / 256);
-  const deadChannels: number[] = [];
-  for (let i = 0; i < base.coverage.length; i++) if (base.coverage[i] === CAL_DEAD) deadChannels.push(i);
-  const qualityProblems = CAL_QUALITY_NAMES.filter((_, bit) => ((qualityFlags >> bit) & 1) !== 0);
-  const ok = state === CAL_STATE_OK && fault === 0;
-  const done = progress >= 100 && (state === CAL_STATE_OK || state === CAL_STATE_FAIL);
-  const result: CalResult = {
-    ...base,
-    done,
-    ok,
-    stateName: CAL_STATE_NAMES[state] ?? String(state),
-    phaseDeg,
-    deadChannels,
-    qualityProblems,
-    summary: ''
-  };
-  result.summary = calSummary(result);
-  return result;
-}
-
-function calSummary(r: CalResult): string {
-  const fmt = (x: number, d = 1) => (Number.isFinite(x) ? x.toFixed(d) : '—');
-  if (!r.ok) {
-    const why = r.qualityProblems.length ? r.qualityProblems.join(', ') : `fault ${r.fault}`;
-    return `Calibration FAILED (${why}); EEPROM unchanged.  table ${fmt(r.tableMm)} mm, echo ${fmt(r.echoMag)}, focus test ${r.verifyGainDb >= 0 ? '+' : ''}${fmt(r.verifyGainDb, 2)} dB`;
-  }
-  const large = r.phaseDeg
-    .map((d, i) => [i, d] as const)
-    .filter(([, d]) => Math.abs(d) >= 30)
-    .map(([i, d]) => `ch${i} ${d >= 0 ? '+' : ''}${d.toFixed(0)}°`);
-  return (
-    `Calibration OK${r.committed ? ' and saved' : ' (not saved)'}: table ${fmt(r.tableMm)} mm, static error ${fmt(r.staticRmsDeg)}° RMS, ` +
-    `applied correction ${fmt(r.correctionRmsDeg)}° RMS, noise ${fmt(r.pairSdDeg)}°/pair, ` +
-    `focus test ${r.verifyGainDb >= 0 ? '+' : ''}${fmt(r.verifyGainDb, 2)} dB (${r.verifyWins}/${r.verifySets} better), ` +
-    `${r.covered} channels, dead ${r.deadChannels.length ? r.deadChannels.join(',') : 'none'}` +
-    (large.length ? `, large: ${large.join(', ')}` : '')
-  );
-}
-
-export function guiLevitationLevel(calLevel: number | null): number {
-  let duty = calLevel === null ? 32 : calLevel * 2;
-  duty = Math.max(44, Math.min(68, duty));
-  return Math.floor((duty * 255 + 64) / 128);
-}
-
-
