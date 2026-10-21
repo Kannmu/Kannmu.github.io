@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07090c">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="UMH Display 是运行在浏览器中的声悬浮光绘控制台：84 路超声相控阵把泡沫小球托在桌面上方，用视觉暂留画出彩色图形；重力枪页用瓶状声场把物体悬在开放空中并做三维移动。">
+  <link rel="canonical" href="https://kannmu.top/UMH%20Display/dist/">
+  <title>UMH Display · 声悬浮光绘控制台 | Kannmu Tools</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2307090c'/%3E%3Ccircle cx='32' cy='32' r='18' fill='none' stroke='%23ffb648' stroke-width='2'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%23ffb648'/%3E%3Ccircle cx='32' cy='10' r='2.6' fill='%2363d9e8'/%3E%3Ccircle cx='15' cy='42' r='2.2' fill='%23ff6b9a'/%3E%3Ccircle cx='49' cy='42' r='2.2' fill='%2363d9e8'/%3E%3C/svg%3E">
+  <script type="module" crossorigin src="./assets/index-BOSA4uNg.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DMvzA6J6.css">
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <span class="ambient-orb ambient-amber"></span>
+    <span class="ambient-orb ambient-cyan"></span>
+    <span class="ambient-grid"></span>
+  </div>
+
+  <div id="app" class="app">
+    <header class="topbar">
+      <a class="brand" href="https://kannmu.top/" aria-label="返回 Kannmu 主页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none">
+            <circle cx="32" cy="32" r="29" stroke="currentColor" stroke-opacity=".22"/>
+            <circle cx="32" cy="32" r="19" stroke="currentColor" stroke-opacity=".5" stroke-dasharray="2 5"/>
+            <circle cx="32" cy="32" r="7" fill="currentColor"/>
+            <circle cx="32" cy="4" r="2.4" fill="#63d9e8"/>
+            <circle cx="8" cy="48" r="2" fill="#ff6b9a"/>
+            <circle cx="56" cy="48" r="2" fill="#ffb648"/>
+            <path d="M32 13v6M13 32h6M45 32h6M32 45v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <strong>UMH <em>Display</em></strong>
+          <small>声悬浮光绘控制台</small>
+        </span>
+      </a>
+
+      <nav class="workspace-tabs" role="tablist" aria-label="工作区">
+        <button type="button" class="workspace-tab is-active" role="tab" aria-selected="true" data-workspace="display">
+          <i data-lucide="pen-tool" aria-hidden="true"></i>
+          <span class="tab-copy"><strong>光绘显示器</strong><small>阵列朝下 · 桌面反射</small></span>
+          <span class="tab-key">01</span>
+        </button>
+        <button type="button" class="workspace-tab" role="tab" aria-selected="false" data-workspace="gun">
+          <i data-lucide="orbit" aria-hidden="true"></i>
+          <span class="tab-copy"><strong>重力枪</strong><small>阵列朝上 · 瓶状声场</small></span>
+          <span class="tab-key">02</span>
+        </button>
+      </nav>
+
+      <div class="topbar-actions">
+        <div class="link-chip" id="linkChip" data-state="demo" title="设备连接状态">
+          <span class="link-dot" aria-hidden="true"></span>
+          <span id="linkLabel">演示模式</span>
+        </div>
+        <button type="button" class="btn btn-ghost btn-connect" id="connectBtn" title="通过 Web Serial 连接 UMH 控制器">
+          <i data-lucide="usb" aria-hidden="true"></i>
+          <span id="connectLabel">连接设备</span>
+        </button>
+        <button type="button" class="icon-btn" id="helpBtn" aria-label="打开帮助与说明" title="帮助与说明">
+          <i data-lucide="circle-help" aria-hidden="true"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- ============================================================ DISPLAY -->
+      <section class="workspace is-active" id="workspace-display" data-workspace-panel="display" aria-label="光绘显示器">
+        <aside class="rail" id="displayRail" aria-label="光绘控制面板">
+          <div class="rail-head">
+            <div>
+              <span class="eyebrow">DISPLAY / DOWNWARD ARRAY</span>
+              <h1>光绘画布</h1>
+            </div>
+            <button type="button" class="icon-btn rail-close" data-close-rail aria-label="收起控制面板">
+              <i data-lucide="panel-left-close" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="rail-scroll" id="displayControls"></div>
+          <div class="rail-foot">
+            <span class="mono" id="displayRailHint">84 × 40 kHz · 850 µm 小球</span>
+          </div>
+        </aside>
+
+        <section class="stage-column">
+          <div class="stage-card" id="displayStage">
+            <canvas id="displayCanvas" aria-label="泡沫小球在阵列下方桌面上的光绘三维视图"></canvas>
+            <div class="stage-hud">
+              <div class="hud hud-tl">
+                <span class="eyebrow" id="displayHudEyebrow">LIGHT PAINTING · STANDING WAVE</span>
+                <div class="hud-title-row">
+                  <h2 id="displayPlanTitle">圆</h2>
+                  <span class="badge" id="displayRefreshBadge">—</span>
+                </div>
+                <p class="hud-sub" id="displayPlanSub">等待规划</p>
+              </div>
+
+              <div class="hud hud-tr">
+                <div class="segmented view-switch" role="group" aria-label="视图">
+                  <button type="button" class="is-active" data-display-view="scene" data-short="3D">三维</button>
+                  <button type="button" data-display-view="plan" data-short="2D">规划</button>
+                  <button type="button" data-display-view="field" data-short="场">声场</button>
+                </div>
+                <button type="button" class="icon-btn" id="displayResetView" title="重置视角" aria-label="重置视角">
+                  <i data-lucide="focus" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="icon-btn inspector-open" data-open-inspector="display" aria-label="打开诊断" title="诊断"><i data-lucide="activity" aria-hidden="true"></i></button>
+                <button type="button" class="icon-btn rail-open" data-open-rail="display" aria-label="打开控制面板">
+                  <i data-lucide="panel-left-open" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <div class="hud hud-bl">
+                <div class="legend" aria-label="图例">
+                  <span><i class="legend-line legend-bead"></i>小球轨迹</span>
+                  <span><i class="legend-line legend-trap"></i>指令陷阱</span>
+                  <span><i class="legend-dot legend-point"></i>设备点</span>
+                  <span><i class="legend-line legend-sim"></i>仿真</span>
+                </div>
+              </div>
+
+              <div class="hud hud-br">
+                <div class="playback">
+                  <button type="button" class="icon-btn play-btn" id="displayPlay" aria-label="播放/暂停">
+                    <i data-lucide="play" aria-hidden="true"></i>
+                  </button>
+                  <div class="loop-track" aria-hidden="true"><i id="displayLoopFill"></i></div>
+                  <select class="mini-select" id="displaySpeed" aria-label="预览速度">
+                    <option value="1">1×</option>
+                    <option value="0.5">0.5×</option>
+                    <option value="0.25">0.25×</option>
+                  </select>
+                  <span class="mono hud-clock" id="displayClock">0.0 ms</span>
+                </div>
+              </div>
+            </div>
+            <div class="stage-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <div class="stage-loading" id="displayLoading" hidden>
+              <span class="spinner" aria-hidden="true"></span>
+              <span id="displayLoadingText">正在规划…</span>
+            </div>
+            <div class="stage-error" id="displayStageError" hidden></div>
+          </div>
+
+          <div class="deck">
+            <div class="metric-strip" id="displayMetrics" aria-live="polite"></div>
+            <div class="chart-pair">
+              <figure class="chart-card">
+                <figcaption>
+                  <span>速度 / 加速度</span>
+                  <span class="chart-legend"><i class="swatch-speed"></i>v <i class="swatch-accel"></i>|a|</span>
+                </figcaption>
+                <canvas id="speedChart" aria-label="循环内速度与加速度曲线"></canvas>
+              </figure>
+              <figure class="chart-card">
+                <figcaption>
+                  <span>平面轨迹</span>
+                  <span class="chart-note" id="planChartNote">—</span>
+                </figcaption>
+                <canvas id="planChart" aria-label="光绘图形与设备路径俯视图"></canvas>
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        <aside class="inspector" id="displayInspector" aria-label="诊断信息">
+          <div class="inspector-head">
+            <div>
+              <span class="eyebrow">TELEMETRY</span>
+              <h2>诊断</h2>
+            </div>
+            <button type="button" class="icon-btn" data-close-inspector aria-label="收起诊断">
+              <i data-lucide="x" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="inspector-scroll">
+            <div id="displayWarnings" class="warning-list"></div>
+            <div id="displayReadout" class="readout"></div>
+            <div class="log-head"><span>事件</span><button type="button" class="text-btn" id="displayClearLog">清空</button></div>
+            <div id="displayLog" class="event-log"></div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- ============================================================== GUN -->
+      <section class="workspace" id="workspace-gun" data-workspace-panel="gun" aria-label="重力枪">
+        <aside class="rail" id="gunRail" aria-label="重力枪控制面板">
+          <div class="rail-head">
+            <div>
+              <span class="eyebrow">GRAVITY GUN / UPWARD ARRAY</span>
+              <h1>瓶状声场</h1>
+            </div>
+            <button type="button" class="icon-btn rail-close" data-close-rail aria-label="收起控制面板">
+              <i data-lucide="panel-left-close" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="rail-scroll" id="gunControls"></div>
+          <div class="rail-foot">
+            <span class="mono" id="gunRailHint">暗核 + 瓶壁 · 单面阵列</span>
+          </div>
+        </aside>
+
+        <section class="stage-column">
+          <div class="stage-card" id="gunStage">
+            <canvas id="gunCanvas" aria-label="瓶状声场与悬浮物体的三维视图"></canvas>
+            <div class="stage-hud">
+              <div class="hud hud-tl">
+                <span class="eyebrow">BOTTLE BEAM · DARK CORE</span>
+                <div class="hud-title-row">
+                  <h2 id="gunTitle">待生成</h2>
+                  <span class="badge" id="gunModeBadge">HOLOGRAM</span>
+                </div>
+                <p class="hud-sub" id="gunSub">连接设备或进入演示模式后生成声瓶</p>
+              </div>
+              <div class="hud hud-tr">
+                <div class="segmented view-switch" role="group" aria-label="视图">
+                  <button type="button" class="is-active" data-gun-view="scene" data-short="3D">三维</button>
+                  <button type="button" data-gun-view="slice" data-short="场">声场截面</button>
+                </div>
+                <button type="button" class="icon-btn" id="gunResetView" title="重置视角" aria-label="重置视角">
+                  <i data-lucide="focus" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="icon-btn inspector-open" data-open-inspector="gun" aria-label="打开诊断" title="诊断"><i data-lucide="activity" aria-hidden="true"></i></button>
+                <button type="button" class="icon-btn rail-open" data-open-rail="gun" aria-label="打开控制面板">
+                  <i data-lucide="panel-left-open" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="hud hud-bl">
+                <div class="legend">
+                  <span><i class="legend-dot legend-core"></i>暗核</span>
+                  <span><i class="legend-line legend-wall"></i>瓶壁</span>
+                  <span><i class="legend-line legend-trail"></i>运动轨迹</span>
+                </div>
+              </div>
+              <div class="hud hud-br">
+                <div class="telemetry-line mono" id="gunHudTelemetry">x 0.0 · y 0.0 · z 70.0 mm</div>
+              </div>
+            </div>
+            <div class="stage-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <div class="stage-loading" id="gunLoading" hidden>
+              <span class="spinner" aria-hidden="true"></span>
+              <span id="gunLoadingText">正在合成声场…</span>
+            </div>
+            <div class="stage-error" id="gunStageError" hidden></div>
+          </div>
+
+          <div class="deck">
+            <div class="metric-strip" id="gunMetrics" aria-live="polite"></div>
+            <div class="chart-pair single">
+              <figure class="chart-card">
+                <figcaption>
+                  <span>声场截面 · |p|</span>
+                  <span class="chart-note" id="gunSliceNote">沿 y = 0 平面</span>
+                </figcaption>
+                <canvas id="gunSliceChart" aria-label="瓶状声场压力截面"></canvas>
+              </figure>
+              <figure class="chart-card">
+                <figcaption>
+                  <span>移动速度</span>
+                  <span class="chart-note" id="gunSpeedNote">|v| mm/s</span>
+                </figcaption>
+                <canvas id="gunSpeedChart" aria-label="陷阱移动速度曲线"></canvas>
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        <aside class="inspector" id="gunInspector" aria-label="诊断信息">
+          <div class="inspector-head">
+            <div>
+              <span class="eyebrow">TELEMETRY</span>
+              <h2>诊断</h2>
+            </div>
+            <button type="button" class="icon-btn" data-close-inspector aria-label="收起诊断">
+              <i data-lucide="x" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="inspector-scroll">
+            <div id="gunReadout" class="readout"></div>
+            <div class="log-head"><span>事件</span><button type="button" class="text-btn" id="gunClearLog">清空</button></div>
+            <div id="gunLog" class="event-log"></div>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="statusbar">
+      <div class="status-left">
+        <span class="status-item" id="statusMode"><i data-lucide="cpu" aria-hidden="true"></i><span>演示模式</span></span>
+        <span class="status-item" id="statusHint">规划在 Web Worker 中运行，界面保持流畅</span>
+      </div>
+      <div class="status-right">
+        <span class="status-item mono" id="statusFps">— fps</span>
+        <span class="status-item mono" id="statusBuild">UMH Display 2.0</span>
+        <a class="status-item status-link" href="https://kannmu.top/" target="_blank" rel="noopener">Kannmu Tools <i data-lucide="external-link" aria-hidden="true"></i></a>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast-stack" id="toastStack" role="status" aria-live="polite"></div>
+
+  <dialog class="help-dialog" id="helpDialog" aria-labelledby="helpTitle">
+    <div class="help-head">
+      <div>
+        <span class="eyebrow">FIELD NOTES</span>
+        <h2 id="helpTitle">UMH Display 使用说明</h2>
+      </div>
+      <button type="button" class="icon-btn" data-close-help aria-label="关闭">
+        <i data-lucide="x" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="help-body">
+      <section>
+        <h3>这是什么</h3>
+        <p>84 路 40 kHz 超声相控阵朝下发射，在桌面形成驻波，把一颗 3 mm 泡沫小球托在桌面上方约 2.3 mm 处。阵列每帧重算相位，让陷阱沿规划好的路径高速移动；泡沫球被 4 颗 WS2812 照亮，靠视觉暂留画出彩色图形。</p>
+        <p>「重力枪」是另一台机器：阵列朝上，用暗核瓶状声场把物体悬在开放空中，再用键盘或手柄在三维里推动它。</p>
+      </section>
+      <section>
+        <h3>光绘流程</h3>
+        <ol>
+          <li>连接设备；没有硬件时留在演示模式，同样可以规划和预览。</li>
+          <li>「起浮 / 接管」打开陷阱，把小泡沫球放进声场。</li>
+          <li>选图形、尺寸和颜色，点「规划」。规划器会做速度规划、抗共振滤波、前馈与仿真验证。</li>
+          <li>点「播放」开始画图；「停止」沿路径减速后原地悬停，「落球」关场。</li>
+          <li>第一次画图前建议先做 spin test：让小球在 8 mm 圆上加速旋转，甩出时点一下，程序反解 255 级下的横向陷阱强度。</li>
+        </ol>
+      </section>
+      <section>
+        <h3>重力枪操作</h3>
+        <p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 或方向键移动 xy，<kbd>R</kbd>/<kbd>PageUp</kbd> 上升，<kbd>F</kbd>/<kbd>PageDown</kbd> 下降，<kbd>Space</kbd> 回中心，<kbd>Esc</kbd> 立即关场。浏览器支持时可用标准手柄：左摇杆 xy，右摇杆与扳机 z。</p>
+      </section>
+      <section>
+        <h3>浏览器要求</h3>
+        <p>三维视图需要 WebGL 2。连接真实硬件需要 Chrome / Edge 的 <strong>Web Serial</strong>，并且页面必须通过 HTTPS 或 localhost 打开（本页上线地址满足要求）。串口自动识别 STM32 CDC（VID 0483 / PID 5740）。</p>
+      </section>
+      <section>
+        <h3>关于模型</h3>
+        <p>本页是原 Python 桌面程序的浏览器重构：声场 / Gor'kov 势、陷阱模型、速度规划、抗共振滤波器、固件路径插值、协议编解码与全息相位编码均按原实现逐行移植，并用 Python 生成的黄金数据做单元测试。规划结果只作提示，真实小球的安全由操作者判断。</p>
+      </section>
+    </div>
+    <div class="help-foot">
+      <span class="mono">UMH Display 2.0 · Web Serial + WebGL</span>
+      <a class="btn btn-primary" href="https://kannmu.top/" target="_blank" rel="noopener">访问 Kannmu Tools</a>
+    </div>
+  </dialog>
+
+  <div class="boot" id="boot">
+    <div class="boot-rings" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
+    <div class="boot-title">UMH DISPLAY</div>
+    <div class="boot-sub" id="bootText">正在启动声场引擎…</div>
+    <div class="boot-bar"><i id="bootBar"></i></div>
+  </div>
+
+</body>
+</html>
+
+

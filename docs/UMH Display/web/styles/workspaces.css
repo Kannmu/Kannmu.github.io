@@ -1,0 +1,94 @@
+/* ==========================================================================
+   Workspace-specific decoration.  Layout lives in layout.css, controls in
+   components.css; this file only adds the instrument-panel touches that do
+   not belong to a reusable component.
+   ========================================================================== */
+
+.view-switch {
+  background: rgba(5, 8, 11, 0.64);
+  backdrop-filter: blur(10px);
+}
+
+.view-switch button {
+  height: 24px;
+  font-size: 10px;
+}
+
+.hud-tr .icon-btn {
+  background: rgba(5, 8, 11, 0.66);
+  backdrop-filter: blur(10px);
+}
+
+.stage-card.is-field .stage-scanline {
+  opacity: 0.85;
+}
+
+/* the deck cards read as one strip */
+.metric-card:nth-child(3n + 1) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.034), rgba(255, 255, 255, 0.008));
+}
+
+/* a faint amber underline on the active rail section */
+.control-section:focus-within {
+  background: linear-gradient(90deg, rgba(255, 182, 72, 0.03), transparent 55%);
+}
+
+/* dialogs inside the boot / help flow */
+.help-dialog a.btn {
+  text-decoration: none;
+}
+
+/* Mobile HUD: keep the title clear, put view controls above the playback bar. */
+@media (max-width: 760px) {
+  #workspace-display .hud-tr,
+  #workspace-gun .hud-tr {
+    top: auto;
+    right: auto;
+    left: 12px;
+    bottom: 48px;
+    max-width: calc(100% - 24px);
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+  .segmented.view-switch button {
+    height: 24px;
+    padding: 0 7px;
+    font-size: 9.5px;
+  }
+}
+
+@media (max-width: 520px) {
+  .segmented.view-switch button {
+    width: 34px;
+    padding: 0;
+    font-size: 0;
+  }
+  .segmented.view-switch button::after {
+    content: attr(data-short);
+    font-size: 9.5px;
+  }
+  #workspace-display .hud-tl,
+  #workspace-gun .hud-tl {
+    max-width: calc(100% - 24px);
+  }
+}
+
+
+/* Drawers need a more opaque plate so the stage does not show through the text. */
+@media (max-width: 1280px) {
+  .inspector {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.028), transparent 120px),
+      linear-gradient(180deg, rgba(11, 16, 22, 0.975), rgba(8, 12, 17, 0.975));
+    backdrop-filter: blur(22px) saturate(1.15);
+  }
+}
+
+@media (max-width: 1040px) {
+  .rail {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 140px),
+      linear-gradient(180deg, rgba(11, 16, 22, 0.975), rgba(8, 12, 17, 0.975));
+    backdrop-filter: blur(22px) saturate(1.15);
+  }
+}

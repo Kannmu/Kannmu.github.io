@@ -1,0 +1,8 @@
+node_modules/
+*.log
+.vite/
+.DS_Store
+__pycache__/
+*.pyc
+coverage/
+tests/fixtures/*.tmp.json

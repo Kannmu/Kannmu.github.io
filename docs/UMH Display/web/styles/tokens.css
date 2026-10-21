@@ -1,0 +1,241 @@
+/* ==========================================================================
+   Design tokens, reset and the ambient lab background.
+   UMH Display — dark acoustic-instrument aesthetic.
+   ========================================================================== */
+
+:root {
+  --bg: #05070a;
+  --bg-soft: #080c11;
+  --panel: rgba(13, 18, 24, 0.8);
+  --panel-solid: #0c1117;
+  --panel-raised: rgba(21, 28, 37, 0.72);
+  --text: #eef3f7;
+  --text-2: #b7c4cf;
+  --muted: #7f8e9c;
+  --dim: #5a6875;
+  --line: rgba(255, 255, 255, 0.075);
+  --line-2: rgba(255, 255, 255, 0.14);
+
+  --amber: #ffb648;
+  --amber-strong: #ff9d2e;
+  --amber-soft: rgba(255, 182, 72, 0.14);
+  --cyan: #65d8e7;
+  --cyan-soft: rgba(101, 216, 231, 0.13);
+  --magenta: #ff6f9f;
+  --green: #74e0a5;
+  --red: #ff5d6c;
+  --red-soft: rgba(255, 93, 108, 0.12);
+  --accent: var(--amber);
+  --accent-contrast: #1a1206;
+
+  --radius-xl: 24px;
+  --radius-lg: 18px;
+  --radius: 13px;
+  --radius-sm: 9px;
+
+  --font-sans: "Inter", "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+
+  --topbar-h: 74px;
+  --status-h: 33px;
+  --rail-w: 332px;
+  --inspector-w: 318px;
+  --gutter: 14px;
+
+  --shadow-panel: 0 24px 60px -30px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  --ease: cubic-bezier(0.22, 0.68, 0.27, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+  background: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+canvas {
+  display: block;
+}
+
+h1,
+h2,
+h3,
+p,
+dl,
+dd,
+dt,
+figure {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+}
+
+::selection {
+  background: rgba(255, 182, 72, 0.3);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- ambient */
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(110px);
+  opacity: 0.22;
+}
+
+.ambient-amber {
+  top: -260px;
+  left: -160px;
+  width: 720px;
+  height: 720px;
+  background: radial-gradient(circle, #ffb648 0%, rgba(255, 120, 30, 0.55) 45%, transparent 70%);
+}
+
+.ambient-cyan {
+  right: -260px;
+  bottom: -320px;
+  width: 820px;
+  height: 820px;
+  background: radial-gradient(circle, #2b9fb5 0%, rgba(20, 70, 110, 0.5) 50%, transparent 72%);
+  opacity: 0.18;
+}
+
+.ambient-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 20%, transparent 78%);
+  opacity: 0.7;
+}
+
+.ambient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, transparent 40%, rgba(5, 7, 10, 0.7) 100%);
+}
+
+/* ------------------------------------------------------------- scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 99px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.26);
+  background-clip: padding-box;
+}
+
+/* --------------------------------------------------------------- helpers */
+.eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.hidden,
+[hidden] {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

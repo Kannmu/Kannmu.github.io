@@ -56,6 +56,10 @@ defaults:
     values:
       sitemap: false
   - scope:
+      path: "UMH Display/dist/index.html"
+    values:
+      sitemap: false
+  - scope:
       path: "PhoLo/index.html"
     values:
       sitemap: false
