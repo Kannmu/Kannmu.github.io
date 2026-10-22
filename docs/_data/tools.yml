@@ -40,6 +40,13 @@
   url: /UMH/
   mark: UM
 
+- name: UMH Demo
+  category: 超声交互
+  description: UMH v7 超声相控阵演示台：84 路阵列的聚焦触觉与定向音频，通过 Web Serial 直接驱动控制器，也内置无硬件演示模式。
+  technology: React · Vite · Web Serial
+  url: /UMH%20Demo/dist/
+  mark: UD
+
 - name: T-Sim 做T训练场
   category: 交易训练
   description: 用真实 A 股与 ETF 的分钟级历史行情做逐根回放，未来不可见，训练做T的择时直觉、仓位纪律与成本意识，收盘后逐笔复盘评级。
