@@ -456,6 +456,15 @@ export class DisplayScene {
     this.targetLine = null;
   }
 
+  /** Continuous live target marker used by the unrestricted mode. */
+  setLiveTarget(xMm: number, yMm: number, visible = true): void {
+    this.bead.position.set(xMm, PAINT_HEIGHT + 0.6, yMm);
+    this.bead.visible = visible;
+    this.beadLight.position.set(xMm, PAINT_HEIGHT + 4, yMm);
+    this.beadLight.intensity = visible ? 26 : 0;
+    this.beadLight.color.setRGB(1, 0.72, 0.3);
+  }
+
   /** phase in [0,1), playing controls whether the brush tail shows. */
   setProgress(phase: number, playing: boolean): void {
     if (!this.plan) return;

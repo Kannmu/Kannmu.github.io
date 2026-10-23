@@ -1314,3 +1314,18 @@ input[type="range"]:active::-webkit-slider-thumb {
   color: var(--cyan);
   font-weight: 550;
 }
+
+/* realtime unrestricted mode: live target, no plan/play controls */
+body.is-realtime .rail-actions,
+body.is-realtime .playback {
+  display: none;
+}
+
+body.is-realtime .chart-pair,
+body.is-realtime .hud-bl {
+  display: none;
+}
+
+body.is-realtime .center-duplicate {
+  display: none;
+}

@@ -7,6 +7,7 @@ import { lateralAccelOf, setLateralAccel, trapModeOf } from '../config/defaults.
 import { clearConfig, downloadConfig, readConfigFile, saveConfig } from '../config/store.ts';
 import { SHAPES } from '../shapes/library.ts';
 import type { Plan } from '../motion/planner.ts';
+import { LiveController, type LiveSample } from '../realtime/liveController.ts';
 import { Session, SessionState } from '../device/session.ts';
 import type { MotionStatus } from '../device/protocol.ts';
 import type { DeviceManager, LinkState } from './DeviceManager.ts';
@@ -54,29 +55,6 @@ function must<T extends HTMLElement>(id: string): T {
   return node as T;
 }
 
-const RAW_LOOP_MIN_MS = 1;
-const RAW_LOOP_MAX_MS = 60000;
-const RAW_RATE_MIN = 0.001;
-const RAW_RATE_MAX = 1;
-const RAW_LOOP_DECADES = Math.log10(RAW_LOOP_MAX_MS);
-const RAW_RATE_DECADES = Math.log10(RAW_RATE_MAX / RAW_RATE_MIN);
-
-function posToRawLoop(pos: number): number {
-  return Math.max(RAW_LOOP_MIN_MS, Math.min(RAW_LOOP_MAX_MS, 10 ** ((pos / 1000) * RAW_LOOP_DECADES)));
-}
-
-function rawLoopToPos(ms: number): number {
-  return (1000 * Math.log10(Math.max(RAW_LOOP_MIN_MS, Math.min(RAW_LOOP_MAX_MS, ms)))) / RAW_LOOP_DECADES;
-}
-
-function posToRawRate(pos: number): number {
-  return Math.max(RAW_RATE_MIN, Math.min(RAW_RATE_MAX, 10 ** (Math.log10(RAW_RATE_MIN) + (pos / 1000) * RAW_RATE_DECADES)));
-}
-
-function rawRateToPos(rate: number): number {
-  return (1000 * (Math.log10(Math.max(RAW_RATE_MIN, Math.min(RAW_RATE_MAX, rate))) - Math.log10(RAW_RATE_MIN))) / RAW_RATE_DECADES;
-}
-
 export class DisplayWorkspace {
   private readonly cfg: AppConfig;
   private readonly log: EventLog;
@@ -107,11 +85,28 @@ export class DisplayWorkspace {
   private readonly levelSlider: SliderHandle;
   private readonly lateralSlider: SliderHandle;
   private readonly refreshSlider: SliderHandle;
+  private readonly cxSlider: SliderHandle;
+  private readonly cySlider: SliderHandle;
+  private liveLevel = 255;
+  private liveSpeedNow = 0;
+  private realtime = false;
+  private autoLevitated = false;
+  private liveSending = false;
+  private livePending = false;
+  private liveSaveTimer = 0;
+  private liveHudAt = 0;
+  private readonly live = new LiveController(
+    () => ({ speedMmS: this.cfg.unlimited.speedMmS, accelMmS2: this.cfg.unlimited.accelMmS2 }),
+    (sample) => this.onLiveMove(sample),
+    35
+  );
   private readonly normalMotion: HTMLElement;
   private readonly motionRoot: HTMLElement;
   private readonly rawMotion: HTMLElement;
-  private readonly rawLoop: SliderHandle;
-  private readonly rawRate: SliderHandle;
+  private readonly liveX: SliderHandle;
+  private readonly liveY: SliderHandle;
+  private readonly liveSpeed: SliderHandle;
+  private readonly liveAccel: SliderHandle;
   private readonly rawActual: HTMLElement;
   private readonly unlimitedToggle: ToggleHandle;
   private readonly spanEl: HTMLElement;
@@ -172,11 +167,15 @@ export class DisplayWorkspace {
     this.levelSlider = trap.level;
     this.lateralSlider = motion.lateral;
     this.refreshSlider = motion.refresh;
+    this.cxSlider = shape.cx;
+    this.cySlider = shape.cy;
     this.normalMotion = motion.normal;
     this.motionRoot = motion.root;
     this.rawMotion = mode.raw;
-    this.rawLoop = mode.rawLoop;
-    this.rawRate = mode.rawRate;
+    this.liveX = mode.liveX;
+    this.liveY = mode.liveY;
+    this.liveSpeed = mode.liveSpeed;
+    this.liveAccel = mode.liveAccel;
     this.rawActual = mode.rawActual;
     this.unlimitedToggle = mode.toggle;
     this.spanEl = shape.span;
@@ -234,6 +233,12 @@ export class DisplayWorkspace {
         if (this.session?.state === SessionState.Hover) {
           this.session.setLevel(levelValue).catch((error) => this.fail(error));
         }
+        if (this.cfg.unlimited.enabled) {
+          this.liveLevel = levelValue;
+          this.livePending = true;
+          void this.flushLiveTarget();
+          this.updateLiveUi();
+        }
       }
     });
     const drawLevel = slider({
@@ -287,6 +292,8 @@ export class DisplayWorkspace {
     textRow: HTMLElement;
     textField: HTMLInputElement;
     span: HTMLElement;
+    cx: SliderHandle;
+    cy: SliderHandle;
   } {
     const cfg = this.cfg;
     const grid = shapeGrid(SHAPE_NAMES, this.selectedShape, (name) => this.selectShape(name));
@@ -342,10 +349,11 @@ export class DisplayWorkspace {
       unit: 'mm',
       onInput: (value) => {
         cfg.display.centerXMm = value;
+        if (cfg.unlimited.enabled) this.applyLiveCenter();
       },
       onChange: () => {
         this.host.saveConfig();
-        this.schedulePlan();
+        if (!cfg.unlimited.enabled) this.schedulePlan();
       }
     });
     const cy = slider({
@@ -357,12 +365,15 @@ export class DisplayWorkspace {
       unit: 'mm',
       onInput: (value) => {
         cfg.display.centerYMm = value;
+        if (cfg.unlimited.enabled) this.applyLiveCenter();
       },
       onChange: () => {
         this.host.saveConfig();
-        this.schedulePlan();
+        if (!cfg.unlimited.enabled) this.schedulePlan();
       }
     });
+    cx.root.classList.add('center-duplicate');
+    cy.root.classList.add('center-duplicate');
     const span = el('span', { class: 'eyebrow', text: 'SHAPE' });
     const root = section(
       { title: '图形与摆放', eyebrow: 'SHAPE', actions: span },
@@ -374,7 +385,7 @@ export class DisplayWorkspace {
       cy.root,
       el('p', { class: 'section-note', text: '小图形画得更快；图形离阵列轴心越远，陷阱越弱。' })
     );
-    return { root, grid, textRow, textField, span };
+    return { root, grid, textRow, textField, span, cx, cy };
   }
 
   private buildColourSection(): { root: HTMLElement } {
@@ -470,8 +481,10 @@ export class DisplayWorkspace {
   private buildModeSection(): {
     root: HTMLElement;
     raw: HTMLElement;
-    rawLoop: SliderHandle;
-    rawRate: SliderHandle;
+    liveX: SliderHandle;
+    liveY: SliderHandle;
+    liveSpeed: SliderHandle;
+    liveAccel: SliderHandle;
     rawActual: HTMLElement;
     toggle: ToggleHandle;
   } {
@@ -479,69 +492,92 @@ export class DisplayWorkspace {
     const rawToggle = toggle({
       label: '解除所有限制',
       checked: cfg.unlimited.enabled,
-      hint: '原始轨迹：不提前规划、不做动力学仿真。关闭后恢复速度规划与校验。',
+      hint: '开启后自动起浮，中心 X/Y、手柄左摇杆与 WASD 直接实时下发，不走规划和播放。',
       onChange: (checked) => void this.setUnlimited(checked).catch((error) => this.fail(error))
     });
     rawToggle.input.id = 'unlimitedToggle';
     const rawActual = el('div', { class: 'raw-summary' });
-    const rawLoop = slider({
-      label: '基础周期',
-      min: 0,
-      max: 1000,
-      step: 1,
-      value: rawLoopToPos(cfg.unlimited.loopMs),
-      format: (pos) => formatDuration(posToRawLoop(pos)),
-      hint: '固件循环长度：1 ms – 60 s。',
-      onInput: (pos) => {
-        cfg.unlimited.loopMs = Math.round(posToRawLoop(pos));
+    const liveX = slider({
+      label: '中心 X',
+      min: -35,
+      max: 35,
+      step: 0.1,
+      value: cfg.display.centerXMm,
+      unit: 'mm',
+      onInput: (value) => {
+        cfg.display.centerXMm = value;
+        this.applyLiveCenter();
+      },
+      onChange: () => this.host.saveConfig()
+    });
+    liveX.input.id = 'liveX';
+    const liveY = slider({
+      label: '中心 Y',
+      min: -35,
+      max: 35,
+      step: 0.1,
+      value: cfg.display.centerYMm,
+      unit: 'mm',
+      onInput: (value) => {
+        cfg.display.centerYMm = value;
+        this.applyLiveCenter();
+      },
+      onChange: () => this.host.saveConfig()
+    });
+    liveY.input.id = 'liveY';
+    const liveSpeed = slider({
+      label: '移动速度',
+      min: 0.01,
+      max: 50,
+      step: 0.01,
+      value: cfg.unlimited.speedMmS,
+      unit: 'mm/s',
+      hint: '手柄左摇杆 / WASD 的目标速度；可播放中实时改。',
+      onInput: (value) => {
+        cfg.unlimited.speedMmS = value;
         this.updateRawSummary();
       },
-      onChange: (pos) => {
-        cfg.unlimited.loopMs = Math.round(posToRawLoop(pos));
+      onChange: () => {
         this.host.saveConfig();
         this.updateRawSummary();
-        if (this.playing) toast('基础周期在下次播放生效', 'info');
-        else this.schedulePlan(true);
+        if (this.realtime) this.updateLiveUi();
       }
     });
-    rawLoop.input.id = 'rawLoop';
-    const rawRate = slider({
-      label: '播放速度',
-      min: 0,
-      max: 1000,
-      step: 1,
-      value: rawRateToPos(cfg.unlimited.rate),
-      format: (pos) => `${posToRawRate(pos).toFixed(3)}×`,
-      hint: '固件速率分频 0.001× – 1×；播放中也可实时调整。',
-      onInput: (pos) => {
-        cfg.unlimited.rate = posToRawRate(pos);
+    liveSpeed.input.id = 'liveSpeed';
+    const liveAccel = slider({
+      label: '加速度',
+      min: 0.1,
+      max: 500,
+      step: 0.1,
+      value: cfg.unlimited.accelMmS2,
+      unit: 'mm/s²',
+      hint: '速度向目标值逼近的加速度；越小越柔和。',
+      onInput: (value) => {
+        cfg.unlimited.accelMmS2 = value;
         this.updateRawSummary();
       },
-      onChange: (pos) => {
-        const rate = posToRawRate(pos);
-        cfg.unlimited.rate = rate;
+      onChange: () => {
         this.host.saveConfig();
-        if (this.playing && this.plan?.raw) void this.applyRawRate(rate);
-        else {
-          this.updateRawSummary();
-          this.schedulePlan(true);
-        }
+        this.updateRawSummary();
+        if (this.realtime) this.updateLiveUi();
       }
     });
-    rawRate.input.id = 'rawRate';
+    liveAccel.input.id = 'liveAccel';
     const raw = el(
       'div',
       { class: 'raw-group' },
-      rawLoop.root,
-      rawRate.root,
+      liveX.root,
+      liveY.root,
+      liveSpeed.root,
+      liveAccel.root,
       rawActual,
       el('p', {
         class: 'section-note',
-        text: '固件按上传点线性插值循环播放：无前馈、无速度/加速度约束、无共振滤波、无仿真校验。硬边界只有固件点数和 60 s 循环。'
+        text: '开启即自动打开声场：修改中心 X/Y 会立即下发；Xbox 左摇杆或 WASD 以设定的速度/加速度连续移动。不生成路径、不需要规划或播放。'
       })
     );
     const root = section({ title: '模式', eyebrow: 'MODE' }, rawToggle.root, raw);
-    return { root, raw, rawLoop, rawRate, rawActual, toggle: rawToggle };
+    return { root, raw, liveX, liveY, liveSpeed, liveAccel, rawActual, toggle: rawToggle };
   }
 
   private buildMotionSection(): {
@@ -643,12 +679,12 @@ export class DisplayWorkspace {
   private createMetrics(): MetricBar {
     if (this.cfg.unlimited.enabled) {
       return new MetricBar(must('displayMetrics'), [
-        { key: 'period', label: '一圈用时', digits: 0, accent: true },
-        { key: 'speed', label: '平均速度', unit: 'mm/s', digits: 3 },
-        { key: 'length', label: '路径总长', unit: 'mm', digits: 1 },
-        { key: 'loop', label: '基础周期', digits: 0 },
-        { key: 'rate', label: '速度倍率', unit: '×', digits: 3 },
-        { key: 'points', label: '设备点', unit: 'pts', digits: 0 }
+        { key: 'x', label: '中心 X', unit: 'mm', digits: 2, accent: true },
+        { key: 'y', label: '中心 Y', unit: 'mm', digits: 2 },
+        { key: 'speed', label: '速度', unit: 'mm/s', digits: 2 },
+        { key: 'accel', label: '加速度', unit: 'mm/s²', digits: 1 },
+        { key: 'level', label: '电平', unit: '/255', digits: 0 },
+        { key: 'mode', label: '输出', digits: 0 }
       ]);
     }
     return new MetricBar(must('displayMetrics'), [
@@ -667,83 +703,208 @@ export class DisplayWorkspace {
     this.motionRoot.hidden = raw;
     this.rawMotion.hidden = !raw;
     this.unlimitedToggle.setChecked(raw);
-    if (this.rawLoop) this.rawLoop.setValue(rawLoopToPos(this.cfg.unlimited.loopMs), true);
-    if (this.rawRate) this.rawRate.setValue(rawRateToPos(this.cfg.unlimited.rate), true);
+    this.liveX.setValue(this.cfg.display.centerXMm, true);
+    this.liveY.setValue(this.cfg.display.centerYMm, true);
+    this.liveSpeed.setValue(this.cfg.unlimited.speedMmS, true);
+    this.liveAccel.setValue(this.cfg.unlimited.accelMmS2, true);
     this.metrics = this.createMetrics();
-    must('displayHudEyebrow').textContent = raw ? 'LIGHT PAINTING · RAW TRAJECTORY' : 'LIGHT PAINTING · STANDING WAVE';
+    must('displayHudEyebrow').textContent = raw ? 'LIGHT PAINTING · LIVE TARGET' : 'LIGHT PAINTING · STANDING WAVE';
     this.updateRawSummary();
   }
 
   private updateRawSummary(): void {
     if (!this.rawActual) return;
-    const effectiveMs =
-      this.playing && this.plan?.raw
-        ? this.plan.periodS * 1000
-        : (this.cfg.unlimited.loopMs / 1000 / Math.max(this.cfg.unlimited.rate, 0.001)) * 1000;
-    const lengthMm = this.plan?.raw ? this.plan.metrics.lengthMm : 0;
-    const speed = lengthMm > 0 ? lengthMm / (effectiveMs / 1000) : 0;
+    const live = this.realtime ? this.live.position : { xMm: this.cfg.display.centerXMm, yMm: this.cfg.display.centerYMm };
     clear(this.rawActual);
     this.rawActual.append(
-      el('span', { text: '实际一圈 ' }),
-      el('strong', { text: formatDuration(effectiveMs) }),
-      el('span', { text: ' · 平均 ' }),
-      el('strong', { text: speed > 0 ? `${formatNumber(speed, speed < 1 ? 3 : 1)} mm/s` : '—' })
+      el('span', { text: '实时目标 ' }),
+      el('strong', { text: `X ${formatNumber(live.xMm, 2)} / Y ${formatNumber(live.yMm, 2)} mm` }),
+      el('span', { text: ` · ${formatNumber(this.cfg.unlimited.speedMmS, 2)} mm/s · ` }),
+      el('strong', { text: `${formatNumber(this.cfg.unlimited.accelMmS2, 1)} mm/s²` })
     );
   }
 
   private async setUnlimited(enabled: boolean): Promise<void> {
     if (enabled === this.cfg.unlimited.enabled) return;
     if (this.playing) await this.stopPlayback();
-    this.cfg.unlimited.enabled = enabled;
+    if (enabled) {
+      this.cfg.unlimited.enabled = true;
+      this.host.saveConfig();
+      this.syncUnlimitedUi();
+      this.log.add('已解除限制：实时 XY 输出', 'warn');
+      const ok = await this.startRealtime();
+      if (!ok) {
+        this.cfg.unlimited.enabled = false;
+        this.host.saveConfig();
+        this.syncUnlimitedUi();
+        await this.replan(true);
+      }
+      return;
+    }
+    this.cfg.unlimited.enabled = false;
     this.host.saveConfig();
+    await this.stopRealtime();
     this.syncUnlimitedUi();
-    this.log.add(enabled ? '已解除限制：使用原始轨迹' : '已恢复速度规划与动力学校验', 'warn');
-    this.host.setHint(
-      enabled
-        ? '原始轨迹模式：无前馈、无速度/加速度规划；播放速度可实时调整'
-        : '规划模式：时间最优速度、抗共振滤波与仿真校验'
-    );
+    this.log.add('已恢复速度规划与动力学校验', 'warn');
+    this.host.setHint('规划模式：时间最优速度、抗共振滤波与仿真校验');
     await this.replan(true);
   }
 
-  private async applyRawRate(rate: number): Promise<void> {
+  private async startRealtime(): Promise<boolean> {
+    if (this.realtime) return true;
+    this.plan = null;
+    this.scene.setPlan(null);
+    this.scene.setLiveTarget(0, 0, false);
+    this.drawCharts(0);
     try {
-      await this.ensureSession().setPlaybackRate(rate);
-      const plan = this.plan;
-      if (!plan?.raw) return;
-      this.updateRawPlanSpeed();
-      const m = plan.metrics;
-      this.metrics.update({
-        period: formatDuration(m.periodMs),
-        speed: m.vMaxMmS,
-        length: m.lengthMm,
-        loop: formatDuration(m.deviceLoopMs),
-        rate: m.playbackRate,
-        points: plan.points.length
-      });
-      must('displayPlanSub').textContent =
-        `一圈 ${formatDuration(m.periodMs)} · ${plan.points.length} 点 · 平均 ${formatNumber(m.vMaxMmS, m.vMaxMmS < 1 ? 4 : 2)} mm/s`;
-      must('planChartNote').textContent = `${formatDuration(m.periodMs)} · ${plan.points.length} pts`;
-      this.host.setHint(`原始轨迹 · 一圈 ${formatDuration(m.periodMs)} · 速度倍率 ${m.playbackRate.toFixed(3)}×`);
-      this.renderReadout();
-      this.drawCharts(this.phase);
+      const session = this.ensureSession();
+      if (session.state === SessionState.Running) await session.stopDrawing();
+      if (session.state === SessionState.Idle) {
+        const message = await session.levitate();
+        this.autoLevitated = true;
+        this.log.add(message, 'ok');
+      }
+      this.liveLevel = Math.max(1, Math.min(255, Math.round(this.cfg.trap.level)));
+      await session.setLevel(this.liveLevel);
+      const x = this.cfg.display.centerXMm;
+      const y = this.cfg.display.centerYMm;
+      this.realtime = true;
+      document.body.classList.add('is-realtime');
+      this.live.start(x, y);
+      this.scene.setLiveTarget(x, y, true);
+      this.livePending = true;
+      void this.flushLiveTarget();
+      this.updateLiveUi(true);
+      this.log.add(`实时输出已启动：X ${x.toFixed(2)} / Y ${y.toFixed(2)} mm`, 'ok');
+      toast('实时输出：左摇杆 / WASD 移动，中心 X/Y 直接下发', 'ok', 3500);
+      return true;
     } catch (error) {
+      this.realtime = false;
+      this.live.stop();
+      document.body.classList.remove('is-realtime');
+      this.scene.setLiveTarget(0, 0, false);
+      if (this.autoLevitated && this.session && this.session.state !== SessionState.Idle) {
+        await this.session.drop().catch(() => undefined);
+        this.autoLevitated = false;
+      }
       this.fail(error);
+      return false;
     }
   }
 
-  private updateRawPlanSpeed(): void {
-    const plan = this.plan;
-    if (!plan?.raw) return;
-    const periodS = Math.max(plan.periodS, 1e-9);
-    const speedMmS = plan.metrics.lengthMm / periodS;
-    plan.metrics.periodMs = periodS * 1000;
-    plan.metrics.refreshHz = 1 / periodS;
-    plan.metrics.vMaxMmS = speedMmS;
-    plan.metrics.vLitMeanMmS = speedMmS;
-    plan.metrics.playbackRate = plan.playbackRate ?? this.cfg.unlimited.rate;
-    plan.speed.fill(speedMmS * 1e-3);
+  private async stopRealtime(): Promise<void> {
+    if (!this.realtime) return;
+    this.realtime = false;
+    this.live.stop();
+    this.livePending = false;
+    window.clearTimeout(this.liveSaveTimer);
+    this.liveSaveTimer = 0;
+    document.body.classList.remove('is-realtime');
+    this.scene.setLiveTarget(0, 0, false);
+    this.host.saveConfig();
+    const session = this.session;
+    if (this.autoLevitated && session && session.state !== SessionState.Idle) {
+      await session.drop().catch(() => undefined);
+    }
+    this.autoLevitated = false;
+  }
+
+  private applyLiveCenter(): void {
+    const x = this.cfg.display.centerXMm;
+    const y = this.cfg.display.centerYMm;
+    this.cxSlider.setValue(x, true);
+    this.cySlider.setValue(y, true);
+    this.liveX.setValue(x, true);
+    this.liveY.setValue(y, true);
+    this.liveX.setValue(x, true);
+    this.liveY.setValue(y, true);
+    if (this.realtime) {
+      this.live.setPosition(x, y);
+      return;
+    }
+    this.scene.setLiveTarget(x, y, true);
     this.updateRawSummary();
+  }
+
+  private onLiveMove(sample: LiveSample): void {
+    if (!this.realtime) return;
+    const x = Math.max(-35, Math.min(35, sample.xMm));
+    const y = Math.max(-35, Math.min(35, sample.yMm));
+    this.cfg.display.centerXMm = x;
+    this.cfg.display.centerYMm = y;
+    this.cxSlider.setValue(x, true);
+    this.cySlider.setValue(y, true);
+    this.liveX.setValue(x, true);
+    this.liveY.setValue(y, true);
+    this.liveSpeedNow = Math.hypot(sample.vxMmS, sample.vyMmS);
+    this.scene.setLiveTarget(x, y, true);
+    this.livePending = true;
+    void this.flushLiveTarget();
+    this.scheduleLiveSave();
+    const now = performance.now();
+    if (now - this.liveHudAt > 100) {
+      this.liveHudAt = now;
+      this.updateLiveUi();
+    }
+  }
+
+  private async flushLiveTarget(): Promise<void> {
+    if (this.liveSending || !this.realtime) return;
+    const session = this.session;
+    if (!session || session.state !== SessionState.Hover) return;
+    this.liveSending = true;
+    try {
+      while (this.livePending && this.realtime) {
+        this.livePending = false;
+        if (this.session?.state !== SessionState.Hover) break;
+        const { xMm, yMm } = this.live.position;
+        await session.liveTarget(xMm, yMm, this.liveLevel);
+      }
+    } catch (error) {
+      this.fail(error);
+    } finally {
+      this.liveSending = false;
+    }
+  }
+
+  private scheduleLiveSave(): void {
+    window.clearTimeout(this.liveSaveTimer);
+    this.liveSaveTimer = window.setTimeout(() => {
+      this.liveSaveTimer = 0;
+      this.host.saveConfig();
+    }, 500);
+  }
+
+  private updateLiveUi(initial = false): void {
+    const { xMm, yMm } = this.live.position;
+    const active = this.session?.state === SessionState.Hover;
+    this.metrics.update({
+      x: xMm,
+      y: yMm,
+      speed: this.liveSpeedNow,
+      accel: this.cfg.unlimited.accelMmS2,
+      level: this.liveLevel,
+      mode: active ? 'LIVE' : 'IDLE'
+    });
+    must('displayPlanTitle').textContent = '实时输出';
+    const badge = must('displayRefreshBadge');
+    badge.textContent = active ? 'LIVE' : 'IDLE';
+    badge.style.borderColor = active ? 'rgba(101,216,231,.42)' : 'rgba(255,182,72,.32)';
+    badge.style.color = active ? '#9be7f0' : '#ffc46b';
+    must('displayPlanSub').textContent =
+      `X ${formatNumber(xMm, 2)} · Y ${formatNumber(yMm, 2)} mm · ` +
+      `${formatNumber(this.liveSpeedNow, 2)} mm/s · a ${formatNumber(this.cfg.unlimited.accelMmS2, 1)} mm/s²`;
+    must('planChartNote').textContent = '实时坐标';
+    this.host.setHint(
+      `实时输出 · X ${formatNumber(xMm, 2)} / Y ${formatNumber(yMm, 2)} mm · ` +
+        `${formatNumber(this.liveSpeedNow, 2)} mm/s`
+    );
+    if (initial) {
+      must('displayHudEyebrow').textContent = 'LIGHT PAINTING · LIVE TARGET';
+      renderWarnings(must('displayWarnings'), [], '实时模式：无规划、无播放；中心坐标直接下发设备');
+    }
+    this.updateRawSummary();
+    this.renderReadout();
   }
 
   private buildConfigSection(): HTMLElement {
@@ -872,7 +1033,7 @@ export class DisplayWorkspace {
   }
 
   private schedulePlan(immediate = false): void {
-    if (this.playing) return;
+    if (this.cfg.unlimited.enabled || this.playing) return;
     if (this.planning) {
       this.pendingPlan = true;
       return;
@@ -888,6 +1049,7 @@ export class DisplayWorkspace {
   private planTimer: number | null = null;
 
   async replan(manual: boolean): Promise<Plan | null> {
+    if (this.cfg.unlimited.enabled) return null;
     if (this.planning) {
       this.pendingPlan = true;
       return this.plan;
@@ -1067,6 +1229,17 @@ export class DisplayWorkspace {
       this.log.add(message, 'ok');
       toast(message, 'ok');
       this.renderReadout();
+      if (this.cfg.unlimited.enabled) {
+        this.liveLevel = Math.max(1, Math.min(255, Math.round(session.level)));
+        if (!this.realtime) {
+          await this.startRealtime();
+        } else {
+          await session.setLevel(this.liveLevel);
+          this.livePending = true;
+          void this.flushLiveTarget();
+          this.updateLiveUi();
+        }
+      }
     } catch (error) {
       this.fail(error);
     }
@@ -1077,6 +1250,8 @@ export class DisplayWorkspace {
     try {
       await this.ensureSession().drop();
       this.log.add('声场关闭，小球落下', 'info');
+      this.liveSpeedNow = 0;
+      if (this.realtime) this.updateLiveUi();
       this.renderReadout();
     } catch (error) {
       this.fail(error);
@@ -1090,12 +1265,18 @@ export class DisplayWorkspace {
       await this.devices.current.clear();
       this.log.add('E-STOP 已发送：立即关场', 'error');
       toast('E-STOP：声场立即关闭', 'error');
+      this.liveSpeedNow = 0;
+      if (this.realtime) this.updateLiveUi();
     } catch (error) {
       this.fail(error);
     }
   }
 
   async recolor(): Promise<void> {
+    if (this.cfg.unlimited.enabled) {
+      toast('实时模式没有路径颜色；关闭限制后再使用实时上色', 'info');
+      return;
+    }
     if (this.session?.state === SessionState.Running && this.session.plan) {
       const previous = this.session.plan;
       const plan = await this.client.plan(this.cfg, previous.name, previous.points.length, previous.periodS);
@@ -1110,6 +1291,10 @@ export class DisplayWorkspace {
 
   // ----------------------------------------------------------------- playback
   private async togglePlayback(): Promise<void> {
+    if (this.cfg.unlimited.enabled) {
+      toast('实时模式不需要播放：用中心 X/Y、左摇杆或 WASD 直接移动', 'info');
+      return;
+    }
     if (this.playing) {
       await this.stopPlayback();
       return;
@@ -1257,7 +1442,7 @@ export class DisplayWorkspace {
       this.renderReadout();
       if (this.visible) {
         this.host.setHint(
-          `${this.plan?.raw ? '原始轨迹' : '规划'} · ${status.stateName} · ` +
+          `${this.realtime ? '实时' : '规划'} · ${status.stateName} · ` +
             `(${(status.xUm / 1000).toFixed(2)}, ${(status.yUm / 1000).toFixed(2)}) mm · ` +
             `${status.fps.toFixed(0)} fps · 服务 ${status.serviceAvgUs}/${status.serviceMaxUs} µs`
         );
@@ -1276,7 +1461,22 @@ export class DisplayWorkspace {
     const fmt = (value: number | undefined, digits = 1): string =>
       value === undefined || !Number.isFinite(value) ? '—' : formatNumber(value, digits);
     const rows: Parameters<typeof renderReadout>[1] = [];
-    if (plan?.raw) {
+    if (this.realtime) {
+      const live = this.live.position;
+      rows.push({
+        title: '实时输出',
+        meta: this.session?.state === SessionState.Hover ? 'LIVE' : 'IDLE',
+        rows: [
+          { label: '中心 X', value: `${fmt(live.xMm, 2)} mm` },
+          { label: '中心 Y', value: `${fmt(live.yMm, 2)} mm` },
+          { label: '当前速度', value: `${fmt(this.liveSpeedNow, 2)} mm/s` },
+          { label: '加速度', value: `${fmt(this.cfg.unlimited.accelMmS2, 1)} mm/s²` },
+          { label: '目标速度', value: `${fmt(this.cfg.unlimited.speedMmS, 2)} mm/s` },
+          { label: '电平', value: `${this.liveLevel}/255` },
+          { label: '控制器', value: '左摇杆 / WASD · 直接下发', state: 'good' }
+        ]
+      });
+    } else if (plan?.raw) {
       const m = plan.metrics;
       rows.push({
         title: '原始轨迹',
@@ -1389,7 +1589,14 @@ export class DisplayWorkspace {
       this.devices.isDemo ? 'warn' : 'ok'
     );
     this.pollStatusSoon();
-    void this.replan(false);
+    if (this.cfg.unlimited.enabled) {
+      this.realtime = false;
+      this.live.stop();
+      document.body.classList.remove('is-realtime');
+      void this.startRealtime();
+    } else {
+      void this.replan(false);
+    }
   }
 
   private pollStatusSoon(): void {
@@ -1418,7 +1625,8 @@ export class DisplayWorkspace {
 
   async start(): Promise<void> {
     this.lastDeviceVersion = this.devices.state.version;
-    await this.replan(false);
+    if (this.cfg.unlimited.enabled) await this.startRealtime();
+    else await this.replan(false);
     this.drawCharts(0);
     this.updatePlayUi();
   }
@@ -1435,6 +1643,7 @@ export class DisplayWorkspace {
     window.clearInterval(this.pollTimer);
     this.resizeObserver.disconnect();
     cancelAnimationFrame(this.raf);
+    this.live.stop();
     this.scene.dispose();
     void this.session?.emergencyStop();
   }

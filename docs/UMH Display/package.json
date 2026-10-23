@@ -3,7 +3,7 @@
   "private": true,
   "version": "2.1.0",
   "type": "module",
-  "description": "UMH Display — browser-native acoustic levitation light painting with unrestricted raw trajectories",
+  "description": "UMH Display — browser-native acoustic levitation light painting with live unrestricted XY control",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

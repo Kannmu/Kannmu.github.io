@@ -17,7 +17,7 @@ const DEADZONE = 0.12;
 function editable(target: EventTarget | null): boolean {
   return (
     target instanceof HTMLElement &&
-    (target.matches('input, textarea, select, button') || target.isContentEditable)
+    (target.matches('input, textarea, select') || target.isContentEditable)
   );
 }
 
@@ -156,7 +156,7 @@ export class LiveController {
 
     const moving = Math.abs(this.vx) > 1e-5 || Math.abs(this.vy) > 1e-5;
     if (moving || this.x !== previousX || this.y !== previousY) {
-      if (now - this.lastEmit > 45) {
+      if (now - this.lastEmit > 20) {
         this.lastEmit = now;
         this.onMove(this.sample());
       }

@@ -82,7 +82,7 @@ export class App implements AppHost {
       this.onLink(this.devices.state);
       this.setHint(
         this.cfg.unlimited.enabled
-          ? '原始轨迹模式：无动力学提前量 · 基础周期与播放速度可调'
+          ? '实时输出：左摇杆 / WASD 连续移动 · 中心 X/Y 直接下发'
           : '规划在 Web Worker 中运行 · 拖动三维视图可旋转'
       );
       await sleep(260);
