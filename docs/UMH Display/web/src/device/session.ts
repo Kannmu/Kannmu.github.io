@@ -131,6 +131,15 @@ export class Session {
     if (this.state === SessionState.Hover) await this.dev.configure(this.liveConfig());
   }
 
+  /** Direct live target for the unrestricted mode (no path/plan). */
+  async liveTarget(xMm: number, yMm: number, level = this.level): Promise<void> {
+    if (this.state === SessionState.Idle) throw new SessionError('levitate the bead first');
+    if (this.state === SessionState.Running) await this.stopDrawing();
+    this.hoverXUm = xMm * 1000;
+    this.hoverYUm = yMm * 1000;
+    await this.dev.target(new MotionPoint(this.hoverXUm, this.hoverYUm, focusZmmOf(this.cfg) * 1000, level, 0));
+  }
+
   async moveHover(xMm: number, yMm: number): Promise<void> {
     if (this.state !== SessionState.Hover) throw new SessionError('hover moves need a hovering bead');
     this.hoverXUm = xMm * 1000;

@@ -66,8 +66,12 @@ export interface DisplayConfig {
  */
 export interface UnlimitedConfig {
   enabled: boolean;
+  /** Preallocated preview path parameters (unused by live output). */
   loopMs: number;
   rate: number;
+  /** Live joystick/keyboard motion limits. */
+  speedMmS: number;
+  accelMmS2: number;
 }
 
 export interface AppConfig {

@@ -121,6 +121,8 @@ export function normalizeConfig(raw: unknown): AppConfig {
   cfg.unlimited.enabled = bool(unlimited.enabled, cfg.unlimited.enabled);
   cfg.unlimited.loopMs = int(unlimited.loop_ms ?? unlimited.loopMs, cfg.unlimited.loopMs, 1, 60000);
   cfg.unlimited.rate = num(unlimited.rate, cfg.unlimited.rate, 0.001, 1);
+  cfg.unlimited.speedMmS = num(unlimited.speed_mm_s ?? unlimited.speedMmS, cfg.unlimited.speedMmS, 0.01, 50);
+  cfg.unlimited.accelMmS2 = num(unlimited.accel_mm_s2 ?? unlimited.accelMmS2, cfg.unlimited.accelMmS2, 0.01, 500);
 
   // migrations from config.py
   const version = int(raw.config_version ?? raw.configVersion, 1, 1, 999);

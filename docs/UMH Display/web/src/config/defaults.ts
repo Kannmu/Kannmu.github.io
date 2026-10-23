@@ -70,7 +70,9 @@ export function createDefaultConfig(): AppConfig {
     unlimited: {
       enabled: false,
       loopMs: 2000,
-      rate: 1
+      rate: 1,
+      speedMmS: 2.0,
+      accelMmS2: 5.0
     }
   };
 }
