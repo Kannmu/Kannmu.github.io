@@ -8,12 +8,20 @@ import {
   FLAG_LINEAR,
   FLAG_LOOP,
   FLAG_RGB,
+  FLAG_ULM,
+  HOLO_FLAG_GAMMA,
+  HOLO_FLAG_HOLD_LAST,
+  HologramConfig,
   MODE_LIVE,
   MODE_PATH,
   MotionConfig,
   MotionPoint,
-  SYS_VORTEX_ALT,
-  SYS_VORTEX_STEADY,
+  SYS_PLAYING,
+  ULM_AXIS_RING,
+  ULM_AXIS_X,
+  ULM_AXIS_Y,
+  ULM_SAWTOOTH,
+  type HologramKeyframe,
   type MotionStatus
 } from './protocol.ts';
 import type { DeviceLike } from './types.ts';
@@ -25,7 +33,8 @@ import { spinFoldAccel, spinFoldHz, trapModelFromConfig } from '../physics/trap.
 export enum SessionState {
   Idle = 'idle',
   Hover = 'hover',
-  Running = 'running'
+  Running = 'running',
+  Hologram = 'hologram'
 }
 
 export class SessionError extends Error {
@@ -79,14 +88,48 @@ export class Session {
     const pc = this.cfg.planner;
     return new MotionConfig({
       mode: MODE_LIVE,
-      flags: FLAG_RGB,
+      flags: FLAG_RGB | this.ulmFlags(),
       outputRateHz: pc.outputRateHz,
       maxSpeedMmS: Math.trunc(pc.seekSpeedMmS),
       maxAccelMmS2: Math.trunc(pc.seekAccelMmS2),
       level: this.level,
-      trapMode: trapModeOf(this.cfg),
+      ...this.patternFields(),
+      ...this.ulmFields(),
       palette: palette ?? [[255, 255, 255]]
     });
+  }
+
+  /** trap_mode plus the pattern radius / vortex span the firmware expects. */
+  private patternFields(): { trapMode: number; trapRadiusUm: number; trapPhaseSpan: number } {
+    const trap = this.cfg.trap;
+    return {
+      trapMode: trapModeOf(this.cfg),
+      trapRadiusUm: Math.round(trap.patternRadiusMm * 1000),
+      trapPhaseSpan: Math.round(trap.phaseSpan)
+    };
+  }
+
+  private ulmFlags(): number {
+    return this.cfg.ulm.enabled ? FLAG_ULM : 0;
+  }
+
+  private ulmFields(): {
+    ulmFrequencyHz: number;
+    ulmAmplitudeUm: number;
+    ulmWaveSpeedMmS: number;
+    ulmAxis: number;
+  } {
+    const ulm = this.cfg.ulm;
+    if (!ulm.enabled) {
+      return { ulmFrequencyHz: 0, ulmAmplitudeUm: 0, ulmWaveSpeedMmS: 0, ulmAxis: 0 };
+    }
+    const axis = ulm.axis === 'x' ? ULM_AXIS_X : ulm.axis === 'y' ? ULM_AXIS_Y : ULM_AXIS_RING;
+    return {
+      ulmFrequencyHz: Math.round(ulm.frequencyHz),
+      ulmAmplitudeUm: Math.max(0, Math.round(ulm.amplitudeUm)),
+      ulmWaveSpeedMmS: Math.max(0, Math.round(ulm.waveSpeedMmS)),
+      ulmAxis: axis | (ulm.sawtooth ? ULM_SAWTOOTH : 0)
+    };
   }
 
   private hoverPoint(xUm: number, yUm: number): MotionPoint {
@@ -98,8 +141,8 @@ export class Session {
     this.abort.value = false;
     let status = await this.dev.motionStatus();
     const flags = await this.dev.systemFlags();
-    if (flags & (SYS_VORTEX_STEADY | SYS_VORTEX_ALT)) {
-      throw new SessionError('a defoam vortex program is running; stop it on the device first');
+    if ((flags & SYS_PLAYING) !== 0 && !status.running) {
+      throw new SessionError('设备正在执行其他输出（块流 / 全息 / 枪模式），请先在设备上停止');
     }
     if (status.running) {
       if (status.trapMode !== trapModeOf(this.cfg)) {
@@ -170,6 +213,7 @@ export class Session {
   private pathConfig(plan: Plan, rateInitial: number, rateTarget: number, rampMs: number): MotionConfig {
     let flags = FLAG_DIRECT | FLAG_LOOP | FLAG_RGB;
     if (plan.raw || this.cfg.planner.interpolation === 'linear') flags |= FLAG_LINEAR;
+    flags |= this.ulmFlags();
     const loopS = plan.deviceLoopS ?? plan.periodS;
     const rawRate = plan.playbackRate ?? 1;
     return new MotionConfig({
@@ -180,12 +224,63 @@ export class Session {
       maxSpeedMmS: plan.raw ? 10000 : undefined,
       maxAccelMmS2: plan.raw ? 65535 : undefined,
       level: this.level,
-      trapMode: trapModeOf(this.cfg),
+      ...this.patternFields(),
+      ...this.ulmFields(),
       palette: plan.palette,
       paletteSpinX10: plan.paletteSpinX10,
       rateInitial: plan.raw ? rawRate : rateInitial,
       rateTarget: plan.raw ? rawRate : rateTarget,
       rateRampMs: plan.raw ? 0 : rampMs
+    });
+  }
+
+  /** Re-send CONFIG for whatever program is running (pattern, ULM, level). */
+  async applyOutputConfig(): Promise<void> {
+    if (this.state === SessionState.Hover) await this.dev.configure(this.liveConfig());
+    else if (this.state === SessionState.Running && this.plan) {
+      await this.dev.configure(this.pathConfig(this.plan, 1, 1, 0));
+    }
+  }
+
+  /* ------------------------------------------------------------ holograms */
+
+  /** Upload keyframes, configure and take over the output in one go. */
+  async holoStart(frames: HologramKeyframe[], config: HologramConfig): Promise<void> {
+    if (!this.dev.hasHologram) {
+      throw new SessionError('当前设备固件没有全息关键帧引擎（capability bit11）');
+    }
+    if (frames.length === 0) throw new SessionError('全息模式至少需要一张关键帧');
+    this.abort.value = true;
+    await this.dev.holoUpload(frames);
+    config.keyframes = frames.length;
+    await this.dev.holoConfigure(config);
+    await this.dev.holoStart();
+    this.state = SessionState.Hologram;
+  }
+
+  /** Re-send CONFIG for a running morph (rate, level, transition, loop). */
+  async holoUpdate(config: HologramConfig): Promise<void> {
+    if (this.state !== SessionState.Hologram) return;
+    await this.dev.holoConfigure(config);
+  }
+
+  async holoStop(): Promise<void> {
+    if (this.state !== SessionState.Hologram) return;
+    await this.dev.holoStop();
+    this.state = SessionState.Idle;
+  }
+
+  /** Hologram CONFIG built from the persisted panel state. */
+  holoConfig(frames: number): HologramConfig {
+    const holo = this.cfg.holo;
+    return new HologramConfig({
+      flags:
+        (holo.holdLast ? HOLO_FLAG_HOLD_LAST : 0) | (holo.gamma ? HOLO_FLAG_GAMMA : 0),
+      outputRateHz: holo.outputRateHz,
+      loopMs: holo.loopMs,
+      transitionMs: holo.transitionMs,
+      level: holo.level,
+      keyframes: frames
     });
   }
 

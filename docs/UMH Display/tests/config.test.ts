@@ -35,7 +35,9 @@ describe('configuration', () => {
     });
     expect(cfg.port).toBe('COM7');
     expect(cfg.trap.field).toBe('vortex');
-    expect(trapModeOf(cfg)).toBe(6);
+    /* v7.5 firmware renumbers the patterns: 4 is the eight-source vortex ring
+     * and 6 is rejected, so the legacy name maps onto the real device mode. */
+    expect(trapModeOf(cfg)).toBe(4);
     expect(lateralAccelOf(cfg)).toBe(44);
     expect(cfg.planner.cornerMode).toBe('stop');
     expect(cfg.planner.interpolation).toBe('linear');
@@ -62,16 +64,35 @@ describe('configuration', () => {
 
   it('clamps nonsense values instead of taking them literally', () => {
     const cfg = normalizeConfig({
-      trap: { level: -20, table_distance_mm: 9999 },
+      trap: { level: -20, table_distance_mm: 9999, pattern_radius_mm: 999, phase_span: 400 },
       display: { size_mm: 500, gamma: 100, color_scheme: 'cartoon' },
       unlimited: { loop_ms: 0, rate: 2 }
     });
     expect(cfg.trap.level).toBe(1);
     expect(cfg.trap.tableDistanceMm).toBe(400);
+    expect(cfg.trap.patternRadiusMm).toBe(20);
+    expect(cfg.trap.phaseSpan).toBe(255);
     expect(cfg.display.sizeMm).toBe(80);
     expect(cfg.display.gamma).toBe(4);
     expect(cfg.display.colorScheme).toBe('wheel');
     expect(cfg.unlimited.loopMs).toBe(1);
     expect(cfg.unlimited.rate).toBe(1);
+  });
+
+  it('keeps the ULM and hologram panels inside firmware limits', () => {
+    const cfg = normalizeConfig({
+      ulm: { enabled: true, frequency_hz: 5000, amplitude_um: -3, wave_speed_mm_s: 20000, axis: 'z' },
+      holo: { shapes: ['circle', 'star'], transition_ms: 99999, output_rate_hz: 5000, level: 300, loop_ms: -1 }
+    });
+    expect(cfg.ulm.enabled).toBe(true);
+    expect(cfg.ulm.frequencyHz).toBe(1000);
+    expect(cfg.ulm.amplitudeUm).toBe(0);
+    expect(cfg.ulm.waveSpeedMmS).toBe(10000);
+    expect(cfg.ulm.axis).toBe('ring');
+    expect(cfg.holo.shapes).toEqual(['circle', 'star']);
+    expect(cfg.holo.transitionMs).toBe(10000);
+    expect(cfg.holo.outputRateHz).toBe(1000);
+    expect(cfg.holo.level).toBe(128);
+    expect(cfg.holo.loopMs).toBe(0);
   });
 });

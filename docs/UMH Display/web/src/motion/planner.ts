@@ -32,7 +32,7 @@ import { place, type Planar } from '../shapes/base.ts';
 import { make } from '../shapes/library.ts';
 import { layoutText } from '../shapes/text.ts';
 import { samplePath, pointsArrays, framePhases } from '../device/emulation.ts';
-import { MotionPoint, TRAP_DARK_VORTEX } from '../device/protocol.ts';
+import { MotionPoint } from '../device/protocol.ts';
 
 const GRID_HZ = 4000;
 const MIN_DWELL_LIGHT = 0.12;
@@ -1128,6 +1128,10 @@ export function deviceFrames(result: Plan, durationS: number, rampS: number, lin
   };
 }
 
+/** The Python app's continuous vortex beam; the firmware's mode 4 is a
+ * discrete eight-source ring, so this only affects the diagnostic estimate. */
+const LEGACY_CONTINUOUS_VORTEX = 6;
+
 /** Largest per-element carrier phase change between consecutive frames. */
 export function phaseStepDeg(
   trapX: ArrayLike<number>,
@@ -1148,7 +1152,7 @@ export function phaseStepDeg(
       const ey = elements[j * 3 + 1] - trapY[f];
       const ez = elements[j * 3 + 2] - focusZ;
       let phi = -k * Math.hypot(ex, ey, ez);
-      if (trapMode === TRAP_DARK_VORTEX) phi += Math.atan2(ey, ex);
+      if (trapMode === LEGACY_CONTINUOUS_VORTEX) phi += Math.atan2(ey, ex);
       current[j] = phi;
       if (f > 0) {
         let d = current[j] - previous[j];

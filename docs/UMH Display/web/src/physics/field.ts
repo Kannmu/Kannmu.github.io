@@ -141,12 +141,22 @@ export function elementDrive(
   return { re, im };
 }
 
-function directivity(cosT: number): number {
+/** Piston directivity for the angle cosine of one element->point ray. */
+export function directivity(cosT: number): number {
   const arg = K * PISTON_RADIUS * Math.sqrt(clamp(1 - cosT * cosT, 0, 1));
   let out = 1;
   if (arg > 1e-9) out = (2 * besselJ1(arg)) / arg;
   return cosT > 0 ? out : 0;
 }
+
+export interface PatternOptions {
+  /** Ring radius / twin separation in millimetres (firmware clamps to >= 0.5). */
+  radiusMm?: number;
+  /** Vortex span in carrier units; 0 means one full turn, exactly like the MCU. */
+  phaseSpan?: number;
+}
+
+const PATTERN_RADIUS_DEFAULT_MM = 2.0;
 
 export class FieldModel {
   readonly src: ElementPositions;
@@ -161,6 +171,8 @@ export class FieldModel {
   readonly bead: BeadConfig;
   readonly tableDistanceMm: number;
   readonly focusOffsetMm: number;
+  readonly patternRadiusMm: number;
+  readonly phaseSpan: number;
 
   constructor(
     bead: BeadConfig,
@@ -168,18 +180,21 @@ export class FieldModel {
     trapMode: number,
     focusXYMm: readonly [number, number] = [0, 0],
     focusOffsetMm = 0,
-    src?: ElementPositions
+    src?: ElementPositions,
+    pattern: PatternOptions = {}
   ) {
     this.bead = { ...bead };
     this.tableDistanceMm = tableDistanceMm;
     this.focusOffsetMm = focusOffsetMm;
+    this.patternRadiusMm = pattern.radiusMm ?? PATTERN_RADIUS_DEFAULT_MM;
+    this.phaseSpan = pattern.phaseSpan ?? 0;
     this.src = src ?? elementPositionsM();
     let zSum = 0;
     for (let j = 0; j < this.src.count; j++) zSum += this.src.xyz[j * 3 + 2];
     this.tableZ = zSum / this.src.count + tableDistanceMm * 1e-3;
     this.trapMode = trapMode;
     this.focus = [focusXYMm[0] * 1e-3, focusXYMm[1] * 1e-3, this.tableZ + focusOffsetMm * 1e-3];
-    this.drive = elementDrive(trapMode, this.focus, this.src);
+    this.drive = elementDrive(trapMode, this.focus, this.src, this.patternRadiusMm * 1e-3, this.phaseSpan);
     this.image = new Float64Array(this.src.xyz.length);
     for (let j = 0; j < this.src.count; j++) {
       this.image[j * 3] = this.src.xyz[j * 3];
@@ -434,7 +449,9 @@ export class FieldModel {
       this.tableDistanceMm,
       this.trapMode,
       [commandMm, 0],
-      this.focusOffsetMm
+      this.focusOffsetMm,
+      this.src,
+      { radiusMm: this.patternRadiusMm, phaseSpan: this.phaseSpan }
     );
     const xs = linspace((commandMm - 1.5) * 1e-3, (commandMm + 1.5) * 1e-3, 301);
     const pts = new Float64Array(xs.length * 3);
@@ -486,9 +503,10 @@ export function offaxisR0Mm(
   trapMode: number,
   focusOffsetMm: number,
   onAxisPeak: number,
-  probeMm = OFFAXIS_PROBE_MM
+  probeMm = OFFAXIS_PROBE_MM,
+  pattern: PatternOptions = {}
 ): number {
-  const m = new FieldModel(bead, tableDistanceMm, trapMode, [probeMm, 0], focusOffsetMm);
+  const m = new FieldModel(bead, tableDistanceMm, trapMode, [probeMm, 0], focusOffsetMm, undefined, pattern);
   const wells = m.axialWells(12, m.focus[0], m.focus[1]);
   if (wells.length === 0 || onAxisPeak <= 0) return 0;
   const z0 = wells[0].z;
@@ -504,8 +522,14 @@ export function offaxisR0Mm(
   return probeMm / Math.sqrt(-Math.log(ratio));
 }
 
-function shapeOf(bead: BeadConfig, tableDistanceMm: number, trapMode: number, focusOffsetMm: number): FieldShape {
-  const model = new FieldModel(bead, tableDistanceMm, trapMode, [0, 0], focusOffsetMm);
+function shapeOf(
+  bead: BeadConfig,
+  tableDistanceMm: number,
+  trapMode: number,
+  focusOffsetMm: number,
+  pattern: PatternOptions = {}
+): FieldShape {
+  const model = new FieldModel(bead, tableDistanceMm, trapMode, [0, 0], focusOffsetMm, undefined, pattern);
   const wells = model.axialWells(30);
   if (wells.length === 0) throw new Error('no stable height on the axis for this field');
   const low = wells[0];
@@ -551,7 +575,7 @@ function shapeOf(bead: BeadConfig, tableDistanceMm: number, trapMode: number, fo
     xyGain: model.xyGain(low.z),
     pumping: kLat > 0 ? Math.abs(beta) / kLat : Infinity,
     midForce,
-    offaxisR0Mm: offaxisR0Mm(bead, tableDistanceMm, trapMode, focusOffsetMm, peak)
+    offaxisR0Mm: offaxisR0Mm(bead, tableDistanceMm, trapMode, focusOffsetMm, peak, OFFAXIS_PROBE_MM, pattern)
   };
 }
 
@@ -561,18 +585,21 @@ export function fieldShape(
   bead: BeadConfig,
   tableDistanceMm: number,
   trapMode: number,
-  focusOffsetMm = 0
+  focusOffsetMm = 0,
+  pattern: PatternOptions = {}
 ): FieldShape {
   const key = [
     Math.round(bead.diameterMm * 1000) / 1000,
     Math.round(bead.densityKgM3 * 1000) / 1000,
     Math.round(tableDistanceMm * 100) / 100,
     trapMode,
-    Math.round(focusOffsetMm * 100) / 100
+    Math.round(focusOffsetMm * 100) / 100,
+    Math.round((pattern.radiusMm ?? PATTERN_RADIUS_DEFAULT_MM) * 100) / 100,
+    Math.round((pattern.phaseSpan ?? 0) * 100) / 100
   ].join('|');
   const hit = shapeCache.get(key);
   if (hit) return hit;
-  const shape = shapeOf(bead, tableDistanceMm, trapMode, focusOffsetMm);
+  const shape = shapeOf(bead, tableDistanceMm, trapMode, focusOffsetMm, pattern);
   shapeCache.set(key, shape);
   return shape;
 }
@@ -586,10 +613,11 @@ export function trapForceCurve(
   bead: BeadConfig,
   tableDistanceMm: number,
   trapMode: number,
-  focusOffsetMm = 0
+  focusOffsetMm = 0,
+  pattern: PatternOptions = {}
 ): { xsMm: Float64Array; force: Float64Array } {
-  const shape = fieldShape(bead, tableDistanceMm, trapMode, focusOffsetMm);
-  const m = new FieldModel(bead, tableDistanceMm, trapMode, [0, 0], focusOffsetMm);
+  const shape = fieldShape(bead, tableDistanceMm, trapMode, focusOffsetMm, pattern);
+  const m = new FieldModel(bead, tableDistanceMm, trapMode, [0, 0], focusOffsetMm, undefined, pattern);
   const well = shape.heightMm * 1e-3;
   void well;
   const wells = m.axialWells(30);

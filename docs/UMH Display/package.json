@@ -1,9 +1,9 @@
 {
   "name": "umh-display-web",
   "private": true,
-  "version": "2.1.0",
+  "version": "2.2.0",
   "type": "module",
-  "description": "UMH Display — browser-native acoustic levitation light painting with live unrestricted XY control",
+  "description": "UMH Display — browser-native acoustic levitation light painting, firmware trap patterns, ULM haptics and device-side hologram morphing",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

@@ -3,13 +3,24 @@ import { clear, el, formatNumber, icon } from '../core/dom.ts';
 import { formatDuration } from '../core/math.ts';
 import type { AppConfig } from '../config/types.ts';
 import { acousticPower } from '../physics/trap.ts';
-import { lateralAccelOf, setLateralAccel, trapModeOf } from '../config/defaults.ts';
+import { FIELD_LABELS, FIELDS, lateralAccelOf, setLateralAccel, trapModeOf } from '../config/defaults.ts';
 import { clearConfig, downloadConfig, readConfigFile, saveConfig } from '../config/store.ts';
 import { SHAPES } from '../shapes/library.ts';
 import type { Plan } from '../motion/planner.ts';
 import { LiveController, type LiveSample } from '../realtime/liveController.ts';
 import { Session, SessionState } from '../device/session.ts';
-import type { MotionStatus } from '../device/protocol.ts';
+import {
+  HOLOGRAM_MAX_KEYFRAMES,
+  HOLOGRAM_MAX_RATE_HZ,
+  HOLOGRAM_MIN_RATE_HZ,
+  SYS_RECORDING,
+  SYS_TRIGGER,
+  SYS_USB_AUDIO,
+  type HologramKeyframe,
+  type HologramStatus,
+  type MotionStatus
+} from '../device/protocol.ts';
+import { hologramFieldMap, interpolateKeyframes, shapeKeyframe } from '../motion/hologram.ts';
 import type { DeviceManager, LinkState } from './DeviceManager.ts';
 import type { PlanClient } from './PlanClient.ts';
 import type { AppHost, UiState } from './workspace.ts';
@@ -125,6 +136,16 @@ export class DisplayWorkspace {
   private readonly clock: HTMLElement;
   private readonly paletteStrip: HTMLElement;
   private readonly resizeObserver: ResizeObserver;
+  private patternSeg: ReturnType<typeof segmented<string>> | null = null;
+  private patternRadiusSlider: SliderHandle | null = null;
+  private patternSpanSlider: SliderHandle | null = null;
+  private patternCaption: HTMLElement | null = null;
+  private holoStatusEl: HTMLElement | null = null;
+  private holoListEl: HTMLElement | null = null;
+  private holoFrames: HologramKeyframe[] = [];
+  private lastHolo: HologramStatus | null = null;
+  private holoPreviewAt = 0;
+  private lastFlags = 0;
 
   constructor(
     private readonly host: AppHost,
@@ -160,8 +181,10 @@ export class DisplayWorkspace {
     const shape = this.buildShapeSection();
     const colour = this.buildColourSection();
     const motion = this.buildMotionSection();
+    const holo = this.buildHoloSection();
+    const ulm = this.buildUlmSection();
     const config = this.buildConfigSection();
-    must('displayControls').append(mode.root, trap.root, shape.root, colour.root, motion.root, config);
+    must('displayControls').append(mode.root, trap.root, shape.root, colour.root, motion.root, holo, ulm, config);
     mountIcons(must('displayControls'));
 
     this.levelSlider = trap.level;
@@ -194,6 +217,7 @@ export class DisplayWorkspace {
     );
 
     this.syncUnlimitedUi();
+    this.syncPatternUi();
     this.bindHud();
     this.bindPlayback();
     this.syncShapeUi();
@@ -258,6 +282,64 @@ export class DisplayWorkspace {
       }
     });
     const meter = el('div', { class: 'level-meter' }, this.levelFill);
+    /* The six patterns motion_rebuild_pattern() synthesises on the MCU.  The
+     * firmware rejects 6 and above with -4, so the picker is the enum, not a
+     * free-form field name. */
+    const pattern = segmented<string>(
+      Object.keys(FIELDS).map((key) => ({
+        value: key,
+        label: FIELD_LABELS[key] ?? key,
+        title: `${FIELD_LABELS[key] ?? key} · trap_mode ${FIELDS[key]}`
+      })),
+      cfg.trap.field,
+      (value) => {
+        cfg.trap.field = value as AppConfig['trap']['field'];
+        this.host.saveConfig();
+        this.syncPatternUi();
+        this.schedulePlan(true);
+        void this.applyOutputConfig();
+      },
+      'segmented-wrap'
+    );
+    const patternCaption = el('p', { class: 'section-note' });
+    const radius = slider({
+      label: '图案半径',
+      min: 0.5,
+      max: 20,
+      step: 0.1,
+      value: cfg.trap.patternRadiusMm,
+      unit: 'mm',
+      hint: '环形 / 涡旋 / 双环的中心半径，双焦的间距；固件下限 0.5 mm。',
+      onInput: (value) => {
+        cfg.trap.patternRadiusMm = value;
+      },
+      onChange: () => {
+        this.host.saveConfig();
+        this.schedulePlan(true);
+        void this.applyOutputConfig();
+      }
+    });
+    const span = slider({
+      label: '涡旋相位跨度',
+      min: 0,
+      max: 255,
+      step: 1,
+      value: cfg.trap.phaseSpan,
+      unit: '/256',
+      hint: '0 = 一整圈；只在涡旋（mode 4）下有效。',
+      onInput: (value) => {
+        cfg.trap.phaseSpan = Math.round(value);
+      },
+      onChange: () => {
+        this.host.saveConfig();
+        this.schedulePlan(true);
+        void this.applyOutputConfig();
+      }
+    });
+    this.patternSeg = pattern;
+    this.patternRadiusSlider = radius;
+    this.patternSpanSlider = span;
+    this.patternCaption = patternCaption;
     const levitate = button('起浮 / 接管', {
       icon: 'power',
       variant: 'primary',
@@ -272,8 +354,12 @@ export class DisplayWorkspace {
       {
         title: '声场与强度',
         eyebrow: 'TRAP',
-        actions: el('span', { class: 'eyebrow', text: 'MOTION v7' })
+        actions: el('span', { class: 'eyebrow', text: 'MOTION v7.5' })
       },
+      pattern.root,
+      patternCaption,
+      radius.root,
+      span.root,
       level.root,
       drawLevel.root,
       meter,
@@ -674,6 +760,403 @@ export class DisplayWorkspace {
     );
     const root = section({ title: '运动与预览', eyebrow: 'MOTION' }, normal);
     return { root, lateral, refresh, normal };
+  }
+
+  /** Keep the trap-pattern controls in step with the chosen firmware mode. */
+  private syncPatternUi(): void {
+    const mode = trapModeOf(this.cfg);
+    this.patternSeg?.setValue(this.cfg.trap.field);
+    /* Span only means something for the orbital ring; radius is meaningless
+     * for a plain single focus, so both are disabled instead of silently
+     * ignored. */
+    this.patternSpanSlider?.setDisabled(mode !== 4);
+    this.patternRadiusSlider?.setDisabled(mode === 0);
+    if (this.patternCaption) {
+      const label = FIELD_LABELS[this.cfg.trap.field] ?? this.cfg.trap.field;
+      const span = this.cfg.trap.phaseSpan === 0 ? '整圈' : `${this.cfg.trap.phaseSpan}/256`;
+      this.patternCaption.textContent =
+        mode === 0
+          ? `${label} · 固件 trap_mode 0（无图案偏移）`
+          : `${label} · 固件 trap_mode ${mode} · 半径 ${this.cfg.trap.patternRadiusMm.toFixed(1)} mm · 跨度 ${span}`;
+    }
+  }
+
+  /** Push a pattern / radius / ULM edit into whatever program is running. */
+  private async applyOutputConfig(): Promise<void> {
+    if (!this.session) return;
+    try {
+      await this.session.applyOutputConfig();
+    } catch (error) {
+      this.log.add(`声场参数下发失败：${String(error)}`, 'warn');
+    }
+  }
+
+  /* --------------------------------------------------------- hologram morph */
+
+  private buildHoloSection(): HTMLElement {
+    const cfg = this.cfg;
+    const status = el('p', { class: 'section-note' });
+    this.holoStatusEl = status;
+    const list = el('div', { class: 'holo-list' });
+    this.holoListEl = list;
+
+    const picker = el('select', { class: 'mini-select holo-picker', attrs: { 'aria-label': '添加全息关键帧' } }) as HTMLSelectElement;
+    for (const name of [...Object.keys(SHAPES), 'text']) {
+      const option = document.createElement('option');
+      option.value = name;
+      option.textContent = SHAPE_LABELS[name] ?? name;
+      picker.append(option);
+    }
+    const add = button('添加关键帧', {
+      variant: 'small',
+      onClick: () => {
+        if (cfg.holo.shapes.length >= HOLOGRAM_MAX_KEYFRAMES) {
+          toast(`两次上传之间最多 ${HOLOGRAM_MAX_KEYFRAMES} 帧`, 'info');
+          return;
+        }
+        cfg.holo.shapes = [...cfg.holo.shapes, picker.value];
+        this.host.saveConfig();
+        this.renderHoloList();
+        this.holoFrames = [];
+      }
+    });
+    const reset = button('清空', {
+      variant: 'small',
+      onClick: () => {
+        cfg.holo.shapes = [];
+        this.host.saveConfig();
+        this.renderHoloList();
+        this.holoFrames = [];
+      }
+    });
+
+    const transition = slider({
+      label: '形变时间',
+      min: 50,
+      max: 10000,
+      step: 50,
+      value: cfg.holo.transitionMs,
+      unit: 'ms',
+      hint: '相邻关键帧之间在设备端插值的时长。',
+      onInput: (value) => {
+        cfg.holo.transitionMs = Math.round(value);
+      },
+      onChange: () => {
+        this.host.saveConfig();
+        void this.applyHoloConfig();
+      }
+    });
+    const rate = slider({
+      label: '全息帧率',
+      min: HOLOGRAM_MIN_RATE_HZ,
+      max: HOLOGRAM_MAX_RATE_HZ,
+      step: 10,
+      value: cfg.holo.outputRateHz,
+      unit: 'Hz',
+      onInput: (value) => {
+        cfg.holo.outputRateHz = Math.round(value);
+      },
+      onChange: () => {
+        this.host.saveConfig();
+        void this.applyHoloConfig();
+      }
+    });
+    const level = slider({
+      label: '全息幅度',
+      min: 0,
+      max: 128,
+      step: 1,
+      value: cfg.holo.level,
+      unit: '/128',
+      hint: '线性幅度：128 就是 50% 占空比的满幅度。',
+      onInput: (value) => {
+        cfg.holo.level = Math.round(value);
+      },
+      onChange: () => {
+        this.host.saveConfig();
+        void this.applyHoloConfig();
+      }
+    });
+    const loop = slider({
+      label: '循环周期',
+      min: 0,
+      max: 20000,
+      step: 100,
+      value: cfg.holo.loopMs,
+      unit: 'ms',
+      hint: '0 = 由帧数 × 形变时间推导。',
+      onInput: (value) => {
+        cfg.holo.loopMs = Math.round(value);
+      },
+      onChange: () => {
+        this.host.saveConfig();
+        void this.applyHoloConfig();
+      }
+    });
+    const holdLast = toggle({
+      label: '停在最后一帧',
+      checked: cfg.holo.holdLast,
+      hint: '关闭则回卷到第 0 帧继续循环。',
+      onChange: (checked) => {
+        cfg.holo.holdLast = checked;
+        this.host.saveConfig();
+        void this.applyHoloConfig();
+      }
+    });
+    const gamma = toggle({
+      label: '幅度 γ 校正',
+      checked: cfg.holo.gamma,
+      hint: '把线性幅度经 sin(π·l/256) 反查成占空比，低声压更细腻。',
+      onChange: (checked) => {
+        cfg.holo.gamma = checked;
+        this.host.saveConfig();
+        void this.applyHoloConfig();
+      }
+    });
+
+    const start = button('上传并开始', {
+      icon: 'layers',
+      variant: 'primary',
+      block: true,
+      onClick: () => void this.holoRun()
+    });
+    const preview = button('场图预览', { icon: 'waves', onClick: () => void this.holoPreviewNow() });
+    const stop = button('停止形变', { icon: 'square', onClick: () => void this.holoHalt() });
+
+    this.renderHoloList();
+    this.updateHoloStatus();
+    return section(
+      { title: '全息变形', eyebrow: 'HOLOGRAM', actions: el('span', { class: 'eyebrow', text: '0xA0..0xA5' }) },
+      el('p', {
+        class: 'section-note',
+        text: '把多个图形上传成 84 路相位关键帧，由设备端按自己的帧时钟插值 —— USB 抖动不会让声场跳变。'
+      }),
+      el('p', {
+        class: 'section-note',
+        text: '40 kHz 在 100 mm 处的焦斑约 20 mm：比这更小的图形会糊成一团。想看清晰的形变，先把「图形尺寸」调到 30 mm 以上。'
+      }),
+      list,
+      el('div', { class: 'inline-row' }, picker, add, reset),
+      transition.root,
+      rate.root,
+      level.root,
+      loop.root,
+      holdLast.root,
+      gamma.root,
+      el('div', { class: 'btn-row' }, start),
+      el('div', { class: 'btn-row' }, preview, stop),
+      status
+    );
+  }
+
+  private renderHoloList(): void {
+    const list = this.holoListEl;
+    if (!list) return;
+    clear(list);
+    const shapes = this.cfg.holo.shapes;
+    if (shapes.length === 0) {
+      list.append(el('p', { class: 'section-note', text: '还没有关键帧：先添加至少一帧。' }));
+      return;
+    }
+    shapes.forEach((name, index) => {
+      const chip = el(
+        'span',
+        { class: 'holo-chip' },
+        el('b', { text: String(index) }),
+        el('span', { text: SHAPE_LABELS[name] ?? name }),
+        el('button', {
+          type: 'button',
+          class: 'chip-x',
+          text: '×',
+          title: `移除第 ${index} 帧`,
+          attrs: { 'aria-label': `移除第 ${index} 帧` }
+        })
+      );
+      chip.querySelector('button')?.addEventListener('click', () => {
+        this.cfg.holo.shapes = this.cfg.holo.shapes.filter((_, i) => i !== index);
+        this.host.saveConfig();
+        this.renderHoloList();
+        this.holoFrames = [];
+      });
+      list.append(chip);
+    });
+  }
+
+  private updateHoloStatus(): void {
+    const el0 = this.holoStatusEl;
+    if (!el0) return;
+    const status = this.lastHolo;
+    if (!status) {
+      el0.textContent = this.devices.current.profile.hasHologram
+        ? '全息引擎待命（capability bit11 已就绪）。'
+        : '当前固件没有全息引擎：请烧录 v7.5+ 固件。';
+      return;
+    }
+    const key = `${status.stateName} · 第 ${status.currentKeyframe + 1}/${status.keyframeCount} 帧 · α ${(status.alpha * 100).toFixed(0)}% · ${status.fps.toFixed(0)} fps · 服务 ${status.serviceAvgUs}/${status.serviceMaxUs} µs · 丢帧 ${status.missedDeadlines}`;
+    el0.textContent = key;
+  }
+
+  private async applyHoloConfig(): Promise<void> {
+    if (!this.session || this.session.state !== SessionState.Hologram) return;
+    try {
+      await this.session.holoUpdate(this.session.holoConfig(this.holoFrames.length || this.cfg.holo.shapes.length));
+    } catch (error) {
+      this.log.add(`全息配置下发失败：${String(error)}`, 'warn');
+    }
+  }
+
+  private holoFrameList(): HologramKeyframe[] {
+    return this.cfg.holo.shapes.map((name) => shapeKeyframe(this.cfg, name, { samples: 56 }).frame);
+  }
+
+  private async holoRun(): Promise<void> {
+    try {
+      if (!this.devices.current.hasHologram) {
+        toast('当前设备固件没有全息关键帧引擎', 'error');
+        return;
+      }
+      if (this.cfg.holo.shapes.length === 0) {
+        toast('先添加至少一个关键帧', 'info');
+        return;
+      }
+      this.stopPlaybackLocal();
+      const session = this.ensureSession();
+      this.holoFrames = this.holoFrameList();
+      await session.holoStart(this.holoFrames, session.holoConfig(this.holoFrames.length));
+      this.lastHolo = await this.devices.current.holoStatus();
+      this.updateHoloStatus();
+      this.log.add(
+        `全息形变接管输出：${this.holoFrames.length} 帧 × ${this.cfg.holo.transitionMs} ms`,
+        'ok'
+      );
+      toast('全息形变已开始', 'ok');
+      void this.holoPreviewNow();
+    } catch (error) {
+      this.fail(error);
+    }
+  }
+
+  private async holoHalt(): Promise<void> {
+    try {
+      await this.ensureSession().holoStop();
+      this.lastHolo = await this.devices.current.holoStatus().catch(() => null);
+      this.updateHoloStatus();
+      this.log.add('全息形变已停止', 'info');
+    } catch (error) {
+      this.fail(error);
+    }
+  }
+
+  /** Field map of the frame the device is showing right now. */
+  private async holoPreviewNow(): Promise<void> {
+    if (this.holoFrames.length === 0) this.holoFrames = this.holoFrameList();
+    if (this.holoFrames.length === 0) {
+      toast('先添加关键帧再预览', 'info');
+      return;
+    }
+    if (this.view !== 'field') this.applyView('field', false);
+    this.holoPreviewAt = 0;
+    await this.holoPreviewFrame();
+  }
+
+  /* ------------------------------------------------------------------- ULM */
+
+  private buildUlmSection(): HTMLElement {
+    const cfg = this.cfg;
+    const enabled = toggle({
+      label: 'ULM 触觉调制',
+      checked: cfg.ulm.enabled,
+      hint: '焦点在路径上宏观移动的同时以触觉频率横向振荡（固件 flag bit7）。',
+      onChange: (checked) => {
+        cfg.ulm.enabled = checked;
+        this.host.saveConfig();
+        void this.applyOutputConfig();
+      }
+    });
+    const frequency = slider({
+      label: '调制频率',
+      min: 1,
+      max: 1000,
+      step: 1,
+      value: cfg.ulm.frequencyHz,
+      unit: 'Hz',
+      hint: '皮肤最敏感的 100–300 Hz 区间。',
+      onInput: (value) => {
+        cfg.ulm.frequencyHz = Math.round(value);
+      },
+      onChange: () => {
+        this.host.saveConfig();
+        void this.applyOutputConfig();
+      }
+    });
+    const amplitude = slider({
+      label: '振幅',
+      min: 0,
+      max: 50000,
+      step: 10,
+      value: cfg.ulm.amplitudeUm,
+      unit: 'µm',
+      hint: '0 = 由波速与频率推导（A = v / 2πf）。',
+      onInput: (value) => {
+        cfg.ulm.amplitudeUm = Math.round(value);
+      },
+      onChange: () => {
+        this.host.saveConfig();
+        void this.applyOutputConfig();
+      }
+    });
+    const speed = slider({
+      label: '波速',
+      min: 0,
+      max: 10000,
+      step: 50,
+      value: cfg.ulm.waveSpeedMmS,
+      unit: 'mm/s',
+      hint: '0 = 固件默认 5000 mm/s；只在振幅为 0 时参与推导。',
+      onInput: (value) => {
+        cfg.ulm.waveSpeedMmS = Math.round(value);
+      },
+      onChange: () => {
+        this.host.saveConfig();
+        void this.applyOutputConfig();
+      }
+    });
+    const axis = segmented(
+      [
+        { value: 'x', label: 'X 轴' },
+        { value: 'y', label: 'Y 轴' },
+        { value: 'ring', label: '环形' }
+      ],
+      cfg.ulm.axis,
+      (value) => {
+        cfg.ulm.axis = value;
+        this.host.saveConfig();
+        void this.applyOutputConfig();
+      }
+    );
+    const sawtooth = toggle({
+      label: '单向锯齿',
+      checked: cfg.ulm.sawtooth,
+      hint: '锯齿每秒产生一次从 +A 到 −A 的跳变，用于单向扫掠触感。',
+      onChange: (checked) => {
+        cfg.ulm.sawtooth = checked;
+        this.host.saveConfig();
+        void this.applyOutputConfig();
+      }
+    });
+    return section(
+      { title: '触觉 ULM', eyebrow: 'ULM', actions: el('span', { class: 'eyebrow', text: 'MOTION_CONFIG 69..75' }) },
+      enabled.root,
+      frequency.root,
+      amplitude.root,
+      speed.root,
+      axis.root,
+      sawtooth.root,
+      el('p', {
+        class: 'section-note',
+        text: 'ULM 与光绘路径同时生效：位模式仍按规划播放，焦点在每个输出帧被横向偏移。先低幅度试手感。'
+      })
+    );
   }
 
   private createMetrics(): MetricBar {
@@ -1178,7 +1661,9 @@ export class DisplayWorkspace {
   private async requestField(): Promise<void> {
     const mode = trapModeOf(this.cfg);
     const heightMm = this.plan?.trapModel.heightMm ?? 2.26;
-    const key = `${mode}|${heightMm.toFixed(2)}|${this.cfg.trap.tableDistanceMm}|${this.cfg.bead.diameterMm}|${this.cfg.bead.densityKgM3}`;
+    const radiusMm = this.cfg.trap.patternRadiusMm;
+    const phaseSpan = this.cfg.trap.phaseSpan;
+    const key = `${mode}|${radiusMm.toFixed(1)}|${phaseSpan}|${heightMm.toFixed(2)}|${this.cfg.trap.tableDistanceMm}|${this.cfg.bead.diameterMm}|${this.cfg.bead.densityKgM3}`;
     const cached = this.fieldCache.get(key);
     if (cached) {
       this.scene.setField(cached);
@@ -1192,6 +1677,8 @@ export class DisplayWorkspace {
         mode,
         tableDistanceMm: this.cfg.trap.tableDistanceMm,
         focusOffsetMm: this.cfg.trap.focusOffsetMm,
+        radiusMm,
+        phaseSpan,
         heightMm,
         extentMm: 60,
         grid: 96,
@@ -1439,12 +1926,23 @@ export class DisplayWorkspace {
     try {
       const status = await this.session.dev.motionStatus();
       this.lastStatus = status;
+      this.lastFlags = await this.session.dev.systemFlags().catch(() => this.lastFlags);
+      const hologram = this.session.state === SessionState.Hologram;
+      if (hologram && this.devices.current.hasHologram) {
+        this.lastHolo = await this.devices.current.holoStatus().catch(() => this.lastHolo);
+        this.updateHoloStatus();
+        if (this.visible && this.view === 'field') void this.holoPreviewFrame();
+      } else if (this.lastHolo && !hologram) {
+        this.lastHolo = null;
+        this.updateHoloStatus();
+      }
       this.renderReadout();
       if (this.visible) {
+        const trigger = (this.lastFlags & SYS_TRIGGER) !== 0 ? ' · 扳机按下' : '';
         this.host.setHint(
           `${this.realtime ? '实时' : '规划'} · ${status.stateName} · ` +
             `(${(status.xUm / 1000).toFixed(2)}, ${(status.yUm / 1000).toFixed(2)}) mm · ` +
-            `${status.fps.toFixed(0)} fps · 服务 ${status.serviceAvgUs}/${status.serviceMaxUs} µs`
+            `${status.fps.toFixed(0)} fps · 服务 ${status.serviceAvgUs}/${status.serviceMaxUs} µs${trigger}`
         );
       }
     } catch {
@@ -1452,6 +1950,29 @@ export class DisplayWorkspace {
     } finally {
       this.pollBusy = false;
     }
+  }
+
+  /** Cheap in-place refresh of the morph preview while the field view is open. */
+  private async holoPreviewFrame(): Promise<void> {
+    if (performance.now() - this.holoPreviewAt < 500) return;
+    this.holoPreviewAt = performance.now();
+    if (this.holoFrames.length === 0) this.holoFrames = this.holoFrameList();
+    if (this.holoFrames.length === 0) return;
+    const status = this.lastHolo;
+    const index = status ? Math.min(status.currentKeyframe, this.holoFrames.length - 1) : 0;
+    const next = Math.min(index + 1, this.holoFrames.length - 1);
+    const frame = interpolateKeyframes(this.holoFrames[index], this.holoFrames[next], status ? status.alpha : 0);
+    /* The keyframes target the configured focus plane, so the preview slice
+     * must sit exactly there: height above the table = -focusOffset.  Showing
+     * it at the bead height would smear a ring into a filled donut. */
+    this.scene.setField(
+      hologramFieldMap(frame, {
+        heightMm: -this.cfg.trap.focusOffsetMm,
+        extentMm: 60,
+        grid: 64,
+        tableDistanceMm: this.cfg.trap.tableDistanceMm
+      })
+    );
   }
 
   private renderReadout(): void {
@@ -1555,6 +2076,8 @@ export class DisplayWorkspace {
             { label: '路径点', value: `${status.pathPoints}` },
             { label: '循环', value: `${status.loopMs} ms` },
             { label: '服务耗时', value: `${status.serviceAvgUs}/${status.serviceMaxUs} µs` },
+            { label: '空间合成', value: `${status.renderAvgUs}/${status.renderMaxUs} µs` },
+            { label: 'FPGA 帧事务', value: `${status.submitAvgUs}/${status.submitMaxUs} µs` },
             { label: '丢帧 / 错误', value: `${status.missedDeadlines} / ${status.frameErrors}` },
             { label: '链路', value: this.devices.isDemo ? '演示（无硬件）' : this.devices.state.label, state: this.devices.isDemo ? 'dim' : 'good' }
           ]
@@ -1563,6 +2086,55 @@ export class DisplayWorkspace {
             { label: '链路', value: this.devices.isDemo ? '演示（无硬件）' : this.devices.state.label }
           ]
     });
+    const flags = this.lastFlags;
+    rows.push({
+      title: '固件能力',
+      meta: `${this.devices.current.profile.model} · ${this.devices.current.profile.firmware}`,
+      rows: [
+        {
+          label: '光绘扩展',
+          value: this.devices.current.profile.hasDisplay ? 'v7.3 DISPLAY' : '不支持',
+          state: this.devices.current.profile.hasDisplay ? 'good' : 'bad'
+        },
+        {
+          label: '长路径 1024',
+          value: this.devices.current.profile.maxPathPoints > 255 ? `${this.devices.current.profile.maxPathPoints} 点` : '255 点',
+          state: this.devices.current.profile.maxPathPoints > 255 ? 'good' : 'dim'
+        },
+        {
+          label: '全息引擎',
+          value: this.devices.current.profile.hasHologram ? 'bit11 HOLOGRAM' : '不支持',
+          state: this.devices.current.profile.hasHologram ? 'good' : 'bad'
+        },
+        {
+          label: '超声枪扳机',
+          value: (flags & SYS_TRIGGER) !== 0 ? '按下（正在发射）' : '松开',
+          state: (flags & SYS_TRIGGER) !== 0 ? 'warn' : 'dim'
+        },
+        {
+          label: '语音 / USB 音频',
+          value:
+            (flags & SYS_RECORDING) !== 0 ? '录音中' : (flags & SYS_USB_AUDIO) !== 0 ? 'USB 音频' : '空闲',
+          state: (flags & (SYS_RECORDING | SYS_USB_AUDIO)) !== 0 ? 'good' : 'dim'
+        }
+      ]
+    });
+    if (this.lastHolo) {
+      const holo = this.lastHolo;
+      rows.push({
+        title: '全息引擎',
+        meta: holo.stateName,
+        rows: [
+          { label: '当前帧', value: `${holo.currentKeyframe + 1} / ${holo.keyframeCount}` },
+          { label: '段内进度', value: `${(holo.alpha * 100).toFixed(0)} %` },
+          { label: '提交帧率', value: `${holo.fps.toFixed(0)} / ${holo.outputRateHz} Hz`, state: holo.fps >= holo.outputRateHz * 0.9 ? 'good' : 'warn' },
+          { label: '换算耗时', value: `${holo.serviceAvgUs}/${holo.serviceMaxUs} µs` },
+          { label: '提交事务', value: `${holo.submitAvgUs}/${holo.submitMaxUs} µs` },
+          { label: '已提交 / 跳过', value: `${holo.frames} / ${holo.skipped}` },
+          { label: '丢帧 / 错误', value: `${holo.missedDeadlines} / ${holo.frameErrors}`, state: holo.frameErrors > 0 ? 'bad' : 'good' }
+        ]
+      });
+    }
     renderReadout(must('displayReadout'), rows);
   }
 

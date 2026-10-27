@@ -22,6 +22,8 @@ interface DisplayFieldRequest {
   mode: number;
   tableDistanceMm: number;
   focusOffsetMm: number;
+  radiusMm?: number;
+  phaseSpan?: number;
   heightMm: number;
   extentMm: number;
   grid: number;
@@ -60,7 +62,9 @@ function displayField(request: DisplayFieldRequest): FieldMapResponse {
     request.tableDistanceMm,
     request.mode,
     [0, 0],
-    request.focusOffsetMm
+    request.focusOffsetMm,
+    undefined,
+    { radiusMm: request.radiusMm, phaseSpan: request.phaseSpan }
   );
   const n = request.grid;
   const half = request.extentMm * 0.5;
@@ -94,7 +98,7 @@ function reply(message: Record<string, unknown>, transfer?: Transferable[]): voi
     if (request.type === 'warmup') {
       const started = performance.now();
       fieldShape({ diameterMm: 3, densityKgM3: 25 }, 95, 0, 0);
-      fieldShape({ diameterMm: 3, densityKgM3: 25 }, 95, 6, 0);
+      fieldShape({ diameterMm: 3, densityKgM3: 25 }, 95, 4, 0, { radiusMm: 2, phaseSpan: 0 });
       reply({ type: 'ready', id: request.id, ms: performance.now() - started });
       return;
     }

@@ -3,11 +3,17 @@
  * Port of ``umh_display/device/umh.py`` over the asynchronous Web Serial link.
  */
 import {
+  HOLOGRAM_MAX_PER_MESSAGE,
   MAX_POINTS,
   MSG_CLEAR_PLAN,
   MSG_ACK,
   MSG_GET_PROFILE,
   MSG_GET_STATUS,
+  MSG_HOLOGRAM_CONFIG,
+  MSG_HOLOGRAM_START,
+  MSG_HOLOGRAM_STATUS,
+  MSG_HOLOGRAM_STOP,
+  MSG_HOLOGRAM_UPLOAD,
   MSG_MOTION_CONFIG,
   MSG_MOTION_RATE,
   MSG_MOTION_START,
@@ -19,6 +25,8 @@ import {
   MSG_STATUS,
   MotionConfig,
   MotionPoint,
+  hologramUploadPayload,
+  parseHologramStatus,
   parseMotionStatus,
   parseProfile,
   parseSystemFlags,
@@ -26,6 +34,9 @@ import {
   targetPayload,
   uploadChunks,
   uploadPayload,
+  type HologramConfig,
+  type HologramKeyframe,
+  type HologramStatus,
   type MotionStatus,
   type Profile
 } from './protocol.ts';
@@ -114,4 +125,45 @@ export class UmhDevice implements DeviceLike {
     await this.link.request(MSG_CLEAR_PLAN, new Uint8Array(0), MSG_ACK, 2);
   }
 
+  /* -------------------------------------------------------------- hologram */
+
+  get hasHologram(): boolean {
+    return this.profile.hasHologram;
+  }
+
+  private requireHologram(): void {
+    if (!this.profile.hasHologram) {
+      throw new Error(`固件 ${this.profile.firmware} 没有全息关键帧引擎（capability bit11），请先烧录新固件`);
+    }
+  }
+
+  async holoUpload(frames: HologramKeyframe[], firstIndex = 0): Promise<void> {
+    this.requireHologram();
+    /* One UPLOAD carries at most 11 keyframes; a longer sequence goes out as
+     * consecutive slots and only the CONFIG count makes them one morph. */
+    for (let at = 0; at < frames.length; at += HOLOGRAM_MAX_PER_MESSAGE) {
+      const part = frames.slice(at, at + HOLOGRAM_MAX_PER_MESSAGE);
+      await this.link.request(MSG_HOLOGRAM_UPLOAD, hologramUploadPayload(firstIndex + at, part));
+    }
+  }
+
+  async holoConfigure(config: HologramConfig): Promise<void> {
+    this.requireHologram();
+    await this.link.request(MSG_HOLOGRAM_CONFIG, config.pack());
+  }
+
+  async holoStart(): Promise<void> {
+    this.requireHologram();
+    await this.link.request(MSG_HOLOGRAM_START);
+  }
+
+  async holoStop(): Promise<void> {
+    this.requireHologram();
+    await this.link.request(MSG_HOLOGRAM_STOP, new Uint8Array(0), MSG_ACK, 2);
+  }
+
+  async holoStatus(): Promise<HologramStatus> {
+    this.requireHologram();
+    return parseHologramStatus(await this.link.request(MSG_HOLOGRAM_STATUS, new Uint8Array(0), MSG_HOLOGRAM_STATUS));
+  }
 }

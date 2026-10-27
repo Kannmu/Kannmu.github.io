@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#07090c">
   <meta name="color-scheme" content="dark">
-  <meta name="description" content="UMH Display 是运行在浏览器中的声悬浮光绘控制台：84 路超声相控阵把泡沫小球托在桌面上方，用视觉暂留画出彩色图形。">
+  <meta name="description" content="UMH Display 是运行在浏览器中的声悬浮光绘控制台：84 路超声相控阵把泡沫小球托在桌面上方，用视觉暂留画出彩色图形，并支持六种固件阵列图案、ULM 触觉调制与设备端全息变形。">
   <link rel="canonical" href="https://kannmu.top/UMH%20Display/dist/">
   <title>UMH Display · 声悬浮光绘控制台 | Kannmu Tools</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2307090c'/%3E%3Ccircle cx='32' cy='32' r='18' fill='none' stroke='%23ffb648' stroke-width='2'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%23ffb648'/%3E%3Ccircle cx='32' cy='10' r='2.6' fill='%2363d9e8'/%3E%3Ccircle cx='15' cy='42' r='2.2' fill='%23ff6b9a'/%3E%3Ccircle cx='49' cy='42' r='2.2' fill='%2363d9e8'/%3E%3C/svg%3E">
-  <script type="module" crossorigin src="./assets/index-CqTnthfa.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-Bw8rOP2d.css">
+  <script type="module" crossorigin src="./assets/index-0mQ6MhRO.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-ByF3JKcJ.css">
 </head>
 <body>
   <div class="ambient" aria-hidden="true">
@@ -186,7 +186,7 @@
       </div>
       <div class="status-right">
         <span class="status-item mono" id="statusFps">— fps</span>
-        <span class="status-item mono" id="statusBuild">UMH Display 2.1</span>
+        <span class="status-item mono" id="statusBuild">UMH Display 2.2</span>
         <a class="status-item status-link" href="https://kannmu.top/" target="_blank" rel="noopener">Kannmu Tools <i data-lucide="external-link" aria-hidden="true"></i></a>
       </div>
     </footer>
@@ -231,6 +231,18 @@
         <p>实时输出只使用设备已有的 LIVE 目标通路，不上传路径；标准模式的规划、路径上传和播放完全不受影响。</p>
       </section>
       <section>
+        <h3>阵列图案（trap_mode 0–5）</h3>
+        <p>固件不再接受 mode 6 及以上，只合成六种图案：单焦点、轴向双焦、横向双焦、环形、涡旋、双环。半径决定图案尺寸（下限 0.5 mm），涡旋的相位跨度决定绕轴一圈缠绕多少（0 = 整圈）。切换图案会重新规划并把新的 CONFIG 直接下发到正在运行的程序。</p>
+      </section>
+      <section>
+        <h3>全息变形</h3>
+        <p>把若干图形上传成 84 路相位关键帧（每帧 84 字节相位 + 84 字节线性幅度），设备端在相邻帧之间按自己的帧时钟插值，因此 USB 卡顿不会让声场跳变。可调形变时间、输出帧率、全局幅度（128 = 50% 占空比满幅度）、循环周期，以及「停在最后一帧」。点「场图预览」会在声场视图里显示设备当前正在给出的那一帧。</p>
+      </section>
+      <section>
+        <h3>触觉 ULM</h3>
+        <p>焦点沿路径宏观移动的同时，以 1–1000 Hz 横向振荡，用于触觉演示。振幅填 0 时由波速与频率推导（A = v / 2πf）；轴向可选 X / Y / 环形，锯齿模式每秒产生一次从 +A 到 −A 的跳变。建议从低幅度开始试手感。</p>
+      </section>
+      <section>
         <h3>浏览器要求</h3>
         <p>三维视图需要 WebGL 2。连接真实硬件需要 Chrome / Edge 的 <strong>Web Serial</strong>，并且页面必须通过 HTTPS 或 localhost 打开（本页上线地址满足要求）。串口自动识别 STM32 CDC（VID 0483 / PID 5740）。</p>
       </section>
@@ -240,7 +252,7 @@
       </section>
     </div>
     <div class="help-foot">
-      <span class="mono">UMH Display 2.1 · Web Serial + WebGL</span>
+      <span class="mono">UMH Display 2.2 · Web Serial + WebGL</span>
       <a class="btn btn-primary" href="https://kannmu.top/" target="_blank" rel="noopener">访问 Kannmu Tools</a>
     </div>
   </dialog>

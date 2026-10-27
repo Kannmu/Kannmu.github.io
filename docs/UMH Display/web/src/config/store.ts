@@ -5,8 +5,8 @@
  * the v1 -> v3 migrations from ``config.py`` are honoured so a user keeps their
  * spin-tested lateral strength.
  */
-import { CONFIG_KEY, CONFIG_VERSION, createDefaultConfig } from './defaults.ts';
-import type { AppConfig, ColorScheme, CornerMode, FieldKind, Interpolation, Mount, RGB } from './types.ts';
+import { CONFIG_KEY, CONFIG_VERSION, createDefaultConfig, FIELDS } from './defaults.ts';
+import type { AppConfig, ColorScheme, CornerMode, FieldKind, Interpolation, Mount, RGB, UlmConfig } from './types.ts';
 
 type Json = Record<string, unknown>;
 
@@ -71,17 +71,19 @@ export function normalizeConfig(raw: unknown): AppConfig {
 
   const trap = isObject(raw.trap) ? raw.trap : {};
   const field = str(trap.field, cfg.trap.field);
-  cfg.trap.field = (field === 'vortex' ? 'vortex' : 'focus') as FieldKind;
+  cfg.trap.field = (Object.prototype.hasOwnProperty.call(FIELDS, field) ? field : 'focus') as FieldKind;
   cfg.trap.level = int(trap.level, cfg.trap.level, 1, 255);
   cfg.trap.tableDistanceMm = num(trap.table_distance_mm ?? trap.tableDistanceMm, cfg.trap.tableDistanceMm, 10, 400);
   cfg.trap.focusOffsetMm = num(trap.focus_offset_mm ?? trap.focusOffsetMm, cfg.trap.focusOffsetMm, -95, 95);
+  cfg.trap.patternRadiusMm = num(trap.pattern_radius_mm ?? trap.patternRadiusMm, cfg.trap.patternRadiusMm, 0.5, 20);
+  cfg.trap.phaseSpan = int(trap.phase_span ?? trap.phaseSpan, cfg.trap.phaseSpan, 0, 255);
   cfg.trap.mount = (str(trap.mount, cfg.trap.mount) === 'side' ? 'side' : 'down') as Mount;
   cfg.trap.lateralAccels = { ...cfg.trap.lateralAccels, ...dict(trap.lateral_accels ?? trap.lateralAccels) };
   cfg.trap.dropLevels = { ...cfg.trap.dropLevels, ...dict(trap.drop_levels ?? trap.dropLevels) };
   cfg.trap.extraDampingRatio = num(trap.extra_damping_ratio ?? trap.extraDampingRatio, cfg.trap.extraDampingRatio, 0, 0.5);
 
   const planner = isObject(raw.planner) ? raw.planner : {};
-  cfg.planner.outputRateHz = int(planner.output_rate_hz ?? planner.outputRateHz, cfg.planner.outputRateHz, 50, 2000);
+  cfg.planner.outputRateHz = int(planner.output_rate_hz ?? planner.outputRateHz, cfg.planner.outputRateHz, 50, 4000);
   cfg.planner.accelFraction = num(planner.accel_fraction ?? planner.accelFraction, cfg.planner.accelFraction, 0.01, 2);
   cfg.planner.maxSpeedMmS = num(planner.max_speed_mm_s ?? planner.maxSpeedMmS, cfg.planner.maxSpeedMmS, 1, 20000);
   cfg.planner.drawLevel = int(planner.draw_level ?? planner.drawLevel, cfg.planner.drawLevel, 0, 255);
@@ -123,6 +125,25 @@ export function normalizeConfig(raw: unknown): AppConfig {
   cfg.unlimited.rate = num(unlimited.rate, cfg.unlimited.rate, 0.001, 1);
   cfg.unlimited.speedMmS = num(unlimited.speed_mm_s ?? unlimited.speedMmS, cfg.unlimited.speedMmS, 0.01, 50);
   cfg.unlimited.accelMmS2 = num(unlimited.accel_mm_s2 ?? unlimited.accelMmS2, cfg.unlimited.accelMmS2, 0.01, 500);
+
+  const ulm = isObject(raw.ulm) ? raw.ulm : {};
+  cfg.ulm.enabled = bool(ulm.enabled, cfg.ulm.enabled);
+  cfg.ulm.frequencyHz = int(ulm.frequency_hz ?? ulm.frequencyHz, cfg.ulm.frequencyHz, 1, 1000);
+  cfg.ulm.amplitudeUm = num(ulm.amplitude_um ?? ulm.amplitudeUm, cfg.ulm.amplitudeUm, 0, 50000);
+  cfg.ulm.waveSpeedMmS = num(ulm.wave_speed_mm_s ?? ulm.waveSpeedMmS, cfg.ulm.waveSpeedMmS, 0, 10000);
+  const ulmAxis = str(ulm.axis, cfg.ulm.axis);
+  cfg.ulm.axis = (['x', 'y', 'ring'].includes(ulmAxis) ? ulmAxis : 'ring') as UlmConfig['axis'];
+  cfg.ulm.sawtooth = bool(ulm.sawtooth, cfg.ulm.sawtooth);
+
+  const holo = isObject(raw.holo) ? raw.holo : {};
+  const shapes = Array.isArray(holo.shapes) ? holo.shapes.filter((s): s is string => typeof s === 'string') : null;
+  cfg.holo.shapes = shapes && shapes.length > 0 ? shapes.slice(0, 10) : cfg.holo.shapes;
+  cfg.holo.transitionMs = int(holo.transition_ms ?? holo.transitionMs, cfg.holo.transitionMs, 50, 10000);
+  cfg.holo.outputRateHz = int(holo.output_rate_hz ?? holo.outputRateHz, cfg.holo.outputRateHz, 10, 1000);
+  cfg.holo.level = int(holo.level, cfg.holo.level, 0, 128);
+  cfg.holo.loopMs = int(holo.loop_ms ?? holo.loopMs, cfg.holo.loopMs, 0, 60000);
+  cfg.holo.holdLast = bool(holo.hold_last ?? holo.holdLast, cfg.holo.holdLast);
+  cfg.holo.gamma = bool(holo.gamma, cfg.holo.gamma);
 
   // migrations from config.py
   const version = int(raw.config_version ?? raw.configVersion, 1, 1, 999);

@@ -70,3 +70,47 @@ describe('device emulation', () => {
     }
   });
 });
+
+describe('demo hardware hologram engine', () => {
+  it('behaves like the device-side keyframe executor', async () => {
+    const { DemoDevice } = await import('../web/src/device/demo.ts');
+    const { HologramConfig, HOLOGRAM_CHANNELS } = await import('../web/src/device/protocol.ts');
+    const demo = new DemoDevice();
+    expect(demo.profile.hasHologram).toBe(true);
+    expect(demo.hasHologram).toBe(true);
+
+    const frame = (phase: number) => ({
+      phase: Uint8Array.from({ length: HOLOGRAM_CHANNELS }, () => phase),
+      level: new Uint8Array(HOLOGRAM_CHANNELS).fill(128)
+    });
+    await demo.holoUpload([frame(0), frame(64), frame(128)]);
+    const config = new HologramConfig({ outputRateHz: 200, transitionMs: 500, keyframes: 3 });
+    await demo.holoConfigure(config);
+    let status = await demo.holoStatus();
+    expect(status.state).toBe(1);
+    expect(status.stateName).toBe('READY');
+    expect(status.keyframeCount).toBe(3);
+
+    await demo.holoStart();
+    status = await demo.holoStatus();
+    expect(status.state).toBe(2);
+    expect(status.running).toBe(true);
+    expect(status.currentKeyframe).toBeGreaterThanOrEqual(0);
+    expect(status.currentKeyframe).toBeLessThan(3);
+    expect(status.alpha).toBeGreaterThanOrEqual(0);
+    expect(status.alpha).toBeLessThanOrEqual(1);
+
+    /* START takes the output away from the motion engine, like the firmware. */
+    expect((await demo.systemFlags()) & 0x2).toBe(0x2);
+    expect((await demo.motionStatus()).running).toBe(false);
+
+    await demo.holoStop();
+    status = await demo.holoStatus();
+    expect(status.state).toBe(3);
+    expect(status.stateName).toBe('STOPPING');
+    expect((await demo.systemFlags()) & 0x2).toBe(0x2);
+
+    await demo.clear();
+    expect((await demo.motionStatus()).running).toBe(false);
+  });
+});

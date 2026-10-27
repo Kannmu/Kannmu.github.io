@@ -8,7 +8,28 @@ export const UI_KEY = 'umh-display.ui.v1';
 /** Piezo faces above the PCB plane (geometry/elements.py). */
 export const ELEMENT_FACE_Z_MM = 7.0;
 
-export const FIELDS: Record<string, number> = { focus: 0, vortex: 6 };
+/**
+ * Field name -> MOTION_CONFIG.trap_mode.  These are the six patterns the
+ * firmware synthesises in ``motion_rebuild_pattern``; 6 and above are rejected
+ * with -4, so the old Python "continuous vortex beam" is no longer selectable.
+ */
+export const FIELDS: Record<string, number> = {
+  focus: 0,
+  twinz: 1,
+  twiny: 2,
+  ring: 3,
+  vortex: 4,
+  duallring: 5
+};
+
+export const FIELD_LABELS: Record<string, string> = {
+  focus: '单焦点',
+  twinz: '轴向双焦',
+  twiny: '横向双焦',
+  ring: '环形',
+  vortex: '涡旋',
+  duallring: '双环'
+};
 
 export function defaultColorA(): RGB {
   return [255, 40, 0];
@@ -28,8 +49,10 @@ export function createDefaultConfig(): AppConfig {
       level: 88,
       tableDistanceMm: 95.0,
       focusOffsetMm: 0.0,
+      patternRadiusMm: 2.0,
+      phaseSpan: 0,
       mount: 'down',
-      lateralAccels: { focus: 200.0, vortex: 40.0 },
+      lateralAccels: { focus: 200.0, vortex: 40.0, twinz: 120.0, twiny: 60.0, ring: 40.0, duallring: 45.0 },
       dropLevels: {},
       extraDampingRatio: 0.02
     },
@@ -73,6 +96,23 @@ export function createDefaultConfig(): AppConfig {
       rate: 1,
       speedMmS: 2.0,
       accelMmS2: 5.0
+    },
+    ulm: {
+      enabled: false,
+      frequencyHz: 120,
+      amplitudeUm: 0,
+      waveSpeedMmS: 0,
+      axis: 'ring',
+      sawtooth: false
+    },
+    holo: {
+      shapes: ['circle', 'square'],
+      transitionMs: 1200,
+      outputRateHz: 200,
+      level: 128,
+      loopMs: 0,
+      holdLast: false,
+      gamma: true
     }
   };
 }

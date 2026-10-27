@@ -47,7 +47,10 @@ export function trapModelFromConfig(cfg: AppConfig, level?: number): TrapModel {
   let pumping = 0;
   let r0Mm = 0;
   try {
-    const shape = fieldShape(cfg.bead, trap.tableDistanceMm, mode, trap.focusOffsetMm);
+    const shape = fieldShape(cfg.bead, trap.tableDistanceMm, mode, trap.focusOffsetMm, {
+      radiusMm: trap.patternRadiusMm,
+      phaseSpan: trap.phaseSpan
+    });
     dPkMm = shape.peakOffsetMm;
     basinMm = shape.basinMm;
     heightMm = shape.heightMm;

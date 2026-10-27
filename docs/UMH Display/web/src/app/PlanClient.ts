@@ -74,6 +74,8 @@ export class PlanClient {
     mode: number;
     tableDistanceMm: number;
     focusOffsetMm: number;
+    radiusMm?: number;
+    phaseSpan?: number;
     heightMm: number;
     extentMm: number;
     grid: number;

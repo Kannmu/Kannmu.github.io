@@ -50,6 +50,33 @@ describe('field model', () => {
     expectClose(besselJ1(3.3), 0.22066345298524112, 1e-9);
   });
 
+  it('builds the six firmware trap patterns and honours radius / span', () => {
+    clearFieldShapeCache();
+    const bead = { diameterMm: 3, densityKgM3: 25 };
+    for (const mode of [0, 1, 2, 3, 4, 5]) {
+      const shape = fieldShape(bead, 95, mode, 0, { radiusMm: 2, phaseSpan: 0 });
+      expect(Number.isFinite(shape.heightMm)).toBe(true);
+      expect(shape.heightMm).toBeGreaterThan(0);
+      expect(Number.isFinite(shape.lateralPeak)).toBe(true);
+    }
+    /* The ring radius is a real DOF: it moves where each source sits, so the
+     * complex drive of the ring pattern must change with it. */
+    const driveOf = (mode: number, radiusMm: number, phaseSpan: number): number[] => {
+      const model = new FieldModel(bead, 95, mode, [0, 0], 0, undefined, { radiusMm, phaseSpan });
+      return Array.from(model.drive.re).concat(Array.from(model.drive.im));
+    };
+    const maxAbsDiff = (a: number[], b: number[]): number => {
+      let max = 0;
+      for (let i = 0; i < a.length; i++) max = Math.max(max, Math.abs(a[i] - b[i]));
+      return max;
+    };
+    expect(maxAbsDiff(driveOf(3, 1.5, 0), driveOf(3, 8, 0))).toBeGreaterThan(1e-3);
+
+    /* span 0 means one full turn, exactly like motion_rebuild_pattern(). */
+    expect(maxAbsDiff(driveOf(4, 3, 0), driveOf(4, 3, 256))).toBeLessThan(1e-12);
+    expect(maxAbsDiff(driveOf(4, 3, 0), driveOf(4, 3, 128))).toBeGreaterThan(1e-3);
+  });
+
   it('reproduces the Python field shape for focus and vortex', () => {
     clearFieldShapeCache();
     const fps = fixture<FieldFixture>('field.json');
