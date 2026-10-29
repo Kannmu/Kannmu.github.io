@@ -1,0 +1,60 @@
+name: Sync academic record
+
+# Keeps the publication list on kannmu.top in sync with ORCID and Crossref.
+# The job refreshes citation counts, appends newly indexed papers, and commits
+# the regenerated data files back to the repository — GitHub Pages then rebuilds
+# the site automatically, so no manual editing is ever required.
+
+on:
+  schedule:
+    # 03:17 UTC every day (11:17 in Beijing)
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+  push:
+    branches: [master, main]
+    paths:
+      - "docs/_scripts/sync_academic.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-academic
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML
+        run: pip install --quiet pyyaml
+
+      - name: Sync from ORCID + Crossref
+        working-directory: docs
+        run: python _scripts/sync_academic.py
+
+      - name: Commit changes if the record moved
+        run: |
+          if [[ -z "$(git status --porcelain -- docs/_data)" ]]; then
+            echo "No changes — the record is already up to date."
+            exit 0
+          fi
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/_data/publications.yml docs/_data/metrics.yml
+          git commit -m "chore(data): sync publications from ORCID + Crossref
+
+          Automated refresh of citation counts and newly indexed works.
+          Source: ORCID 0009-0000-8611-7194 / Crossref REST API."
+          git push

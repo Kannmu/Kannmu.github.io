@@ -1,47 +1,517 @@
 ---
-layout: page
-title: "关于范林涵（涵无 / Kannmu）"
+layout: default
+title: "关于范林涵 Linhan Fan — 人机交互研究者"
 nav-title: "About"
-description: "范林涵（涵无 / Kannmu）的个人简介：东南大学设计学博士生，研究方向涵盖人机交互与人工智能，并汇总教育经历、研究项目、论文与学术主页。"
-header-img: "img/Backgrounds/Bg_1.jpg"
-header-mask: 0.3
+description: "范林涵（Linhan Fan，涵无 / Kannmu）：东南大学设计学博士研究生，研究眼动与平滑追踪交互、脑机接口与安全神经通信、空中超声触觉以及 XR 与智能座舱人因。含完整论文列表、履历、荣誉与联系方式。"
+body-class: "has-hero page-about"
+academic_sync: true
 multilingual: true
+no-catalog: true
 ---
 
-<!-- Chinese Version -->
-<div class="zh post-container">
-    {% capture about_zh %}{% include about/zh.md %}{% endcapture %}
-    {{ about_zh | markdownify }}
-</div>
+{%- assign P = site.data.profile -%}
+{%- assign pubs = site.data.publications -%}
+{%- assign pubs_sorted = pubs | sort: "date" | reverse -%}
 
-<!-- English Version -->
-<div class="en post-container">
-    {% capture about_en %}{% include about/en.md %}{% endcapture %}
-    {{ about_en | markdownify }}
-</div>
+{%- assign total_cites = 0 -%}
+{%- assign first_author_count = 0 -%}
+{%- assign journal_count = 0 -%}
+{%- assign conf_count = 0 -%}
+{%- for p in pubs -%}
+  {%- assign total_cites = total_cites | plus: p.citation_count -%}
+  {%- if p.author_role == 'first' or p.author_role == 'cofirst' -%}
+    {%- assign first_author_count = first_author_count | plus: 1 -%}
+  {%- endif -%}
+  {%- if p.type == 'journal' -%}
+    {%- assign journal_count = journal_count | plus: 1 -%}
+  {%- else -%}
+    {%- assign conf_count = conf_count | plus: 1 -%}
+  {%- endif -%}
+{%- endfor -%}
 
+<!-- ======================================================================
+     Masthead
+     ====================================================================== -->
+<section class="about-hero">
+  <div class="shell about-hero__inner">
+    <div>
+      <p class="hero__eyebrow" style="margin-bottom:26px">
+        <span class="dot" aria-hidden="true"></span>
+        <span data-zh>学术主页 · Academic Homepage</span>
+        <span data-en>Academic Homepage</span>
+      </p>
 
-{% if site.disqus_username %}
-<!-- disqus 评论框 start -->
-<div class="comment">
-    <div id="disqus_thread" class="disqus-thread">
+      <h1>
+        Linhan <em>Fan</em>
+        <span class="about-hero__zh" aria-label="范林涵"><span data-zh>范 林 涵</span><span data-en>涵无 · Kannmu</span></span>
+      </h1>
+
+      <p class="about-hero__role">
+        <span data-zh>{{ P.role.zh }}</span>
+        <span data-en>{{ P.role.en }}</span>
+        <br>
+        <span data-zh>{{ P.affiliation.zh }} · 导师 <a href="{{ P.advisor.url }}" target="_blank" rel="noopener">{{ P.advisor.zh }}</a></span>
+        <span data-en>{{ P.affiliation.en }} · Advised by <a href="{{ P.advisor.url }}" target="_blank" rel="noopener">{{ P.advisor.en }}</a></span>
+      </p>
+    </div>
+
+    <figure class="about-portrait">
+      <img src="{{ '/img/Kannmu-Avatar.jpg' | prepend: site.baseurl }}"
+           alt="范林涵 Linhan Fan 的照片" width="520" height="650">
+      <figcaption>
+        <span data-zh>涵无 · 拍照的那天在山里</span>
+        <span data-en>Kannmu · somewhere above the treeline</span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="shell">
+    <div class="about-links">
+      {%- for link in P.links -%}
+      <a href="{{ link.url }}" {% unless link.url contains 'mailto' %}target="_blank" rel="noopener"{% endunless %}>
+        {{ link.label }}
+      </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<!-- Metrics (numbers refresh automatically, see js/academic-sync.js) -->
+<section class="metrics" aria-label="学术指标">
+  <div class="metrics__cell">
+    <b data-metric="works">{{ pubs.size }}</b>
+    <span data-zh>篇论文 · Works</span>
+    <span data-en>Works</span>
+  </div>
+  <div class="metrics__cell metrics__cell--live">
+    <b data-metric="citations">{{ total_cites }}</b>
+    <span data-zh>Crossref 引用</span>
+    <span data-en>Citations (Crossref)</span>
+  </div>
+  <div class="metrics__cell">
+    <b>{{ first_author_count }}</b>
+    <span data-zh>第一 / 共一作者</span>
+    <span data-en>First / co-first author</span>
+  </div>
+  <div class="metrics__cell">
+    <b>{{ journal_count }}<span style="font-size:.5em;vertical-align:.55em;opacity:.45"> / {{ conf_count }}</span></b>
+    <span data-zh>期刊 / 会议</span>
+    <span data-en>Journals / Conference</span>
+  </div>
+</section>
+
+<!-- ======================================================================
+     Body
+     ====================================================================== -->
+<div class="band band--paper">
+  <div class="shell about-body">
+
+    <!-- Sticky index -->
+    <nav class="about-index" aria-label="页面章节">
+      {%- for s in P.sections -%}
+      <a href="#{{ s.id }}" data-target="{{ s.id }}">
+        <i aria-hidden="true"></i>
+        <span data-zh>{{ s.zh }}</span><span data-en>{{ s.en }}</span>
+      </a>
+      {%- endfor -%}
+    </nav>
+
+    <div class="about-main">
+
+      <!-- 01 · Overview ------------------------------------------------- -->
+      <section id="overview">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>01</b> <span data-zh>概述</span><span data-en>Overview</span></p>
+          <h2 class="sec-title">
+            <span data-zh>人机交互研究概览</span>
+            <span data-en>Research overview</span>
+          </h2>
+        </div>
+
+        <div class="statement" data-reveal>
+          {%- for para in P.statement -%}
+          <p data-zh>{{ para.zh }}</p>
+          <p data-en>{{ para.en }}</p>
+          {%- endfor -%}
+        </div>
+      </section>
+
+      <!-- 02 · Research -------------------------------------------------- -->
+      <section id="research">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>02</b> <span data-zh>研究主题</span><span data-en>Research topics</span></p>
+          <h2 class="sec-title">
+            <span data-zh>研究主题</span>
+            <span data-en>Research topics</span>
+          </h2>
+          <p class="sec-lede">
+            <span data-zh>以下按主题归纳，列出每个主题下由本人担任第一或共同第一作者的论文。</span>
+            <span data-en>Grouped by topic. Only papers on which the author is first or co-first author are listed under each topic.</span>
+          </p>
+        </div>
+
+        <div class="area-list">
+          {%- for area in P.research -%}
+          <article class="area" data-reveal>
+            <div class="area__no">{{ area.index }}</div>
+            <div>
+              <h3>
+                <span data-zh>{{ area.title.zh }}</span>
+                <span data-en>{{ area.title.en }}</span>
+                <span class="area__tag" aria-hidden="true">
+                  {%- if forloop.index == 1 -%}Gaze{%- elsif forloop.index == 2 -%}BCI{%- elsif forloop.index == 3 -%}Haptics{%- else -%}Methods{%- endif -%}
+                </span>
+              </h3>
+              <p data-zh>{{ area.summary.zh }}</p>
+              <p data-en>{{ area.summary.en }}</p>
+              <div class="area__foot">
+                {%- for kw in area.keywords -%}
+                <span class="chip">{{ kw }}</span>
+                {%- endfor -%}
+                {%- if area.related.size > 0 -%}
+                {%- for rel in area.related -%}
+                {%- assign rel_pub = site.data.publications | where: "id", rel | first -%}
+                <a class="chip chip--teal" href="#{{ rel }}" title="{{ rel_pub.title }}">↳ {{ rel_pub.venue_short | default: rel }}</a>
+                {%- endfor -%}
+                {%- endif -%}
+              </div>
+            </div>
+          </article>
+          {%- endfor -%}
+        </div>
+
+        <!-- Tools and open-source projects -->
+        <div style="margin-top:48px" data-reveal>
+          <p class="sec-label" style="margin-bottom:18px">
+            <b>▸</b> <span data-zh>研究工具与开源项目</span><span data-en>Tools &amp; open-source projects</span>
+          </p>
+          <div class="built-grid">
+            {%- for item in P.built -%}
+            <a class="built" href="{% if item.href contains 'http' %}{{ item.href }}{% else %}{{ item.href | prepend: site.baseurl }}{% endif %}"{% if item.href contains 'http' %} target="_blank" rel="noopener"{% endif %}>
+              <h4>
+                <span data-zh>{{ item.title.zh }}</span><span data-en>{{ item.title.en }}</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </h4>
+              <p data-zh>{{ item.detail.zh }}</p>
+              <p data-en>{{ item.detail.en }}</p>
+            </a>
+            {%- endfor -%}
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 · News ----------------------------------------------------- -->
+      <section id="news">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>03</b> <span data-zh>最近动态</span><span data-en>News</span></p>
+          <h2 class="sec-title">
+            <span data-zh>论文与会议动态</span>
+            <span data-en>Papers &amp; conference activity</span>
+          </h2>
+        </div>
+
+        <div class="news-list" data-reveal>
+          {%- for n in P.news -%}
+          <div class="news-item">
+            <time datetime="{{ n.date }}">{{ n.date | date: "%Y · %m.%d" }}</time>
+            <p data-zh>{{ n.zh }}</p>
+            <p data-en>{{ n.en }}</p>
+          </div>
+          {%- endfor -%}
+        </div>
+      </section>
+
+      <!-- 04 · Publications --------------------------------------------- -->
+      <section id="publications">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>04</b> <span data-zh>论文</span><span data-en>Publications</span></p>
+          <h2 class="sec-title">
+            <span data-zh>全部论文</span>
+            <span data-en>All publications</span>
+          </h2>
+          <p class="sec-lede">
+            <span data-zh>按发表时间倒序，含合作论文；第一与共同第一作者已标注。DOI 与引用数会在页面加载后从 Crossref / ORCID 实时校准。</span>
+            <span data-en>Newest first, including co-authored work; first and co-first authorship are marked. DOIs and citation counts are reconciled live from Crossref / ORCID after load.</span>
+          </p>
+        </div>
+
+        <div class="pub-toolbar" data-reveal>
+          <div class="pub-filters" role="group" aria-label="筛选论文">
+            <button class="pub-filter" data-filter="all" aria-pressed="true">
+              <span data-zh>全部</span><span data-en>All</span>
+            </button>
+            <button class="pub-filter" data-filter="first" aria-pressed="false">First author</button>
+            <button class="pub-filter" data-filter="journal" aria-pressed="false">Journal</button>
+            <button class="pub-filter" data-filter="conference" aria-pressed="false">Conference</button>
+            <button class="pub-filter" data-filter="gaze" aria-pressed="false">Gaze</button>
+            <button class="pub-filter" data-filter="bci" aria-pressed="false">BCI</button>
+          </div>
+          <p class="micro" style="margin:0">
+            <span data-pub-count>{{ pubs.size }}</span>
+            <span data-zh> 篇</span><span data-en> entries</span>
+          </p>
+        </div>
+
+        <div class="pub-list" data-publist>
+          {%- for p in pubs_sorted -%}
+          <article class="pub" id="{{ p.id }}"
+            data-year="{{ p.year }}"
+            data-type="{{ p.type }}"
+            data-role="{{ p.author_role }}"
+            data-topics="{{ p.topics | join: '|' }}"
+            data-doi="{{ p.doi }}"
+            data-reveal>
+
+            <div class="pub__year">{{ p.year }}</div>
+
+            <div class="pub__main">
+              <h3 class="pub__title">
+                <a href="https://doi.org/{{ p.doi }}" target="_blank" rel="noopener">{{ p.title }}</a>
+              </h3>
+
+              <p class="pub__authors">
+                {%- assign author_list = p.authors | split: " ; " -%}
+                {%- for a in author_list -%}
+                  {%- if a == p.self_name -%}<b>{{ a }}</b>{%- else -%}{{ a }}{%- endif -%}
+                  {%- unless forloop.last %}, {% endunless -%}
+                {%- endfor -%}
+              </p>
+
+              <div class="pub__venue">
+                <span class="j">{{ p.venue }}</span>
+                {%- if p.volume %}<span class="sep" aria-hidden="true"></span><span>Vol. {{ p.volume }}{% if p.issue %}({{ p.issue }}){% endif %}</span>{% endif -%}
+                {%- if p.pages %}<span class="sep" aria-hidden="true"></span><span>pp. {{ p.pages }}</span>{% endif -%}
+                <span class="sep" aria-hidden="true"></span><span>{{ p.publisher }}</span>
+                {%- if p.citation_count > 0 %}
+                <span class="sep" aria-hidden="true"></span>
+                <span data-cite-of="{{ p.doi }}">{{ p.citation_count }} cited</span>
+                {%- endif %}
+              </div>
+
+              <div class="pub__badges">
+                {%- case p.author_role -%}
+                {%- when 'first' -%}
+                <span class="chip chip--accent"><span data-zh>第一作者</span><span data-en>First author</span></span>
+                {%- when 'cofirst' -%}
+                <span class="chip chip--accent"><span data-zh>共同第一作者</span><span data-en>Co-first author</span></span>
+                {%- endcase -%}
+                {%- if p.type == 'conference' -%}
+                <span class="chip chip--teal">Conference</span>
+                {%- endif -%}
+                {%- for t in p.topics limit:3 -%}
+                <span class="chip">{{ t }}</span>
+                {%- endfor -%}
+              </div>
+
+              <div class="pub__actions">
+                <a class="pub-act" href="https://doi.org/{{ p.doi }}" target="_blank" rel="noopener">DOI ↗</a>
+                <a class="pub-act" href="https://scholar.google.com/scholar?q={{ p.title | url_encode }}" target="_blank" rel="noopener">Scholar</a>
+                {%- if p.abstract_zh != "" or p.abstract_en != "" %}
+                <button class="pub-act" type="button" data-toggle-pub="abstract" aria-expanded="false">
+                  <span data-zh>摘要</span><span data-en>Abstract</span>
+                </button>
+                {%- endif %}
+                <button class="pub-act pub-act--ghost" type="button"
+                  data-copy="#cite-{{ p.id }}"
+                  data-copied="BibTeX 已复制到剪贴板">BibTeX</button>
+              </div>
+
+              {%- if p.note %}
+              <p class="micro" style="margin-top:12px;letter-spacing:.04em;text-transform:none">{{ p.note }}</p>
+              {%- endif %}
+
+              <div class="pub__abstract">
+                <div>
+                  <p data-zh>{{ p.abstract_zh }}</p>
+                  <p data-en>{{ p.abstract_en }}</p>
+                </div>
+              </div>
+
+              {%- capture entry_type -%}{% if p.type == 'conference' %}inproceedings{% else %}article{% endif %}{%- endcapture -%}
+              {%- capture venue_key -%}{% if p.type == 'conference' %}booktitle{% else %}journal{% endif %}{%- endcapture -%}
+              {%- capture bibtex -%}
+@{{ entry_type }}{ {{ p.id }},
+  title     = { {{ p.title }} },
+  author    = { {{ p.authors | replace: ' ; ', ' and ' }} },
+  {{ venue_key }} = { {{ p.venue }} },
+  year      = { {{ p.year }} },
+  {%- if p.volume %}
+  volume    = { {{ p.volume }} },
+  {%- endif %}
+  {%- if p.issue %}
+  number    = { {{ p.issue }} },
+  {%- endif %}
+  {%- if p.pages %}
+  pages     = { {{ p.pages }} },
+  {%- endif %}
+  publisher = { {{ p.publisher }} },
+  doi       = { {{ p.doi }} }
+}
+              {%- endcapture -%}
+              <pre class="pub__cite" id="cite-{{ p.id }}" hidden>{{ bibtex }}</pre>
+            </div>
+          </article>
+          {%- endfor -%}
+        </div>
+
+        <p class="arc-empty" data-pub-empty hidden>
+          <span data-zh>这个筛选下暂无条目。</span><span data-en>No entries under this filter.</span>
+        </p>
+
+        <div class="sync-state" data-sync-state data-state="loading" style="margin-top:26px">
+          <i aria-hidden="true"></i>
+          <span data-zh>正在从 ORCID / Crossref 同步…</span><span data-en>Syncing from ORCID / Crossref…</span>
+        </div>
+      </section>
+
+      <!-- 05 · CV ------------------------------------------------------- -->
+      <section id="cv">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>05</b> <span data-zh>履历</span><span data-en>Curriculum Vitae</span></p>
+          <h2 class="sec-title">
+            <span data-zh>教育与经历</span>
+            <span data-en>Education &amp; experience</span>
+          </h2>
+        </div>
+
+        <div class="cv-grid">
+          <div class="cv-col" data-reveal>
+            <h3><span data-zh>教育</span><span data-en>Education</span></h3>
+            <div class="tl">
+              {%- for e in P.education -%}
+              <div class="tl__item {% if e.current %}is-current{% endif %}">
+                <div class="tl__top">
+                  <h4><span data-zh>{{ e.institution.zh }}</span><span data-en>{{ e.institution.en }}</span></h4>
+                  <span class="tl__period">
+                    <span data-zh>{{ e.period }}</span><span data-en>{{ e.period_en }}</span>
+                  </span>
+                </div>
+                <p class="tl__detail">
+                  <span data-zh>{{ e.detail.zh }}</span><span data-en>{{ e.detail.en }}</span>
+                </p>
+                <span class="tl__loc">
+                  <span data-zh>{{ e.location.zh }}</span><span data-en>{{ e.location.en }}</span>
+                </span>
+              </div>
+              {%- endfor -%}
+            </div>
+          </div>
+
+          <div class="cv-col" data-reveal data-reveal-delay="90">
+            <h3><span data-zh>经历</span><span data-en>Experience</span></h3>
+            <div class="tl">
+              {%- for x in P.experience -%}
+              <div class="tl__item {% if x.current %}is-current{% endif %}">
+                <div class="tl__top">
+                  <h4>
+                    <span data-zh>{{ x.role.zh }}</span><span data-en>{{ x.role.en }}</span>
+                  </h4>
+                  <span class="tl__period">
+                    <span data-zh>{{ x.period }}</span><span data-en>{{ x.period_en }}</span>
+                  </span>
+                </div>
+                <p class="tl__detail">
+                  <strong><span data-zh>{{ x.organization.zh }}</span><span data-en>{{ x.organization.en }}</span></strong><br>
+                  <span data-zh>{{ x.detail.zh }}</span><span data-en>{{ x.detail.en }}</span>
+                </p>
+              </div>
+              {%- endfor -%}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 · Honors --------------------------------------------------- -->
+      <section id="awards">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>06</b> <span data-zh>荣誉</span><span data-en>Honors</span></p>
+          <h2 class="sec-title">
+            <span data-zh>获奖与荣誉</span>
+            <span data-en>Awards &amp; honors</span>
+          </h2>
+        </div>
+
+        <div class="award-list" data-reveal>
+          {%- for a in P.awards -%}
+          <div class="award">
+            <span class="award__year">{{ a.year }}</span>
+            <p class="award__title">
+              <span data-zh>{{ a.title.zh }}</span><span data-en>{{ a.title.en }}</span>
+            </p>
+          </div>
+          {%- endfor -%}
+        </div>
+      </section>
+
+      <!-- 07 · Toolkit -------------------------------------------------- -->
+      <section id="skills">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>07</b> <span data-zh>工具</span><span data-en>Toolkit</span></p>
+          <h2 class="sec-title">
+            <span data-zh>工具箱</span>
+            <span data-en>What I build with</span>
+          </h2>
+        </div>
+
+        <div class="skill-groups" data-reveal>
+          {%- for group in P.skills -%}
+          <div class="skill-group">
+            <h4>
+              <span data-zh>{{ group.label.zh }}</span><span data-en>{{ group.label.en }}</span>
+            </h4>
+            <div class="skill-tags">
+              {%- for item in group.items -%}
+              <span>{{ item }}</span>
+              {%- endfor -%}
+            </div>
+          </div>
+          {%- endfor -%}
+        </div>
+
+        <div class="aside-note" data-reveal>
+          <p class="sec-label" style="margin-bottom:14px">
+            <b>▸</b> <span data-zh>其他</span><span data-en>Elsewhere</span>
+          </p>
+          <p data-zh>{{ P.beyond.zh }}</p>
+          <p data-en>{{ P.beyond.en }}</p>
+        </div>
+      </section>
 
     </div>
+  </div>
 </div>
-<!-- disqus 评论框 end -->
 
-<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
-<script async type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = "{{site.disqus_username}}";
-    var disqus_identifier = "{{site.disqus_username}}/{{page.url}}";
-    var disqus_url = "{{site.url}}{{page.url}}";
-
-    (function () {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<!-- disqus 公共JS代码 end -->
-{% endif %}
+<!-- ======================================================================
+     Contact
+     ====================================================================== -->
+<section id="contact" class="band band--ink band--tight">
+  <div class="shell">
+    <div class="contact-block" data-reveal>
+      <div>
+        <p class="sec-label" style="color:rgba(255,255,255,.42);margin-bottom:16px">
+          <b>08</b> <span data-zh>联系</span><span data-en>Contact</span>
+        </p>
+        <h3>
+          <span data-zh>一起做点能用的东西</span>
+          <span data-en>Let's build something that runs</span>
+        </h3>
+        <p data-zh>{{ P.contact.zh }}</p>
+        <p data-en>{{ P.contact.en }}</p>
+      </div>
+      <div class="contact-mails">
+        <a href="mailto:{{ P.contact.email }}">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 7.2L4.4 7h15.2L12 12.2z"/></svg>
+          {{ P.contact.email }}
+        </a>
+        <a href="mailto:{{ P.contact.email_academic }}">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+          {{ P.contact.email_academic }}
+        </a>
+        <a href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM9.6 6.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM8.4 10h1.5v8H8.4v-8zm3 0h3.2c2.6 0 4.4 1.7 4.4 4 0 2.4-1.8 4-4.4 4h-3.2v-8zm1.5 1.4v5.2h1.6c1.9 0 3-.8 3-2.6 0-1.7-1.1-2.6-3-2.6h-1.6z"/></svg>
+          ORCID {{ P.identifiers.orcid }}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

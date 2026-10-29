@@ -1,16 +1,35 @@
 ---
 layout: default
-title: Offline
+title: "离线模式"
 hide-in-nav: true
 description: "阅读过的页面可以在离线时访问哦 ;)"
+body-class: "has-hero page-offline"
+no-catalog: true
 header-img: "img/Backgrounds/404-bg.jpg"
 permalink: /offline.html
 ---
 
+{%- assign hero_img = page.header-img | default: site.header-img -%}
 
-<!-- Page Header -->
-{% include intro-header.html type="page" %}
-
-<script async>
-	document.body.classList.add('page-fullscreen');
-</script>
+<section class="page-hero page-hero--tall">
+  <div class="page-hero__media"
+       style="background-image:url('{{ site.baseurl }}/{{ hero_img }}')"
+       role="img" aria-label="背景照片"></div>
+  <div class="shell page-hero__inner">
+    <p class="hero__eyebrow" style="margin-bottom:18px">
+      <span class="dot" aria-hidden="true"></span>
+      <span>Offline</span>
+    </p>
+    <h1>网络暂时<em>断开了</em></h1>
+    <p class="page-hero__desc">
+      你之前读过的页面已被缓存，可以继续离线阅读；需要新内容时再连上网络即可。
+    </p>
+    <div class="hero__actions">
+      <a class="btn" href="{{ '/' | prepend: site.baseurl }}">
+        回到首页
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn" href="{{ '/archive/' | prepend: site.baseurl }}">浏览全部文章</a>
+    </div>
+  </div>
+</section>

@@ -42,19 +42,46 @@
     <!-- Tool directory -->
     <link rel="stylesheet" href="{{ "/css/tools.css" | prepend: site.baseurl }}">
 
-    <!-- Dark Mode Inline Script (Prevent FOUC) -->
+    <!-- Site design system (v3) -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="{{ "/fonts/webfonts/InterVar.woff2" | prepend: site.baseurl }}">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="{{ "/fonts/webfonts/InstrumentSerif-Regular.woff2" | prepend: site.baseurl }}">
+    <link rel="stylesheet" href="{{ "/css/site.css" | prepend: site.baseurl }}">
+
+    <!-- Theme + language bootstrap (runs before paint to avoid a flash) -->
     <script>
-        (function() {
-            var currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            document.documentElement.setAttribute('data-theme', currentTheme);
-        })();
+        (function (doc, root) {
+            root.classList.add('js');
+
+            var theme = null;
+            try { theme = localStorage.getItem('theme'); } catch (e) {}
+            if (!theme) {
+                theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+                    ? 'dark' : 'light';
+            }
+            root.setAttribute('data-theme', theme);
+
+            var lang = 'zh';
+            try {
+                var q = new URLSearchParams(window.location.search).get('lang');
+                if (q === 'en' || q === 'zh') {
+                    lang = q;
+                    localStorage.setItem('lang', q);
+                } else if (localStorage.getItem('lang') === 'en') {
+                    lang = 'en';
+                }
+            } catch (e) {}
+            root.setAttribute('data-lang', lang);
+        })(document, document.documentElement);
     </script>
 
-    <!-- Custom Fonts -->
-    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
-    <!-- Hux change font-awesome CDN to qiniu -->
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"
-        type="text/css">
+    <!--
+        Font Awesome (cdnjs) is no longer linked: the redesign draws its icons as
+        inline SVG, and a cross-origin stylesheet in <head> delays the execution
+        of every following script while it loads — noticeable on networks where
+        cdnjs is slow or blocked.
+    -->
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -69,8 +96,17 @@
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7629675373716127"
     crossorigin="anonymous"></script>
-    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js"></script>
-    <!-- Translate.js -->
-    <script async src="https://res.zvo.cn/translate/translate.js"></script>
+
+    <!--
+        Removed third-party document rewriters:
+
+        • `amp-auto-ads` only functions inside an AMP document; on a normal page
+          the runtime can stall or rewrite the document.
+        • `translate.js` (res.zvo.cn) auto-translated the whole page and could
+          block the parser. The site now has its own ZH/EN switch driven by
+          `data-zh` / `data-en` attributes (see css/site.css §15 and js/site.js),
+          so the machine-translation script is redundant — and it fought with
+          the hand-written English copy.
+    -->
 
 </head>

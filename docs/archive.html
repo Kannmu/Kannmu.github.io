@@ -3,87 +3,130 @@ title: 文章归档与主题索引
 nav-title: Archive
 layout: default
 description: "按年份与主题浏览涵无（Kannmu）的全部文章，涵盖人机交互、人工智能、脑机接口、Unity、Python、硬件设计、开源项目与论文研读。"
-header-mask: 0.3
+body-class: "has-hero page-archive"
+no-catalog: true
+multilingual: true
 header-img: "img/Backgrounds/Bg_5.jpg"
+header-mask: 0.3
 ---
 
-<!--
-Credits: this page shamelessly borrowed a lot from:
-https://github.com/kitian616/jekyll-TeXt-theme
--->
-<!-- Page Header -->
-{% include intro-header.html type='page' short=false %}
+{%- assign all_posts = site.posts | sort: "date" | reverse -%}
+{%- assign year_groups = all_posts | group_by_exp: "post", "post.date | date: '%Y'" -%}
+{%- assign hero_img = page.header-img | default: site.header-img -%}
 
-<!-- Main Content -->
-<div class="container">
-	<div class="row">
-		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-			<!-- Tags (as filter) -->
-			<div id='tag_cloud' class="tags tags-sup js-tags">
-				<a class="tag-button--all" data-encode="">
-					Show All
-					<sup>{{site.posts.size}}</sup>
-				</a>
+<!-- ======================================================================
+     Page hero
+     ====================================================================== -->
+<section class="page-hero">
+  <div class="page-hero__media"
+       style="background-image:url('{{ site.baseurl }}/{{ hero_img }}')"
+       role="img" aria-label="背景照片"></div>
+  <div class="shell page-hero__inner">
+    <p class="hero__eyebrow" style="margin-bottom:20px">
+      <span class="dot" aria-hidden="true"></span>
+      <span>The Archive</span>
+      <span aria-hidden="true" style="opacity:.4">/</span>
+      <span>{{ all_posts.size }} <span data-zh>篇文章</span><span data-en>posts</span> · {{ site.tags.size }} <span data-zh>个主题</span><span data-en>topics</span></span>
+    </p>
+    <h1>
+      <span data-zh>文章归档与<em>主题索引</em></span>
+      <span data-en>Archive &amp; <em>topic index</em></span>
+    </h1>
+    <p class="page-hero__desc">
+      <span data-zh>按年份与主题浏览全部文章：人机交互与实验记录、Unity 与图形开发、Python 与工具脚本、硬件改造、开源项目与论文研读笔记。</span>
+      <span data-en>Browse every note by year or by topic — interaction research and experiment logs, Unity and graphics work, Python and utility scripts, hardware modification, open-source projects and paper notes. Post titles are kept in their original language.</span>
+    </p>
+    <div class="page-hero__meta">
+      <span>{{ all_posts.first.date | date: "%Y" }} — {{ all_posts.last.date | date: "%Y" }}</span>
+      <span data-zh>按时间倒序</span><span data-en>Chronological</span>
+      <span data-zh>按主题筛选</span><span data-en>Topic filter</span>
+    </div>
+  </div>
+</section>
 
-				{% capture tags %}
-				{% for tag in site.tags %}
-				<a data-sort="{{ site.posts.size | minus: tag[1].size | prepend: '0000' | slice: -4, 4 }}"
-					data-encode="{{ tag[0] | strip | url_encode }}" class="tag-button" title="{{ tag[0] }}"
-					rel="{{ tag[1].size }}">
-					{{ tag[0] }}
-					<sup>{{tag[1].size}}</sup>
-				</a>__SEPERATOR__
-				{% endfor %}
-				{% endcapture %}
-				{{ tags | split:'__SEPERATOR__' | sort }}
-			</div>
+<!-- ======================================================================
+     Filters + list
+     ====================================================================== -->
+<div class="band band--paper band--tight">
+  <div class="shell">
 
-			<!-- Article List -->
-			<div class="mini-post-list js-result d-none">
-				{%- assign _sorted_list = site.posts -%}
-				{%- assign _sorted_list = _sorted_list | sort: 'date' -%}
-				{%- assign _sorted_list = _sorted_list | reverse -%}
+    <div class="arc-toolbar">
+      <div class="tag-cloud" id="tagCloud" role="group" aria-label="按主题筛选">
+        <button class="chip is-active" type="button" data-arc-filter="*" aria-pressed="true">
+          <span data-zh>全部</span><span data-en>All</span>
+          <sup>{{ all_posts.size }}</sup>
+        </button>
+        {%- assign sorted_tags = site.tags | sort -%}
+        {%- for tag in sorted_tags -%}
+        <button class="chip{% if tag[1].size < 2 %} chip--minor{% endif %}" type="button"
+          data-arc-filter="{{ tag[0] | escape }}"
+          {% if tag[1].size < 2 %}data-minor{% endif %}
+          aria-pressed="false">
+          {{ tag[0] }}
+          <sup>{{ tag[1].size }}</sup>
+        </button>
+        {%- endfor -%}
+      </div>
 
+      <div class="arc-toolbar__foot">
+        <p class="tag-cloud__count" style="margin:0">
+          <span data-arc-count>{{ all_posts.size }}</span>
+          <span data-zh>篇</span><span data-en>posts</span>
+        </p>
+        <button class="arc-tag-toggle" type="button" id="tagMore" aria-expanded="false" aria-controls="tagCloud"
+          data-more-zh="显示全部 {{ site.tags.size }} 个标签"
+          data-more-en="Show all {{ site.tags.size }} topics"
+          data-less-zh="收起低频标签"
+          data-less-en="Collapse low-frequency topics">
+          <span data-zh>显示全部 {{ site.tags.size }} 个标签</span><span data-en>Show all {{ site.tags.size }} topics</span><span aria-hidden="true"> ↓</span>
+        </button>
+      </div>
+    </div>
 
-				{%- for _article in _sorted_list -%}
-				{%- assign _tags = '' -%}
-				{%- for _tag in _article.tags -%}
-				{%- assign _tag_encode = _tag | strip | url_encode -%}
-				{%- if forloop.last -%}
-				{%- assign _tags = _tags | append: _tag_encode -%}
-				{%- else -%}
-				{%- assign _tags = _tags | append: _tag_encode | append: ',' -%}
-				{%- endif -%}
-				{%- endfor -%}
+    <div class="arc-body" style="margin-top:clamp(24px,3vw,40px)">
+      {%- for group in year_groups -%}
+      <section class="arc-year">
+        <div class="arc-year__label">
+          {{ group.name }}
+          <span>{{ group.items.size }} <span data-zh>篇</span><span data-en>posts</span></span>
+        </div>
 
-				{% comment %} group by year {% endcomment %}
-				{%- assign _currentdate = _article.date | date: '%Y' -%}
-				{%- if _currentdate != _date -%}
-				{%- unless forloop.first -%}</section>{%- endunless -%}
-				<section>
-					<span class="fa listing-seperator">
-						<span class="tag-text">{{ _currentdate }}</span>
-					</span>
-					{%- assign _date = _currentdate -%}
-					{%- endif -%}
+        <div class="arc-list">
+          {%- for post in group.items -%}
+          <article class="arc-item" data-tags="{{ post.tags | join: '|' | escape }}">
+            <div>
+              <h3><a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></h3>
+              {%- if post.subtitle %}
+              <p class="arc-item__sub">{{ post.subtitle }}</p>
+              {%- endif %}
+            </div>
+            <div class="arc-item__side">
+              <time class="arc-item__date" datetime="{{ post.date | date_to_xmlschema }}">
+                {{ post.date | date: "%m.%d" }}
+              </time>
+              {%- if post.tags.size > 0 %}
+              <span class="arc-item__tags">
+                {%- for t in post.tags limit:2 -%}{{ t }}{% unless forloop.last %} · {% endunless %}{%- endfor -%}
+              </span>
+              {%- endif %}
+            </div>
+          </article>
+          {%- endfor -%}
+        </div>
+      </section>
+      {%- endfor -%}
+    </div>
 
-					<div class="post-preview item" data-tags="{{ _tags }}">
-						<a href="{{ _article.url | prepend: site.baseurl }}">
-							<h2 class="post-title">
-								{{ _article.title }}
-							</h2>
-							{% if _article.subtitle %}
-							<h3 class="post-subtitle">
-								{{ _article.subtitle }}
-							</h3>
-							{% endif %}
-						</a>
-						<hr>
-					</div>
-					{%- if forloop.last -%}
-				</section>{%- endif -%}
-				{% endfor %}
-			</div>
-		</div>
-	</div>
+    <p class="arc-empty" data-arc-empty hidden>
+      <span data-zh>这个主题下暂时没有文章。</span><span data-en>No posts under this topic yet.</span>
+    </p>
+
+    <p class="arc-more">
+      <a class="link-arrow" href="{{ '/' | prepend: site.baseurl }}">
+        <span data-zh>返回首页</span><span data-en>Back to home</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+      </a>
+    </p>
+
+  </div>
 </div>

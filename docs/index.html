@@ -1,66 +1,302 @@
 ---
-layout: page
-description: "涵无（Kannmu）的个人博客，记录人机交互、人工智能、脑机接口、硬件开发与交互设计研究，也分享开源工具、项目实践和摄影作品。"
-
+layout: default
+title: "涵无的博客 | Kannmu Blog"
+description: "涵无（Kannmu，范林涵 Linhan Fan）的个人网站：记录人机交互、眼动交互、脑机接口与超声触觉研究，也分享开源工具、论文笔记与摄影作品。"
+body-class: "has-hero page-home"
 header-mask: 0.3
+no-catalog: true
+multilingual: true
 ---
 
-<!-- <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=730 height=86 src="https://music.163.com/outchain/player?type=2&id=1352910518&auto=1&height=66"></iframe> -->
+{%- assign P = site.data.profile -%}
+{%- assign pubs = site.data.publications | sort: "date" | reverse -%}
 
-<section class="home-tools-entry" aria-labelledby="home-tools-title">
-    <div>
-        <p class="home-tools-entry__eyebrow">Kannmu Tools</p>
-        <h2 id="home-tools-title">浏览器里的实验与小工具</h2>
-        <p>从节点计算、图片排版到程序化生成，这些项目都可以直接在线使用。</p>
+{%- assign total_cites = 0 -%}
+{%- for p in pubs -%}{%- assign total_cites = total_cites | plus: p.citation_count -%}{%- endfor -%}
+
+<!-- ======================================================================
+     Hero
+     ====================================================================== -->
+<section class="hero">
+  <div class="hero__media"
+       style="background-image:url('{{ site.baseurl }}{{ site.header-img }}')"
+       role="img" aria-label="山间植物摄影背景"></div>
+  <div class="hero__veil" aria-hidden="true"></div>
+
+  <div class="shell">
+    <div class="hero__inner">
+      <div>
+        <p class="hero__eyebrow">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="hero__eyebrow-a">Human–Computer Interaction</span>
+          <span class="hero__eyebrow-sep" aria-hidden="true">/</span>
+          <span class="hero__eyebrow-b">Southeast University</span>
+        </p>
+
+        <h1 class="hero__title">
+          <span data-zh>涵无的博客</span>
+          <span data-en>Kannmu Blog</span>
+          <span class="cn">
+            <span data-zh>Kannmu Blog · Linhan Fan · 人机交互研究者</span>
+            <span data-en>Linhan Fan · Human–Computer Interaction</span>
+          </span>
+        </h1>
+
+        <p class="hero__lede">
+          <span data-zh>{{ P.lede.zh }}</span>
+          <span data-en>{{ P.lede.en }}</span>
+        </p>
+
+        <div class="hero__actions">
+          <a class="btn" href="{{ '/about/' | prepend: site.baseurl }}">
+            <span data-zh>关于研究</span><span data-en>Research</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="btn" href="{{ '/archive/' | prepend: site.baseurl }}">
+            <span data-zh>阅读文章</span><span data-en>Read notes</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero__aside" aria-hidden="true">
+        <span class="hero__stat"><b>{{ pubs.size }}</b><span data-zh>篇论文</span><span data-en>Papers</span></span>
+        <span class="hero__stat"><b>{{ total_cites }}</b><span data-zh>次引用</span><span data-en>Citations</span></span>
+        <span class="hero__stat"><b>4</b><span data-zh>个方向</span><span data-en>Directions</span></span>
+      </div>
     </div>
-    <div class="home-tools-entry__links" aria-label="精选工具">
-        {% for tool in site.data.tools limit:3 %}
-        <a href="{{ tool.url | prepend: site.baseurl }}">{{ tool.name }}</a>
-        {% endfor %}
+  </div>
+
+  <div class="hero__rail">
+    <div class="shell hero__rail-inner">
+      <span>
+        <span data-zh>{{ P.location.zh }}</span>
+        <span data-en>{{ P.location.en }}</span>
+      </span>
+      <a class="scroll-hint" href="#intro">
+        <span data-zh>向下浏览</span><span data-en>Scroll</span>
+        <i aria-hidden="true"></i>
+      </a>
+      <span>Since 2023 · Ph.D. in Design</span>
     </div>
-    <a class="home-tools-entry__all" href="{{ '/tools/' | prepend: site.baseurl }}">
-        查看全部工具 <span aria-hidden="true">&rarr;</span>
-    </a>
+  </div>
 </section>
 
-{% for post in paginator.posts %}
-<div class="post-preview">
-    <a href="{{ post.url | prepend: site.baseurl }}">
-        <h2 class="post-title">
-            {{ post.title }}
-        </h2>
-        {% if post.subtitle %}
-        <h3 class="post-subtitle">
-            {{ post.subtitle }}
-        </h3>
-        {% endif %}
-        <div class="post-content-preview">
-            {% if post.lang == 'en' %}
-                {{ post.content | strip_html | truncate:300 }}
-            {% else %}
-                {{ post.content | strip_html | truncate:200 }}
-            {% endif %}
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}
-    </p>
-</div>
-<hr>
-{% endfor %}
+<!-- ======================================================================
+     Intro
+     ====================================================================== -->
+<section class="band band--paper" id="intro">
+  <div class="shell intro-grid">
+    <div class="intro-copy" data-reveal>
+      <p class="sec-label" style="margin-bottom:22px"><b>01</b> <span data-zh>简介</span><span data-en>Profile</span></p>
+      <div class="statement">
+        {%- for para in P.statement limit:2 -%}
+        <p data-zh>{{ para.zh }}</p>
+        <p data-en>{{ para.en }}</p>
+        {%- endfor -%}
+      </div>
+      <p style="margin-top:26px">
+        <a class="link-arrow" href="{{ '/about/' | prepend: site.baseurl }}">
+          <span data-zh>完整学术主页</span><span data-en>Read the full academic page</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </p>
+    </div>
 
-<!-- Pager -->
-{% if paginator.total_pages > 1 %}
-<ul class="pager">
-    {% if paginator.previous_page %}
-    <li class="previous">
-        <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&larr; Newer Posts</a>
-    </li>
-    {% endif %}
-    {% if paginator.next_page %}
-    <li class="next">
-        <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Older Posts &rarr;</a>
-    </li>
-    {% endif %}
-</ul>
-{% endif %}
+    <div data-reveal data-reveal-delay="80">
+      <dl class="fact-list">
+        <div>
+          <dt><span data-zh>单位</span><span data-en>Affiliation</span></dt>
+          <dd><span data-zh>{{ P.affiliation.zh }}</span><span data-en>{{ P.affiliation.en }}</span></dd>
+        </div>
+        <div>
+          <dt><span data-zh>学位</span><span data-en>Programme</span></dt>
+          <dd><span data-zh>设计学博士研究生（2023 — 至今）</span><span data-en>Ph.D. in Design (since 2023)</span></dd>
+        </div>
+        <div>
+          <dt><span data-zh>导师</span><span data-en>Advisor</span></dt>
+          <dd><a href="{{ P.advisor.url }}" target="_blank" rel="noopener">{{ P.advisor.zh }}</a></dd>
+        </div>
+        <div>
+          <dt><span data-zh>ORCID</span><span data-en>ORCID</span></dt>
+          <dd><a href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">{{ P.identifiers.orcid }}</a></dd>
+        </div>
+        <div>
+          <dt><span data-zh>关键词</span><span data-en>Keywords</span></dt>
+          <dd>
+            <span class="intro-tags">
+              {%- for area in P.research -%}
+              <a class="chip" href="{{ '/about/' | prepend: site.baseurl }}#research">{{ area.title.en }}</a>
+              {%- endfor -%}
+            </span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     Research topics
+     ====================================================================== -->
+<section class="band band--lift">
+  <div class="shell">
+    <div class="sec-head sec-head--row" data-reveal>
+      <div>
+        <p class="sec-label"><b>02</b> <span data-zh>研究主题</span><span data-en>Research topics</span></p>
+        <h2 class="sec-title" style="margin-top:16px">
+          <span data-zh>研究主题</span>
+          <span data-en>Research topics</span>
+        </h2>
+      </div>
+      <a class="link-arrow" href="{{ '/about/' | prepend: site.baseurl }}#research">
+        <span data-zh>查看全部</span><span data-en>All topics</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <div class="idx-list">
+      {%- for area in P.research -%}
+      <a class="idx-row" href="{{ '/about/' | prepend: site.baseurl }}#research" data-reveal>
+        <span class="idx-row__no">{{ area.index }}</span>
+        <h3>
+          <span data-zh>{{ area.title.zh }}</span>
+          <span data-en>{{ area.title.en }}</span>
+          <span class="idx-row__kw">{{ area.keywords | slice: 0, 3 | join: ' · ' }}</span>
+        </h3>
+        <p>
+          <span data-zh>{{ area.summary.zh }}</span>
+          <span data-en>{{ area.summary.en }}</span>
+        </p>
+        <span class="idx-row__arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     Publications preview
+     ====================================================================== -->
+<section class="band band--paper">
+  <div class="shell">
+    <div class="sec-head sec-head--row" data-reveal>
+      <div>
+        <p class="sec-label"><b>03</b> <span data-zh>论文</span><span data-en>Publications</span></p>
+        <h2 class="sec-title" style="margin-top:16px">
+          <span data-zh>第一 / 共同第一作者论文</span>
+          <span data-en>First &amp; co-first author papers</span>
+        </h2>
+      </div>
+      <a class="link-arrow" href="{{ '/about/' | prepend: site.baseurl }}#publications">
+        <span data-zh>全部论文</span><span data-en>All publications</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <div class="pub-preview">
+      {%- assign lead_pubs = pubs | where_exp: "p", "p.author_role == 'first' or p.author_role == 'cofirst'" -%}
+      {%- for p in lead_pubs -%}
+      <a class="pub-preview__row" href="https://doi.org/{{ p.doi }}" target="_blank" rel="noopener" data-reveal>
+        <span class="pub-preview__year">{{ p.year }}</span>
+        <span class="pub-preview__body">
+          <h3>{{ p.title }}</h3>
+          <p>
+            {%- if p.author_role == 'first' -%}First author · {% elsif p.author_role == 'cofirst' -%}Co-first author · {% endif -%}
+            {{ p.venue_short }}{% if p.volume %} · Vol. {{ p.volume }}{% endif %}
+          </p>
+        </span>
+        <span class="pub-preview__meta">
+          {%- if p.citation_count > 0 -%}{{ p.citation_count }} cited{%- else -%}DOI ↗{%- endif -%}
+        </span>
+      </a>
+      {%- endfor -%}
+    </div>
+
+    <div class="tools-strip" style="margin-top:clamp(40px,5vw,64px)" data-reveal>
+      <div>
+        <p class="sec-label" style="margin-bottom:14px"><b>▸</b> Kannmu Tools</p>
+        <h3><span data-zh>浏览器里的工具与实验</span><span data-en>Tools and experiments in the browser</span></h3>
+        <p>
+          <span data-zh>节点计算、图片排版、程序化生成与设备监控等独立应用，均可直接在线上使用。</span>
+          <span data-en>Independent applications for node-based maths, image layout, procedural generation and device monitoring — all available online.</span>
+        </p>
+      </div>
+      <div class="tools-strip__links">
+        {%- for tool in site.data.tools limit:4 -%}
+        <a href="{{ tool.url | prepend: site.baseurl }}">
+          <span>{{ tool.name }}</span>
+          <span>{{ tool.mark }}</span>
+        </a>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     Notes
+     ====================================================================== -->
+<section class="band band--lift">
+  <div class="shell">
+    <div class="sec-head sec-head--row" data-reveal>
+      <div>
+        <p class="sec-label"><b>04</b> <span data-zh>笔记</span><span data-en>Notes</span></p>
+        <h2 class="sec-title" style="margin-top:16px">
+          <span data-zh>最近文章</span>
+          <span data-en>Recent notes</span>
+        </h2>
+      </div>
+      <a class="link-arrow" href="{{ '/archive/' | prepend: site.baseurl }}">
+        <span data-zh>全部 {{ site.posts.size }} 篇</span><span data-en>All {{ site.posts.size }} posts</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <div class="note-grid">
+      {%- for post in site.posts limit:6 -%}
+      <a class="note-card" href="{{ post.url | prepend: site.baseurl }}" data-reveal>
+        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y · %m.%d" }}</time>
+        <h3>{{ post.title }}</h3>
+        {%- if post.subtitle %}
+        <p>{{ post.subtitle }}</p>
+        {%- else %}
+        <p>{{ post.content | strip_html | truncate: 96 }}</p>
+        {%- endif %}
+        {%- if post.tags.size > 0 %}
+        <span class="note-card__tag">{{ post.tags | first }}</span>
+        {%- endif %}
+      </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     CTA
+     ====================================================================== -->
+<section class="band band--ink band--tight">
+  <div class="shell">
+    <div class="contact-block" data-reveal>
+      <div>
+        <p class="sec-label" style="color:rgba(255,255,255,.42);margin-bottom:16px">
+          <b>05</b> <span data-zh>联系</span><span data-en>Contact</span>
+        </p>
+        <h3>
+          <span data-zh>合作与联系</span>
+          <span data-en>Collaboration &amp; contact</span>
+        </h3>
+        <p data-zh>{{ P.contact.zh }}</p>
+        <p data-en>{{ P.contact.en }}</p>
+      </div>
+      <div class="contact-mails">
+        <a href="mailto:{{ P.contact.email }}">{{ P.contact.email }}</a>
+        <a href="{{ '/about/' | prepend: site.baseurl }}">
+          <span data-zh>学术主页</span><span data-en>Academic page</span> →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+

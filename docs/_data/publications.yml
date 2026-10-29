@@ -1,0 +1,277 @@
+# =============================================================================
+#  publications.yml —— 范林涵 / Linhan Fan 论文数据源
+# -----------------------------------------------------------------------------
+#  这是 About 页面「Publications」区块的唯一数据来源。
+#  字段说明：
+#    id            唯一标识（BibTeX key，也是页面锚点）
+#    year / date   发表年份与精确日期
+#    type          journal | conference
+#    venue         期刊 / 会议全称
+#    venue_short   短名，用于窄屏与徽章
+#    publisher     出版社
+#    volume / issue / pages / article_no   卷期页码
+#    doi           数字对象标识符（不要带 https://doi.org/ 前缀）
+#    citation_count   Crossref 引用计数（同步脚本会覆盖为最新值）
+#    author_role   first | cofirst | corresponding | coauthor
+#    authors       作者全名，用 " ; " 分隔
+#    self_name     用于在作者列表中高亮本人（必须与 authors 中写法一致）
+#    topics        主题标签，供筛选与检索使用
+#    featured      是否在精选区展示
+#    note          补充说明（预印本、封面文章等）
+#  注意：中文长句请保持在同一行，避免 YAML 折叠产生多余空格。
+# =============================================================================
+
+- id: fan2024blink
+  year: 2024
+  title: "Design recommendations for voluntary blink interactions based on pressure sensors"
+  date: 2024-08-01
+  type: journal
+  venue: Advanced Engineering Informatics
+  venue_short: Adv. Eng. Inform.
+  publisher: Elsevier
+  volume: "61"
+  pages: "102489"
+  article_no: "102489"
+  doi: 10.1016/j.aei.2024.102489
+  citation_count: 6
+  author_role: first
+  authors: "Lin-Han Fan ; Wei-Chi Huang ; Xue-Qi Shao ; Ya-Feng Niu"
+  self_name: Lin-Han Fan
+  topics: [gaze, blink, pressure-sensing, interaction-design]
+  featured: true
+  note: >-
+    预印本版见 SSRN 10.2139/ssrn.4695848。
+  abstract_zh: >-
+    在眼控人机交互中，自主眨眼是一种理想的无手输入，但由于信号微弱、又容易与自然眨眼混淆，长期缺乏可用的设计参数。本文选择低功耗的压力传感器作为感知通道，刻画自主眨眼的信号特征，并据此给出一套可直接用于界面设计的建议——覆盖触发阈值、误触抑制、反馈时机与重复输入等关键取舍，让眨眼从「可被检测的信号」变成「可被设计的交互原语」。
+  abstract_en: >-
+    Voluntary blink control is vital in eye-controlled human–computer interaction, yet designers lack parameter-level guidance for making it reliable. Using low-power pressure sensors as the sensing channel, this work characterises intentional blink signals and derives actionable design recommendations — triggering thresholds, false-activation suppression, feedback timing and repeated input — turning a faint physiological signal into a designable interaction primitive.
+
+- id: huang2024takeover
+  year: 2024
+  title: "Enhancing safety in conditionally automated driving: Can more takeover request visual information make a difference in hazard scenarios with varied hazard visibility?"
+  date: 2024-09-01
+  type: journal
+  venue: Accident Analysis & Prevention
+  venue_short: Accid. Anal. Prev.
+  publisher: Elsevier
+  volume: "205"
+  pages: "107687"
+  article_no: "107687"
+  doi: 10.1016/j.aap.2024.107687
+  citation_count: 36
+  author_role: coauthor
+  authors: "Wei-Chi Huang ; Lin-Han Fan ; Zi-Jian Han ; Ya-Feng Niu"
+  self_name: Lin-Han Fan
+  topics: [automated-driving, takeover-request, safety, visual-attention]
+  featured: true
+  abstract_zh: >-
+    在条件自动驾驶中，接管请求（TOR）界面究竟该承载多少视觉信息？本文通过工效学实验比较了「警示 + 危险方向 + 碰撞时间」等信息组合在显性危险与隐性危险场景下的作用：信息更丰富确实能改善接管绩效、提升信任并降低负荷，但在显性危险场景中反而带来分心。结论是设计应与危险的可见度水平相匹配，而不是一味堆叠信息。
+  abstract_en: >-
+    How much visual information should a takeover request (TOR) interface carry in conditionally automated driving? An ergonomics study comparing warning, hazard-direction and time-to-collision information across overt and covert hazards shows that richer cues do improve takeover performance, trust and workload — but in overt-hazard scenarios the same extra information distracts. Design should therefore be visibility-contingent rather than information-maximal.
+
+- id: huang2025fisheye
+  year: 2025
+  title: "Enhancing gaze interaction performance: Design and optimization of perspective-driven fisheye view"
+  date: 2025-05-01
+  type: journal
+  venue: Advanced Engineering Informatics
+  venue_short: Adv. Eng. Inform.
+  publisher: Elsevier
+  volume: "65"
+  pages: "103365"
+  article_no: "103365"
+  doi: 10.1016/j.aei.2025.103365
+  citation_count: 7
+  author_role: coauthor
+  authors: "Wei-Chi Huang ; Yi-Yan Wang ; Lin-Han Fan ; Sha-Tong Yang ; Ya-Feng Niu"
+  self_name: Lin-Han Fan
+  topics: [gaze, fisheye, visualisation, interaction-design]
+  featured: false
+  abstract_zh: >-
+    眼动选取在小目标上常常失准。本文设计并优化了一种「透视驱动的鱼眼视图」，在保持注视点语义稳定的同时放大候选目标区域，系统评估其对选取速度、准确率与主观负荷的影响。
+  abstract_en: >-
+    Gaze-based selection of small or distant targets is error-prone. This work designs and empirically optimises a perspective-driven fisheye view that magnifies candidate regions while keeping the gaze point semantically stable, evaluating its effect on selection speed, accuracy and perceived workload without losing context.
+
+- id: xiao2025metasurface
+  year: 2025
+  title: "Secure wireless communication of brain–computer interface and mind control of smart devices enabled by space-time-coding metasurface"
+  date: 2025-08-25
+  type: journal
+  venue: Nature Communications
+  venue_short: Nat. Commun.
+  publisher: Nature Portfolio
+  volume: "16"
+  issue: "1"
+  pages: "7914"
+  article_no: "7914"
+  doi: 10.1038/s41467-025-63326-0
+  citation_count: 28
+  author_role: cofirst
+  authors: "Qiang Xiao ; Lin Han Fan ; Qian Ma ; Yu Ming Ning ; Ze Gu ; Long Chen ; Lianlin Li ; Jian Wei You ; Ya Feng Niu ; Tie Jun Cui"
+  self_name: Lin Han Fan
+  topics: [bci, wireless, metasurface, security]
+  featured: true
+  note: >-
+    预印本于 2024 年 8 月发布于 Research Square（DOI 10.21203/rs.3.rs-4860006/v1）。
+  abstract_zh: >-
+    如何让脑机接口「隔空」且安全地操控智能设备？本文把视觉刺激诱发的脑电编码与时空编码超表面融合：超表面以谐波加密波束在物理层同时完成调制与加密，由此建立一条从大脑到设备的受控无线指令链路，并用原型系统完成了验证。
+  abstract_en: >-
+    A brain–computer interface that controls smart devices without wires is only useful if the link is secure. Fusing visually evoked EEG encoding with space–time coding on a metasurface, this work uses harmonic-encrypted beams to deliver modulation and encryption at the physical layer — establishing a secure wireless brain-to-device command channel, validated with a prototype.
+
+- id: niu2025smoothpursuit
+  year: 2025
+  title: "Visual perception and user experience optimization: Exploring interaction design through static-triggered smooth pursuit systems"
+  date: 2025-12-01
+  type: journal
+  venue: Displays
+  venue_short: Displays
+  publisher: Elsevier
+  volume: "90"
+  pages: "103121"
+  article_no: "103121"
+  doi: 10.1016/j.displa.2025.103121
+  citation_count: 2
+  author_role: coauthor
+  authors: "Ya-Feng Niu ; Yun Feng ; Xin Li ; Wei-Chi Huang ; Yi-Yan Wang ; Lin-Han Fan"
+  self_name: Lin-Han Fan
+  topics: [gaze, smooth-pursuit, visual-perception, user-experience]
+  featured: false
+  note: >-
+    预印本版见 SSRN 10.2139/ssrn.5109047。
+  abstract_zh: >-
+    本文把「静态触发」引入平滑追踪眼动范式：用不动的触发线索诱发追踪运动，并通过界面与动效设计调节视觉感知过程，从视觉感知、操作绩效与用户体验三方面检验该范式在真实交互任务中的可用性与舒适度。
+  abstract_en: >-
+    Introducing static triggering into the smooth-pursuit paradigm, this study elicits pursuit with stationary trigger cues, shapes visual perception through interface and motion design, and evaluates usability and comfort across visual perception, task performance and user experience.
+
+- id: he2026occluded
+  year: 2026
+  title: "Predictive Smooth Pursuit Gaze Interaction for Occluded Target Selection in Augmented Reality"
+  date: 2026-12-01
+  type: journal
+  venue: Displays
+  venue_short: Displays
+  publisher: Elsevier
+  volume: "95"
+  pages: "103579"
+  article_no: "103579"
+  doi: 10.1016/j.displa.2026.103579
+  citation_count: 1
+  author_role: coauthor
+  authors: "Hua He ; Yu Qian ; Lin-Han Fan ; Ya-Feng Niu"
+  self_name: Lin-Han Fan
+  topics: [gaze, smooth-pursuit, augmented-reality, occlusion]
+  featured: false
+  abstract_zh: >-
+    在增强现实中，目标常被前景物体遮挡，眼动选取会因此失效。本文提出一种可预测的平滑追踪眼动机制，在遮挡条件下仍能推断用户意图目标，从而恢复 AR 场景中的可选择性。
+  abstract_en: >-
+    In augmented reality, targets are routinely occluded by foreground geometry, which breaks gaze selection. This work proposes a predictive smooth-pursuit mechanism that infers the intended target from pursuit dynamics under occlusion, restoring selectability in AR scenes.
+
+- id: huang2026takelook
+  year: 2026
+  title: "Take-A-Look: Enabling intuitive distant target interactions in industrial virtual reality applications via natural gestures"
+  date: 2026-12-01
+  type: journal
+  venue: Computers in Industry
+  venue_short: Comput. Ind.
+  publisher: Elsevier
+  volume: "181"
+  pages: "104545"
+  article_no: "104545"
+  doi: 10.1016/j.compind.2026.104545
+  citation_count: 0
+  author_role: coauthor
+  authors: "Wei-Chi Huang ; Zhuo-Heng Song ; Yi-Yan Wang ; Lin-Han Fan ; Ya-Feng Niu"
+  self_name: Lin-Han Fan
+  topics: [virtual-reality, gesture, industry, distal-interaction]
+  featured: true
+  abstract_zh: >-
+    Take-A-Look 面向工业虚拟现实：操作者往往需要与远处的设备交互，却又不愿在车间里大幅移动。该方法以自然手势表达「看向」的意图，把远距离目标选择变成一次直觉性的指向动作，并在工业任务情境中做了验证。
+  abstract_en: >-
+    Take-A-Look targets industrial virtual reality, where operators must reach distant equipment without moving around the shop floor. The method reads natural gestures as an intent to look at a target, turning distant selection into an intuitive pointing action, validated in industrial task scenarios.
+
+- id: fan2026clarity
+  year: 2026
+  title: "Clarity or Context? Rebalancing Mobile Interaction for Older Adults with Gaze-Zoom-Tap"
+  date: 2026-01-30
+  type: journal
+  venue: International Journal of Human–Computer Interaction
+  venue_short: Int. J. Hum.–Comput. Interact.
+  publisher: Taylor & Francis
+  volume: "42"
+  issue: "19"
+  pages: "16075–16100"
+  doi: 10.1080/10447318.2026.2619925
+  citation_count: 0
+  author_role: first
+  authors: "LinHan Fan ; Ke Zhu ; MingJie Li ; ZhuTao Wang ; YaFeng Niu"
+  self_name: LinHan Fan
+  topics: [gaze, older-adults, mobile, accessibility]
+  featured: true
+  abstract_zh: >-
+    老年用户在移动端操作时，全局放大虽然提升了可读性，却常常打碎上下文、增加体力负担。本文在「清晰度」与「上下文」之间重新分配交互预算，提出并验证了一套「注视—缩放—点按」范式，让老年用户在不失去空间定位感的前提下看清目标。
+  abstract_en: >-
+    Older adults face mobile interaction challenges from age-related decline. Conventional global magnification enhances legibility but fragments context and increases physical strain. Rebalancing the interaction budget between clarity and context, this work proposes and evaluates a gaze–zoom–tap paradigm that keeps targets legible without losing spatial orientation.
+
+- id: wang2026spmark
+  year: 2026
+  title: "Spmark: improving small-target text selection with smooth-pursuit gaze interaction in hybrid paper–digital environments"
+  date: 2026-10-11
+  type: journal
+  venue: Virtual Reality
+  venue_short: Virtual Real.
+  publisher: Springer
+  doi: 10.1007/s10055-026-01497-x
+  citation_count: 0
+  author_role: coauthor
+  authors: "Yiyan Wang ; Weichi Huang ; Linhan Fan ; Zhutao Wang ; Yafeng Niu"
+  self_name: Linhan Fan
+  topics: [gaze, smooth-pursuit, text-selection, paper-digital]
+  featured: false
+  note: >-
+    卷期与文章编号尚未分配（2026 年 10 月在线发表）。
+  abstract_zh: >-
+    Spmark 处理的是「纸上—屏上」混合阅读场景里的小目标文字选取：借助平滑追踪眼动，让用户在不精确瞄准的前提下选中细小字词，从而把纸质材料纳入数字化标注流程。
+  abstract_en: >-
+    Spmark addresses small-target text selection in hybrid paper–digital reading. Using smooth-pursuit gaze marking, it lets users select fine-grained text without precise aiming, bringing printed material into digital annotation workflows.
+
+- id: li2026electrodes
+  year: 2026
+  title: "Data-driven design of disordered structures for direction- and geometry-independent stretchable electrodes"
+  date: 2026-07-23
+  type: journal
+  venue: npj Flexible Electronics
+  venue_short: npj Flex. Electron.
+  publisher: Nature Portfolio
+  doi: 10.1038/s41528-026-00620-x
+  citation_count: 0
+  author_role: cofirst
+  authors: "Mengli Li ; Linhan Fan ; Yilei Fu ; Yihe Yue ; Xinyu Chen ; Jiaying Wang ; Tao Hu ; Kang Gao ; Xuan Liang ; Yumeng You ; Lei Liu ; Jinlan Wang ; Yafeng Niu ; Yunfei Chen ; Zhiyang Lyu"
+  self_name: Linhan Fan
+  topics: [flexible-electronics, stretchable-electrodes, data-driven-design]
+  featured: false
+  abstract_zh: >-
+    可拉伸电极的性能强烈依赖结构与取向。本文构建「神经网络 + 进化算法」的数据驱动框架，生成仿生的无序电极结构，使其在任意拉伸方向与几何形变下都保持稳定导电：3D 打印样件的电阻变化相比有序结构降低 20–50%，并进一步做出一顶可用于脑机任务的无线可拉伸脑电帽。
+  abstract_en: >-
+    The performance of stretchable electrodes depends strongly on structure and orientation. A machine-learning-guided framework — neural network plus evolutionary search — generates bioinspired disordered structures that are strain-insensitive in any direction or geometry. 3D-printed samples cut resistance variation by 20–50% versus ordered designs, and enable a wireless stretchable EEG cap for BCI tasks.
+
+- id: sun2026ssvep
+  year: 2026
+  title: "Effect of Auxiliary-Stimulus Quantity on Visual Enhancement in SSVEP-BCI Interfaces"
+  date: 2026-08-01
+  type: conference
+  venue: 2026 18th International Conference on Intelligent Human-Machine Systems and Cybernetics (IHMSC)
+  venue_short: IHMSC 2026
+  publisher: IEEE
+  pages: "89–92"
+  doi: 10.1109/ihmsc70922.2026.00028
+  citation_count: 0
+  author_role: coauthor
+  authors: "Rongqin Sun ; Zhaozhe Zhou ; Linhan Fan ; Yafeng Niu"
+  self_name: Linhan Fan
+  topics: [bci, ssvep, visual-enhancement]
+  featured: false
+  abstract_zh: >-
+    在 SSVEP-BCI 界面中，辅助刺激的数量会同时影响目标的可辨识度与视觉疲劳。本文通过实验考察辅助刺激数量对视觉增强效果的调节作用，为刺激布局给出可量化的设计依据。
+  abstract_en: >-
+    In SSVEP-BCI interfaces, the number of auxiliary stimuli influences both target discriminability and visual fatigue. This study examines how auxiliary-stimulus quantity modulates visual enhancement, providing quantifiable design guidance for stimulus layout.
+

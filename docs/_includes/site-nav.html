@@ -1,0 +1,63 @@
+<!-- ==========================================================================
+     Primary navigation
+     Transparent over a dark hero, solid after scroll. The `.on-hero` class is
+     applied by site.js only on pages that declare `body-class: has-hero`.
+     ========================================================================== -->
+<header class="site-header" id="siteHeader">
+  <div class="site-header__inner">
+    <a class="brand" href="{{ '/' | prepend: site.baseurl }}" aria-label="{{ site.title }} — 首页">
+      <span class="brand__mark" aria-hidden="true"><span>K</span></span>
+      <span class="brand__text">
+        <span class="brand__name">涵无 · Kannmu</span>
+        <span class="brand__sub">Research &amp; Notes</span>
+      </span>
+    </a>
+
+    <nav class="site-nav" id="siteNav" aria-label="主导航">
+      <a href="{{ '/' | prepend: site.baseurl }}"
+        {% if page.url == '/' %}aria-current="page"{% endif %}>Home</a>
+      <a href="{{ '/Portfolio/' | prepend: site.baseurl }}"
+        {% if page.url contains 'ortfolio' %}aria-current="page"{% endif %}>Portfolio</a>
+      <a href="{{ '/about/' | prepend: site.baseurl }}"
+        {% if page.url contains 'about' %}aria-current="page"{% endif %}>About</a>
+      <a href="{{ '/archive/' | prepend: site.baseurl }}"
+        {% if page.url contains 'archive' %}aria-current="page"{% endif %}>Archive</a>
+      <a href="{{ '/tools/' | prepend: site.baseurl }}"
+        {% if page.url contains 'tools' %}aria-current="page"{% endif %}>Tools</a>
+    </nav>
+
+    <div class="site-tools">
+      <button class="tool-btn" id="themeToggle" type="button"
+        aria-label="切换日间 / 夜间模式" title="切换日间 / 夜间模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+        </svg>
+      </button>
+
+      {% if page.multilingual %}
+      <button class="tool-btn tool-btn--wide" id="langToggle" type="button"
+        aria-label="切换语言 / Switch language" title="中文 / English">
+        <span id="langToggleLabel">EN</span>
+      </button>
+      {% endif %}
+
+      <button class="tool-btn" id="searchOpen" type="button" aria-label="搜索站内文章" title="搜索 ( / )">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="M20 20l-3.6-3.6"></path>
+        </svg>
+      </button>
+
+      <button class="tool-btn nav-burger" id="navBurger" type="button"
+        aria-label="展开导航菜单" aria-expanded="false" aria-controls="siteNav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="read-progress" id="readProgress" aria-hidden="true"></div>

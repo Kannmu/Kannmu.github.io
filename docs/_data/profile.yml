@@ -1,187 +1,350 @@
+# =============================================================================
+#  profile.yml —— 个人资料（About / Home 共用）
+#  修改此文件即可更新整站个人信息，无需改动 HTML。
+#  注意：中文长句请保持在同一行，避免 YAML 折叠产生多余空格。
+# =============================================================================
+
 name:
   zh: 范林涵
   en: Linhan Fan
 handle: Kannmu
+handle_zh: 涵无
 role:
-  zh: 东南大学设计学博士研究生
-  en: Ph.D. researcher in Design at Southeast University
+  zh: 东南大学 · 设计学博士研究生
+  en: Ph.D. Researcher in Design · Southeast University
+affiliation:
+  zh: 东南大学 机械工程学院 设计科学系
+  en: School of Mechanical Engineering, Southeast University
+affiliation_short: Southeast University
 location:
   zh: 中国 · 南京
   en: Nanjing, China
 tagline:
-  zh: 研究人、感知与机器之间的界面。
-  en: Studying the interfaces between people, perception, and machines.
-bio:
-  zh: 我是一名人机交互研究者与原型工程师，关注新型交互方式如何从实验室中的信号、材料和算法，转化为可理解、可使用的真实体验。
-  en: I am an HCI researcher and prototype engineer exploring how signals, materials, and algorithms can become understandable, usable experiences.
+  zh: 人机交互 · 眼动交互 · 脑机接口
+  en: HCI · Gaze Interaction · Brain–Computer Interfaces
+
+lede:
+  zh: >-
+    东南大学设计学博士研究生，研究方向为人机交互，具体涉及眼动输入、脑机接口与空中超声触觉的交互设计与可用性评估。
+  en: >-
+    Ph.D. researcher in Design at Southeast University, working on human–computer interaction — specifically the interaction design and usability evaluation of gaze input, brain–computer interfaces and mid-air ultrasonic haptics.
+
+statement:
+  - zh: >-
+      范林涵（涵无 / Kannmu），东南大学机械工程学院设计科学系设计学博士研究生，导师为牛亚峰教授。研究领域为人机交互，涉及眼动输入、脑机接口与空中触觉反馈。
+    en: >-
+      Linhan Fan (Hanwu / Kannmu) is a Ph.D. researcher in Design at the Department of Design Science, School of Mechanical Engineering, Southeast University, advised by Prof. Yafeng Niu. His research area is human–computer interaction, covering eye-based input, brain–computer interfaces and mid-air haptic feedback.
+  - zh: >-
+      研究方法以原型开发与用户实验为主：先搭建可运行的硬件或软件系统，再通过受控实验考察操作绩效、错误率与主观负荷，最后整理为可复用的设计参数与建议。相关成果发表于 Nature Communications、Advanced Engineering Informatics、Displays、International Journal of Human–Computer Interaction、Computers in Industry 等期刊。
+    en: >-
+      The research method combines prototype development with controlled user studies: a working hardware or software system is built first, its performance, error rate and perceived workload are then examined in controlled experiments, and the results are distilled into reusable design parameters and recommendations. Outcomes have appeared in Nature Communications, Advanced Engineering Informatics, Displays, the International Journal of Human–Computer Interaction and Computers in Industry.
+  - zh: >-
+      工程背景包括机械结构设计、嵌入式硬件与前端开发；研究中使用的大型装置（超声相控阵平台、实验流程框架等）多数由作者自行搭建并维护。
+    en: >-
+      The engineering background covers mechanical design, embedded hardware and front-end development; most of the larger apparatus used in the research — the ultrasonic phased-array platform, the experiment workflow framework and similar tools — was built and maintained by the author.
 
 links:
-  - label: Email
-    url: mailto:linhanfan@seu.edu.cn
-    icon: envelope
-  - label: ORCID
+  - key: scholar
+    label: Google Scholar
+    url: https://scholar.google.com/citations?user=i0o50FAAAAAJ&hl=en
+    icon: scholar
+  - key: orcid
+    label: ORCID
     url: https://orcid.org/0009-0000-8611-7194
-    icon: link
-  - label: Google Scholar
-    url: https://scholar.google.com.hk/citations?hl=zh-CN&pli=1&user=i0o50FAAAAAJ
-    icon: education
-  - label: GitHub
+    icon: orcid
+    meta: 0009-0000-8611-7194
+  - key: researchgate
+    label: ResearchGate
+    url: https://www.researchgate.net/profile/Lin-Han-Fan
+    icon: researchgate
+  - key: github
+    label: GitHub
     url: https://github.com/Kannmu
-    icon: console
+    icon: github
+  - key: email
+    label: Email
+    url: mailto:Kannmu@163.com
+    icon: email
+    meta: Kannmu@163.com
+  - key: linkedin
+    label: LinkedIn
+    url: https://www.linkedin.com/in/%E6%9E%97%E6%B6%B5-%E8%8C%83-578a47279
+    icon: linkedin
+  - key: zhihu
+    label: 知乎
+    url: https://www.zhihu.com/people/sk4-project
+    icon: zhihu
+
+identifiers:
+  orcid: "0009-0000-8611-7194"
+  scholar_id: i0o50FAAAAAJ
+  researchgate: Lin-Han-Fan
+  scopus: "58849468700"
+
+advisor:
+  zh: 牛亚峰 教授
+  en: Prof. Yafeng Niu
+  note:
+    zh: >-
+      教授、博士生导师，东南大学机械工程学院设计科学系；中国人类工效学学会理事、设计工效学分会秘书长。
+    en: >-
+      Professor and doctoral supervisor, Department of Design Science, School of Mechanical Engineering, Southeast University.
+  url: https://me.seu.edu.cn/nyf_31777/list.htm
 
 research:
-  - key: haptics
-    title:
-      zh: 超声触觉
-      en: Ultrasonic haptics
-    summary:
-      zh: 研究声致触觉的感知机制、相控阵布局与聚焦策略，构建更清晰、更高效的无接触触觉反馈。
-      en: Studying perception, array layouts, and focusing strategies for clearer and more efficient contactless haptic feedback.
   - key: gaze
+    index: "01"
     title:
-      zh: 眼动与自然交互
-      en: Gaze and natural interaction
+      zh: 眼动与注视交互
+      en: Gaze-based Interaction
     summary:
-      zh: 通过凝视、平滑追踪与自主眨眼，探索低负担、高可用的人机交互方式。
-      en: Exploring low-effort, usable interaction through gaze, smooth pursuit, and voluntary blinking.
+      zh: >-
+        研究注视、平滑追踪与自主眨眼作为输入通道时的识别方式、选取精度与视觉负荷，并在遮挡、小目标、老年用户等条件下评估可用性。
+      en: >-
+        Recognition, selection accuracy and visual load when gaze, smooth pursuit and voluntary blinking are used as input channels, evaluated under conditions such as occlusion, small targets and older users.
+    keywords: [Eye Tracking, Smooth Pursuit, Voluntary Blink, Gaze Selection]
+    related: [fan2024blink, fan2026clarity]
   - key: bci
+    index: "02"
     title:
-      zh: 脑机接口与智能设备
-      en: BCI and smart devices
+      zh: 脑机接口
+      en: Brain–Computer Interfaces
     summary:
-      zh: 关注脑机接口的信息安全、无线通信及其与智能设备协同工作的交互范式。
-      en: Investigating secure wireless communication and interaction paradigms connecting BCIs with smart devices.
+      zh: >-
+        SSVEP 范式下的视觉刺激设计与接口性能，以及脑机接口与外部设备之间链路的实现方式，包括可拉伸电极等硬件基础。
+      en: >-
+        Visual stimulus design and interface performance in SSVEP paradigms, together with the implementation of links between a BCI and external devices, including hardware such as stretchable electrodes.
+    keywords: [BCI, SSVEP, Metasurface, Stretchable Electrodes]
+    related: [xiao2025metasurface, li2026electrodes]
+  - key: haptics
+    index: "03"
+    title:
+      zh: 空中超声触觉
+      en: Mid-Air Ultrasonic Haptics
+    summary:
+      zh: >-
+        以自建的超声相控阵装置为实验平台，研究阵列布局、聚焦策略与触觉可感知性，并探索无接触反馈在界面中的调用方式。
+      en: >-
+        Array layout, focusing strategies and tactile perceptibility studied on a self-built ultrasonic phased array, together with ways of invoking contactless feedback from an interface.
+    keywords: [Ultrasonic Haptics, Phased Array, Focusing, Perception]
+    related: []
+  - key: method
+    index: "04"
+    title:
+      zh: 实验方法与原型系统
+      en: Methods & Prototype Systems
+    summary:
+      zh: >-
+        支撑用户实验的工程部分：实验流程管理、生理与行为信号采集、数据分析脚本，以及可重复使用的硬件与软件开发。
+      en: >-
+        The engineering side of running user studies — experiment workflow management, physiological and behavioural signal acquisition, analysis scripts, and reusable hardware and software.
+    keywords: [Experimental Design, Instrumentation, Unity, Data Analysis]
+    related: []
 
-current_projects:
-  - title:
-      zh: 声致触觉反馈机制
-      en: Audio-induced haptic feedback
-    period: 2025 - Present
-    detail:
-      zh: 国家自然科学基金面上项目。负责核心软硬件原型与交互系统开发，研究表面波增强和触觉工效评价。
-      en: Developing core hardware, software, and evaluation methods for a National Natural Science Foundation project on surface-wave-enhanced haptics.
-  - title:
-      zh: UMH 超声触觉设备
-      en: UMH ultrasonic haptic device
-    period: V5.0
-    detail:
-      zh: 自研 60 阵元六边形相控阵原型，用于验证高密度阵列布局与触觉聚焦策略。
-      en: A 60-element hexagonal phased-array prototype for testing dense layouts and tactile focusing strategies.
-  - title:
-      zh: 安全脑机通信
-      en: Secure BCI communication
-    period: 2023 - 2025
-    detail:
-      zh: 将脑电视觉刺激编码与时空编码超表面结合，建立脑机接口到智能设备的物理层安全链路。
-      en: Coupling visual EEG encoding with a space-time-coding metasurface to create a physical-layer secure link to smart devices.
+news:
+  - date: 2026-10-11
+    zh: >-
+      论文 <em>Spmark</em> 发表于 <strong>Virtual Reality</strong>，面向纸屏混合场景的小目标文字选取。
+    en: >-
+      <em>Spmark</em> published in <strong>Virtual Reality</strong>, on small-target text selection in hybrid paper–digital settings.
+  - date: 2026-08-01
+    zh: >-
+      论文 <em>Effect of Auxiliary-Stimulus Quantity on Visual Enhancement in SSVEP-BCI Interfaces</em> 发表于 <strong>IHMSC 2026</strong>（IEEE）。
+    en: >-
+      <em>Effect of Auxiliary-Stimulus Quantity on Visual Enhancement in SSVEP-BCI Interfaces</em> published at <strong>IHMSC 2026</strong> (IEEE).
+  - date: 2026-07-23
+    zh: >-
+      论文发表于 <strong>npj Flexible Electronics</strong>，用数据驱动方法设计可拉伸电极的无序结构（共同第一作者）。
+    en: >-
+      Paper published in <strong>npj Flexible Electronics</strong> on data-driven disordered structures for stretchable electrodes (co-first author).
+  - date: 2026-01-30
+    zh: >-
+      第一作者论文 <strong>Clarity or Context?</strong> 发表于 <strong>IJHCI</strong>，重构面向老年用户的注视缩放点按交互。
+    en: >-
+      First-authored <strong>Clarity or Context?</strong> published in <strong>IJHCI</strong>, rebalancing gaze–zoom–tap for older adults.
+  - date: 2025-08-25
+    zh: >-
+      <strong>Nature Communications</strong> 发表时空编码超表面驱动的脑机安全通信工作（共同第一作者）。
+    en: >-
+      <strong>Nature Communications</strong> publishes the space–time-coding metasurface work on secure brain-to-device communication (co-first author).
+  - date: 2025-05-01
+    zh: >-
+      合作论文发表于 <strong>Advanced Engineering Informatics</strong>，提出透视驱动的鱼眼视图以提升眼动选取性能。
+    en: >-
+      Co-authored paper in <strong>Advanced Engineering Informatics</strong> on perspective-driven fisheye views for gaze interaction.
+  - date: 2024-08-01
+    zh: >-
+      第一作者论文发表于 <strong>Advanced Engineering Informatics</strong>，给出基于压力传感器的自主眨眼交互设计建议。
+    en: >-
+      First-authored paper in <strong>Advanced Engineering Informatics</strong> with design recommendations for pressure-sensing voluntary blink interaction.
 
 education:
-  - period: 2023 - Present
+  - period: 2023.09 — 至今
+    period_en: Sep 2023 — Present
+    current: true
     institution:
       zh: 东南大学
       en: Southeast University
     detail:
-      zh: 机械工程学院 · 设计学 · 博士研究生
-      en: School of Mechanical Engineering · Design · Ph.D. student
-  - period: 2019 - 2023
+      zh: 机械工程学院 · 设计学 · 博士研究生，导师牛亚峰教授
+      en: "School of Mechanical Engineering · Design · Ph.D. · Advisor: Prof. Yafeng Niu"
+    location:
+      zh: 江苏 南京
+      en: Nanjing, China
+  - period: 2019.09 — 2023.06
+    period_en: Sep 2019 — Jun 2023
     institution:
       zh: 四川大学
       en: Sichuan University
     detail:
       zh: 机械工程学院 · 机械设计制造及其自动化 · 工学学士（卓越工程师计划）
-      en: Mechanical Design, Manufacturing and Automation · B.Eng. · Excellent Engineer Program
+      en: "School of Mechanical Engineering · Mechanical Design, Manufacturing and Automation · B.Eng. (Honours Program)"
+    location:
+      zh: 四川 成都
+      en: Chengdu, China
 
 experience:
-  - period: 2026 - Present
+  - period: 2026 — 至今
+    period_en: 2026 — Present
+    current: true
     organization:
       zh: 星域蔚蓝（深圳）科技有限公司
       en: Nexo Technology Co., Limited
     role:
       zh: 科学顾问 · 人机交互
-      en: Scientific consultant · Human-computer interaction
-  - period: 2022 - 2023
+      en: Scientific Consultant · HCI
+    detail:
+      zh: 为交互型产品提供感知与交互方案的技术评估与原型建议。
+      en: Technical evaluation and prototyping guidance on sensing and interaction design for interactive products.
+  - period: 2023 — 至今
+    period_en: 2023 — Present
+    current: true
+    organization:
+      zh: 东南大学 牛亚峰教授团队
+      en: Prof. Yafeng Niu's Group, Southeast University
+    role:
+      zh: 博士研究 · 交互原型与用户研究
+      en: Doctoral Research · Interaction Prototyping & User Studies
+    detail:
+      zh: 负责眼动、脑机与触觉方向的原型系统搭建、实验设计与数据分析。
+      en: Builds prototype systems, designs experiments and analyses data across gaze, BCI and haptics research.
+  - period: 2022.08 — 2023.03
+    period_en: Aug 2022 — Mar 2023
     organization:
       zh: 成都路行通信息技术有限公司
       en: Chengdu Luxingtong Information Technology Co., Ltd.
     role:
       zh: 深度学习算法实习生
-      en: Deep learning algorithm intern
-  - period: 2021 - 2023
+      en: Deep Learning Algorithm Intern
+    detail:
+      zh: 参与视觉算法训练与部署流程，负责数据处理与模型评测。
+      en: Worked on visual model training and deployment pipelines, data processing and evaluation.
+  - period: 2020 — 2022
+    period_en: 2020 — 2022
     organization:
-      zh: 四川大学川山甲 Robocon 战队
-      en: Sichuan University Robocon Team
+      zh: 四川大学 川山甲 Robocon 战队
+      en: SCU Chuanshanjia Robocon Team
     role:
       zh: R1 机器人总负责人 · 硬件组组长
-      en: R1 robot lead · Hardware team lead
+      en: R1 Robot Lead · Hardware Team Lead
+    detail:
+      zh: 负责整机机械结构与驱动电路设计，带队完成从方案到赛场调试的全流程。
+      en: Led chassis and driver-circuit design, taking the robot from concept to competition debugging.
 
 awards:
-  - year: 2024
+  - year: "2024"
     title:
-      zh: 硕士研究生国家奖学金 · 排名第一
+      zh: 研究生国家奖学金 · 排名第一
       en: National Scholarship for Graduate Students · Ranked first
-  - year: 2022
+  - year: "2022"
     title:
       zh: 全国大学生机器人大赛 ROBOCON · 国家一等奖
-      en: China University Robot Competition ROBOCON · National First Prize
-  - year: 2021
+      en: China University Robot Competition (ROBOCON) · National First Prize
+  - year: "2021"
     title:
       zh: “挑战杯”黑科技赛道 · 国家特等奖（星系级）
-      en: Challenge Cup, Black Technology Track · National Grand Prize
+      en: "Challenge Cup, Black Technology Track · National Grand Prize"
 
 skills:
-  - label: Research
-    items: [HCI, Eye Tracking, BCI, Haptics, User Studies]
-  - label: Software
-    items: [Python, C#, C, Unity, Blender, Figma]
-  - label: Hardware
-    items: [STM32, PCB Design, SolidWorks, 3D Printing]
+  - label:
+      zh: 研究方法
+      en: Research
+    items: [Experimental Design, User Studies, Statistical Analysis, Eye-Tracking, EEG, Psychophysics]
+  - label:
+      zh: 软件与代码
+      en: Software
+    items: [Python, C#, C, Unity, Three.js, Blender, Figma, Vue]
+  - label:
+      zh: 硬件与制造
+      en: Hardware
+    items: [STM32, PCB Design, SolidWorks, 3D Printing, FPGA, Signal Processing]
 
-publications:
-  - year: 2026
-    title: "Clarity or Context? Rebalancing Mobile Interaction for Older Adults with Gaze-Zoom-Tap"
-    journal: International Journal of Human-Computer Interaction
-    authors: "Linhan Fan; Ke Zhu; Mingjie Li; Zhutao Wang; Yafeng Niu"
-    role:
-      zh: 第一作者
-      en: First author
-    doi: https://doi.org/10.1080/10447318.2026.2619925
-  - year: 2025
-    title: "Secure wireless communication of brain-computer interface and mind control of smart devices enabled by space-time-coding metasurface"
-    journal: Nature Communications
-    authors: "Qiang Xiao; Linhan Fan; Qian Ma; Yuming Ning; Ze Gu; Long Chen; Lianlin Li; Jianwei You; Yafeng Niu; Tiejun Cui"
-    role:
-      zh: 共同第一作者
-      en: Co-first author
-    doi: https://doi.org/10.1038/s41467-025-63326-0
-  - year: 2025
-    title: "Visual perception and user experience optimization: Exploring interaction design through static-triggered smooth pursuit systems"
-    journal: Displays
-    authors: "Yafeng Niu; Yun Feng; Xin Li; Weichi Huang; Yiyan Wang; Linhan Fan"
-    role:
-      zh: 共同作者
-      en: Co-author
-    doi: https://doi.org/10.1016/j.displa.2025.103121
-  - year: 2025
-    title: "Enhancing gaze interaction performance: Design and optimization of perspective-driven fisheye view"
-    journal: Advanced Engineering Informatics
-    authors: "Weichi Huang; Yiyan Wang; Linhan Fan; Shatong Yang; Yafeng Niu"
-    role:
-      zh: 共同作者
-      en: Co-author
-    doi: https://doi.org/10.1016/j.aei.2025.103365
-  - year: 2024
-    title: "Enhancing safety in conditionally automated driving: Can more takeover request visual information make a difference in hazard scenarios with varied hazard visibility?"
-    journal: Accident Analysis & Prevention
-    authors: "Weichi Huang; Linhan Fan; Zijian Han; Yafeng Niu"
-    role:
-      zh: 共同作者
-      en: Co-author
-    doi: https://doi.org/10.1016/j.aap.2024.107687
-  - year: 2024
-    title: "Design recommendations for voluntary blink interactions based on pressure sensors"
-    journal: Advanced Engineering Informatics
-    authors: "Linhan Fan; Weichi Huang; Xueqi Shao; Yafeng Niu"
-    role:
-      zh: 第一作者
-      en: First author
-    doi: https://doi.org/10.1016/j.aei.2024.102489
+built:
+  - title:
+      zh: UMH 超声触觉装置
+      en: UMH Ultrasonic Haptic Device
+    detail:
+      zh: 60 阵元六边形相控阵原型，用于验证高密度阵列布局与触觉聚焦策略，配套浏览器端可视化。
+      en: A 60-element hexagonal phased-array prototype for dense layouts and tactile focusing strategies, with a browser-side visualiser.
+    href: /UMH/
+  - title:
+      zh: ErgoUnity 实验框架
+      en: ErgoUnity Experiment Framework
+    detail:
+      zh: 面向心理学与工效学实验的 Unity 框架，包含流程管理、数据记录与分析组件，已开源。
+      en: An open-source Unity framework for psychology and ergonomics experiments, covering workflow management, logging and analysis.
+    href: https://github.com/Kannmu/ErgoLabUnity
+  - title:
+      zh: CalcFlow
+      en: CalcFlow
+    detail:
+      zh: 把表达式拆成可复用计算节点的可视化工具，用于实验参数推演。
+      en: A visual tool that decomposes expressions into reusable compute nodes, used for experiment parameter exploration.
+    href: /CalcFlow/dist/
+  - title:
+      zh: GenPlant
+      en: GenPlant
+    detail:
+      zh: 基于确定性种子与形态基因的三维植物生成系统，在浏览器端实时运行。
+      en: Browser-side procedural plant generation driven by deterministic seeds and morphological genes.
+    href: /GenPlant/GenPlant/
+
+beyond:
+  zh: >-
+    站内背景照片均为作者本人拍摄；工具页中的项目为独立开发的浏览器应用，可在线上直接使用。
+  en: >-
+    All background photographs on this site were taken by the author. The projects listed under Tools are independently developed browser applications that run online.
+
+contact:
+  email: Kannmu@163.com
+  email_academic: linhanfan@seu.edu.cn
+  zh: >-
+    欢迎就眼动交互、脑机接口、超声触觉与用户研究方向的合作、评审或交流。
+  en: >-
+    Open to collaboration, reviewing and conversation on gaze interaction, BCI, ultrasonic haptics and user research.
+
+sections:
+  - id: overview
+    zh: 概述
+    en: Overview
+  - id: research
+    zh: 研究
+    en: Research
+  - id: news
+    zh: 动态
+    en: News
+  - id: publications
+    zh: 论文
+    en: Publications
+  - id: cv
+    zh: 履历
+    en: CV
+  - id: awards
+    zh: 荣誉
+    en: Honors
+  - id: skills
+    zh: 技能
+    en: Toolkit
+  - id: contact
+    zh: 联系
+    en: Contact

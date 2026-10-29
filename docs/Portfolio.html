@@ -1,22 +1,289 @@
 ---
-layout: portfolio
+layout: default
 title: "研究与设计作品集"
 nav-title: "Portfolio"
-description: "范林涵（Kannmu）的研究与设计作品集，汇总眼动与眨眼交互、脑机接口、机器人硬件、机械结构、交互原型以及相关论文与专利。"
+description: "范林涵（Kannmu）的研究与设计作品集：眼动与眨眼交互、脑机接口、超声相控阵触觉、机器人硬件、机械结构、交互原型、发明专利与摄影作品。"
+body-class: "has-hero page-portfolio"
+no-catalog: true
+multilingual: true
 header-img: "img/Backgrounds/Bg (2).jpg"
 header-mask: 0.3
 ---
 
-<!-- Chinese Version -->
-<div class="zh post-container">
-    
-{% capture Portfolio_zh %}{% include Portfolio/zh.md %}{% endcapture %}
-{{ Portfolio_zh | markdownify }}
+{%- assign P = site.data.profile -%}
+{%- assign hero_img = page.header-img | default: site.header-img -%}
 
+<!-- ======================================================================
+     Hero
+     ====================================================================== -->
+<section class="page-hero">
+  <div class="page-hero__media"
+       style="background-image:url('{{ site.baseurl }}/{{ hero_img }}')"
+       role="img" aria-label="背景照片"></div>
+  <div class="shell page-hero__inner">
+    <p class="hero__eyebrow" style="margin-bottom:20px">
+      <span class="dot" aria-hidden="true"></span>
+      <span>Portfolio</span>
+      <span aria-hidden="true" style="opacity:.4">/</span>
+      <span data-zh>原型 · 硬件 · 专利</span>
+      <span data-en>Prototypes · Hardware · Patents</span>
+    </p>
+    <h1>
+      <span data-zh>研究与设计<em>作品集</em></span>
+      <span data-en>Research and <em>design work</em></span>
+    </h1>
+    <p class="page-hero__desc">
+      <span data-zh>本页汇总交互原型、机械与硬件实现，以及已授权发明专利。各原型均可独立运行或复现。</span>
+      <span data-en>An overview of interaction prototypes, mechanical and hardware work, and granted patents. Each prototype runs or can be reproduced independently.</span>
+    </p>
+    <div class="page-hero__meta">
+      <span>{{ site.data.publications.size }} <span data-zh>篇论文</span><span data-en>papers</span></span>
+      <span>2 <span data-zh>项专利</span><span data-en>patents</span></span>
+      <span>{{ site.posts.size }} <span data-zh>篇文章</span><span data-en>notes</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     Intro
+     ====================================================================== -->
+<div class="band band--paper band--tight">
+  <div class="shell pf-intro">
+    <div data-reveal>
+      <p class="sec-label" style="margin-bottom:18px"><b>01</b> <span data-zh>范围</span><span data-en>Scope</span></p>
+      <h2 class="sec-title">
+        <span data-zh>原型、硬件与专利</span>
+        <span data-en>Prototypes, hardware and patents</span>
+      </h2>
+    </div>
+    <div data-reveal data-reveal-delay="80">
+      <p class="sec-lede" style="max-width:none">
+        <span data-zh>内容分为三部分：面向具体实验或产品问题搭建的交互系统；核磁环境下的驱动结构与机器人整机等机械实现；以及由此形成的两项已授权专利。实验装置与测量链路单独列在最后。</span>
+        <span data-en>The page covers three parts: interaction systems built for a specific experimental or product problem; mechanical implementations such as an MRI-compatible drive and a full robot; and the two granted patents that came out of them. Experimental apparatus and measurement chains are listed at the end.</span>
+      </p>
+    </div>
+  </div>
 </div>
 
-<!-- English Version -->
-<!-- <div class="en post-container">
-    {% capture Portfolio_en %}{% include Portfolio/en.md %}{% endcapture %}
-    {{ Portfolio_en | markdownify }}
-</div> -->
+<!-- ======================================================================
+     Prototypes
+     ====================================================================== -->
+<section class="band band--lift">
+  <div class="shell">
+    <div class="sec-head" data-reveal>
+      <p class="sec-label"><b>02</b> <span data-zh>原型</span><span data-en>Prototypes</span></p>
+      <h2 class="sec-title">
+        <span data-zh>可运行的原型与装置</span>
+        <span data-en>Working prototypes and devices</span>
+      </h2>
+    </div>
+
+    <div class="pf-group__head" data-reveal style="margin-bottom:0">
+      <h3><span data-zh>交互系统</span><span data-en>Interaction systems</span></h3>
+      <span class="micro">2023 — 2026</span>
+    </div>
+
+    <div class="idx-list" style="margin-bottom:clamp(36px,4vw,56px)">
+      <a class="idx-row" href="{{ '/UMH/' | prepend: site.baseurl }}" data-reveal>
+        <span class="idx-row__no">P.01</span>
+        <h3>
+          <span data-zh>UMH · 超声空中触觉装置</span><span data-en>UMH · Ultrasonic haptic device</span>
+          <span class="idx-row__kw">Ultrasonic Haptics · 60-element phased array</span>
+        </h3>
+        <p>
+          <span data-zh>60 阵元六边形相控阵原型，用于验证高密度阵列布局与焦点控制策略。配套浏览器端可视化可实时查看焦点位置与调制波形。</span>
+          <span data-en>A 60-element hexagonal phased-array prototype for validating dense array layouts and focal-point control. A browser-side visualiser shows focal position and modulation waveforms in real time.</span>
+        </p>
+        <span class="idx-row__arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+      <div class="idx-row" data-reveal>
+        <span class="idx-row__no">P.02</span>
+        <h3>
+          <span data-zh>Take-A-Look · 远距离目标选取</span><span data-en>Take-A-Look · Distant target selection</span>
+          <span class="idx-row__kw">Virtual Reality · Natural Gesture</span>
+        </h3>
+        <p>
+          <span data-zh>面向工业虚拟现实的交互方案：以自然手势表达指向意图，使操作者无需在车间中移动即可选中远处设备。</span>
+          <span data-en>An interaction scheme for industrial VR: natural gestures express pointing intent, so an operator can select distant equipment without moving around the shop floor.</span>
+        </p>
+        <span class="idx-row__arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </div>
+
+      <a class="idx-row" href="https://github.com/Kannmu/ErgoLabUnity" target="_blank" rel="noopener" data-reveal>
+        <span class="idx-row__no">P.03</span>
+        <h3>
+          <span data-zh>ErgoUnity · 工效学实验框架</span><span data-en>ErgoUnity · Ergonomics experiment framework</span>
+          <span class="idx-row__kw">Open Source · Unity</span>
+        </h3>
+        <p>
+          <span data-zh>面向心理学与工效学实验的 Unity 框架：实验流程管理、数据记录与分析、通用界面与组件预制体。把实验程序从逐次重写变为配置运行，已在多组实验中使用并开源。</span>
+          <span data-en>A Unity framework for psychology and ergonomics experiments: workflow management, logging and analysis, shared UI and prefabs. It turns each study from a rewrite into a configuration, has been used across several experiments and is released as open source.</span>
+        </p>
+        <span class="idx-row__arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+      <div class="idx-row" data-reveal>
+        <span class="idx-row__no">P.04</span>
+        <h3>
+          <span data-zh>手 · 眼 · 口 多通道交互</span><span data-en>Hand–eye–speech multimodal interaction</span>
+          <span class="idx-row__kw">Multimodal · Speech + Gaze + Gesture</span>
+        </h3>
+        <p>
+          <span data-zh>技术负责人。整合语音识别、Unity 程序、UDP 通信、界面交互与动画，考察同一任务中多通道的分工方式与冲突处理。</span>
+          <span data-en>Technical lead. Speech recognition, a Unity application, UDP communication, UI interaction and animation were combined to examine channel allocation and conflict handling within a single task.</span>
+        </p>
+        <span class="idx-row__arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </div>
+    </div>
+
+    <div class="pf-group__head" data-reveal style="margin-bottom:0">
+      <h3><span data-zh>硬件与机械</span><span data-en>Hardware &amp; machinery</span></h3>
+      <span class="micro">2019 — 2023</span>
+    </div>
+
+    <div class="idx-list">
+      <div class="idx-row" data-reveal>
+        <span class="idx-row__no">H.01</span>
+        <h3>
+          <span data-zh>MRI 环境下的气动步进马达</span><span data-en>Pneumatic stepper motor for MRI environments</span>
+          <span class="idx-row__kw">Medical Robotics · Non-magnetic</span>
+        </h3>
+        <p>
+          <span data-zh>用于核磁共振强磁场与强电场环境的机器人动力源：全非金属结构，行星减速齿轮采用 POM 自润滑材料，在满足 MRI 安全条件的同时提供输出力矩与定位精度。</span>
+          <span data-en>A drive for robots operating inside the strong magnetic and electric fields of an MRI scanner: an all-non-metallic structure with self-lubricating POM planetary gears, providing output torque and positioning accuracy while meeting MRI safety requirements.</span>
+        </p>
+        <span class="idx-row__arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </div>
+
+      <div class="idx-row" data-reveal>
+        <span class="idx-row__no">H.02</span>
+        <h3>
+          <span data-zh>Robocon · R1 机器人整机</span><span data-en>Robocon · R1 robot, complete build</span>
+          <span class="idx-row__kw">Robotics · Mechanical + Driver</span>
+        </h3>
+        <p>
+          <span data-zh>R1 机器人总负责人与硬件组组长。负责整机机械结构与驱动电路设计，完成从方案、装配到赛场调试的全流程；该队获全国大学生机器人大赛国家一等奖。</span>
+          <span data-en>R1 robot lead and hardware team lead. Responsible for the chassis structure and driver-circuit design, from concept and assembly through competition debugging; the team won a national first prize at the China University Robot Competition.</span>
+        </p>
+        <span class="idx-row__arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </div>
+
+      <div class="idx-row" data-reveal>
+        <span class="idx-row__no">H.03</span>
+        <h3>
+          <span data-zh>实验装置与测量链路</span><span data-en>Apparatus and measurement chains</span>
+          <span class="idx-row__kw">Instrumentation · Sensors + Acquisition</span>
+        </h3>
+        <p>
+          <span data-zh>压力传感器、EEG 采集、眼动仪与 STM32 的协同搭建，包括器件选型、时钟同步与数据清洗，使生理信号以可分析的精度进入实验软件。</span>
+          <span data-en>Pressure sensors, EEG acquisition, eye trackers and STM32 boards combined into working rigs — component selection, clock synchronisation and data cleaning — so that physiological signals reach the experiment software at analysable precision.</span>
+        </p>
+        <span class="idx-row__arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     Patents
+     ====================================================================== -->
+<section class="band band--paper">
+  <div class="shell">
+    <div class="sec-head sec-head--row" data-reveal>
+      <div>
+        <p class="sec-label"><b>03</b> <span data-zh>专利</span><span data-en>Patents</span></p>
+        <h2 class="sec-title" style="margin-top:16px">
+          <span data-zh>已授权专利</span>
+          <span data-en>Granted patents</span>
+        </h2>
+      </div>
+      <span class="micro"><span data-zh>第一发明人</span><span data-en>First inventor</span></span>
+    </div>
+
+    <div class="award-list" data-reveal>
+      <div class="award">
+        <span class="award__year">ZL 2021 2<br>2309425.9</span>
+        <p class="award__title">
+          <strong data-zh>一种高转数的步进气动马达</strong>
+          <strong data-en>High-speed pneumatic stepper motor</strong>
+          <span class="award__sub"><span data-zh>实用新型 · 第一发明人</span><span data-en>Utility model · First inventor</span></span>
+        </p>
+      </div>
+      <div class="award">
+        <span class="award__year">ZL 2021 2<br>2312895.0</span>
+        <p class="award__title">
+          <strong data-zh>一种新型步进气动马达</strong>
+          <strong data-en>Pneumatic stepper motor</strong>
+          <span class="award__sub"><span data-zh>实用新型 · 第一发明人</span><span data-en>Utility model · First inventor</span></span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     Photography
+     ====================================================================== -->
+<section class="band band--ink">
+  <div class="shell">
+    <div class="sec-head sec-head--row" data-reveal>
+      <div>
+        <p class="sec-label"><b>04</b> <span data-zh>摄影</span><span data-en>Photography</span></p>
+        <h2 class="sec-title" style="margin-top:16px">
+          <span data-zh>摄影作品</span>
+          <span data-en>Photographs</span>
+        </h2>
+      </div>
+      <span class="micro" style="color:rgba(255,255,255,.4)">
+        <span data-zh>本站背景照片均出自作者</span><span data-en>All backgrounds shot by the author</span>
+      </span>
+    </div>
+  </div>
+
+  {%- assign shots = "Bg_0.jpg|Bg_1.jpg|Bg_3.jpg|Bg_4.jpg|Bg (5).jpg|Bg (10).jpg|Bg (11).jpg|Bg (12).jpg|Bg(14).jpg|Bg (15).jpg|Bg (16).jpg|Bg(17).jpg|DSC_1925.jpg|Bg (6).jpg|Bg (7).jpg|Bg (9).jpg" | split: "|" -%}
+  <div class="pf-photos" data-reveal>
+    {%- for shot in shots -%}
+    <figure class="pf-photo">
+      <img src="{{ site.baseurl }}/img/Backgrounds/{{ shot }}" alt="摄影作品：{{ shot | remove: '.jpg' }}" loading="lazy">
+    </figure>
+    {%- endfor -%}
+  </div>
+</section>
+
+<!-- ======================================================================
+     CTA
+     ====================================================================== -->
+<section class="band band--paper band--tight">
+  <div class="shell" style="display:flex;flex-wrap:wrap;gap:20px 48px;align-items:center;justify-content:space-between">
+    <p class="sec-lede" style="margin:0;max-width:44ch">
+      <span data-zh>论文全文、引用数与实验细节见学术主页与文章归档。</span>
+      <span data-en>Full-text links, citation counts and experiment write-ups live on the academic page and in the archive.</span>
+    </p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px">
+      <a class="btn" href="{{ '/about/' | prepend: site.baseurl }}">
+        <span data-zh>学术主页</span><span data-en>Academic page</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn" href="{{ '/archive/' | prepend: site.baseurl }}">
+        <span data-zh>文章归档</span><span data-en>Archive</span>
+      </a>
+      <a class="btn btn--solid" href="mailto:{{ P.contact.email }}">{{ P.contact.email }}</a>
+    </div>
+  </div>
+</section>
+
