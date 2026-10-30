@@ -1,0 +1,89 @@
+<!-- =============================================================================
+     SPATIAL · v3 fixed HUD
+     All wording is static markup so the top bar, primary menu and language
+     switch work with JavaScript disabled (flat fallback). Only the floor rail,
+     the live readout/status and the floor plan are populated at runtime; in
+     `.sp-flat` those are hidden by hud.css, so an empty rail is a valid state,
+     never a broken one.
+
+     JS hooks that must not be renamed: #sp-rail, #sp-level, #sp-total, #sp-name,
+     #sp-pct, #sp-xyz, #sp-fov, #sp-fps, #sp-hint, #sp-map-wrap, #sp-map,
+     [data-sp-lang], [data-sp-jump] (injected into #sp-rail).
+     Styles: assets/space/css/hud.css only — no inline <style> here.
+     ========================================================================== -->
+{%- assign _sp_url = page.url | default: '/' -%}
+
+<header class="sp-topbar">
+  <a class="sp-brand" href="{{ '/' | relative_url }}" data-sp-cursor="INDEX" aria-label="Kannmu · Spatial Index">
+    <span class="sp-brand__mark" aria-hidden="true">K</span>
+    <span class="sp-brand__txt">
+      <span class="sp-brand__name">Kannmu</span>
+      <span class="sp-brand__sub">Spectral Vector</span>
+    </span>
+  </a>
+
+  <nav class="sp-menu" aria-label="Primary">
+    <a href="{{ '/' | relative_url }}" data-sp-cursor="INDEX" {% if _sp_url == '/' %}aria-current="page"{% endif %}>
+      <i aria-hidden="true">00</i><span data-zh>首页</span><span data-en>Home</span>
+    </a>
+    <a href="{{ '/about/' | relative_url }}" data-sp-cursor="OPEN" {% if _sp_url == '/about/' %}aria-current="page"{% endif %}>
+      <i aria-hidden="true">01</i><span data-zh>关于</span><span data-en>About</span>
+    </a>
+    <a href="{{ '/archive/' | relative_url }}" data-sp-cursor="OPEN" {% if _sp_url == '/archive/' %}aria-current="page"{% endif %}>
+      <i aria-hidden="true">02</i><span data-zh>文章</span><span data-en>Archive</span>
+    </a>
+    <a href="{{ '/tools/' | relative_url }}" data-sp-cursor="OPEN" {% if _sp_url == '/tools/' %}aria-current="page"{% endif %}>
+      <i aria-hidden="true">03</i><span data-zh>工具</span><span data-en>Tools</span>
+    </a>
+    <a href="{{ '/Portfolio/' | relative_url }}" data-sp-cursor="OPEN" {% if _sp_url == '/Portfolio/' %}aria-current="page"{% endif %}>
+      <i aria-hidden="true">04</i><span data-zh>作品</span><span data-en>Work</span>
+    </a>
+    <a href="{{ '/lab/' | relative_url }}" data-sp-cursor="OPEN" {% if _sp_url == '/lab/' %}aria-current="page"{% endif %}>
+      <i aria-hidden="true">05</i><span data-zh>实验</span><span data-en>Lab</span>
+    </a>
+  </nav>
+
+  <div class="sp-tools">
+    <div class="sp-lang" role="group" aria-label="Language / 语言">
+      <button type="button" data-sp-lang="zh" aria-pressed="true" data-sp-cursor="SWITCH">中</button>
+      <button type="button" data-sp-lang="en" aria-pressed="false" data-sp-cursor="SWITCH">EN</button>
+    </div>
+  </div>
+</header>
+
+<!-- left floor rail: 7 buttons injected by app.js (button[data-sp-jump]) -->
+<nav class="sp-rail" id="sp-rail" aria-label="Sections"><!-- populated by app.js --></nav>
+
+<!-- right readout: current floor, total, live progress -->
+<div class="sp-readout" aria-hidden="true">
+  <div class="sp-readout__lvl"><b id="sp-level">01</b><span id="sp-total">/07</span></div>
+  <div class="sp-readout__name" id="sp-name">入口</div>
+  <div class="sp-meter">
+    <div class="sp-meter__bar"><i></i></div>
+    <div class="sp-meter__txt">
+      <span data-zh>位置</span><span data-en>Position</span><span id="sp-pct">000%</span>
+    </div>
+  </div>
+</div>
+
+<!-- bottom-left: camera telemetry -->
+<div class="sp-status" aria-hidden="true">
+  <span><em>XYZ</em><b id="sp-xyz">0.0 / 1.6 / 6.0</b></span>
+  <span><em>FOV</em><b id="sp-fov">33</b></span>
+  <span><em>FPS</em><b id="sp-fps">--</b></span>
+</div>
+
+<!-- bottom-centre: scroll hint (first station only) -->
+<div class="sp-hint" id="sp-hint" aria-hidden="true">
+  <span data-zh>滚动穿行</span><span data-en>Scroll to travel</span>
+  <i></i>
+</div>
+
+<!-- top-right: floor plan (spatial mode only) -->
+<div class="sp-map-wrap" id="sp-map-wrap" aria-hidden="true">
+  <div class="sp-map__cap">
+    <span data-zh>平面</span><span data-en>Plan</span>
+    <span class="sp-map__range">F01–F07</span>
+  </div>
+  <canvas class="sp-map" id="sp-map" width="352" height="224"></canvas>
+</div>

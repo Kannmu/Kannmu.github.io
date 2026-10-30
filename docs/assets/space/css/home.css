@@ -1,0 +1,460 @@
+/* =============================================================================
+   HOME — page composition for docs/index.html
+   Scope: [data-sp-page="home"] body only. Loaded after space.css via extra_css.
+   Contains NO design tokens, NO panel backgrounds and no redefined component:
+   only px panel boxes + interior padding, panel-local spacing, inner grids.
+   The physical body of every panel is drawn by the runtime from data-sp-slab.
+   Reference viewport: 1600 × 1000 (1 CSS px = 1 screen px at rest).
+   ========================================================================== */
+
+/* ---------- 0. Panel-local resets ---------------------------------------- */
+/* Zero-specificity resets: every rule in space.css still wins over these.   */
+:where(.sp-panel) p,
+:where(.sp-panel) dl,
+:where(.sp-panel) dd,
+:where(.sp-panel) ul,
+:where(.sp-panel) ol,
+:where(.sp-panel) li,
+:where(.sp-panel) hr {
+  margin: 0;
+}
+:where(.sp-panel) ul,
+:where(.sp-panel) ol {
+  padding: 0;
+  list-style: none;
+}
+:where(.sp-panel) hr { border: 0; }
+
+/* CJK display type: space.css masks .sp-line with overflow:hidden at
+   line-height .96, which slices the ideographic glyphs. Grow the clip box
+   without moving the baseline (negative margins + a BFC on the heading). */
+[data-sp-page="home"] .sp-display { display: flow-root; }
+[data-sp-page="home"] .sp-display .sp-line {
+  padding: .18em 0 .24em;
+  margin: -.18em 0 -.24em;
+}
+
+/* ---------- 1. Panel boxes: px width + milled interior margin ------------- */
+/* The slab is the panel box, so text keeps a margin to the glass edge.      */
+.sp-station[data-sp-station="entry"] .sp-panel[data-sp-slot="title"] { width: 620px; padding: 30px 32px; }
+.sp-station[data-sp-station="entry"] .sp-panel[data-sp-slot="aside"] { width: 300px; padding: 20px 22px; }
+.sp-station[data-sp-station="entry"] .sp-panel[data-sp-slot="cta"]   { width: 440px; padding: 22px 24px; }
+
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="title"] { width: 520px; padding: 22px 24px; }
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="body"]  { width: 560px; padding: 30px 32px; }
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="aside"] { width: 380px; padding: 22px 24px; }
+
+.sp-station[data-sp-station="research"] .sp-panel[data-sp-slot="title"]  { width: 460px; padding: 22px 24px; }
+.sp-station[data-sp-station="research"] .sp-panel[data-sp-slot="list"]   { width: 560px; padding: 20px 22px 40px; }
+.sp-station[data-sp-station="research"] .sp-panel[data-sp-slot="detail"] { width: 420px; padding: 22px; }
+
+.sp-station[data-sp-station="papers"] .sp-panel[data-sp-slot="title"] { width: 460px; padding: 22px 24px; }
+.sp-station[data-sp-station="papers"] .sp-panel[data-sp-slot="list"]  { width: 640px; padding: 22px 24px; }
+.sp-station[data-sp-station="papers"] .sp-panel[data-sp-slot="aside"] { width: 300px; padding: 20px 22px; }
+
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="title"] { width: 400px; padding: 22px 24px; }
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"]  { width: 720px; padding: 18px 20px; }
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="aside"] { width: 260px; padding: 20px; }
+
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="title"] { width: 560px; padding: 22px 26px; text-align: center; }
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"]  { width: 900px; padding: 20px 22px; }
+
+.sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="body"] { width: 640px; padding: 30px 32px; text-align: center; }
+.sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="meta"] { width: 560px; padding: 18px 22px; }
+
+/* ---------- 2. Entry ----------------------------------------------------- */
+.sp-station[data-sp-station="entry"] .sp-panel[data-sp-slot="title"] .sp-display {
+  margin-top: 2px;
+  line-height: .96;
+}
+.sp-station[data-sp-station="entry"] .sp-panel[data-sp-slot="title"] .sp-display__sub {
+  margin-top: 22px;
+  letter-spacing: .32em;
+}
+.sp-station[data-sp-station="entry"] .sp-panel[data-sp-slot="title"] .sp-lede {
+  max-width: 54ch;
+  margin-top: 26px;
+}
+.sp-station[data-sp-station="entry"] .sp-panel[data-sp-slot="cta"] .sp-meta {
+  margin-top: 22px;
+  color: var(--c-steel);
+}
+
+/* EN hero only: "Kannmu Blog" wraps the display at 102 px in a 556 px column
+   (it becomes a two-line 189 px block). Cap the EN display one step lower so
+   the name stays a single line, and tighten the lede's leading gap to keep the
+   hero clear of the CTA at the same approved y = 170. zh is untouched. */
+html[data-lang='en'] .sp-station[data-sp-station='entry'] .sp-panel[data-sp-slot='title'] .sp-display {
+  font-size: clamp(40px, 6.2vw, 92px);
+}
+html[data-lang='en'] .sp-station[data-sp-station='entry'] .sp-panel[data-sp-slot='title'] .sp-lede {
+  margin-top: 18px;
+}
+.sp-station[data-sp-station="entry"] .sp-panel[data-sp-slot="aside"] .sp-stats {
+  border-top-color: var(--ln-3);
+}
+.sp-station[data-sp-station="entry"] .sp-panel[data-sp-slot="aside"] .sp-stats__row {
+  padding: 12px 0;
+}
+.sp-station[data-sp-station="entry"] .sp-panel[data-sp-slot="aside"] .sp-note-tiny {
+  line-height: 1.6;
+}
+
+/* ---------- 3. Profile --------------------------------------------------- */
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="title"] .sp-rule {
+  margin-top: 22px;
+}
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="body"] .sp-body-copy {
+  font-size: 16.2px;
+  line-height: 1.86;
+}
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="body"] .sp-body-copy:last-child {
+  margin-bottom: 0;
+}
+
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="aside"] dl {
+  margin-top: 16px;
+}
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="aside"] dl > div {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 2px 14px;
+  align-items: start;
+  padding: 11px 0;
+  border-top: 1px solid var(--ln-1);
+}
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="aside"] dl > div:last-of-type {
+  border-bottom: 1px solid var(--ln-1);
+}
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="aside"] dt {
+  padding-top: 3px;
+}
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="aside"] dd {
+  font: 400 12.5px/1.55 var(--f-cjk);
+  color: var(--c-mist);
+  letter-spacing: .005em;
+}
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="aside"] dd a:not(.sp-link):not(.sp-chip) {
+  color: var(--c-white);
+  border-bottom: 1px solid var(--ln-3);
+  transition: border-color .3s var(--e-out), color .3s var(--e-out);
+}
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="aside"] dd a:not(.sp-link):not(.sp-chip):hover {
+  color: var(--c-cyan);
+  border-color: var(--c-cyan);
+}
+.sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="aside"] dd .sp-row {
+  gap: 6px;
+}
+
+/* ---------- 4. Research -------------------------------------------------- */
+.sp-station[data-sp-station="research"] .sp-panel[data-sp-slot="title"] .sp-lede {
+  max-width: 100%;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.sp-station[data-sp-station="research"] .sp-panel[data-sp-slot="detail"] > .sp-label {
+  display: block;
+  margin-bottom: 2px;
+}
+.sp-station[data-sp-station="research"] .sp-panel[data-sp-slot="detail"] section h3 {
+  margin-top: 14px;
+}
+.sp-station[data-sp-station="research"] .sp-panel[data-sp-slot="detail"] section .sp-body-copy {
+  margin-top: 12px;
+  margin-bottom: 0;
+  font-size: 14.5px;
+  line-height: 1.8;
+}
+.sp-station[data-sp-station="research"] .sp-panel[data-sp-slot="detail"] section .sp-meta {
+  margin-top: 12px;
+  flex-wrap: wrap;
+  font-size: 8.5px;
+  color: rgba(147, 169, 189, .72);
+}
+/* detail footer: counter + door out of the station */
+.sp-station[data-sp-station="research"] .sp-panel[data-sp-slot="detail"] > .sp-row {
+  justify-content: space-between;
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ln-1);
+}
+.sp-station[data-sp-station="research"] .sp-panel[data-sp-slot="detail"] > .sp-row .sp-link {
+  font-size: 9.5px;
+  letter-spacing: .14em;
+}
+
+/* tower rhythm — one step looser so an expanded row cannot touch the next */
+.sp-station[data-sp-station="research"] .sp-tower {
+  padding: 15px 14px 15px 0;
+}
+.sp-station[data-sp-station="research"] .sp-tower__body p {
+  margin-top: 7px;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--c-steel);
+}
+
+/* ---------- 5. Papers ---------------------------------------------------- */
+.sp-station[data-sp-station="papers"] .sp-panel[data-sp-slot="title"] .sp-meta {
+  margin-top: 16px;
+  color: var(--c-steel);
+}
+.sp-station[data-sp-station="papers"] .sp-panel[data-sp-slot="list"] .sp-pub {
+  padding: 13px 0;
+}
+.sp-station[data-sp-station="papers"] .sp-panel[data-sp-slot="list"] li:last-child .sp-pub {
+  border-bottom: 1px solid var(--ln-1);
+}
+.sp-station[data-sp-station="papers"] .sp-panel[data-sp-slot="list"] .sp-pub h3 {
+  font-size: 13px;
+  line-height: 1.38;
+}
+.sp-station[data-sp-station="papers"] .sp-panel[data-sp-slot="list"] .sp-pub p {
+  font-size: 10px;
+  color: var(--c-steel);
+}
+
+/* ---------- 6. Notes ----------------------------------------------------- */
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="title"] .sp-lede {
+  max-width: 32ch;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 26px;
+  row-gap: 0;
+}
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] .sp-note {
+  height: 100%;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  border-left-color: var(--ln-1);
+  border-top: 1px solid transparent;
+}
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] .sp-note:hover {
+  border-top-color: var(--c-cyan-soft);
+}
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] .sp-note > span {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] .sp-note > span > span {
+  max-width: 62%;
+  font: 400 8.5px/1 var(--f-mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--c-steel);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] .sp-note > span > span::before {
+  content: '·';
+  margin-right: 9px;
+  color: var(--c-dim);
+}
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] .sp-note time {
+  margin-bottom: 0;
+  color: var(--c-steel);
+}
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] .sp-note h3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--c-mist);
+}
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] .sp-note:hover h3 {
+  color: var(--c-white);
+}
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="aside"] .sp-note-tiny {
+  line-height: 1.7;
+  color: rgba(147, 169, 189, .8);
+}
+
+/* ---------- 7. Tools ----------------------------------------------------- */
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="title"] .sp-eyebrow {
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="title"] .sp-lede {
+  margin: 20px auto 0;
+  max-width: 62ch;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] ul {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] li {
+  display: flex;
+}
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] .sp-tool {
+  flex: 1 1 auto;
+  min-height: 168px;
+}
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] .sp-tool > div {
+  flex: 1 1 auto;
+  margin: 10px 0 12px;
+}
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] .sp-tool > div p {
+  margin-top: 7px;
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--c-steel);
+}
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] .sp-tool h3 {
+  font-size: 12.5px;
+}
+
+/* ---------- 8. Contact --------------------------------------------------- */
+/* Secondary plates stand in front of lit walls: lift every small string one
+   step on the greyscale ramp so nothing sinks into the glass behind it. */
+.sp-panel[data-sp-slab] .sp-stats__row span { color: var(--c-mist); }
+.sp-panel[data-sp-slab] .sp-stats__row b { color: var(--c-white); }
+.sp-panel[data-sp-slab] .sp-stats__row em { color: var(--c-steel); }
+.sp-panel[data-sp-slab] .sp-label { color: var(--c-steel); }
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="aside"] .sp-label,
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="aside"] .sp-note-tiny {
+  color: var(--c-steel);
+}
+.sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="meta"] .sp-meta {
+  color: var(--c-steel);
+}
+
+.sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="body"] .sp-lede {
+  margin: 22px auto 0;
+  max-width: 42ch;
+}
+.sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="body"] a[href^="mailto:"] {
+  display: inline-block;
+  font: 300 26px/1 var(--f-mono);
+  letter-spacing: -.01em;
+  color: var(--c-white);
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--ln-3);
+  transition: color .3s var(--e-out), border-color .3s var(--e-out);
+}
+.sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="body"] a[href^="mailto:"]:hover {
+  color: var(--c-cyan);
+  border-color: var(--c-cyan);
+}
+.sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="body"] .sp-row {
+  justify-content: center;
+}
+.sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="meta"] .sp-meta {
+  flex-wrap: wrap;
+  gap: 6px 16px;
+}
+
+/* ---------- 10. Home type scale ------------------------------------------ */
+/* The smallest rows, pushed to the largest step the composition holds.
+   Panel widths are unchanged; every panel grows downward only. */
+.sp-station[data-sp-station="papers"] .sp-panel[data-sp-slot="list"] .sp-pub__yr { font-size: 13px; }
+.sp-station[data-sp-station="papers"] .sp-panel[data-sp-slot="list"] .sp-pub h3 { font-size: 16px; line-height: 1.32; }
+.sp-station[data-sp-station="papers"] .sp-panel[data-sp-slot="list"] .sp-pub p { font-size: 11.5px; line-height: 1.4; }
+
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] .sp-note h3 { font-size: 16px; line-height: 1.32; }
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] .sp-note time { font-size: 11px; }
+.sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] .sp-note > span > span {
+  font-size: 11px;
+  letter-spacing: .14em;
+}
+
+.sp-station[data-sp-station="research"] .sp-tower__body h3 { font-size: 18px; }
+.sp-station[data-sp-station="research"] .sp-tower__body p { font-size: 12px; letter-spacing: .09em; }
+
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] .sp-tool__mark { font-size: 26px; }
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] .sp-tool h3 { font-size: 16.5px; }
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] .sp-tool > div p { font-size: 12.5px; line-height: 1.5; }
+.sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] .sp-tool__tech { font-size: 10px; }
+
+.sp-station[data-sp-station="entry"] .sp-panel[data-sp-slot="aside"] .sp-stats__row b { font-size: 32px; }
+.sp-station[data-sp-station="entry"] .sp-panel[data-sp-slot="aside"] .sp-stats__row span { font-size: 11.5px; letter-spacing: .14em; }
+
+/* ---------- 9. Flat / narrow document layout ----------------------------- */
+.sp-flat .sp-station[data-sp-station] .sp-panel[data-sp-slot] { padding: 0; }
+
+.sp-flat .sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] ul {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.sp-flat .sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] ol {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 6px;
+}
+.sp-flat .sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="title"],
+.sp-flat .sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="body"] {
+  text-align: left;
+}
+.sp-flat .sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="title"] .sp-eyebrow {
+  justify-content: flex-start;
+}
+.sp-flat .sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="title"] .sp-lede,
+.sp-flat .sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="body"] .sp-lede {
+  margin-left: 0;
+}
+.sp-flat .sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="body"] .sp-row {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 899px) {
+  .sp-station[data-sp-station] .sp-panel[data-sp-slot] {
+    width: 100%;
+    padding: 0;
+  }
+
+  .sp-station[data-sp-station] .sp-panel[data-sp-slot="title"],
+  .sp-station[data-sp-station] .sp-panel[data-sp-slot="body"] {
+    text-align: left;
+  }
+
+  .sp-station[data-sp-station="entry"] .sp-panel[data-sp-slot="title"] .sp-lede,
+  .sp-station[data-sp-station="research"] .sp-panel[data-sp-slot="title"] .sp-lede,
+  .sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="title"] .sp-lede,
+  .sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="title"] .sp-lede,
+  .sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="body"] .sp-lede {
+    max-width: none;
+  }
+
+  .sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .sp-station[data-sp-station="notes"] .sp-panel[data-sp-slot="list"] ol {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 6px;
+  }
+  .sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="title"] .sp-eyebrow {
+    justify-content: flex-start;
+  }
+  .sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="title"] .sp-lede,
+  .sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="body"] .sp-lede {
+    margin-left: 0;
+  }
+  .sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="body"] .sp-row {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  .sp-station[data-sp-station="contact"] .sp-panel[data-sp-slot="body"] a[href^="mailto:"] {
+    font-size: 20px;
+  }
+  .sp-station[data-sp-station="profile"] .sp-panel[data-sp-slot="aside"] dl > div {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .sp-flat .sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] ul,
+  .sp-station[data-sp-station="tools"] .sp-panel[data-sp-slot="list"] ul {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

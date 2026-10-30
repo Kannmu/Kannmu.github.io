@@ -23,7 +23,7 @@
   category: 程序化生成
   description: 用确定性种子和形态基因生成可重复的三维植物，在浏览器中实时观察、调整并保存不同植株。
   technology: Three.js · WebGL · Procedural
-  url: /GenPlant/GenPlant/
+  url: /GenPlant/dist/
   mark: GP
 
 - name: ZenMux Balance Monitor

@@ -82,7 +82,7 @@ tags:
 ![alt text](</img/AIGCAssignment/enhanced-image (2).png>)
 <p align="center">第1代</p>
 
-![alt text](<enhanced-image (4).png>)
+![alt text](/img/AIGCAssignment/enhanced-image (4).png)
 <p align="center">第2代，修改为碟式封闭轮与破风车架</p>
 
 ![alt text](/img/AIGCAssignment/image-4.png)

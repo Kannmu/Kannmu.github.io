@@ -1,302 +1,774 @@
 ---
-layout: default
+layout: space
 title: "涵无的博客 | Kannmu Blog"
-description: "涵无（Kannmu，范林涵 Linhan Fan）的个人网站：记录人机交互、眼动交互、脑机接口与超声触觉研究，也分享开源工具、论文笔记与摄影作品。"
-body-class: "has-hero page-home"
-header-mask: 0.3
-no-catalog: true
+description: "范林涵（涵无 / Kannmu），东南大学设计学博士研究生，研究方向为人机交互、眼动交互、脑机接口与空中超声触觉。"
+sp_page: home
 multilingual: true
 ---
 
 {%- assign P = site.data.profile -%}
-{%- assign pubs = site.data.publications | sort: "date" | reverse -%}
-
+{%- assign pubs_by_date = site.data.publications | sort: "date" | reverse -%}
+{%- assign lead_pubs = pubs_by_date | where_exp: "p", "p.author_role == 'first' or p.author_role == 'cofirst'" -%}
+{%- assign paper_count = site.data.publications.size -%}
+{%- assign tool_count = site.data.tools.size -%}
+{%- assign post_count = site.posts.size -%}
 {%- assign total_cites = 0 -%}
-{%- for p in pubs -%}{%- assign total_cites = total_cites | plus: p.citation_count -%}{%- endfor -%}
+{%- for p in site.data.publications -%}{%- assign total_cites = total_cites | plus: p.citation_count -%}{%- endfor -%}
+{%- assign lead_cites = 0 -%}
+{%- for p in lead_pubs -%}{%- assign lead_cites = lead_cites | plus: p.citation_count -%}{%- endfor -%}
 
-<!-- ======================================================================
-     Hero
-     ====================================================================== -->
-<section class="hero">
-  <div class="hero__media"
-       style="background-image:url('{{ site.baseurl }}{{ site.header-img }}')"
-       role="img" aria-label="山间植物摄影背景"></div>
-  <div class="hero__veil" aria-hidden="true"></div>
+{%- comment -%} Data for viz.js — shapes agreed with the viz engineer. {%- endcomment -%}
+{%- capture spine_json -%}
+[{%- for p in lead_pubs -%}
+{"label":"{{ p.year }}","value":{{ p.citation_count }},"sub":{{ p.venue_short | jsonify }},"hi":true,"key":{{ p.doi | jsonify }},"title":{{ p.title | jsonify }}}{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}]
+{%- endcapture -%}
 
-  <div class="shell">
-    <div class="hero__inner">
-      <div>
-        <p class="hero__eyebrow">
-          <span class="dot" aria-hidden="true"></span>
-          <span class="hero__eyebrow-a">Human–Computer Interaction</span>
-          <span class="hero__eyebrow-sep" aria-hidden="true">/</span>
-          <span class="hero__eyebrow-b">Southeast University</span>
-        </p>
+{%- capture timeline_json -%}
+[{%- for e in P.education -%}
+{"label":{{ e.period | split: '.' | first | jsonify }},"value":{{ e.period | split: '.' | first }},"sub":{{ e.institution.en | jsonify }},"subZh":{{ e.institution.zh | jsonify }},"role":{{ e.detail.en | jsonify }},"roleZh":{{ e.detail.zh | jsonify }},"hi":{% if e.current %}true{% else %}false{% endif %}}{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}]
+{%- endcapture -%}
 
-        <h1 class="hero__title">
-          <span data-zh>涵无的博客</span>
-          <span data-en>Kannmu Blog</span>
-          <span class="cn">
-            <span data-zh>Kannmu Blog · Linhan Fan · 人机交互研究者</span>
-            <span data-en>Linhan Fan · Human–Computer Interaction</span>
-          </span>
-        </h1>
+{%- capture radar_json -%}
+[{"label":"Gaze","value":1,"key":"gaze","short":"GAZE"},{"label":"BCI","value":1,"key":"bci","short":"BCI"},{"label":"Haptics","value":1,"key":"haptics","short":"HAPTIC"},{"label":"Methods","value":1,"key":"method","short":"METHOD"}]
+{%- endcapture -%}
 
-        <p class="hero__lede">
-          <span data-zh>{{ P.lede.zh }}</span>
-          <span data-en>{{ P.lede.en }}</span>
-        </p>
+{%- assign topic_keys = "技术博客,Python,Project,PCB,Hardware,作品集" | split: "," -%}
+{%- assign topic_labels = "Tech blog,Python,Project,PCB,Hardware,Portfolio" | split: "," -%}
+{%- capture topics_json -%}
+[{%- for t in topic_keys -%}
+{%- assign tagged = site.tags[t] -%}
+{"label":{{ topic_labels[forloop.index0] | jsonify }},"value":{{ tagged.size }}}{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}]
+{%- endcapture -%}
 
-        <div class="hero__actions">
-          <a class="btn" href="{{ '/about/' | prepend: site.baseurl }}">
-            <span data-zh>关于研究</span><span data-en>Research</span>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </a>
-          <a class="btn" href="{{ '/archive/' | prepend: site.baseurl }}">
-            <span data-zh>阅读文章</span><span data-en>Read notes</span>
-          </a>
+<!-- =========================================================================
+     F01 · ENTRY — hero name, statement, four measures, two ways in, floor 01.
+     ========================================================================= -->
+<section class="sp-station" data-sp-station="entry" aria-label="入口 · Entry">
+  <div class="sp-layer">
+
+    <article class="sp-panel" data-sp-slot="title" data-sp-anchor="lt"
+             data-sp-pos="-690,-330,110" data-sp-rot="0,-2,0" data-sp-order="1"
+             style="width:780px">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>F01 / 入口<span>东南大学</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>F01 / ENTRY<span>SOUTHEAST UNIVERSITY</span></p>
+
+      <h1 class="sp-xl">
+        <span class="sp-line">LINHAN FAN</span>
+        <span class="sp-display__sub">范林涵 · 涵无 / KANNMU</span>
+      </h1>
+
+      <p class="sp-caps">
+        <span data-zh>{{ P.role.zh }}</span>
+        <span data-en>{{ P.role.en }}</span>
+      </p>
+
+      <p class="sp-lede">
+        <span data-zh>研究聚焦人机交互中的眼动输入、脑机接口与空中超声触觉，覆盖原型系统搭建、受控用户实验与可用性评估。成果发表于 Nature Communications、Advanced Engineering Informatics、Displays 等期刊。</span>
+        <span data-en>Research focuses on gaze input, brain–computer interfaces and mid-air ultrasonic haptics within human–computer interaction, spanning prototype systems, controlled user studies and usability evaluation. Work has appeared in Nature Communications, Advanced Engineering Informatics and Displays.</span>
+      </p>
+    </article>
+
+    <aside class="sp-panel" data-sp-slot="kpi" data-sp-anchor="rt"
+           data-sp-pos="700,-300,60" data-sp-rot="0,6,0" data-sp-order="2"
+           style="width:320px" aria-label="关键数据 · Key figures">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>数据<span>2026-10</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>FIGURES<span>2026-10</span></p>
+
+      <div class="sp-grid2">
+        <div class="sp-kpi">
+          <b class="sp-kpi__v" data-count="{{ paper_count }}">{{ paper_count }}</b>
+          <span class="sp-kpi__l"><span data-zh>论文</span><span data-en>Papers</span></span>
+          <em class="sp-kpi__src">publications.yml</em>
+        </div>
+        <div class="sp-kpi">
+          <b class="sp-kpi__v" data-count="{{ total_cites }}">{{ total_cites }}</b>
+          <span class="sp-kpi__l"><span data-zh>引用</span><span data-en>Citations</span></span>
+          <em class="sp-kpi__src">Crossref, 2026-10</em>
+        </div>
+        <div class="sp-kpi">
+          <b class="sp-kpi__v">{% if P.research.size < 10 %}0{% endif %}{{ P.research.size }}</b>
+          <span class="sp-kpi__l"><span data-zh>方向</span><span data-en>Directions</span></span>
+          <em class="sp-kpi__src">profile.yml</em>
+        </div>
+        <div class="sp-kpi">
+          <b class="sp-kpi__v">{% if tool_count < 10 %}0{% endif %}{{ tool_count }}</b>
+          <span class="sp-kpi__l"><span data-zh>工具</span><span data-en>Tools</span></span>
+          <em class="sp-kpi__src">tools.yml</em>
         </div>
       </div>
+    </aside>
 
-      <div class="hero__aside" aria-hidden="true">
-        <span class="hero__stat"><b>{{ pubs.size }}</b><span data-zh>篇论文</span><span data-en>Papers</span></span>
-        <span class="hero__stat"><b>{{ total_cites }}</b><span data-zh>次引用</span><span data-en>Citations</span></span>
-        <span class="hero__stat"><b>4</b><span data-zh>个方向</span><span data-en>Directions</span></span>
-      </div>
-    </div>
-  </div>
-
-  <div class="hero__rail">
-    <div class="shell hero__rail-inner">
-      <span>
-        <span data-zh>{{ P.location.zh }}</span>
-        <span data-en>{{ P.location.en }}</span>
-      </span>
-      <a class="scroll-hint" href="#intro">
-        <span data-zh>向下浏览</span><span data-en>Scroll</span>
-        <i aria-hidden="true"></i>
-      </a>
-      <span>Since 2023 · Ph.D. in Design</span>
-    </div>
-  </div>
-</section>
-
-<!-- ======================================================================
-     Intro
-     ====================================================================== -->
-<section class="band band--paper" id="intro">
-  <div class="shell intro-grid">
-    <div class="intro-copy" data-reveal>
-      <p class="sec-label" style="margin-bottom:22px"><b>01</b> <span data-zh>简介</span><span data-en>Profile</span></p>
-      <div class="statement">
-        {%- for para in P.statement limit:2 -%}
-        <p data-zh>{{ para.zh }}</p>
-        <p data-en>{{ para.en }}</p>
-        {%- endfor -%}
-      </div>
-      <p style="margin-top:26px">
-        <a class="link-arrow" href="{{ '/about/' | prepend: site.baseurl }}">
-          <span data-zh>完整学术主页</span><span data-en>Read the full academic page</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    <div class="sp-panel" data-sp-slot="cta" data-sp-anchor="lb"
+         data-sp-pos="-690,300,150" data-sp-rot="0,3,0" data-sp-order="3"
+         style="width:700px">
+      <div class="sp-row sp-wrap sp-gap-14">
+        <a class="sp-btn sp-btn--solid" href="{{ '/about/' | relative_url }}#research">
+          <span data-zh>研究</span><span data-en>Research</span>
+          <span class="sp-arrow" aria-hidden="true">→</span>
         </a>
+        <a class="sp-btn" href="{{ '/archive/' | relative_url }}">
+          <span data-zh>文章</span><span data-en>Writing</span>
+          <span class="sp-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+      <p class="sp-meta">
+        <b><span data-zh>{{ P.location.zh }}</span><span data-en>{{ P.location.en }}</span></b>
+        <span data-zh>2023 年至今 · 设计学博士</span>
+        <span data-en>Since 2023 · Ph.D. in Design</span>
       </p>
     </div>
 
-    <div data-reveal data-reveal-delay="80">
-      <dl class="fact-list">
-        <div>
-          <dt><span data-zh>单位</span><span data-en>Affiliation</span></dt>
-          <dd><span data-zh>{{ P.affiliation.zh }}</span><span data-en>{{ P.affiliation.en }}</span></dd>
-        </div>
-        <div>
-          <dt><span data-zh>学位</span><span data-en>Programme</span></dt>
-          <dd><span data-zh>设计学博士研究生（2023 — 至今）</span><span data-en>Ph.D. in Design (since 2023)</span></dd>
-        </div>
-        <div>
-          <dt><span data-zh>导师</span><span data-en>Advisor</span></dt>
-          <dd><a href="{{ P.advisor.url }}" target="_blank" rel="noopener">{{ P.advisor.zh }}</a></dd>
-        </div>
-        <div>
-          <dt><span data-zh>ORCID</span><span data-en>ORCID</span></dt>
-          <dd><a href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">{{ P.identifiers.orcid }}</a></dd>
-        </div>
-        <div>
-          <dt><span data-zh>关键词</span><span data-en>Keywords</span></dt>
+    <div class="sp-panel" data-sp-slot="numeral" data-sp-anchor="rb"
+         data-sp-pos="700,250,90" data-sp-rot="0,5,0" data-sp-order="4"
+         style="width:300px" aria-label="楼层 01 · 入口 / Floor 01 · Entry">
+      <div class="sp-numeral">
+        <b class="sp-ghost" aria-hidden="true">01</b>
+        <span class="sp-caps">
+          <span data-zh>FLOOR 01 · 入口</span>
+          <span data-en>FLOOR 01 · ENTRY</span>
+        </span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================================
+     F02 · PROFILE — statement, fact sheet, education timeline band.
+     ========================================================================= -->
+<section class="sp-station" data-sp-station="profile" aria-label="简介 · Profile">
+  <div class="sp-layer">
+
+    <article class="sp-panel" data-sp-slot="title" data-sp-anchor="lt"
+             data-sp-pos="-690,-395,100" data-sp-rot="0,-2,0" data-sp-order="1"
+             style="width:620px">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>F02 / 简介<span>研究陈述</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>F02 / PROFILE<span>RESEARCH STATEMENT</span></p>
+      <h2 class="sp-h2">
+        <span data-zh>简介</span><span data-en>Profile</span>
+      </h2>
+      <hr class="sp-hair">
+    </article>
+
+    <div class="sp-panel" data-sp-slot="statement" data-sp-anchor="lt"
+         data-sp-pos="-690,-150,-30" data-sp-rot="0,-3,0" data-sp-order="2"
+         style="width:660px">
+      <p class="sp-body-copy">
+        <span data-zh>{{ P.statement[0].zh }}</span>
+        <span data-en>{{ P.statement[0].en }}</span>
+      </p>
+      <p class="sp-body-copy">
+        <span data-zh>研究方法以原型开发与受控实验为主：先搭建可运行的软硬件系统，再测量操作绩效、错误率与主观负荷，并将结果整理为可复用的设计参数。</span>
+        <span data-en>The method pairs prototype development with controlled studies: a working system is built first, then performance, error rate and perceived workload are measured, and the results are distilled into reusable design parameters.</span>
+      </p>
+    </div>
+
+    <aside class="sp-panel" data-sp-slot="facts" data-sp-anchor="rt"
+           data-sp-pos="700,-230,60" data-sp-rot="0,6,0" data-sp-order="3"
+           style="width:340px" aria-label="档案 · Facts">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>档案<span>基本资料</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>FACTS<span>AT A GLANCE</span></p>
+
+      <dl>
+        <div class="sp-rowline">
+          <dt class="sp-kicker"><span data-zh>单位</span><span data-en>AFFILIATION</span></dt>
           <dd>
-            <span class="intro-tags">
+            <span data-zh>{{ P.affiliation.zh }}</span>
+            <span data-en>{{ P.affiliation.en }}</span>
+          </dd>
+        </div>
+        <div class="sp-rowline">
+          <dt class="sp-kicker"><span data-zh>项目</span><span data-en>PROGRAMME</span></dt>
+          <dd>
+            <span data-zh>设计学博士研究生 · 2023 年至今</span>
+            <span data-en>Ph.D. in Design · since 2023</span>
+          </dd>
+        </div>
+        <div class="sp-rowline">
+          <dt class="sp-kicker"><span data-zh>导师</span><span data-en>ADVISOR</span></dt>
+          <dd>
+            <a class="sp-link" href="{{ P.advisor.url }}" target="_blank" rel="noopener">
+              <span data-zh>{{ P.advisor.zh }}</span><span data-en>{{ P.advisor.en }}</span>
+              <span class="sp-arrow" aria-hidden="true">↗</span>
+            </a>
+          </dd>
+        </div>
+        <div class="sp-rowline">
+          <dt class="sp-kicker">ORCID</dt>
+          <dd><a class="sp-link" href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">{{ P.identifiers.orcid }}</a></dd>
+        </div>
+        <div class="sp-rowline">
+          <dt class="sp-kicker"><span data-zh>关键词</span><span data-en>KEYWORDS</span></dt>
+          <dd>
+            <span class="sp-row sp-wrap sp-gap-8">
               {%- for area in P.research -%}
-              <a class="chip" href="{{ '/about/' | prepend: site.baseurl }}#research">{{ area.title.en }}</a>
+              <a class="sp-chip" href="{{ '/about/' | relative_url }}#research">{{ area.keywords[0] }}</a>
               {%- endfor -%}
             </span>
           </dd>
         </div>
       </dl>
-    </div>
+    </aside>
+
+    <figure class="sp-panel sp-band sp-viz" data-sp-slot="timeline" data-sp-anchor="lb"
+            data-sp-pos="-690,340,140" data-sp-rot="0,2,0" data-sp-order="4"
+            style="width:1380px"
+            data-viz="timeline" data-viz-h="96"
+            data-viz-data='{{ timeline_json | strip_newlines | strip }}'
+            role="img" aria-label="教育经历：四川大学工学学士 2019—2023，东南大学设计学博士研究生 2023 年至今 / Education: B.Eng. at Sichuan University 2019–2023, Ph.D. in Design at Southeast University since 2023">
+      <figcaption class="sp-viz__cap">
+        <span class="sp-kicker" data-zh><i aria-hidden="true"></i>教育经历<span>2019—至今</span></span>
+        <span class="sp-kicker" data-en><i aria-hidden="true"></i>EDUCATION<span>2019—PRESENT</span></span>
+        <span class="sp-caps">
+          <span data-zh>四川大学 2019—2023 · 东南大学 2023 年至今</span>
+          <span data-en>Sichuan University 2019–2023 · Southeast University 2023–present</span>
+        </span>
+      </figcaption>
+      <noscript>
+        <table>
+          <caption>教育经历 / Education</caption>
+          <thead><tr><th>Period</th><th>Institution</th><th>Programme</th></tr></thead>
+          <tbody>
+            {%- for e in P.education -%}
+            <tr>
+              <td>{{ e.period }}</td>
+              <td>{{ e.institution.zh }} / {{ e.institution.en }}</td>
+              <td>{{ e.detail.zh }} / {{ e.detail.en }}</td>
+            </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </noscript>
+    </figure>
+
   </div>
 </section>
 
-<!-- ======================================================================
-     Research topics
-     ====================================================================== -->
-<section class="band band--lift">
-  <div class="shell">
-    <div class="sec-head sec-head--row" data-reveal>
-      <div>
-        <p class="sec-label"><b>02</b> <span data-zh>研究主题</span><span data-en>Research topics</span></p>
-        <h2 class="sec-title" style="margin-top:16px">
-          <span data-zh>研究主题</span>
-          <span data-en>Research topics</span>
-        </h2>
-      </div>
-      <a class="link-arrow" href="{{ '/about/' | prepend: site.baseurl }}#research">
-        <span data-zh>查看全部</span><span data-en>All topics</span>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-    </div>
+<!-- =========================================================================
+     F03 · RESEARCH — four directions, detail plate with radar, live count.
+     ========================================================================= -->
+<section class="sp-station" data-sp-station="research" aria-label="研究 · Research">
+  <div class="sp-layer">
 
-    <div class="idx-list">
-      {%- for area in P.research -%}
-      <a class="idx-row" href="{{ '/about/' | prepend: site.baseurl }}#research" data-reveal>
-        <span class="idx-row__no">{{ area.index }}</span>
-        <h3>
-          <span data-zh>{{ area.title.zh }}</span>
-          <span data-en>{{ area.title.en }}</span>
-          <span class="idx-row__kw">{{ area.keywords | slice: 0, 3 | join: ' · ' }}</span>
-        </h3>
-        <p>
-          <span data-zh>{{ area.summary.zh }}</span>
-          <span data-en>{{ area.summary.en }}</span>
-        </p>
-        <span class="idx-row__arrow" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </span>
-      </a>
-      {%- endfor -%}
-    </div>
-  </div>
-</section>
+    <article class="sp-panel" data-sp-slot="title" data-sp-anchor="lt"
+             data-sp-pos="-690,-395,100" data-sp-rot="0,-2,0" data-sp-order="1"
+             style="width:640px">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>F03 / 研究<span>四个方向</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>F03 / RESEARCH<span>FOUR DIRECTIONS</span></p>
+      <h2 class="sp-h2">
+        <span data-zh>研究</span><span data-en>Research</span>
+      </h2>
+      <hr class="sp-hair">
+      <p class="sp-lede">
+        <span data-zh>四个方向共用一套方法：先搭建可运行的原型系统，再通过受控用户实验评估操作绩效与主观负荷。</span>
+        <span data-en>Four directions share one method: a working prototype first, then controlled user studies of performance and perceived workload.</span>
+      </p>
+    </article>
 
-<!-- ======================================================================
-     Publications preview
-     ====================================================================== -->
-<section class="band band--paper">
-  <div class="shell">
-    <div class="sec-head sec-head--row" data-reveal>
-      <div>
-        <p class="sec-label"><b>03</b> <span data-zh>论文</span><span data-en>Publications</span></p>
-        <h2 class="sec-title" style="margin-top:16px">
-          <span data-zh>第一 / 共同第一作者论文</span>
-          <span data-en>First &amp; co-first author papers</span>
-        </h2>
-      </div>
-      <a class="link-arrow" href="{{ '/about/' | prepend: site.baseurl }}#publications">
-        <span data-zh>全部论文</span><span data-en>All publications</span>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-    </div>
-
-    <div class="pub-preview">
-      {%- assign lead_pubs = pubs | where_exp: "p", "p.author_role == 'first' or p.author_role == 'cofirst'" -%}
-      {%- for p in lead_pubs -%}
-      <a class="pub-preview__row" href="https://doi.org/{{ p.doi }}" target="_blank" rel="noopener" data-reveal>
-        <span class="pub-preview__year">{{ p.year }}</span>
-        <span class="pub-preview__body">
-          <h3>{{ p.title }}</h3>
-          <p>
-            {%- if p.author_role == 'first' -%}First author · {% elsif p.author_role == 'cofirst' -%}Co-first author · {% endif -%}
-            {{ p.venue_short }}{% if p.volume %} · Vol. {{ p.volume }}{% endif %}
-          </p>
-        </span>
-        <span class="pub-preview__meta">
-          {%- if p.citation_count > 0 -%}{{ p.citation_count }} cited{%- else -%}DOI ↗{%- endif -%}
-        </span>
-      </a>
-      {%- endfor -%}
-    </div>
-
-    <div class="tools-strip" style="margin-top:clamp(40px,5vw,64px)" data-reveal>
-      <div>
-        <p class="sec-label" style="margin-bottom:14px"><b>▸</b> Kannmu Tools</p>
-        <h3><span data-zh>浏览器里的工具与实验</span><span data-en>Tools and experiments in the browser</span></h3>
-        <p>
-          <span data-zh>节点计算、图片排版、程序化生成与设备监控等独立应用，均可直接在线上使用。</span>
-          <span data-en>Independent applications for node-based maths, image layout, procedural generation and device monitoring — all available online.</span>
-        </p>
-      </div>
-      <div class="tools-strip__links">
-        {%- for tool in site.data.tools limit:4 -%}
-        <a href="{{ tool.url | prepend: site.baseurl }}">
-          <span>{{ tool.name }}</span>
-          <span>{{ tool.mark }}</span>
-        </a>
+    <div class="sp-panel" data-sp-slot="list" data-sp-anchor="lt"
+         data-sp-pos="-690,-140,-20" data-sp-rot="0,-3,0" data-sp-order="2"
+         style="width:700px" aria-label="研究方向列表 · Directions">
+      <div class="sp-tower-list">
+        {%- for area in P.research -%}
+        <button class="sp-tower" type="button"
+                aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+                aria-controls="sp-area-{{ area.key }}">
+          <span class="sp-tower__no">{{ area.index }}</span>
+          <span class="sp-tower__body">
+            <h3>
+              <span data-zh>{{ area.title.zh }}</span>
+              <span data-en>{{ area.title.en }}</span>
+            </h3>
+            <p>{{ area.keywords | join: ' · ' }}</p>
+          </span>
+          <span class="sp-tower__sig" aria-hidden="true"></span>
+        </button>
         {%- endfor -%}
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ======================================================================
-     Notes
-     ====================================================================== -->
-<section class="band band--lift">
-  <div class="shell">
-    <div class="sec-head sec-head--row" data-reveal>
-      <div>
-        <p class="sec-label"><b>04</b> <span data-zh>笔记</span><span data-en>Notes</span></p>
-        <h2 class="sec-title" style="margin-top:16px">
-          <span data-zh>最近文章</span>
-          <span data-en>Recent notes</span>
-        </h2>
-      </div>
-      <a class="link-arrow" href="{{ '/archive/' | prepend: site.baseurl }}">
-        <span data-zh>全部 {{ site.posts.size }} 篇</span><span data-en>All {{ site.posts.size }} posts</span>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-    </div>
+    <article class="sp-panel" data-sp-slot="detail" data-sp-anchor="rt"
+             data-sp-pos="700,-215,60" data-sp-rot="0,6,0" data-sp-order="3"
+             style="width:380px" aria-label="方向详情 · Direction detail">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>方向详情<span>详情</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>DIRECTION DETAIL<span>DETAIL</span></p>
 
-    <div class="note-grid">
-      {%- for post in site.posts limit:6 -%}
-      <a class="note-card" href="{{ post.url | prepend: site.baseurl }}" data-reveal>
-        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y · %m.%d" }}</time>
-        <h3>{{ post.title }}</h3>
-        {%- if post.subtitle %}
-        <p>{{ post.subtitle }}</p>
-        {%- else %}
-        <p>{{ post.content | strip_html | truncate: 96 }}</p>
-        {%- endif %}
-        {%- if post.tags.size > 0 %}
-        <span class="note-card__tag">{{ post.tags | first }}</span>
-        {%- endif %}
-      </a>
-      {%- endfor -%}
-    </div>
-  </div>
-</section>
-
-<!-- ======================================================================
-     CTA
-     ====================================================================== -->
-<section class="band band--ink band--tight">
-  <div class="shell">
-    <div class="contact-block" data-reveal>
-      <div>
-        <p class="sec-label" style="color:rgba(255,255,255,.42);margin-bottom:16px">
-          <b>05</b> <span data-zh>联系</span><span data-en>Contact</span>
-        </p>
-        <h3>
-          <span data-zh>合作与联系</span>
-          <span data-en>Collaboration &amp; contact</span>
+      {%- for area in P.research -%}
+      <section id="sp-area-{{ area.key }}">
+        <p class="sp-tower__no">{{ area.index }}</p>
+        <h3 class="sp-h3">
+          <span data-zh>{{ area.title.zh }}</span>
+          <span data-en>{{ area.title.en }}</span>
         </h3>
-        <p data-zh>{{ P.contact.zh }}</p>
-        <p data-en>{{ P.contact.en }}</p>
-      </div>
-      <div class="contact-mails">
-        <a href="mailto:{{ P.contact.email }}">{{ P.contact.email }}</a>
-        <a href="{{ '/about/' | prepend: site.baseurl }}">
-          <span data-zh>学术主页</span><span data-en>Academic page</span> →
-        </a>
-      </div>
-    </div>
+        <p class="sp-body-copy">
+          <span data-zh>{{ area.summary.zh }}</span>
+          <span data-en>{{ area.summary.en }}</span>
+        </p>
+        <p class="sp-caps">{{ area.keywords | join: ' · ' }}</p>
+      </section>
+      {%- endfor -%}
+
+      <figure class="sp-viz" data-viz="radar" data-viz-h="140"
+              data-viz-data='{{ radar_json | strip_newlines | strip }}'
+              role="img" aria-label="四个研究方向的等权图谱：眼动与注视交互、脑机接口、空中超声触觉、实验方法与原型系统 / Four equal-weight research axes: gaze, BCI, mid-air ultrasonic haptics, methods and prototype systems">
+        <figcaption class="sp-viz__cap">
+          <span data-zh>方向图谱 · 四个等权轴</span>
+          <span data-en>Direction map · four equal axes</span>
+        </figcaption>
+        <noscript>
+          <ol>
+            {%- for area in P.research -%}
+            <li>{{ area.index }} · {{ area.title.zh }} / {{ area.title.en }} — {{ area.keywords | join: ' · ' }}</li>
+            {%- endfor -%}
+          </ol>
+        </noscript>
+      </figure>
+    </article>
+
+    <aside class="sp-panel" data-sp-slot="index" data-sp-anchor="rb"
+           data-sp-pos="700,330,120" data-sp-rot="0,3,0" data-sp-order="4"
+           style="width:300px" aria-label="方向索引 · Index">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>索引<span>方向</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>INDEX<span>DIRECTIONS</span></p>
+      <b class="sp-kpi__v" id="sp-area-count">01 / {% if P.research.size < 10 %}0{% endif %}{{ P.research.size }}</b>
+      <a class="sp-link" href="{{ '/about/' | relative_url }}#research">
+        <span data-zh>全部研究方向</span><span data-en>All directions</span>
+        <span class="sp-arrow" aria-hidden="true">↗</span>
+      </a>
+    </aside>
+
   </div>
 </section>
 
+<!-- =========================================================================
+     F04 · PAPERS — first / co-first author papers, citation spine, totals.
+     ========================================================================= -->
+<section class="sp-station" data-sp-station="papers" aria-label="论文 · Publications">
+  <div class="sp-layer">
+
+    <article class="sp-panel" data-sp-slot="title" data-sp-anchor="lt"
+             data-sp-pos="-690,-395,100" data-sp-rot="0,-2,0" data-sp-order="1"
+             style="width:640px">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>F04 / 论文<span>第一作者</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>F04 / PUBLICATIONS<span>FIRST AUTHOR</span></p>
+      <h2 class="sp-h2">
+        <span data-zh>论文</span><span data-en>Publications</span>
+      </h2>
+      <hr class="sp-hair">
+      <p class="sp-meta">
+        <span data-zh>第一作者 / 共同第一作者 · {{ lead_pubs.size }} 篇</span>
+        <span data-en>First / co-first author · {{ lead_pubs.size }} papers</span>
+      </p>
+    </article>
+
+    <div class="sp-panel" data-sp-slot="list" data-sp-anchor="lt"
+         data-sp-pos="-690,-130,-20" data-sp-rot="0,-3,0" data-sp-order="2"
+         style="width:700px" aria-label="第一作者论文列表 · Selected papers">
+      <ol>
+        {%- for p in lead_pubs -%}
+        <li>
+          <a class="sp-rowline" href="https://doi.org/{{ p.doi }}" target="_blank" rel="noopener"
+             aria-label="DOI {{ p.doi }}">
+            <span class="sp-rowline__no">{{ p.year }}</span>
+            <span class="sp-rowline__body">
+              <b>{{ p.title }}</b>
+              <em>
+                <span data-zh>{% if p.author_role == 'first' %}第一作者{% else %}共同第一作者{% endif %}</span>
+                <span data-en>{% if p.author_role == 'first' %}First author{% else %}Co-first author{% endif %}</span>
+                · {{ p.venue_short }} ·
+                <span data-zh>{{ p.citation_count }} 次引用</span>
+                <span data-en>{{ p.citation_count }} citations</span>
+                · DOI
+              </em>
+            </span>
+            <span class="sp-arrow" aria-hidden="true">↗</span>
+          </a>
+        </li>
+        {%- endfor -%}
+      </ol>
+    </div>
+
+    <aside class="sp-panel" data-sp-slot="viz" data-sp-anchor="rt"
+           data-sp-pos="700,-235,60" data-sp-rot="0,6,0" data-sp-order="3"
+           style="width:400px" aria-label="引用统计 · Citation record">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>引用记录<span>第一作者</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>CITATION RECORD<span>FIRST AUTHOR</span></p>
+
+      <figure class="sp-viz" data-viz="spine" data-viz-h="180"
+              data-viz-data='{{ spine_json | strip_newlines | strip }}'
+              role="img" aria-label="第一作者与共同第一作者论文的引用数：2026 年 0 次，2025 年 28 次，2024 年 6 次 / Citations for first and co-first author papers: 0 in 2026, 28 in 2025, 6 in 2024">
+        <figcaption class="sp-viz__cap">
+          <span data-zh>第一/共同第一作者 · 2024—2026</span>
+          <span data-en>First &amp; co-first · 2024–2026</span>
+        </figcaption>
+        <noscript>
+          <table>
+            <caption>Citations / 引用</caption>
+            <thead><tr><th>Year</th><th>Citations</th><th>Venue</th><th>DOI</th></tr></thead>
+            <tbody>
+              {%- for p in lead_pubs -%}
+              <tr><td>{{ p.year }}</td><td>{{ p.citation_count }}</td><td>{{ p.venue_short }}</td><td>{{ p.doi }}</td></tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+        </noscript>
+      </figure>
+
+      <div class="sp-grid2">
+        <div class="sp-kpi">
+          <b class="sp-kpi__v">{{ lead_cites }}</b>
+          <span class="sp-kpi__l"><span data-zh>合计引用</span><span data-en>Citations</span></span>
+          <em class="sp-kpi__src">Crossref, 2026-10</em>
+        </div>
+        <div class="sp-kpi">
+          <b class="sp-kpi__v">{{ lead_pubs.size }}</b>
+          <span class="sp-kpi__l"><span data-zh>论文</span><span data-en>Papers</span></span>
+          <em class="sp-kpi__src">first / co-first</em>
+        </div>
+      </div>
+    </aside>
+
+    <aside class="sp-panel" data-sp-slot="kpi" data-sp-anchor="rb"
+           data-sp-pos="700,330,120" data-sp-rot="0,3,0" data-sp-order="4"
+           style="width:400px" aria-label="论文总量 · Totals">
+      <div class="sp-grid3">
+        <div class="sp-kpi">
+          <b class="sp-kpi__v" data-count="{{ paper_count }}">{{ paper_count }}</b>
+          <span class="sp-kpi__l"><span data-zh>全部论文</span><span data-en>Papers</span></span>
+          <em class="sp-kpi__src">publications.yml</em>
+        </div>
+        <div class="sp-kpi">
+          <b class="sp-kpi__v" data-count="{{ total_cites }}">{{ total_cites }}</b>
+          <span class="sp-kpi__l"><span data-zh>总引用</span><span data-en>Citations</span></span>
+          <em class="sp-kpi__src">Crossref, 2026-10</em>
+        </div>
+        <div class="sp-kpi">
+          <b class="sp-kpi__v">{{ lead_pubs.size }}</b>
+          <span class="sp-kpi__l"><span data-zh>第一作者</span><span data-en>First author</span></span>
+          <em class="sp-kpi__src">F04</em>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<!-- =========================================================================
+     F05 · NOTES — six recent posts, archive count, topic distribution.
+     ========================================================================= -->
+<section class="sp-station" data-sp-station="notes" aria-label="笔记 · Notes">
+  <div class="sp-layer">
+
+    <article class="sp-panel" data-sp-slot="title" data-sp-anchor="lt"
+             data-sp-pos="-690,-395,100" data-sp-rot="0,-2,0" data-sp-order="1"
+             style="width:680px">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>F05 / 笔记<span>最近文章</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>F05 / NOTES<span>RECENT POSTS</span></p>
+      <h2 class="sp-h2">
+        <span data-zh>笔记</span><span data-en>Notes</span>
+      </h2>
+      <hr class="sp-hair">
+      <p class="sp-lede">
+        <span data-zh>工具、论文与实验过程的记录。</span>
+        <span data-en>Working notes on tools, papers and the experimental process.</span>
+      </p>
+    </article>
+
+    <div class="sp-panel" data-sp-slot="list" data-sp-anchor="lt"
+         data-sp-pos="-690,-150,-20" data-sp-rot="0,-3,0" data-sp-order="2"
+         style="width:700px" aria-label="文章列表 · Posts">
+      <ol>
+        {%- for post in site.posts limit:6 -%}
+        <li>
+          <a class="sp-rowline" href="{{ post.url | relative_url }}">
+            <span class="sp-rowline__no">{{ post.date | date: "%Y.%m.%d" }}</span>
+            <span class="sp-rowline__body">
+              <b>{{ post.title }}</b>
+              <em>
+                {%- if post.tags.size > 0 -%}{{ post.tags | first }}{%- else -%}Note{%- endif -%}
+              </em>
+            </span>
+            <span class="sp-arrow" aria-hidden="true">↗</span>
+          </a>
+        </li>
+        {%- endfor -%}
+      </ol>
+    </div>
+
+    <aside class="sp-panel" data-sp-slot="aside" data-sp-anchor="rt"
+           data-sp-pos="700,-235,60" data-sp-rot="0,6,0" data-sp-order="3"
+           style="width:360px" aria-label="归档与主题 · Archive and topics">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>主题<span>按标签</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>TOPICS<span>BY TAG</span></p>
+
+      <figure class="sp-viz" data-viz="topics" data-viz-h="150"
+              data-viz-data='{{ topics_json | strip_newlines | strip }}'
+              role="img" aria-label="文章主题分布：技术博客 5 篇，Python 4 篇，Project 4 篇，PCB 3 篇，Hardware 3 篇，作品集 3 篇 / Post topics: Tech blog 5, Python 4, Project 4, PCB 3, Hardware 3, Portfolio 3">
+        <figcaption class="sp-viz__cap">
+          <span data-zh>前六项 · {{ post_count }} 篇文章</span>
+          <span data-en>Top six · {{ post_count }} posts</span>
+        </figcaption>
+        <noscript>
+          <table>
+            <caption>Topics / 主题</caption>
+            <thead><tr><th>Tag</th><th>Posts</th></tr></thead>
+            <tbody>
+              <tr><td>技术博客 / Tech blog</td><td>5</td></tr>
+              <tr><td>Python</td><td>4</td></tr>
+              <tr><td>Project</td><td>4</td></tr>
+              <tr><td>PCB</td><td>3</td></tr>
+              <tr><td>Hardware</td><td>3</td></tr>
+              <tr><td>作品集 / Portfolio</td><td>3</td></tr>
+            </tbody>
+          </table>
+        </noscript>
+      </figure>
+
+      <p class="sp-meta">
+        <b>{{ post_count }}</b>
+        <span data-zh>篇文章 · {{ site.posts.last.date | date: "%Y" }}—{{ site.posts.first.date | date: "%Y" }}</span>
+        <span data-en>posts · {{ site.posts.last.date | date: "%Y" }}–{{ site.posts.first.date | date: "%Y" }}</span>
+      </p>
+      <a class="sp-link" href="{{ '/archive/' | relative_url }}">
+        <span data-zh>全部文章</span><span data-en>All posts</span>
+        <span class="sp-arrow" aria-hidden="true">↗</span>
+      </a>
+    </aside>
+
+    <aside class="sp-panel" data-sp-slot="index" data-sp-anchor="rb"
+           data-sp-pos="700,330,120" data-sp-rot="0,3,0" data-sp-order="4"
+           style="width:360px" aria-label="归档 · Archive">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>ARCHIVE<span>归档</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>ARCHIVE<span>NOTES</span></p>
+      <div class="sp-numeral">
+        <b class="sp-ghost">{{ post_count }}</b>
+        <span class="sp-caps">
+          <span data-zh>篇文章 · {{ site.posts.last.date | date: "%Y" }}—{{ site.posts.first.date | date: "%Y" }}</span>
+          <span data-en>posts · {{ site.posts.last.date | date: "%Y" }}–{{ site.posts.first.date | date: "%Y" }}</span>
+        </span>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<!-- =========================================================================
+     F06 · TOOLS — eight browser applications in a 4 × 2 field.
+     ========================================================================= -->
+<section class="sp-station" data-sp-station="tools" aria-label="工具 · Tools">
+  <div class="sp-layer">
+
+    <article class="sp-panel" data-sp-slot="title" data-sp-anchor="ct"
+             data-sp-pos="0,-395,100" data-sp-rot="0,2,0" data-sp-order="1"
+             style="width:760px">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>F06 / 工具<span>浏览器应用</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>F06 / TOOLS<span>BROWSER APPLICATIONS</span></p>
+      <h2 class="sp-h2">
+        <span data-zh>工具</span><span data-en>Tools</span>
+      </h2>
+      <hr class="sp-hair">
+      <p class="sp-lede">
+        <span data-zh>{{ tool_count }} 个独立应用，覆盖计算、排版、生成、监控与交互实验；全部在浏览器中运行。</span>
+        <span data-en>{{ tool_count }} independent applications covering computation, layout, generation, monitoring and interaction experiments — all run in the browser.</span>
+      </p>
+    </article>
+
+    <div class="sp-panel sp-band" data-sp-slot="grid" data-sp-anchor="ct"
+         data-sp-pos="0,-120,-20" data-sp-rot="0,-2,0" data-sp-order="2"
+         style="width:1200px" aria-label="工具列表 · Tools">
+      <ul class="sp-grid4">
+        {%- for tool in site.data.tools -%}
+        {%- case tool.name -%}
+          {%- when 'CalcFlow' -%}
+            {%- assign tool_desc_zh = '把表达式拆成可引用的计算节点，依赖与结果随输入实时更新。' -%}
+            {%- assign tool_desc_en = 'Splits an expression into referenceable compute nodes whose dependencies and results update as inputs change.' -%}
+          {%- when 'PhoLo' -%}
+            {%- assign tool_desc_zh = '在浏览器本地把照片排成规整画布，只平移与等比例缩放，不裁剪、不拉伸、不上传。' -%}
+            {%- assign tool_desc_en = 'Arranges photos into a regular local canvas with translation and proportional scaling only — no cropping, no stretching, no uploads.' -%}
+          {%- when 'Kannmu Image Studio' -%}
+            {%- assign tool_desc_zh = '面向 Gemini 图像模型的生成与编辑工作台，可组合提示词、参考图与局部蒙版。' -%}
+            {%- assign tool_desc_en = 'A generation and editing bench for Gemini image models: prompts, reference images and local masks in one place.' -%}
+          {%- when 'GenPlant' -%}
+            {%- assign tool_desc_zh = '用确定性种子与形态基因生成可重复的三维植物，实时观察、调整并保存。' -%}
+            {%- assign tool_desc_en = 'Deterministic seeds and morphological genes generate reproducible 3D plants, observed, adjusted and saved live in the browser.' -%}
+          {%- when 'ZenMux Balance Monitor' -%}
+            {%- assign tool_desc_zh = '读取 ZenMux 管理接口的滚动额度、月度订阅与模型用量，集中查看余额、趋势与供应商分布。' -%}
+            {%- assign tool_desc_en = 'Reads rolling quota, monthly subscription and model usage from the ZenMux admin API, gathering balance, trend and provider distribution.' -%}
+          {%- when 'UMH Lab' -%}
+            {%- assign tool_desc_zh = '超声空中触觉的展示与交互模拟器，介绍相控阵硬件、聚焦原理、触觉模式与相关成果。' -%}
+            {%- assign tool_desc_en = 'A showcase and interaction simulator for mid-air ultrasonic haptics: phased-array hardware, focusing, tactile patterns and related results.' -%}
+          {%- when 'UMH Demo' -%}
+            {%- assign tool_desc_zh = 'UMH v7 演示台：84 路阵列的聚焦触觉与定向音频，通过 Web Serial 驱动，内置无硬件演示模式。' -%}
+            {%- assign tool_desc_en = 'The UMH v7 bench: 84-channel focusing and directional audio over Web Serial, with a hardware-free demo mode.' -%}
+          {%- when 'T-Sim 做T训练场' -%}
+            {%- assign tool_desc_zh = '以真实 A 股与 ETF 分钟级行情逐根回放，未来不可见，训练择时、仓位纪律与成本意识。' -%}
+            {%- assign tool_desc_en = 'Bar-by-bar replay of real minute-level A-share and ETF data with no look-ahead — timing, position discipline and cost awareness.' -%}
+          {%- else -%}
+            {%- assign tool_desc_zh = tool.description -%}
+            {%- assign tool_desc_en = tool.description -%}
+        {%- endcase -%}
+        <li>
+          <a class="sp-tool" href="{{ tool.url | relative_url }}" target="_blank" rel="noopener">
+            <span class="sp-tool__mark" aria-hidden="true">{{ tool.mark }}</span>
+            <h3>{{ tool.name }}</h3>
+            <p>
+              <span data-zh>{{ tool_desc_zh }}</span>
+              <span data-en>{{ tool_desc_en }}</span>
+            </p>
+            <span class="sp-tool__tech">{{ tool.technology }}</span>
+          </a>
+        </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+
+    <aside class="sp-panel" data-sp-slot="index" data-sp-anchor="cb"
+           data-sp-pos="0,395,130" data-sp-rot="0,2,0" data-sp-order="3"
+           style="width:900px" aria-label="工具数量 · Tool count">
+      <div class="sp-kpi">
+        <b class="sp-kpi__v">{% if tool_count < 10 %}0{% endif %}{{ tool_count }}</b>
+        <span class="sp-kpi__l">
+          <span data-zh>个工具 · 全部在浏览器中运行</span>
+          <span data-en>tools · all run in the browser</span>
+        </span>
+        <em class="sp-kpi__src">tools.yml, 2026-10</em>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<!-- =========================================================================
+     F07 · CONTACT — mailto, statement, link register, imprint.
+     ========================================================================= -->
+<section class="sp-station" data-sp-station="contact" aria-label="联系 · Contact">
+  <div class="sp-layer">
+
+    <article class="sp-panel" data-sp-slot="title" data-sp-anchor="lt"
+             data-sp-pos="-690,-330,110" data-sp-rot="0,-2,0" data-sp-order="1"
+             style="width:720px">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>F07 / 联系<span>南京 · 中国</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>F07 / CONTACT<span>NANJING · CHINA</span></p>
+      <h2 class="sp-h2">
+        <span data-zh>联系</span><span data-en>Contact</span>
+      </h2>
+      <hr class="sp-hair">
+      <p>
+        <a class="sp-h3 sp-accent" href="mailto:{{ P.contact.email }}">{{ P.contact.email }}</a>
+      </p>
+      <p class="sp-lede">
+        <span data-zh>{{ P.contact.zh }}</span>
+        <span data-en>{{ P.contact.en }}</span>
+      </p>
+    </article>
+
+    <aside class="sp-panel" data-sp-slot="links" data-sp-anchor="rt"
+           data-sp-pos="700,-160,60" data-sp-rot="0,6,0" data-sp-order="2"
+           style="width:340px" aria-label="链接 · Links">
+      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>链接<span>外部档案</span></p>
+      <p class="sp-kicker" data-en><i aria-hidden="true"></i>LINKS<span>EXTERNAL RECORDS</span></p>
+
+      {%- assign show_links = "scholar,orcid,github,zhihu,linkedin,email" | split: "," -%}
+      {%- for key in show_links -%}
+        {%- assign l = P.links | where: "key", key | first -%}
+        {%- if l -%}
+        <a class="sp-rowline" href="{{ l.url }}"
+           {%- unless key == 'email' %} target="_blank" rel="noopener"{% endunless %}>
+          <span class="sp-rowline__no">0{{ forloop.index }}</span>
+          <span class="sp-rowline__body">
+            <b>
+              {%- case key -%}
+                {%- when 'zhihu' -%}<span data-zh>知乎</span><span data-en>Zhihu</span>
+                {%- when 'email' -%}<span data-zh>邮箱</span><span data-en>Email</span>
+                {%- else -%}{{ l.label }}
+              {%- endcase -%}
+            </b>
+            <em>
+              {%- if key == 'orcid' -%}{{ P.identifiers.orcid }}
+              {%- elsif key == 'email' -%}{{ P.contact.email }}
+              {%- else -%}{{ l.url | remove: 'https://' | remove: 'http://' | split: '/' | first }}
+              {%- endif -%}
+            </em>
+          </span>
+          <span class="sp-arrow" aria-hidden="true">↗</span>
+        </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </aside>
+
+    <footer class="sp-panel sp-band" data-sp-slot="meta" data-sp-anchor="lb"
+            data-sp-pos="-690,330,130" data-sp-rot="0,2,0" data-sp-order="3"
+            style="width:900px">
+      <div class="sp-grid4">
+        <div>
+          <p class="sp-kicker" data-zh><i aria-hidden="true"></i>地点<span>PLACE</span></p>
+          <p class="sp-kicker" data-en><i aria-hidden="true"></i>PLACE<span>LOCATION</span></p>
+          <p class="sp-caps">
+            <span data-zh>{{ P.location.zh }}</span>
+            <span data-en>{{ P.location.en }}</span>
+          </p>
+        </div>
+        <div>
+          <p class="sp-kicker">ORCID</p>
+          <p class="sp-caps"><a class="sp-link" href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">{{ P.identifiers.orcid }}</a></p>
+        </div>
+        <div>
+          <p class="sp-kicker" data-zh><i aria-hidden="true"></i>许可<span>代码</span></p>
+          <p class="sp-kicker" data-en><i aria-hidden="true"></i>LICENCE<span>CODE</span></p>
+          <p class="sp-caps">
+            <span data-zh>仓库许可 Apache-2.0</span>
+            <span data-en>Repository licence Apache-2.0</span>
+          </p>
+        </div>
+        <div>
+          <p class="sp-kicker" data-zh><i aria-hidden="true"></i>版权<span>2023—2026</span></p>
+          <p class="sp-kicker" data-en><i aria-hidden="true"></i>COPYRIGHT<span>2023–2026</span></p>
+          <p class="sp-caps">© 2023–2026 Linhan Fan</p>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+</section>
+
+<script>
+  /* Research accordion. Progressive: without JS every summary stays visible
+     in the detail panel, so all four directions are readable and crawlable. */
+  (function () {
+    var station = document.querySelector('[data-sp-station="research"]');
+    if (!station) return;
+    var rows = [].slice.call(station.querySelectorAll('.sp-tower'));
+    var panels = [].slice.call(station.querySelectorAll('[data-sp-slot="detail"] section'));
+    if (!rows.length || !panels.length) return;
+
+    var count = document.getElementById('sp-area-count');
+    var total = ('0' + rows.length).slice(-2);
+
+    function open(id, active) {
+      rows.forEach(function (btn, i) {
+        var on = btn.getAttribute('aria-controls') === id;
+        btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+        if (on) active = i;
+      });
+      panels.forEach(function (p) { p.hidden = p.id !== id; });
+      if (count) count.textContent = ('0' + (active + 1)).slice(-2) + ' / ' + total;
+    }
+
+    rows.forEach(function (btn, i) {
+      btn.addEventListener('click', function () {
+        open(btn.getAttribute('aria-controls'), i);
+      });
+      btn.addEventListener('keydown', function (e) {
+        if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+        e.preventDefault();
+        var next = rows[(i + (e.key === 'ArrowDown' ? 1 : rows.length - 1)) % rows.length];
+        next.focus();
+      });
+    });
+
+    open(rows[0].getAttribute('aria-controls'), 0);
+  })();
+</script>

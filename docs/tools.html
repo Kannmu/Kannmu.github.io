@@ -1,63 +1,402 @@
 ---
-layout: default
+layout: space
 title: "在线工具与交互实验"
 nav-title: "Tools"
 description: "涵无（Kannmu）开发的在线工具与交互实验合集，包含节点计算、无裁剪图片排版、AI 图像生成、程序化植物、API 用量监控和超声空中触觉演示。"
 permalink: /tools/
-body-class: "has-hero page-tools"
+extra_css: /assets/space/css/pages.css
+sp_page: tools
 no-catalog: true
-header-img: "img/Backgrounds/Bg (13).jpg"
-header-mask: 0.55
 ---
 
-{%- assign hero_img = page.header-img | default: site.header-img -%}
+{%- assign all_tools = site.data.tools -%}
+{%- assign t_calc = all_tools | where: "name", "CalcFlow" | first -%}
+{%- assign t_pholo = all_tools | where: "name", "PhoLo" | first -%}
+{%- assign t_image = all_tools | where: "name", "Kannmu Image Studio" | first -%}
+{%- assign t_plant = all_tools | where: "name", "GenPlant" | first -%}
+{%- assign t_balance = all_tools | where: "name", "ZenMux Balance Monitor" | first -%}
+{%- assign t_lab = all_tools | where: "name", "UMH Lab" | first -%}
+{%- assign t_demo = all_tools | where: "name", "UMH Demo" | first -%}
+{%- assign t_sim = all_tools | where: "name", "T-Sim 做T训练场" | first -%}
 
-<section class="page-hero">
-  <div class="page-hero__media"
-       style="background-image:url('{{ site.baseurl }}/{{ hero_img }}')"
-       role="img" aria-label="背景照片"></div>
-  <div class="shell page-hero__inner">
-    <p class="hero__eyebrow" style="margin-bottom:20px">
-      <span class="dot" aria-hidden="true"></span>
-      <span>Build · Test · Use</span>
-      <span aria-hidden="true" style="opacity:.4">/</span>
-      <span>{{ site.data.tools.size }} tools</span>
-    </p>
-    <h1>在线工具与<em>交互实验</em></h1>
-    <p class="page-hero__desc">
-      收录的浏览器工具覆盖可视化计算、图片排版、图像生成、程序化生成与设备监控等场景，均为独立运行、无需注册的客户端应用。
-    </p>
+<!-- =====================================================================
+     F01 · INDEX · the standing category grid
+     ================================================================== -->
+<section class="sp-station" id="sp-tools-index" data-sp-station="tools-index"
+         data-sp-floor="01" data-sp-zh="索引" data-sp-en="Index" aria-label="工具索引">
+  <div class="sp-layer">
+
+    <article class="sp-panel tl-mast" data-sp-slot="title"
+             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
+      <p class="sp-eyebrow">
+        <i aria-hidden="true"></i><s aria-hidden="true"></s>
+        <span>Build · Test · Use</span>
+      </p>
+      <h1 class="sp-display tl-display">在线工具与<em>交互实验</em></h1>
+      <p class="sp-lede sp-lede--cjk">
+        收录的浏览器工具覆盖可视化计算、图片排版、图像生成、程序化生成与设备监控等场景，均为独立运行、无需注册的客户端应用。
+      </p>
+      <div class="sp-rule tl-rule"></div>
+      <p class="sp-meta tl-mast__meta">
+        <span><b>{{ all_tools.size }}</b> 个工具</span>
+        <span><b>4</b> 个类别组</span>
+        <span>无需登录</span>
+      </p>
+    </article>
+
+    <article class="sp-panel tl-grid" data-sp-slab="ink" data-sp-rot="0,6,0" data-sp-slot="list"
+            
+             data-sp-pos="-600,-30,60" data-sp-anchor="lt" data-sp-order="1"
+             aria-label="工具目录 01–04">
+      <p class="sp-label tl-kicker">01 — 04 / 08 · Index</p>
+      <div class="tl-grid__inner">
+        {%- for tool in all_tools limit: 4 -%}
+        <a class="sp-tool tl-tool" href="{{ tool.url | relative_url }}">
+          <span class="tl-tool__top">
+            <span class="sp-tool__mark">{{ tool.mark }}</span>
+            <span class="tl-tool__cat">{{ tool.category }}</span>
+          </span>
+          <span class="tl-tool__body">
+            <h3>{{ tool.name }}</h3>
+            <p>{{ tool.description }}</p>
+          </span>
+          <span class="tl-tool__foot">
+            <span class="sp-tool__tech">{{ tool.technology }}</span>
+            <span aria-hidden="true">↗</span>
+          </span>
+        </a>
+        {%- endfor -%}
+      </div>
+    </article>
+
+    <article class="sp-panel tl-grid" data-sp-slot="list"
+             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-6,0"
+             data-sp-pos="20,-380,0" data-sp-anchor="lt" data-sp-order="2"
+             aria-label="工具目录 05–08">
+      <p class="sp-label tl-kicker">05 — 08 / 08 · Index</p>
+      <div class="tl-grid__inner">
+        {%- for tool in all_tools offset: 4 -%}
+        <a class="sp-tool tl-tool" href="{{ tool.url | relative_url }}">
+          <span class="tl-tool__top">
+            <span class="sp-tool__mark">{{ tool.mark }}</span>
+            <span class="tl-tool__cat">{{ tool.category }}</span>
+          </span>
+          <span class="tl-tool__body">
+            <h3>{{ tool.name }}</h3>
+            <p>{{ tool.description }}</p>
+          </span>
+          <span class="tl-tool__foot">
+            <span class="sp-tool__tech">{{ tool.technology }}</span>
+            <span aria-hidden="true">↗</span>
+          </span>
+        </a>
+        {%- endfor -%}
+      </div>
+    </article>
+
   </div>
 </section>
 
-<div class="band band--paper band--tight">
-  <div class="shell">
-    <section class="tool-directory" aria-labelledby="tool-directory-title">
+<!-- =====================================================================
+     F02 · 可视化计算 · 图片排版
+     ================================================================== -->
+<section class="sp-station" id="sp-tools-visual" data-sp-station="tools-visual"
+         data-sp-floor="02" data-sp-zh="计算与排版" data-sp-en="Compute & Layout" aria-label="可视化计算与图片排版">
+  <div class="sp-layer">
 
-      <div class="tool-directory__intro" data-reveal>
-        <p class="sec-label" style="margin-bottom:14px"><b>01</b> Index</p>
-        <h2 id="tool-directory-title">可以直接打开使用的项目</h2>
-        <p>这些工具来自实验参数推演、照片排版、额度监控等具体场景，各自独立部署，无需登录即可使用。</p>
+    <article class="sp-panel tl-head" data-sp-slot="title"
+             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
+      <p class="sp-eyebrow">
+        <i aria-hidden="true"></i><s aria-hidden="true"></s>
+        <span>02 / 05</span>
+      </p>
+      <h2 class="sp-h2">可视化计算<br>· 图片排版</h2>
+      <p class="sp-lede sp-lede--cjk">两个客户端工具：一个处理表达式与依赖关系，一个处理照片的版面分配。</p>
+      <div class="sp-rule tl-rule"></div>
+      <div class="tl-head__tech">
+        <span>Vue</span><span>math.js</span><span>KaTeX</span>
+        <span>Web Worker</span><span>Canvas</span>
       </div>
+    </article>
 
-      <div class="tool-directory__grid">
-        {% for tool in site.data.tools %}
-        <article class="tool-card" data-reveal>
-          <a href="{{ tool.url | prepend: site.baseurl }}" aria-label="打开 {{ tool.name }}">
-            <div class="tool-card__topline">
-              <span class="tool-card__icon" aria-hidden="true">{{ tool.mark }}</span>
-              <span class="tool-card__category">{{ tool.category }}</span>
-            </div>
-            <h3>{{ tool.name }}</h3>
-            <p>{{ tool.description }}</p>
-            <div class="tool-card__footer">
-              <span>{{ tool.technology }}</span>
-              <span aria-hidden="true">&rarr;</span>
-            </div>
-          </a>
-        </article>
-        {% endfor %}
+    <article class="sp-panel tl-exhibit" data-sp-slab="ink" data-sp-rot="0,5,0" data-sp-slot="detail"
+            
+             data-sp-pos="-206,-380,50" data-sp-anchor="lt" data-sp-order="1"
+             aria-label="{{ t_calc.name }}">
+      <p class="tl-ex__mark">{{ t_calc.mark }}</p>
+      <p class="tl-ex__cat">{{ t_calc.category }}</p>
+      <h3 class="sp-h3 tl-ex__name">{{ t_calc.name }}</h3>
+      <p class="tl-ex__desc">{{ t_calc.description }}</p>
+      <p class="tl-ex__tech">{{ t_calc.technology }}</p>
+      <a class="sp-btn tl-ex__btn" href="{{ t_calc.url | relative_url }}">
+        <span>打开工具</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <p class="tl-ex__url">{{ t_calc.url }}</p>
+    </article>
+
+    <article class="sp-panel tl-exhibit" data-sp-slab="ink" data-sp-rot="0,-5,0" data-sp-slot="detail"
+            
+             data-sp-pos="214,-380,50" data-sp-anchor="lt" data-sp-order="2"
+             aria-label="{{ t_pholo.name }}">
+      <p class="tl-ex__mark">{{ t_pholo.mark }}</p>
+      <p class="tl-ex__cat">{{ t_pholo.category }}</p>
+      <h3 class="sp-h3 tl-ex__name">{{ t_pholo.name }}</h3>
+      <p class="tl-ex__desc">{{ t_pholo.description }}</p>
+      <p class="tl-ex__tech">{{ t_pholo.technology }}</p>
+      <a class="sp-btn tl-ex__btn" href="{{ t_pholo.url | relative_url }}">
+        <span>打开工具</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <p class="tl-ex__url">{{ t_pholo.url }}</p>
+    </article>
+
+    <article class="sp-panel tl-stations" data-sp-slot="aside"
+             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-12,0"
+             data-sp-pos="-616,-40,0" data-sp-anchor="lt" data-sp-order="3"
+             aria-label="类别索引">
+      <p class="sp-label tl-kicker">类别索引 · Stations</p>
+      <div class="tl-stations__list">
+        <a class="sp-item tl-station" href="#sp-tools-visual" aria-current="true"><span>02</span> 计算与排版</a>
+        <a class="sp-item tl-station" href="#sp-tools-generative"><span>03</span> 生成与程序化</a>
+        <a class="sp-item tl-station" href="#sp-tools-haptic"><span>04</span> 触觉与交互</a>
+        <a class="sp-item tl-station" href="#sp-tools-data"><span>05</span> 用量与训练</a>
       </div>
-    </section>
+    </article>
+
   </div>
-</div>
+</section>
+
+<!-- =====================================================================
+     F03 · 图像生成 · 程序化生成
+     ================================================================== -->
+<section class="sp-station" id="sp-tools-generative" data-sp-station="tools-generative"
+         data-sp-floor="03" data-sp-zh="生成" data-sp-en="Generative" aria-label="图像生成与程序化生成">
+  <div class="sp-layer">
+
+    <article class="sp-panel tl-head" data-sp-slot="title"
+             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
+      <p class="sp-eyebrow">
+        <i aria-hidden="true"></i><s aria-hidden="true"></s>
+        <span>03 / 05</span>
+      </p>
+      <h2 class="sp-h2">图像生成<br>· 程序化生成</h2>
+      <p class="sp-lede sp-lede--cjk">两个生成类工具：一个面向图像模型的提示与蒙版工作台，一个用确定性种子生成三维植物。</p>
+      <div class="sp-rule tl-rule"></div>
+      <div class="tl-head__tech">
+        <span>Gemini</span><span>ZenMux</span><span>Three.js</span><span>WebGL</span><span>Procedural</span>
+      </div>
+    </article>
+
+    <article class="sp-panel tl-exhibit" data-sp-slab="ink" data-sp-rot="0,5,0" data-sp-slot="detail"
+            
+             data-sp-pos="-206,-380,50" data-sp-anchor="lt" data-sp-order="1"
+             aria-label="{{ t_image.name }}">
+      <p class="tl-ex__mark">{{ t_image.mark }}</p>
+      <p class="tl-ex__cat">{{ t_image.category }}</p>
+      <h3 class="sp-h3 tl-ex__name">{{ t_image.name }}</h3>
+      <p class="tl-ex__desc">{{ t_image.description }}</p>
+      <p class="tl-ex__tech">{{ t_image.technology }}</p>
+      <a class="sp-btn tl-ex__btn" href="{{ t_image.url | relative_url }}">
+        <span>打开工具</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <p class="tl-ex__url">{{ t_image.url }}</p>
+    </article>
+
+    <article class="sp-panel tl-exhibit" data-sp-slab="ink" data-sp-rot="0,-5,0" data-sp-slot="detail"
+            
+             data-sp-pos="214,-380,50" data-sp-anchor="lt" data-sp-order="2"
+             aria-label="{{ t_plant.name }}">
+      <p class="tl-ex__mark">{{ t_plant.mark }}</p>
+      <p class="tl-ex__cat">{{ t_plant.category }}</p>
+      <h3 class="sp-h3 tl-ex__name">{{ t_plant.name }}</h3>
+      <p class="tl-ex__desc">{{ t_plant.description }}</p>
+      <p class="tl-ex__tech">{{ t_plant.technology }}</p>
+      <a class="sp-btn tl-ex__btn" href="{{ t_plant.url | relative_url }}">
+        <span>打开工具</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <p class="tl-ex__url">{{ t_plant.url }}</p>
+    </article>
+
+    <article class="sp-panel tl-stations" data-sp-slot="aside"
+             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-12,0"
+             data-sp-pos="-616,-40,0" data-sp-anchor="lt" data-sp-order="3"
+             aria-label="类别索引">
+      <p class="sp-label tl-kicker">类别索引 · Stations</p>
+      <div class="tl-stations__list">
+        <a class="sp-item tl-station" href="#sp-tools-visual"><span>02</span> 计算与排版</a>
+        <a class="sp-item tl-station" href="#sp-tools-generative" aria-current="true"><span>03</span> 生成与程序化</a>
+        <a class="sp-item tl-station" href="#sp-tools-haptic"><span>04</span> 触觉与交互</a>
+        <a class="sp-item tl-station" href="#sp-tools-data"><span>05</span> 用量与训练</a>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- =====================================================================
+     F04 · 交互实验 · 超声交互
+     ================================================================== -->
+<section class="sp-station" id="sp-tools-haptic" data-sp-station="tools-haptic"
+         data-sp-floor="04" data-sp-zh="触觉" data-sp-en="Haptics" aria-label="交互实验与超声交互">
+  <div class="sp-layer">
+
+    <article class="sp-panel tl-head" data-sp-slot="title"
+             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
+      <p class="sp-eyebrow">
+        <i aria-hidden="true"></i><s aria-hidden="true"></s>
+        <span>04 / 05</span>
+      </p>
+      <h2 class="sp-h2">交互实验<br>· 超声交互</h2>
+      <p class="sp-lede sp-lede--cjk">同一套超声相控阵的两种入口：研究展示与模拟器，以及可直接驱动控制器的演示台。</p>
+      <div class="sp-rule tl-rule"></div>
+      <div class="tl-head__tech">
+        <span>Ultrasound</span><span>Haptics</span><span>Simulator</span><span>React</span><span>Vite</span><span>Web Serial</span>
+      </div>
+    </article>
+
+    <article class="sp-panel tl-exhibit" data-sp-slab="ink" data-sp-rot="0,5,0" data-sp-slot="detail"
+            
+             data-sp-pos="-206,-380,50" data-sp-anchor="lt" data-sp-order="1"
+             aria-label="{{ t_lab.name }}">
+      <p class="tl-ex__mark">{{ t_lab.mark }}</p>
+      <p class="tl-ex__cat">{{ t_lab.category }}</p>
+      <h3 class="sp-h3 tl-ex__name">{{ t_lab.name }}</h3>
+      <p class="tl-ex__desc">{{ t_lab.description }}</p>
+      <p class="tl-ex__tech">{{ t_lab.technology }}</p>
+      <a class="sp-btn tl-ex__btn" href="{{ t_lab.url | relative_url }}">
+        <span>打开工具</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <p class="tl-ex__url">{{ t_lab.url }}</p>
+    </article>
+
+    <article class="sp-panel tl-exhibit" data-sp-slab="ink" data-sp-rot="0,-5,0" data-sp-slot="detail"
+            
+             data-sp-pos="214,-380,50" data-sp-anchor="lt" data-sp-order="2"
+             aria-label="{{ t_demo.name }}">
+      <p class="tl-ex__mark">{{ t_demo.mark }}</p>
+      <p class="tl-ex__cat">{{ t_demo.category }}</p>
+      <h3 class="sp-h3 tl-ex__name">{{ t_demo.name }}</h3>
+      <p class="tl-ex__desc">{{ t_demo.description }}</p>
+      <p class="tl-ex__tech">{{ t_demo.technology }}</p>
+      <a class="sp-btn tl-ex__btn" href="{{ t_demo.url | relative_url }}">
+        <span>打开工具</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <p class="tl-ex__url">{{ t_demo.url }}</p>
+    </article>
+
+    <article class="sp-panel tl-stations" data-sp-slot="aside"
+             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-12,0"
+             data-sp-pos="-616,-40,0" data-sp-anchor="lt" data-sp-order="3"
+             aria-label="类别索引">
+      <p class="sp-label tl-kicker">类别索引 · Stations</p>
+      <div class="tl-stations__list">
+        <a class="sp-item tl-station" href="#sp-tools-visual"><span>02</span> 计算与排版</a>
+        <a class="sp-item tl-station" href="#sp-tools-generative"><span>03</span> 生成与程序化</a>
+        <a class="sp-item tl-station" href="#sp-tools-haptic" aria-current="true"><span>04</span> 触觉与交互</a>
+        <a class="sp-item tl-station" href="#sp-tools-data"><span>05</span> 用量与训练</a>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- =====================================================================
+     F05 · API 用量 · 交易训练
+     ================================================================== -->
+<section class="sp-station" id="sp-tools-data" data-sp-station="tools-data"
+         data-sp-floor="05" data-sp-zh="数据" data-sp-en="Data" aria-label="用量监控与交易训练">
+  <div class="sp-layer">
+
+    <article class="sp-panel tl-head" data-sp-slot="title"
+             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
+      <p class="sp-eyebrow">
+        <i aria-hidden="true"></i><s aria-hidden="true"></s>
+        <span>05 / 05</span>
+      </p>
+      <h2 class="sp-h2">API 用量<br>· 交易训练</h2>
+      <p class="sp-lede sp-lede--cjk">两个以数据回放为主体的工具：一个集中查看接口额度与用量，一个用历史行情做逐根回放训练。</p>
+      <div class="sp-rule tl-rule"></div>
+      <div class="tl-head__tech">
+        <span>ZenMux API</span><span>Charts</span><span>Canvas</span><span>A股行情</span>
+      </div>
+    </article>
+
+    <article class="sp-panel tl-exhibit" data-sp-slab="ink" data-sp-rot="0,5,0" data-sp-slot="detail"
+            
+             data-sp-pos="-206,-380,50" data-sp-anchor="lt" data-sp-order="1"
+             aria-label="{{ t_balance.name }}">
+      <p class="tl-ex__mark">{{ t_balance.mark }}</p>
+      <p class="tl-ex__cat">{{ t_balance.category }}</p>
+      <h3 class="sp-h3 tl-ex__name">{{ t_balance.name }}</h3>
+      <p class="tl-ex__desc">{{ t_balance.description }}</p>
+      <p class="tl-ex__tech">{{ t_balance.technology }}</p>
+      <a class="sp-btn tl-ex__btn" href="{{ t_balance.url | relative_url }}">
+        <span>打开工具</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <p class="tl-ex__url">{{ t_balance.url }}</p>
+    </article>
+
+    <article class="sp-panel tl-exhibit" data-sp-slab="ink" data-sp-rot="0,-5,0" data-sp-slot="detail"
+            
+             data-sp-pos="214,-380,50" data-sp-anchor="lt" data-sp-order="2"
+             aria-label="{{ t_sim.name }}">
+      <p class="tl-ex__mark">{{ t_sim.mark }}</p>
+      <p class="tl-ex__cat">{{ t_sim.category }}</p>
+      <h3 class="sp-h3 tl-ex__name">{{ t_sim.name }}</h3>
+      <p class="tl-ex__desc">{{ t_sim.description }}</p>
+      <p class="tl-ex__tech">{{ t_sim.technology }}</p>
+      <a class="sp-btn tl-ex__btn" href="{{ t_sim.url | relative_url }}">
+        <span>打开工具</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <p class="tl-ex__url">{{ t_sim.url }}</p>
+    </article>
+
+    <article class="sp-panel tl-stations" data-sp-slot="aside"
+             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-12,0"
+             data-sp-pos="-616,-40,0" data-sp-anchor="lt" data-sp-order="3"
+             aria-label="类别索引">
+      <p class="sp-label tl-kicker">类别索引 · Stations</p>
+      <div class="tl-stations__list">
+        <a class="sp-item tl-station" href="#sp-tools-visual"><span>02</span> 计算与排版</a>
+        <a class="sp-item tl-station" href="#sp-tools-generative"><span>03</span> 生成与程序化</a>
+        <a class="sp-item tl-station" href="#sp-tools-haptic"><span>04</span> 触觉与交互</a>
+        <a class="sp-item tl-station" href="#sp-tools-data" aria-current="true"><span>05</span> 用量与训练</a>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<script type="module">
+  /* TOOLS — in-page station travel (also works as plain anchor jumps). */
+  (function () {
+    if (!document.body || document.body.dataset.spPage !== 'tools') return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('a[href^="#sp-tools-"]').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (!target) return;
+        e.preventDefault();
+        const top = target.getBoundingClientRect().top + window.scrollY;
+        if (reduce) { window.scrollTo(0, top); return; }
+        const from = window.scrollY;
+        const dist = top - from;
+        const t0 = performance.now();
+        const dur = Math.min(1100, 420 + Math.abs(dist) * 0.45);
+        const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+        (function step(now) {
+          const t = Math.min(1, (now - t0) / dur);
+          window.scrollTo(0, from + dist * ease(t));
+          if (t < 1) requestAnimationFrame(step);
+        })(t0);
+      });
+    });
+  })();
+</script>

@@ -1,0 +1,224 @@
+/* ============================================================================
+   viz.css — SPECTRAL VECTOR v3 · data figures
+   ----------------------------------------------------------------------------
+   Only v3 tokens from docs/_doc/direction-v3.md §1. No radius, no shadow.
+   The canvas itself is sized by viz.js; this file owns the figure box, the
+   caption, the tooltip and the no-JS table fallback.
+   ========================================================================== */
+
+.sp-viz {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--paper, #F7F7F4);
+  font-family: var(--f-mono, ui-monospace, monospace);
+  /* chart internals must never be rounded or blurred */
+  box-shadow: none;
+}
+
+.sp-viz > canvas {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: 0;
+  outline: none;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sp-viz[tabindex] > canvas {
+  cursor: crosshair;
+}
+
+/* the figure is the interactive summary: one visible focus ring, no glow */
+.sp-viz:focus {
+  outline: none;
+}
+
+.sp-viz:focus-visible {
+  outline: 1px solid var(--g-cyan, #24D6EA);
+  outline-offset: 4px;
+}
+
+/* ---- caption ------------------------------------------------------------ */
+
+.sp-viz__cap {
+  margin: 9px 0 0;
+  padding: 8px 0 0;
+  border-top: 1px solid var(--line-1, rgba(255, 255, 255, 0.09));
+  color: var(--mute, #8C93A3);
+  font: 400 12px/1.55 var(--f-mono, ui-monospace, monospace);
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.sp-viz__cap b,
+.sp-viz__cap strong {
+  color: var(--paper-2, #C9CDD6);
+  font-weight: 500;
+}
+
+.sp-viz__cap a {
+  color: var(--paper-2, #C9CDD6);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-3, rgba(255, 255, 255, 0.42));
+}
+
+.sp-viz__cap a:hover,
+.sp-viz__cap a:focus-visible {
+  color: var(--paper, #F7F7F4);
+  border-bottom-color: var(--g-cyan, #24D6EA);
+}
+
+/* ---- tooltip: absolute inside the figure, hard 1px border ---------------- */
+
+.sp-viz [data-viz-tip] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 5;
+  max-width: min(280px, calc(100% - 8px));
+  padding: 8px 10px 9px;
+  border: 1px solid var(--line-3, rgba(255, 255, 255, 0.42));
+  border-radius: 0;
+  background: var(--ink-1, #090B10);
+  color: var(--paper, #F7F7F4);
+  font: 400 12px/1.5 var(--f-mono, ui-monospace, monospace);
+  letter-spacing: 0.01em;
+  text-align: left;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 90ms linear;
+  box-shadow: none;
+}
+
+.sp-viz [data-viz-tip][data-on="1"] {
+  visibility: visible;
+  opacity: 1;
+}
+
+.sp-viz [data-viz-tip] b {
+  display: block;
+  margin: 0 0 3px;
+  color: var(--paper, #F7F7F4);
+  font-weight: 500;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.sp-viz [data-viz-tip] span {
+  display: block;
+  color: var(--mute, #8C93A3);
+  font-variant-numeric: tabular-nums;
+}
+
+.sp-viz [data-viz-tip] span + span {
+  margin-top: 1px;
+}
+
+/* ---- no-JS / table fallback --------------------------------------------- */
+
+.sp-viz table[data-viz-table] {
+  width: 100%;
+  margin: 8px 0 0;
+  border-collapse: collapse;
+  border: 0;
+  color: var(--paper-2, #C9CDD6);
+  font: 400 12px/1.5 var(--f-mono, ui-monospace, monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+.sp-viz table[data-viz-table] caption {
+  padding: 0 0 6px;
+  color: var(--mute, #8C93A3);
+  text-align: left;
+  caption-side: top;
+}
+
+.sp-viz table[data-viz-table] th,
+.sp-viz table[data-viz-table] td {
+  padding: 5px 8px 5px 0;
+  border-bottom: 1px solid var(--line-1, rgba(255, 255, 255, 0.09));
+  text-align: left;
+  vertical-align: top;
+}
+
+.sp-viz table[data-viz-table] th {
+  color: var(--mute, #8C93A3);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sp-viz table[data-viz-table] td:last-child,
+.sp-viz table[data-viz-table] th:last-child {
+  text-align: right;
+  padding-right: 0;
+}
+
+/* ---- sizing exceptions --------------------------------------------------- */
+
+/* the live signal is exactly 96 × 28 (viz.js clamps to the container) */
+.sp-viz[data-viz="signal"] {
+  width: auto;
+  max-width: 96px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.sp-viz[data-viz="signal"] > canvas {
+  width: 96px;
+  max-width: 100%;
+  height: 28px;
+}
+
+/* a sigil mark is a square-ish procedural plate; data-viz-h can override */
+.sp-viz[data-viz="sigil"] {
+  width: 100%;
+}
+
+/* ---- reduced motion ------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-viz [data-viz-tip] {
+    transition: none;
+  }
+}
+
+/* ---- responsive ---------------------------------------------------------- */
+
+@media (max-width: 720px) {
+  .sp-viz__cap {
+    margin-top: 8px;
+    padding-top: 7px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+}
+
+@media (max-width: 420px) {
+  .sp-viz [data-viz-tip] {
+    max-width: calc(100% - 6px);
+    padding: 7px 9px 8px;
+  }
+}
+
+/* print: charts keep their vector output, captions stay legible */
+@media print {
+  .sp-viz {
+    break-inside: avoid;
+  }
+  .sp-viz [data-viz-tip] {
+    display: none;
+  }
+}

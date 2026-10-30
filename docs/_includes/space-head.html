@@ -1,0 +1,138 @@
+<!-- =============================================================================
+     SPATIAL · document head
+     Loaded only by _layouts/space.html. Order matters: fonts → shell css →
+     page css → lang bootstrap → importmap → runtime module. No CDN, no jQuery,
+     no bootstrap. Verification + analytics tags are kept (analytics last).
+     ========================================================================== -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#04060a">
+<meta name="google-site-verification" content="pmu1kqultL62F58MPIP5I-_4G15QehP0HAywIr1qWzA" />
+<meta name="google-adsense-account" content="ca-pub-7629675373716127">
+<meta name="baidu-site-verification" content="codeva-0gvzDSDpdY" />
+<meta name="msvalidate.01" content="39DBA1088E4D102A5E0F2E461D60227E" />
+{% seo %}
+
+<link rel="manifest" href="{{ '/pwa/manifest.json' | relative_url }}">
+<link rel="shortcut icon" href="{{ '/img/favicon_K.ico' | relative_url }}">
+
+<link rel="preload" as="font" type="font/woff2" crossorigin
+      href="{{ '/assets/fonts/archivo-latin-wdth-normal.woff2' | relative_url }}">
+<link rel="preload" as="font" type="font/woff2" crossorigin
+      href="{{ '/assets/fonts/jbmono-latin-wght-normal.woff2' | relative_url }}">
+
+<link rel="stylesheet" href="{{ '/assets/space/css/space.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/space/css/hud.css' | relative_url }}">
+
+{%- comment -%}
+  Page-level stylesheets are owned by the web / reader agents. Load them only
+  when the files actually exist so their absence never produces a 404.
+{%- endcomment -%}
+{%- assign _sp_pages_css = site.static_files | where: 'path', '/assets/space/css/pages.css' -%}
+{%- if _sp_pages_css.size > 0 -%}
+<link rel="stylesheet" href="{{ '/assets/space/css/pages.css' | relative_url }}">
+{%- endif -%}
+{%- assign _sp_prose_css = site.static_files | where: 'path', '/assets/space/css/prose.css' -%}
+{%- if _sp_prose_css.size > 0 -%}
+<link rel="stylesheet" href="{{ '/assets/space/css/prose.css' | relative_url }}">
+{%- endif -%}
+{%- assign _sp_viz_css = site.static_files | where: 'path', '/assets/space/css/viz.css' -%}
+{%- if _sp_viz_css.size > 0 -%}
+<link rel="stylesheet" href="{{ '/assets/space/css/viz.css' | relative_url }}">
+{%- endif -%}
+{% if page.extra_css %}<link rel="stylesheet" href="{{ page.extra_css | relative_url }}">{% endif %}
+
+<style>
+  /* native smooth scrolling is banned: the camera timeline / rAF tween owns it */
+  html { scroll-behavior: auto; }
+
+  /* no-JS belt and braces (the .sp-flat fallback is baked into <html>) */
+  html:not(.js) .sp-boot,
+  html:not(.js) #sp-gl { display: none !important; }
+  html:not(.js) .sp-cursor { display: none !important; }
+</style>
+
+<noscript>
+  <style>
+    .sp-boot { display: none !important; }
+    #sp-gl { display: none !important; }
+  </style>
+</noscript>
+
+<script>
+/* language bootstrap — runs before first paint (no flash), and the switcher is
+   wired here (plain script, not a module) so it keeps working even if app.js
+   never boots. app.js listens for the 'sp:lang' event to re-project panels. */
+(function (root, doc) {
+  root.classList.add('js');
+
+  var KEY = 'lang';
+  var lang = 'zh';
+  try {
+    var q = new URLSearchParams(location.search).get('lang');
+    if (q === 'en' || q === 'zh') { lang = q; localStorage.setItem(KEY, q); }
+    else if (localStorage.getItem(KEY) === 'en') { lang = 'en'; }
+  } catch (e) { /* private mode */ }
+
+  function apply(v) {
+    root.setAttribute('data-lang', v);
+    root.setAttribute('lang', v === 'en' ? 'en' : 'zh-CN');
+  }
+
+  function sync() {
+    var btns = doc.querySelectorAll('[data-sp-lang]');
+    var cur = root.getAttribute('data-lang');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].setAttribute('aria-pressed', String(btns[i].getAttribute('data-sp-lang') === cur));
+    }
+  }
+
+  apply(lang);
+
+  doc.addEventListener('click', function (e) {
+    var el = e.target;
+    var btn = el && el.closest ? el.closest('[data-sp-lang]') : null;
+    if (!btn) return;
+    var v = btn.getAttribute('data-sp-lang') === 'en' ? 'en' : 'zh';
+    apply(v);
+    try { localStorage.setItem(KEY, v); } catch (e2) {}
+    sync();
+    try {
+      doc.dispatchEvent(new CustomEvent('sp:lang', { detail: { lang: v } }));
+    } catch (e3) {}
+  }, false);
+
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', sync);
+  else sync();
+})(document.documentElement, document);
+</script>
+
+<script type="importmap">
+{ "imports": { "three": "{{ '/assets/vendor/three/three.module.js' | relative_url }}" } }
+</script>
+
+{%- comment -%}
+  viz.js is owned by the viz agent and auto-initialises [data-viz] figures.
+  Load it as a module only when the file exists (same guard as pages.css), so
+  its absence never produces a 404 and the runtime boots without it.
+{%- endcomment -%}
+{%- assign _sp_viz_js = site.static_files | where: 'path', '/assets/space/js/viz.js' -%}
+{%- if _sp_viz_js.size > 0 -%}
+<script type="module" src="{{ '/assets/space/js/viz.js' | relative_url }}"></script>
+{%- endif -%}
+
+<script type="module" src="{{ '/assets/space/js/app.js' | relative_url }}"></script>
+
+<!-- analytics: async, last, never blocks the shell -->
+<script async>
+  var _hmt = _hmt || [];
+  (function () {
+    var hm = document.createElement('script');
+    hm.src = 'https://hm.baidu.com/hm.js?1f681335bb8c58643c8ed990ab06f8cc';
+    var s = document.getElementsByTagName('script')[0];
+    if (s && s.parentNode) s.parentNode.insertBefore(hm, s);
+  })();
+</script>
+<script src="https://analytics.ahrefs.com/analytics.js" data-key="FjQXJERHNkxbxmgW07y3Lg" async></script>

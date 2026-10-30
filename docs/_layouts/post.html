@@ -1,246 +1,408 @@
 ---
-layout: default
+layout: space
+sp-page: post
+sp_mode: ambient
 ---
+{%- comment -%}
+  READING LAYOUT — a document, not a deck.
+  No .sp-station / .sp-layer / .sp-panel: the runtime keeps the WebGL
+  architecture as a fixed backdrop (document / ambient mode) and the page is
+  plain flow. The whole column lives inside one `.rd-lane` scrim so body text
+  always sits on a controlled value instead of the live render.
+  Typography: assets/space/css/prose.css.
 
-<!-- Image to hack wechat -->
-<!-- Post Header -->
-{% include intro-header.html type='post' %}
+  NOTE ON THE TWO KEYS ABOVE — Jekyll does not merge a layout's front matter into
+  `page`, so `sp-page: post` / `sp_mode: ambient` here document the intent but
+  are not read by `_layouts/space.html`. The runtime resolves them structurally
+  instead: `page.layout == 'post'` (or `page.collection == 'posts'`) → post +
+  ambient. Keep them in sync with `_includes/space-head.html`'s resolver.
+{%- endcomment -%}
+{%- assign rd_chars = content | strip_html | strip_newlines | size -%}
+{%- assign rd_min = rd_chars | divided_by: 620 | plus: 1 -%}
+{%- assign rd_cat = page.categories | join: ' / ' -%}
 
-<!-- Post Content -->
-<article>
-    <div class="container">
-        <div class="row">
+<div class="rd-doc">
 
-    <!-- Post Container -->
-            <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                post-container">
-                <!-- <ul class="ignore">
-                    <li><a href="javascript:translate.changeLanguage('english');">English</a></li>|
-                    <li><a href="javascript:translate.changeLanguage('chinese_simplified');">简体中文</a></li>|
-                    <li><a href="javascript:translate.changeLanguage('chinese_traditional');">繁體中文</a></li>
-                </ul> -->
-                <!-- Multi-Lingual -->
-                {% if page.multilingual %}
-                    {% include multilingual-sel.html %}
-                {% endif %}
+  <div class="rd-lane">
 
-				{{ content }}
+    <!-- ================================================================== -->
+    <!-- HEADER                                                             -->
+    <!-- ================================================================== -->
+    <header class="rd-head">
+      <p class="sp-eyebrow rd-head__eyebrow">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>阅读</span><span data-en>Reading</span></span>
+        <s aria-hidden="true"></s>
+        <span>{% if rd_cat != '' %}{{ rd_cat | escape }}{% else %}<span data-zh>笔记</span><span data-en>Notes</span>{% endif %}</span>
+      </p>
 
-                <hr style="visibility: hidden;">
-                <ul class="pager">
-                    {% if page.previous.url %}
-                    <li class="previous">
-                        <a href="{{ page.previous.url | prepend: site.baseurl | replace: '//', '/' }}" data-toggle="tooltip" data-placement="top" title="{{page.previous.title}}">
-                        Previous<br>
-                        <span>{{page.previous.title}}</span>
-                        </a>
-                    </li>
-                    {% endif %}
-                    {% if page.next.url %}
-                    <li class="next">
-                        <a href="{{ page.next.url | prepend: site.baseurl | replace: '//', '/' }}" data-toggle="tooltip" data-placement="top" title="{{page.next.title}}">
-                        Next<br>
-                        <span>{{page.next.title}}</span>
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-                <hr style="visibility: hidden;">
+      <h1 class="rd-title" id="rd-title">{{ page.title | escape }}</h1>
 
-                {% if site.disqus_username %}
-                <!-- disqus 评论框 start -->
-                <div class="comment">
-                    <div id="disqus_thread" class="disqus-thread"></div>
-                </div>
-                <!-- disqus 评论框 end -->
-                {% endif %}
+      {% if page.subtitle %}
+      <p class="rd-sub">{{ page.subtitle | escape }}</p>
+      {% endif %}
 
-                {% if site.netease_comment %}
-                <!-- 网易云跟帖 评论框 start -->
-                <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
-                <!-- 网易云跟帖 评论框 end -->
-                {% endif %}
+      <div class="sp-rule rd-head__rule" aria-hidden="true"></div>
 
-                {% if site.giscus.enabled %}
-                <!-- Giscus 评论框 start -->
-                <div class="comment">
-                    <script src="https://giscus.app/client.js"
-                        data-repo="{{ site.giscus.repo }}"
-                        data-repo-id="{{ site.giscus.repo_id }}"
-                        data-category="{{ site.giscus.category }}"
-                        data-category-id="{{ site.giscus.category_id }}"
-                        data-mapping="{{ site.giscus.mapping }}"
-                        data-reactions-enabled="{{ site.giscus.reactions_enabled }}"
-                        data-emit-metadata="{{ site.giscus.emit_metadata }}"
-                        data-input-position="{{ site.giscus.input_position }}"
-                        data-theme="{{ site.giscus.theme }}"
-                        data-lang="{{ site.giscus.lang }}"
-                        crossorigin="anonymous"
-                        async>
-                    </script>
-                </div>
-                <!-- Giscus 评论框 end -->
-                {% endif %}
-            </div>  
-
-    <!-- Side Catalog Container -->
-        {% unless page.no-catalog %}
-            <div class="
-                col-lg-2 col-lg-offset-0
-                visible-lg-block
-                sidebar-container
-                catalog-container">
-                
-                <div id="translate"></div>
-
-                <div class="side-catalog">
-                    <hr class="hidden-sm hidden-xs">
-                    <h5>
-                        <a class="catalog-toggle" href="#">CATALOG</a>
-                    </h5>
-                    <ul class="catalog-body"></ul>
-                </div>
-            </div>
-        {% endunless %}
-
-    <!-- Sidebar Container -->
-            <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                sidebar-container">
-
-                <!-- Featured Tags -->
-                {% include featured-tags.html bottom=true %}
-
-                <!-- Friends Blog -->
-                {% include friends.html %}
-            </div>
+      <div class="rd-metabar">
+        <div class="rd-meta">
+          <span class="sp-label"><span data-zh>日期</span><span data-en>Date</span></span>
+          <b><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: '%Y.%m.%d' }}</time></b>
         </div>
-    </div>
-    
+        <div class="rd-meta">
+          <span class="sp-label"><span data-zh>阅读</span><span data-en>Length</span></span>
+          <b>{{ rd_min }} MIN</b>
+          <small>{{ rd_chars }} <span data-zh>字符</span><span data-en>chars</span></small>
+        </div>
+        <div class="rd-meta">
+          <span class="sp-label"><span data-zh>作者</span><span data-en>Author</span></span>
+          <b><a href="{{ '/about/' | relative_url }}">{{ page.author | default: site.author | default: site.title | escape }}</a></b>
+          <small><span data-zh>研究笔记</span><span data-en>Research notes</span></small>
+        </div>
+      </div>
 
+      {% if page.tags and page.tags.size > 0 %}
+      <div class="rd-tags">
+        <span class="sp-label"><span data-zh>标签</span><span data-en>Tags</span></span>
+        {% for tag in page.tags %}<a class="sp-chip" href="{{ '/archive/' | relative_url }}" title="{{ tag | escape }}">{{ tag | escape }}</a>{% endfor %}
+      </div>
+      {% endif %}
+    </header>
 
-</article>
+    <!-- ================================================================== -->
+    <!-- ARTICLE                                                            -->
+    <!-- ================================================================== -->
+    <article class="rd-article" id="rd-article">
+      <div class="rd-article__head">
+        <span class="sp-label"><span data-zh>正文</span><span data-en>Body copy</span></span>
+        <span class="rd-article__len" aria-hidden="true">≈ <b>{{ rd_min }}</b> MIN · {{ page.date | date: '%Y' }}</span>
+      </div>
+      <div class="rd-prose" id="rd-body">{{ content }}</div>
+    </article>
 
-<!-- add support for mathjax by voleking-->
-{% if page.mathjax %}
-  {% include mathjax_support.html %}
-{% endif %}
+    <!-- ================================================================== -->
+    <!-- COMMENTS (giscus, lazy)                                            -->
+    <!-- ================================================================== -->
+    {% if site.giscus.enabled %}
+    {%- assign giscus_theme = site.giscus.theme -%}
+    {%- comment -%} Reading surface is always dark; a light system scheme would drop a white slab inside it. {%- endcomment -%}
+    {%- if giscus_theme == 'preferred_color_scheme' %}{% assign giscus_theme = 'dark' %}{% endif -%}
+    <section class="rd-comments" aria-labelledby="rd-comments-h">
+      <div class="rd-comments__hd">
+        <h2 class="sp-h3" id="rd-comments-h"><span data-zh>讨论</span><span data-en>Discussion</span></h2>
+        <span class="sp-label">GISCUS</span>
+      </div>
+      <div class="rd-comments__mount" id="rd-comments-mount"
+           data-loaded="0"
+           data-repo="{{ site.giscus.repo }}"
+           data-repo-id="{{ site.giscus.repo_id }}"
+           data-category="{{ site.giscus.category }}"
+           data-category-id="{{ site.giscus.category_id }}"
+           data-mapping="{{ site.giscus.mapping }}"
+           data-reactions-enabled="{{ site.giscus.reactions_enabled }}"
+           data-emit-metadata="{{ site.giscus.emit_metadata }}"
+           data-input-position="{{ site.giscus.input_position }}"
+           data-theme="{{ giscus_theme }}"
+           data-lang="{{ site.giscus.lang }}"
+           data-loading="{{ site.giscus.loading | default: 'lazy' }}">
+        <div class="rd-comments__fallback" aria-hidden="true">
+          <span><span data-zh>接近时载入评论</span><span data-en>Comments load on approach</span></span>
+        </div>
+        <div id="rd-comments"></div>
+      </div>
+    </section>
+    {% endif %}
 
-{% if site.netease_comment %}
-<!-- 网易云跟帖JS代码 start -->
-<script src="https://img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"></script>
-<script async>
-  var cloudTieConfig = {
-    url: document.location.href, 
-    sourceId: "",
-    productKey: "de25fc98a6fe48b3bc8a7ae765da99a0",
-    target: "cloud-tie-wrapper"
-  };
-  var yunManualLoad = true;
-  Tie.loader("aHR0cHM6Ly9hcGkuZ2VudGllLjE2My5jb20vcGMvbGl2ZXNjcmlwdC5odG1s", true);
-</script>
-<!-- 网易云跟帖JS代码 end -->
-{% endif %}
+    <!-- ================================================================== -->
+    <!-- END — prev / next + colophon                                       -->
+    <!-- ================================================================== -->
+    <footer class="rd-end" aria-labelledby="rd-end-h">
+      <div class="rd-end__hd">
+        <h2 class="sp-h3" id="rd-end-h"><span data-zh>继续阅读</span><span data-en>Continue</span></h2>
+        <span class="sp-label">{{ page.date | date: '%Y' }} · <span data-zh>档案</span><span data-en>Archive</span></span>
+      </div>
 
+      <nav class="rd-pn" aria-label="Article navigation">
+        {% if page.previous %}
+        <a class="rd-pn__a rd-pn__a--prev" href="{{ page.previous.url | relative_url }}">
+          <span class="rd-pn__k">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+            <span data-zh>上一篇</span><span data-en>Previous</span>
+          </span>
+          <span class="rd-pn__t">{{ page.previous.title | escape }}</span>
+        </a>
+        {% else %}
+        <div class="rd-pn__a rd-pn__a--empty" aria-hidden="true">
+          <span class="rd-pn__k"><span data-zh>第一篇</span><span data-en>First entry</span></span>
+          <span class="rd-pn__t">—</span>
+        </div>
+        {% endif %}
 
-{% if site.disqus_username %}
-<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = "{{site.disqus_username}}";
-    var disqus_identifier = "{{page.id}}";
-    var disqus_url = "{{site.url}}{{page.url}}";
+        {% if page.next %}
+        <a class="rd-pn__a rd-pn__a--next" href="{{ page.next.url | relative_url }}">
+          <span class="rd-pn__k">
+            <span data-zh>下一篇</span><span data-en>Next</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+          <span class="rd-pn__t">{{ page.next.title | escape }}</span>
+        </a>
+        {% else %}
+        <div class="rd-pn__a rd-pn__a--empty" aria-hidden="true">
+          <span class="rd-pn__k"><span data-zh>最新一篇</span><span data-en>Latest entry</span></span>
+          <span class="rd-pn__t">—</span>
+        </div>
+        {% endif %}
+      </nav>
 
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<!-- disqus 公共JS代码 end -->
-{% endif %}
+      <div class="rd-end__foot">
+        <div class="rd-end__links">
+          <a class="sp-link" href="{{ '/archive/' | relative_url }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+            <span><span data-zh>全部笔记</span><span data-en>All notes</span></span>
+          </a>
+          <a class="sp-link" href="{{ '/' | relative_url }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9h-6v-6H10v6H4z"/></svg>
+            <span><span data-zh>返回首页</span><span data-en>Home</span></span>
+          </a>
+          <a class="sp-link" href="#rd-title" data-rd-top>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+            <span><span data-zh>顶部</span><span data-en>Top</span></span>
+          </a>
+        </div>
+        <p class="rd-end__note">© {{ site.time | date: '%Y' }} Kannmu · <span data-zh>保留所有权利</span><span data-en>All rights reserved</span></p>
+      </div>
+    </footer>
 
+  </div><!-- /.rd-lane -->
+</div><!-- /.rd-doc -->
 
-{% if site.anchorjs %}
-<!-- async load function -->
+<!-- reading progress hairline -->
+<div class="rd-prog" aria-hidden="true"><i></i></div>
+
+<!-- catalog (right-hand TOC) -->
+{% unless page.no-catalog %}
+<aside class="rd-toc" id="rd-toc" data-empty="1" aria-labelledby="rd-toc-h">
+  <div class="rd-toc__hd">
+    <span class="sp-label" id="rd-toc-h"><span data-zh>目录</span><span data-en>Catalog</span></span>
+    <span class="rd-toc__pct" id="rd-pct">0%</span>
+  </div>
+  <ol class="rd-toc__list" id="rd-toc-list"></ol>
+  <a class="rd-toc__back" href="#rd-title" data-rd-top>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+    <span data-zh>返回标题</span><span data-en>Back to title</span>
+  </a>
+</aside>
+{% endunless %}
+
 <script>
-    function async(u, c) {
-      var d = document, t = 'script',
-          o = d.createElement(t),
-          s = d.getElementsByTagName(t)[0];
-      o.src = u;
-      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
-      s.parentNode.insertBefore(o, s);
-    }
-</script>
-<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
-<script async>
-    async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
-        anchors.options = {
-          visible: 'hover',
-          placement: 'right',
-          // icon: '#'
-        };
-        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
-    })
-</script>
+/* Reading layer — catalog, heading anchors, progress, lazy comments.
+   No dependencies; the document reads fine without it. */
+(function () {
+  'use strict';
+  var body = document.getElementById('rd-body');
+  if (!body) return;
 
-<style>
-    /* place left on bigger screen */
-    @media all and (min-width: 800px) {
-        .anchorjs-link{
-            position: absolute;
-            left: -0.75em;
-            font-size: 1.1em;
-            margin-top : -0.1em;
-        }
-    }
-</style>
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-<script async>
-    document.addEventListener("DOMContentLoaded", function() {
-        // 选择所有的标题元素，除了h1
-        var headers = document.querySelectorAll('h2, h3, h4');
-    
-        // 初始化一个计数器对象
-        var counter = { h2: 0, h3: 0, h4: 0};
-    
-        // 遍历每个标题元素
-        headers.forEach(function(header) {
-            // 如果标题是目录中的元素，则不编号
-            if (
-                header.classList.contains('side-catalog') || 
-                header.classList.contains('subheading')) {
-                return;
-            }
-    
-            // 获取标题的级别
-            var tagName = header.tagName.toLowerCase();
-    
-            // 为当前级别的标题增加计数
-            counter[tagName]++;
-    
-            // 为所有低于当前级别的标题重置计数
-            for (var i = parseInt(tagName.charAt(1)) + 1; i <= 4; i++) {
-                counter['h' + i] = 0;
-            }
-    
-            // 创建编号字符串
-            var numbering = '';
-            for (var i = 2; i <= parseInt(tagName.charAt(1)); i++) {
-                numbering += counter['h' + i] + '.';
-            }
-    
-            // 将编号添加到标题文本中
-            header.textContent = numbering + ' ' + header.textContent;
-        });
+  /* ---- 0. typography hooks (chrome only — no content is rewritten) ------
+     · Latin-only blocks get lang="en" → the tighter 1.72 leading in prose.css
+     · wide tables get a scroll wrapper instead of pushing the page sideways */
+  var CJK = /[\u2e80-\u9fff\uf900-\ufaff\uff00-\uffef\u3000-\u303f]/;
+  [].forEach.call(body.querySelectorAll('p, li, blockquote, dd'), function (el) {
+    var t = el.textContent || '';
+    if (t.trim() && !CJK.test(t)) el.setAttribute('lang', 'en');
+  });
+
+  [].forEach.call(body.querySelectorAll('table'), function (t) {
+    if (t.classList.contains('rouge-table')) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'rd-tablewrap';
+    t.parentNode.insertBefore(wrap, t);
+    wrap.appendChild(t);
+  });
+
+  function slug(t) {
+    return t.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fff-]/g, '');
+  }
+
+  /* ---- 1. catalog ------------------------------------------------------ */
+  var tocEl = document.getElementById('rd-toc');
+  var listEl = document.getElementById('rd-toc-list');
+  var heads = [].slice.call(body.querySelectorAll('h2, h3'));
+  var items = [];
+
+  if (heads.length) {
+    var h2n = 0;
+    heads.forEach(function (h, i) {
+      if (!h.id) h.id = slug(h.textContent) || ('section-' + i);
+      var label = h.textContent.trim();
+      var depth = h.tagName === 'H2' ? 2 : 3;
+      if (depth === 2) h2n++;
+
+      var a = document.createElement('a');
+      a.className = 'rd-anchor';
+      a.href = '#' + h.id;
+      a.setAttribute('aria-label', '链接到本节 · Link to this section');
+      a.textContent = '#';
+      h.appendChild(a);
+
+      if (tocEl && listEl) {
+        var li = document.createElement('li');
+        li.className = 'rd-toc__li rd-toc__li--h' + depth;
+        var lnk = document.createElement('a');
+        lnk.className = 'rd-toc__a';
+        lnk.href = '#' + h.id;
+        var no = document.createElement('span');
+        no.className = 'rd-toc__no';
+        no.textContent = ('0' + h2n).slice(-2);
+        var txt = document.createElement('span');
+        txt.className = 'rd-toc__t';
+        txt.textContent = label;
+        lnk.appendChild(no);
+        lnk.appendChild(txt);
+        li.appendChild(lnk);
+        listEl.appendChild(li);
+        items.push({ h: h, a: lnk, li: li });
+      }
     });
+    if (tocEl) tocEl.setAttribute('data-empty', '0');
+  }
+
+  /* ---- 2. progress + active section ----------------------------------- */
+  var prog = document.querySelector('.rd-prog i');
+  var pct = document.getElementById('rd-pct');
+  var article = document.getElementById('rd-article') || body;
+  var ticking = false;
+  var current = -1;
+
+  function sync() {
+    ticking = false;
+
+    var r = article.getBoundingClientRect();
+    var vh = window.innerHeight || 800;
+    var span = Math.max(1, r.height - vh * 0.9);
+    var p = Math.min(1, Math.max(0, -r.top / span));
+    if (prog) prog.style.setProperty('--rd-p', p.toFixed(4));
+    document.documentElement.style.setProperty('--rd-p', p.toFixed(4));
+    if (pct) pct.textContent = Math.round(p * 100) + '%';
+
+    if (items.length) {
+      var line = vh * 0.28;
+      var idx = 0;
+      for (var i = 0; i < items.length; i++) {
+        /* rows hidden by CSS at narrow widths must not steal the highlight */
+        if (items[i].li.offsetParent === null) continue;
+        if (items[i].h.getBoundingClientRect().top <= line) idx = i;
+      }
+      if (idx !== current) {
+        if (current > -1) items[current].a.removeAttribute('aria-current');
+        items[idx].a.setAttribute('aria-current', 'true');
+        current = idx;
+      }
+    }
+  }
+
+  function onScroll() {
+    if (!ticking) { ticking = true; window.requestAnimationFrame(sync); }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  sync();
+
+  /* ---- 3. jumps — a short rAF tween, never native smooth scrolling
+     (the runtime's camera tween owns scroll; native smooth fights it) ------ */
+  function tweenTo(top) {
+    if (reduce) { window.scrollTo(0, top); return; }
+    var start = window.pageYOffset;
+    var delta = top - start;
+    if (Math.abs(delta) < 2) return;
+    var dur = Math.min(720, Math.max(260, Math.abs(delta) * 0.22));
+    var t0 = performance.now();
+    (function step(now) {
+      var k = Math.min(1, (now - t0) / dur);
+      var e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      window.scrollTo(0, start + delta * e);
+      if (k < 1) window.requestAnimationFrame(step);
+    })(t0);
+  }
+
+  function jump(e) {
+    var id = (this.getAttribute('href') || '').slice(1);
+    var target = id && document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    var top = target.getBoundingClientRect().top + window.pageYOffset - 96;
+    tweenTo(top);
+    if (history.replaceState) history.replaceState(null, '', '#' + id);
+    /* keyboard activation: move reading focus to the section, no extra scroll */
+    if (e.detail === 0) {
+      target.setAttribute('tabindex', '-1');
+      try { target.focus({ preventScroll: true }); } catch (err) { target.focus(); }
+    }
+  }
+
+  [].forEach.call(document.querySelectorAll('#rd-toc a, .rd-anchor, [data-rd-top]'), function (a) {
+    a.addEventListener('click', jump);
+  });
+
+  /* ---- 4. lazy giscus -------------------------------------------------- */
+  var mount = document.getElementById('rd-comments-mount');
+  if (mount) {
+    var started = false;
+
+    /* the placeholder stays until the iframe has actually painted, so a slow or
+       blocked giscus never leaves a blank bordered box */
+    var reveal = function () {
+      var host = document.getElementById('rd-comments');
+      var tries = 0;
+      var timer = window.setInterval(function () {
+        var frame = host && host.querySelector('iframe');
+        if (frame) {
+          window.clearInterval(timer);
+          frame.addEventListener('load', function () { mount.setAttribute('data-loaded', '1'); });
+          if (frame.contentDocument) mount.setAttribute('data-loaded', '1');
+        } else if (++tries > 40) {
+          window.clearInterval(timer);
+        }
+      }, 250);
+    };
+
+    var load = function () {
+      if (started) return;
+      started = true;
+      var d = mount.dataset;
+      var s = document.createElement('script');
+      s.src = 'https://giscus.app/client.js';
+      s.async = true;
+      s.crossOrigin = 'anonymous';
+      s.setAttribute('data-repo', d.repo);
+      s.setAttribute('data-repo-id', d.repoId);
+      s.setAttribute('data-category', d.category);
+      s.setAttribute('data-category-id', d.categoryId);
+      s.setAttribute('data-mapping', d.mapping);
+      s.setAttribute('data-reactions-enabled', d.reactionsEnabled);
+      s.setAttribute('data-emit-metadata', d.emitMetadata);
+      s.setAttribute('data-input-position', d.inputPosition);
+      s.setAttribute('data-theme', d.theme);
+      s.setAttribute('data-lang', d.lang);
+      s.setAttribute('data-loading', d.loading || 'lazy');
+      document.getElementById('rd-comments').appendChild(s);
+      reveal();
+    };
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) { io.disconnect(); load(); }
+      }, { rootMargin: '600px 0px' });
+      io.observe(mount);
+    } else {
+      window.addEventListener('load', load, { once: true });
+    }
+  }
+})();
 </script>
-    
 
-
+{% if page.mathjax or site.page-mathjax %}
+{% include mathjax_support.html %}
 {% endif %}
-

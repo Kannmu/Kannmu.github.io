@@ -20,3 +20,6 @@ documents/*
 # /.trae/
 # .trae/*
 # *trae*
+
+# local tooling (playwright + review screenshots), not part of the site
+.tooling/

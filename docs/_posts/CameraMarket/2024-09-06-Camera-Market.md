@@ -29,9 +29,9 @@ tags:
 ## 价格走势 Price trends
 
 <!-- 引入Chart.js -->
-<script async src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/assets/vendor/chart/chart.umd.min.js"></script>
 <!-- 引入zoom插件 -->
-<script async src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+<script src="/assets/vendor/chart/chartjs-plugin-zoom.min.js"></script>
 <style>
     .chart-container {
         position: relative; /* 设置相对定位 */

@@ -1,36 +1,51 @@
 ---
-layout: default
+layout: space
 title: "404 · 页面不存在"
+description: "该地址没有对应的页面。可返回首页或浏览全部文章。"
 hide-in-nav: true
-description: "你来到了没有知识的荒原 :("
-body-class: "has-hero page-404"
-no-catalog: true
-header-img: "img/Backgrounds/404-bg.jpg"
+sp-page: error
+sp_mode: ambient
 permalink: /404.html
 ---
 
-{%- assign hero_img = page.header-img | default: site.header-img -%}
-
-<section class="page-hero page-hero--tall">
-  <div class="page-hero__media"
-       style="background-image:url('{{ site.baseurl }}/{{ hero_img }}')"
-       role="img" aria-label="背景照片"></div>
-  <div class="shell page-hero__inner">
-    <p class="hero__eyebrow" style="margin-bottom:18px">
-      <span class="dot" aria-hidden="true"></span>
+<section class="rd-err" aria-labelledby="rd-err-title">
+  <div class="rd-err__inner">
+    <p class="sp-eyebrow">
+      <i aria-hidden="true"></i>
       <span>Error 404</span>
+      <s aria-hidden="true"></s>
+      <span><span data-zh>找不到页面</span><span data-en>Not found</span></span>
     </p>
-    <h1>这里什么也<em>没有</em></h1>
-    <p class="page-hero__desc">
-      你来到了没有知识的荒原。页面可能被移动过，或者链接本身有一点小问题。
+
+    <p class="sp-display rd-err__code" aria-hidden="true">4<em>0</em>4</p>
+
+    <div class="sp-rule rd-err__rule" aria-hidden="true"></div>
+
+    <h1 class="rd-err__title" id="rd-err-title">
+      <span data-zh>该地址没有对应的页面</span>
+      <span data-en>No page exists at this address</span>
+    </h1>
+
+    <p class="rd-err__desc">
+      <span data-zh>链接可能已经变更，或者地址录入有误。站内全部文章仍可在档案页检索。</span>
+      <span data-en>The link may have changed, or the address was mistyped. Every published note remains available in the archive.</span>
     </p>
-    <div class="hero__actions">
-      <a class="btn" href="{{ '/' | prepend: site.baseurl }}">
-        回到首页
+
+    <div class="rd-err__acts">
+      <a class="sp-btn sp-btn--solid" href="{{ '/' | relative_url }}">
+        <span><span data-zh>返回首页</span><span data-en>Home</span></span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
-      <a class="btn" href="{{ '/archive/' | prepend: site.baseurl }}">浏览全部文章</a>
-      <a class="btn" href="{{ '/about/' | prepend: site.baseurl }}">学术主页</a>
+      <a class="sp-btn" href="{{ '/archive/' | relative_url }}">
+        <span><span data-zh>浏览全部文章</span><span data-en>Archive</span></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      </a>
+      <a class="sp-btn" href="{{ '/about/' | relative_url }}">
+        <span><span data-zh>学术主页</span><span data-en>About</span></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
     </div>
+
+    <p class="rd-err__foot">HTTP 404 · {{ site.url | default: 'kannmu.top' | remove: 'https://' | remove: 'http://' }}</p>
   </div>
 </section>

@@ -1,0 +1,519 @@
+---
+layout: space
+title: "空中超声声场 · UMH 84 通道相控阵模拟器"
+description: "以 84 通道 40 kHz 超声相控阵为对象的交互式声场模拟器：相位延迟、焦距与偏转、栅瓣、焦斑 FWHM、Rayleigh 极限与声压量级，并说明线性模型的边界。"
+extra_css: /assets/space/css/lab.css
+sp_page: lab
+sp_mode: ambient
+multilingual: true
+---
+
+<script>
+  /* THE SITE'S DOCUMENT MODE
+     _layouts/space.html forwards `sp_mode` only once the runtime agent wires it
+     up.  app.js reads <body data-sp-mode> before it boots, so setting it here
+     early in the body makes the ambient/flat document path deterministic.  If
+     the layout already emitted the attribute this is a no-op. */
+  if (document.body && !document.body.dataset.spMode) {
+    document.body.dataset.spMode = 'ambient';
+  }
+</script>
+
+<section class="sp-station sp-lab" id="sp-lab" data-sp-station="lab" aria-labelledby="lab-title">
+  <div class="sp-layer">
+    <div class="lab-wrap">
+
+      <!-- ================================================================ -->
+      <!-- MASTHEAD                                                         -->
+      <!-- ================================================================ -->
+      <header class="lab-head">
+        <div class="lab-head__main">
+          <p class="sp-eyebrow">
+            <i aria-hidden="true"></i><s aria-hidden="true"></s>
+            <span class="lab-eyebrow-full">Research 03 · UMH / Acoustic Instrument</span>
+            <span class="lab-eyebrow-short">UMH · Acoustic Instrument</span>
+          </p>
+          <h1 class="sp-h2" id="lab-title">
+            <span data-zh>空中超声触觉的<em>声场</em></span>
+            <span data-en>Mid-Air Haptics: the <em>Acoustic Field</em></span>
+          </h1>
+          <div class="lab-head__lede">
+            <p class="sp-lede sp-lede--cjk" data-zh>
+              以自建 84 通道 40 kHz 超声相控阵为对象，在 x–z 截面上逐点叠加 84 个点源的复声压，显示相位延迟如何把声能收束到可移动的焦点。改变焦距、偏转角或阵元数时，声场、焦斑宽度与声压量级会重新计算。
+            </p>
+            <p class="sp-lede sp-copy-en" data-en>
+              A working cross-section of an 84-channel, 40 kHz phased array. Complex
+              pressures from 84 point sources are summed at every sample, showing how
+              per-element phase delays concentrate acoustic energy at a movable focus.
+              The field, focal widths and pressure scale are recomputed whenever focus,
+              steering or element count changes.
+            </p>
+          </div>
+        </div>
+
+        <dl class="lab-spec" aria-label="Array parameters / 阵列参数">
+          <div>
+            <dt>Channels</dt>
+            <dd><b>84</b> / 16</dd>
+          </div>
+          <div>
+            <dt>Carrier</dt>
+            <dd><b>40.0</b> <i>kHz</i></dd>
+          </div>
+          <div>
+            <dt>Wavelength</dt>
+            <dd><b>8.575</b> <i>mm</i></dd>
+          </div>
+          <div>
+            <dt>Aperture</dt>
+            <dd><b>90.0</b>×40.7 <i>mm</i></dd>
+          </div>
+        </dl>
+      </header>
+
+      <!-- ================================================================ -->
+      <!-- INSTRUMENT                                                       -->
+      <!-- ================================================================ -->
+      <div class="lab-grid">
+
+        <figure class="lab-figure" aria-labelledby="lab-field-title">
+          <div class="lab-figure__head">
+            <h2 class="lab-kicker" id="lab-field-title">
+              <span data-zh>声场截面</span><span data-en>Field section</span> · X–Z
+            </h2>
+            <p class="lab-kicker lab-kicker--dim">
+              <b id="lab-grid-meta">240 × 150</b> · Δt <b id="lab-compute">--</b>
+            </p>
+          </div>
+
+          <div class="lab-canvas-wrap">
+            <canvas id="lab-field" width="800" height="535" role="img"
+                    aria-label="Acoustic field cross-section / 声场截面"
+                    aria-describedby="lab-figure-desc"></canvas>
+          </div>
+
+          <div class="lab-legend" aria-hidden="true">
+            <span class="lab-legend__key">−20 dB</span>
+            <span class="lab-legend__ramp"></span>
+            <span class="lab-legend__key">0 dB</span>
+            <span class="lab-legend__key"><i></i> −6 dB</span>
+            <span class="lab-legend__spacer"></span>
+            <span class="lab-legend__note lab-kicker lab-kicker--dim">
+              <span data-zh>归一至焦点</span><span data-en>normalised to focus</span>
+            </span>
+          </div>
+
+          <figcaption class="lab-figure__cap">
+            <span data-zh>
+              x–z 截面，单位 mm。十字为几何焦点，青灰细线为 −6 dB 等值线；距阵元 9 mm 内的源区不参与成像。声场按焦点幅值归一化，色阶下限 −20 dB；焦前或近场样本可高于焦点，≥0 dB 处截断为白色。
+            </span>
+            <span data-en>
+              x–z section in mm. The crosshair is the geometric focus; the thin cyan-grey
+              line is the −6 dB contour. The source region within 9 mm of an element is
+              not imaged. The field is normalised to the focal amplitude; the colour floor is
+              −20 dB. Pre-focal or near-field samples can exceed the focus and are
+              clipped to white at 0 dB.
+            </span>
+          </figcaption>
+        </figure>
+
+        <p class="sp-sr" id="lab-figure-desc">
+          <span data-zh>声场截面正在初始化。</span>
+          <span data-en>The acoustic field section is initialising.</span>
+        </p>
+        <p class="sp-sr" id="lab-live" aria-live="polite"></p>
+
+        <div class="lab-side">
+
+          <!-- controls -------------------------------------------------- -->
+          <section class="lab-block lab-controls" aria-labelledby="lab-ctl-title">
+            <div class="lab-block__head">
+              <h2 class="lab-kicker" id="lab-ctl-title">
+                <span data-zh>控制</span><span data-en>Controls</span>
+              </h2>
+              <button type="button" class="lab-reset" id="lab-reset">
+                <span data-zh>复位</span><span data-en>Reset</span>
+              </button>
+            </div>
+
+            <div class="lab-block__body">
+              <div class="lab-ctl">
+                <div class="lab-ctl__head">
+                  <label class="lab-ctl__label" for="lab-focus">
+                    <span data-zh>焦距</span><span data-en>Focal distance</span>
+                    <i>R</i>
+                  </label>
+                  <output class="lab-ctl__val" id="lab-focus-out" for="lab-focus">
+                    <b data-out="r">100</b><span>mm</span>
+                  </output>
+                </div>
+                <input class="lab-range" type="range" id="lab-focus"
+                       min="30" max="200" step="1" value="100" style="--fill: 41.18%">
+                <div class="lab-scale" aria-hidden="true">
+                  <span>30</span><span>115</span><span>200 mm</span>
+                </div>
+              </div>
+
+              <div class="lab-ctl">
+                <div class="lab-ctl__head">
+                  <label class="lab-ctl__label" for="lab-steer">
+                    <span data-zh>偏转角</span><span data-en>Steering</span>
+                    <i>θ</i>
+                  </label>
+                  <output class="lab-ctl__val" id="lab-steer-out" for="lab-steer">
+                    <b data-out="steer">0</b><span>°</span>
+                  </output>
+                </div>
+                <input class="lab-range" type="range" id="lab-steer"
+                       min="-40" max="40" step="1" value="0" style="--fill: 50%">
+                <div class="lab-scale" aria-hidden="true">
+                  <span>−40°</span><span>0°</span><span>+40°</span>
+                </div>
+              </div>
+
+              <div class="lab-ctl__row">
+                <label class="lab-ctl__label" for="lab-elements">
+                  <span data-zh>阵元数</span><span data-en>Elements</span>
+                  <i>N</i>
+                </label>
+                <span class="lab-select">
+                  <select id="lab-elements">
+                    <option value="84">84</option>
+                    <option value="16">16</option>
+                  </select>
+                  <i aria-hidden="true"></i>
+                </span>
+              </div>
+
+              <label class="lab-check" for="lab-phase-toggle">
+                <input type="checkbox" id="lab-phase-toggle" checked>
+                <span data-zh>显示相位条</span><span data-en>Show phase</span>
+              </label>
+
+              <p class="lab-ctl__note">
+                <span data-zh>16 元模式是同一孔径的稀疏抽样，用于显示栅瓣，不是设备的运行模式。</span>
+                <span data-en>16-element mode is a sparse sub-set of the same aperture, used to
+                  expose grating lobes; it is not a device operating mode.</span>
+              </p>
+            </div>
+          </section>
+
+          <!-- readout --------------------------------------------------- -->
+          <section class="lab-block lab-readout" aria-labelledby="lab-read-title">
+            <div class="lab-block__head">
+              <h2 class="lab-kicker" id="lab-read-title">
+                <span data-zh>读数</span><span data-en>Readout</span>
+              </h2>
+              <p class="lab-kicker lab-kicker--dim lab-data">D = 90 mm</p>
+            </div>
+
+            <dl class="lab-read">
+              <div class="lab-read__row">
+                <dt><span data-zh>焦距</span><span data-en>Focus R</span></dt>
+                <dd><b data-read="r">100.0</b><i>mm</i></dd>
+              </div>
+              <div class="lab-read__row">
+                <dt><span data-zh>偏转角</span><span data-en>Steering</span></dt>
+                <dd><b data-read="steer">0.0</b><i>°</i></dd>
+              </div>
+              <div class="lab-read__row">
+                <dt><span data-zh>波长</span><span data-en>Wavelength</span></dt>
+                <dd><b data-read="lambda">8.575</b><i>mm</i></dd>
+              </div>
+              <div class="lab-read__row">
+                <dt><span data-zh>Rayleigh 极限</span><span data-en>Rayleigh limit</span></dt>
+                <dd><b data-read="rayleigh">11.6</b><i>mm</i></dd>
+              </div>
+              <div class="lab-read__row lab-read__row--key">
+                <dt><span data-zh>焦斑 FWHM <span class="lab-lc">o<sub>x</sub> × o<sub>z</sub></span></span><span data-en>Focal FWHM <span class="lab-lc">o<sub>x</sub> × o<sub>z</sub></span></span></dt>
+                <dd><b data-read="fwhm-x">11.9</b> × <b data-read="fwhm-z">96.2</b><i>mm</i></dd>
+              </div>
+              <div class="lab-read__row">
+                <dt><span data-zh>估计峰值声压</span><span data-en>Peak pressure (est.)</span></dt>
+                <dd><b data-read="spl">152.1</b><i>dB SPL</i></dd>
+              </div>
+              <div class="lab-read__row">
+                <dt><span data-zh>焦点 / 场峰值</span><span data-en>Focus / field peak</span></dt>
+                <dd><b data-read="repeak">−0.8</b><i>dB</i></dd>
+              </div>
+              <div class="lab-read__row">
+                <dt><span data-zh>相干增益</span><span data-en>Array gain</span></dt>
+                <dd><b data-read="gain">38.1</b><i>dB</i></dd>
+              </div>
+              <div class="lab-read__row">
+                <dt><span data-zh>Fresnel 数</span><span data-en>Fresnel number</span></dt>
+                <dd><b data-read="fresnel">2.36</b></dd>
+              </div>
+            </dl>
+
+            <p class="lab-read__foot">
+              <span data-zh>声压按每阵元 1 m 处 1 Pa rms（≈94 dB SPL）、1/r 相干叠加估计；未计驱动电压、灵敏度与饱和。</span>
+              <span data-en>Pressure assumes 1 Pa rms at 1 m per element (≈94 dB SPL) with
+                coherent 1/r summation; drive, sensitivity and saturation are excluded.</span>
+            </p>
+          </section>
+
+          <!-- phase ----------------------------------------------------- -->
+          <section class="lab-block lab-phase" id="lab-phase" aria-labelledby="lab-phase-title">
+            <div class="lab-block__head">
+              <h2 class="lab-kicker" id="lab-phase-title">
+                <span data-zh>相位延迟</span><span data-en>Phase delay</span>
+              </h2>
+              <p class="lab-kicker lab-kicker--dim lab-phase__meta" id="lab-phase-meta">84 ch · Δτ -- µs</p>
+            </div>
+            <div class="lab-phase__wrap">
+              <canvas id="lab-phase-cv" width="640" height="144" aria-hidden="true"></canvas>
+            </div>
+            <p class="lab-phase__cap">
+              <span data-zh>按 |pᵢ| 排序；柱高 = (τᵢ − τmin) / Δτmax。硬件实际施加的相位以 2π 为周期折叠。</span>
+              <span data-en>Sorted by |pᵢ|; bar height = (τᵢ − τmin) / Δτmax. The phase actually
+                applied by the hardware is wrapped modulo 2π.</span>
+            </p>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- ================================================================ -->
+      <!-- PRINCIPLE STRIP                                                  -->
+      <!-- ================================================================ -->
+      <section class="lab-principles" aria-labelledby="lab-principles-title">
+        <div class="lab-principles__head">
+          <h2 class="sp-h2" id="lab-principles-title">
+            <span data-zh>从延迟到触感</span><span data-en>From delay to touch</span>
+          </h2>
+          <p class="lab-kicker lab-kicker--dim">01 — 06</p>
+        </div>
+
+        <ol class="lab-steps">
+          <li class="lab-step">
+            <span class="lab-step__no">01</span>
+            <svg class="lab-step__fig" viewBox="0 0 64 40" aria-hidden="true" focusable="false">
+              <path d="M5 33h54" stroke="currentColor" stroke-width="1" opacity=".35" vector-effect="non-scaling-stroke"/>
+              <g fill="currentColor" stroke="none">
+                <circle cx="13" cy="25" r="1"/><circle cx="20" cy="25" r="1"/><circle cx="27" cy="25" r="1"/>
+                <circle cx="34" cy="25" r="1"/><circle cx="41" cy="25" r="1"/><circle cx="48" cy="25" r="1"/>
+                <circle cx="16.5" cy="19" r="1" opacity=".55"/><circle cx="23.5" cy="19" r="1" opacity=".55"/>
+                <circle cx="30.5" cy="19" r="1" opacity=".55"/><circle cx="37.5" cy="19" r="1" opacity=".55"/>
+                <circle cx="44.5" cy="19" r="1" opacity=".55"/>
+                <circle class="lab-dot" cx="32" cy="25" r="1.7"/>
+              </g>
+              <path d="M5 33v-4M59 33v-4" stroke="currentColor" stroke-width="1" opacity=".5" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <h3><span data-zh>阵元与孔径</span><span data-en>Aperture</span></h3>
+            <p><span data-zh>84 个点源分布在一段 90 mm 的水平孔径上，每个点源独立控制相位。</span><span class="lab-en" data-en>84 point sources share a 90 mm horizontal aperture; each one is phase-controlled independently.</span></p>
+          </li>
+
+          <li class="lab-step">
+            <span class="lab-step__no">02</span>
+            <svg class="lab-step__fig" viewBox="0 0 64 40" aria-hidden="true" focusable="false">
+              <path d="M7 33h50" stroke="currentColor" stroke-width="1" opacity=".35" vector-effect="non-scaling-stroke"/>
+              <path d="M10 33V24M16 33V20M22 33V16M28 33V13M34 33V13M40 33V16M46 33V20M52 33V24"
+                    stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <path d="M10 24Q31 5 52 24" fill="none" stroke="currentColor" stroke-width="1" opacity=".3" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <h3><span data-zh>相位延迟</span><span data-en>Phase delay</span></h3>
+            <p><span data-zh>每个阵元的发射时延由它到焦点的距离决定：越远的阵元越早发射。</span><span class="lab-en" data-en>Each element's emission delay follows its distance to the focus: the farthest element fires first.</span></p>
+          </li>
+
+          <li class="lab-step">
+            <span class="lab-step__no">03</span>
+            <svg class="lab-step__fig" viewBox="0 0 64 40" aria-hidden="true" focusable="false">
+              <path d="M8 33h48" stroke="currentColor" stroke-width="1" opacity=".35" vector-effect="non-scaling-stroke"/>
+              <path d="M20 10v23M44 10v23" stroke="currentColor" stroke-width="1" opacity=".55" vector-effect="non-scaling-stroke"/>
+              <path d="M20 31Q32 20 44 31" fill="none" stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <path d="M20 31Q32 13 44 31" fill="none" stroke="currentColor" stroke-width="1" opacity=".35" vector-effect="non-scaling-stroke"/>
+              <circle class="lab-dot" cx="32" cy="24" r="1.7"/>
+            </svg>
+            <h3><span data-zh>相长干涉</span><span data-en>Interference</span></h3>
+            <p><span data-zh>到达焦点时各阵元相位对齐，复声压同相叠加，幅值随阵元数线性增长。</span><span class="lab-en" data-en>At the focus the phases align and complex pressures add in phase, so amplitude grows linearly with element count.</span></p>
+          </li>
+
+          <li class="lab-step">
+            <span class="lab-step__no">04</span>
+            <svg class="lab-step__fig" viewBox="0 0 64 40" aria-hidden="true" focusable="false">
+              <path d="M32 5v30M17 20h30" stroke="currentColor" stroke-width="1" opacity=".35" vector-effect="non-scaling-stroke"/>
+              <ellipse cx="32" cy="20" rx="4.5" ry="11" fill="none" stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <circle class="lab-dot" cx="32" cy="20" r="1.7"/>
+              <path d="M22 36h20M22 35v2M42 35v2" stroke="currentColor" stroke-width="1" opacity=".5" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <h3><span data-zh>焦斑</span><span data-en>Focal spot</span></h3>
+            <p><span data-zh>有限孔径把焦点展宽成 λR/D 量级的斑，而不是一个点；轴向尺寸通常远大于横向。</span><span class="lab-en" data-en>A finite aperture broadens the focus to a spot of order λR/D rather than a point; its axial extent is usually far larger than its lateral width.</span></p>
+          </li>
+
+          <li class="lab-step">
+            <span class="lab-step__no">05</span>
+            <svg class="lab-step__fig" viewBox="0 0 64 40" aria-hidden="true" focusable="false">
+              <path d="M6 33h52" stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <path d="M6 36h52" stroke="currentColor" stroke-width="1" opacity=".25" vector-effect="non-scaling-stroke"/>
+              <path d="M18 33V25M26 33V21M34 33V21M42 33V25" stroke="currentColor" stroke-width="1" opacity=".55" vector-effect="non-scaling-stroke"/>
+              <path d="M16 27l2-2 2 2M24 23l2-2 2 2M32 23l2-2 2 2M40 27l2-2 2 2" fill="none" stroke="currentColor" stroke-width="1" opacity=".55" vector-effect="non-scaling-stroke"/>
+              <rect x="28" y="11" width="8" height="5" fill="none" stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <path d="M32 18v-2" stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <h3><span data-zh>辐射压</span><span data-en>Radiation pressure</span></h3>
+            <p><span data-zh>时均声强在皮肤表面产生稳定的声辐射压，量级为 p²/(2ρc)，焦斑处可达亚 kPa。</span><span class="lab-en" data-en>Time-averaged intensity produces a steady radiation pressure of order p²/(2ρc), reaching sub-kPa levels at the focus.</span></p>
+          </li>
+
+          <li class="lab-step">
+            <span class="lab-step__no">06</span>
+            <svg class="lab-step__fig" viewBox="0 0 64 40" aria-hidden="true" focusable="false">
+              <path d="M6 30h52" stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <path d="M6 34h52" stroke="currentColor" stroke-width="1" opacity=".3" vector-effect="non-scaling-stroke"/>
+              <path d="M24 30c0 5 3 5 3 0c0 5 3 5 3 0" fill="none" stroke="currentColor" stroke-width="1" opacity=".8" vector-effect="non-scaling-stroke"/>
+              <path d="M40 30c0 6 5 6 5 0" fill="none" stroke="currentColor" stroke-width="1" opacity=".5" vector-effect="non-scaling-stroke"/>
+              <path d="M30 8v14M27 11l3-3 3 3" fill="none" stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <circle class="lab-dot" cx="30" cy="24" r="1.5"/>
+            </svg>
+            <h3><span data-zh>触觉感知</span><span data-en>Perception</span></h3>
+            <p><span data-zh>机械感受器把局部压力与振动编码为位置、强度和质感；调制方式决定“点、线、纹理”的差别。</span><span class="lab-en" data-en>Mechanoreceptors encode local pressure and vibration as location, strength and texture; modulation determines whether the sensation reads as a point, a line or a texture.</span></p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- TECHNICAL NOTE                                                   -->
+      <!-- ================================================================ -->
+      <section class="lab-note" aria-labelledby="lab-note-title">
+        <aside class="lab-note__aside">
+          <p class="sp-label">Method / 方法</p>
+          <h2 class="sp-h2 lab-note__title" id="lab-note-title">
+            <span data-zh>模型做了什么，<br>没做什么</span>
+            <span data-en>What the model does —<br>and does not do</span>
+          </h2>
+          <p class="sp-lede">
+            <span data-zh>每个数字都来自页面内可见的公式与假设；下面列出可核对的部分与刻意的省略。</span>
+            <span data-en>Every number follows from the equation and assumptions shown here; the checkable parts and the deliberate omissions are listed below.</span>
+          </p>
+
+          <dl class="lab-assume" aria-label="Assumptions / 假设">
+            <div><dt>c · 20 °C</dt><dd>343 m/s</dd></div>
+            <div><dt>f</dt><dd>40.0 kHz</dd></div>
+            <div><dt>λ = c/f</dt><dd>8.575 mm</dd></div>
+            <div><dt>D<sub>x</sub></dt><dd>90.0 mm</dd></div>
+            <div><dt>p₀</dt><dd>1 Pa @ 1 m</dd></div>
+            <div><dt>floor</dt><dd>−20 dB</dd></div>
+            <div><dt>grid</dt><dd>240 × 150</dd></div>
+          </dl>
+        </aside>
+
+        <div class="lab-notes">
+          <p class="sp-body-copy sp-copy-zh" data-zh>
+            本页计算的是<strong>线性、稳态、连续波</strong>条件下的复声压。84 个阵元各被视为自由场点源，按 1/r 衰减；焦距 F 与阵元 pᵢ 的距离给出时延 τᵢ = |F − pᵢ|/c。载波 f = 40 kHz、c = 343 m/s（20 °C），故 λ = c/f = 8.575 mm。截面上任一点 r 的幅值为
+          </p>
+          <p class="sp-body-copy sp-copy-en" data-en>
+            This page computes a <strong>steady-state, continuous-wave complex pressure
+            field</strong>. Each of the 84 elements is a point source in free field with 1/r
+            spreading; the geometric focus F and the element positions pᵢ set the delays
+            τᵢ = |F − pᵢ|/c. At a 40 kHz carrier and c = 343 m/s (20 °C), λ = c/f = 8.575 mm.
+            The amplitude at any point r in the section is
+          </p>
+
+          <div class="lab-formula">
+            A(r) = | Σᵢ (1/|r − pᵢ|) · exp( j ( k|r − pᵢ| − 2πfτᵢ ) ) |<br>
+            τᵢ = |F − pᵢ| / c &nbsp;·&nbsp; k = 2π/λ &nbsp;·&nbsp; λ = c/f = 8.575 mm &nbsp;·&nbsp; dB = 20 log₁₀(A/A<sub>F</sub>)
+          </div>
+
+          <p class="sp-body-copy sp-copy-zh" data-zh>
+            场以焦点幅值 A<sub>F</sub> 归一化，取 20·log₁₀ 并截断在 −20 dB。采样网格为 240×150，覆盖 x ∈ [−190, 190] mm、z ∈ [−14, 240] mm；84 元模式的全分辨率样本只在围绕主波束与近场区的包络内计算，包络外按色阶下限处理；16 元模式因旁瓣分布在多个方向而计算全网格。−6 dB 等值线由同一网格的 marching squares 提取，−6 dB 宽度则由 0.4 mm 步长的一维切割得到——它们不是从屏幕像素估计的。
+          </p>
+          <p class="sp-body-copy sp-copy-en" data-en>
+            The field is normalised to the focal amplitude A<sub>F</sub>, plotted as
+            20·log₁₀ and floored at −20 dB. The sampling grid is 240×150 over
+            x ∈ [−190, 190] mm and z ∈ [−14, 240] mm. In the 84-element case
+            full-resolution samples are computed only inside an envelope around the main
+            beam and the immediate near field, and cells outside that envelope are set to
+            the colour floor; the sparse 16-element case, whose lobes point in many
+            directions, is computed over the full grid. The −6 dB contour is extracted from
+            the same grid with marching squares, and the −6 dB widths come from 0.4 mm
+            one-dimensional cuts — neither is estimated from screen pixels.
+          </p>
+
+          <p class="sp-body-copy sp-copy-zh" data-zh>
+            有四类真实效应被刻意省略。第一是<strong>非线性传播</strong>：在约 150 dB SPL 的估计水平上，空气的 B/A ≈ 0.4，p ≈ 0.8 kPa 时平面波冲击形成距离约 0.2 m，与传播路径同量级；因此线性叠加会高估焦点峰值，并完全略去谐波增长与饱和。第二是<strong>换能器指向性</strong>：真实 40 kHz 活塞（10 mm 孔径时 ka ≈ 3.7）并非各向同性，点源模型会高估大角度与栅瓣的贡献。第三是<strong>空气吸收</strong>：40 kHz、20 °C、50% RH 时 α ≈ 1.3 dB/m，200 mm 路径约 0.26 dB，页内忽略。第四是<strong>通道校准与互耦合</strong>：真实阵列的逐路增益、相位偏差与阵元间耦合均未建模。
+          </p>
+          <p class="sp-body-copy sp-copy-en" data-en>
+            Four real effects are deliberately absent. First, <strong>nonlinear
+            propagation</strong>: at the estimated ~150 dB SPL, air (B/A ≈ 0.4) has a
+            plane-wave shock formation distance of roughly 0.2 m for p ≈ 0.8 kPa —
+            comparable to the propagation path. The linear sum therefore overestimates the
+            focal peak and omits harmonic growth and saturation entirely. Second,
+            <strong>transducer directivity</strong>: a real 40 kHz piston (ka ≈ 3.7 for a
+            10 mm aperture) is not isotropic, so the point-source model overweights
+            wide-angle and grating-lobe contributions. Third, <strong>air
+            absorption</strong>: at 40 kHz, 20 °C and 50% RH, α ≈ 1.3 dB/m, or about
+            0.26 dB over 200 mm; it is neglected here. Fourth, <strong>channel calibration
+            and mutual coupling</strong>: per-channel gain, phase offset and
+            element-to-element coupling in the real array are not modelled.
+          </p>
+
+          <p class="sp-body-copy sp-copy-zh" data-zh>
+            站点内公开的 UMH 原型页记录的是一套 <strong>61 单元六角阵列</strong>（行数 5-6-7-8-9-8-7-6-5，40 kHz 载波，推荐焦距 80–150 mm）。当前 84 路控制器在连接时通过设备描述符逐路上报实测坐标（x, y, z，µm），这份坐标表并未随仓库发布。因此本页使用一套写明的<strong>理想布局</strong>：12 列 × 7 行交错六角晶格，最近邻间距 7.83 mm，水平孔径 90.0 mm、垂直孔径 40.7 mm，共 84 个等效点源。16 元模式从同一孔径中抽取 4×4 个子集，用于展示稀疏采样下的栅瓣，并不对应设备的运行模式。实测坐标、单元灵敏度与校准会改变旁瓣和焦斑细节，页面中的绝对声压只应作为量级参考。
+          </p>
+          <p class="sp-body-copy sp-copy-en" data-en>
+            The public UMH prototype page on this site documents a <strong>61-element
+            hexagonal array</strong> (rows 5-6-7-8-9-8-7-6-5, 40 kHz carrier, recommended
+            focal range 80–150 mm). The current 84-channel controller reports measured
+            coordinates for every element (x, y, z in µm) through its device descriptor;
+            that coordinate table is not published in the repository. This page therefore
+            uses an explicitly stated <strong>ideal layout</strong>: a 12-column × 7-row
+            staggered hexagonal lattice with a 7.83 mm nearest-neighbour pitch, a 90.0 mm
+            horizontal aperture and a 40.7 mm vertical aperture, giving 84 equivalent point
+            sources. The 16-element mode takes a 4×4 sub-set from the same aperture to
+            demonstrate sparse sampling and grating lobes; it is not an operating mode of
+            the device. Measured coordinates, element sensitivity and calibration will
+            change sidelobes and focal detail, so the absolute pressures shown here are
+            order-of-magnitude estimates only.
+          </p>
+
+          <p class="sp-body-copy sp-copy-zh" data-zh>
+            读数中的 Rayleigh 极限取 1.22 λR/D（D = 90 mm 水平孔径，圆孔径远场判据）。R = 100 mm 时约 11.6 mm，与模拟的 −6 dB 横向宽度约 11.9 mm 相符。o<sub>x</sub>、o<sub>z</sub> 分别为过焦点的水平与竖直 −6 dB 切割宽度；o<sub>z</sub> 取 x = F<sub>x</sub> 的竖直切割，偏转时并非焦斑主轴。焦斑呈细长形（100 mm 处约 12 × 96 mm），这是低 Fresnel 数聚焦的正常结果。声压估计假设每阵元在 1 m 处 1 Pa rms（约 94 dB SPL）并按 1/r 相干叠加，未计驱动电压、灵敏度与饱和。色阶以<strong>几何焦点</strong>归一化；Fresnel 数较低时，1/r 加权会让轴向最大点早于几何焦点：100 mm、0° 时约 +0.7 dB（z ≈ 84 mm），200 mm、40° 时可达 +7 dB 量级。因此长距离视图中被截白的区域主要对应焦前峰值，几何焦点由十字标出；读数中的“焦点 / 场峰值”给出两者之差。这是模型结果，不是绘图误差。
+          </p>
+          <p class="sp-body-copy sp-copy-en" data-en>
+            The Rayleigh limit in the readout is 1.22 λR/D with D = 90 mm, the horizontal
+            aperture; this is the far-field criterion for a circular aperture. At
+            R = 100 mm it is 11.6 mm, consistent with the simulated −6 dB lateral width of
+            about 11.9 mm. The reported widths (o<sub>x</sub>, o<sub>z</sub>) are horizontal
+            and vertical −6 dB cuts through the focus; o<sub>z</sub> is a vertical cut at
+            x = F<sub>x</sub> and is not the principal axis of the spot when the beam is
+            steered. The spot is elongated
+            (about 12 × 96 mm at 100 mm), as expected for focusing at a low Fresnel number.
+            The pressure estimate assumes 1 Pa rms at 1 m per element (≈94 dB SPL) with
+            coherent 1/r summation, and ignores drive voltage, sensitivity and saturation.
+            The colour scale is normalised to the <strong>geometric focus</strong>. At low
+            Fresnel numbers, 1/r weighting places the axial maximum upstream of that focus:
+            about +0.7 dB at z ≈ 84 mm for 100 mm, 0°, and of order +7 dB for 200 mm, 40°.
+            In long-range views the clipped white region therefore corresponds mainly to the
+            pre-focal peak, while the geometric focus is marked by the crosshair; the
+            “Focus / field peak” readout gives the difference. That is a model result, not
+            a plotting error.
+          </p>
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- FOOT                                                             -->
+      <!-- ================================================================ -->
+      <footer class="lab-foot">
+        <div class="lab-foot__links">
+          <a class="sp-link" href="{{ '/UMH/' | relative_url }}">
+            <span data-zh>UMH 原型页</span><span data-en>UMH prototype</span> ↗
+          </a>
+          <a class="sp-link" href="{{ '/tools/' | relative_url }}">
+            <span data-zh>工具索引</span><span data-en>Tools index</span> ↗
+          </a>
+          <a class="sp-link" href="{{ '/about/' | relative_url }}">
+            <span data-zh>研究方向 03</span><span data-en>Research 03</span> ↗
+          </a>
+        </div>
+        <p class="lab-foot__note">
+          <span data-zh>纯前端 Canvas 2D · 无外部依赖 · 模拟在本地完成</span>
+          <span data-en>Client-side Canvas 2D · no external dependencies · simulation runs locally</span>
+        </p>
+      </footer>
+
+    </div>
+  </div>
+</section>
+
+<script type="module" src="{{ '/assets/space/js/lab.js' | relative_url }}"></script>

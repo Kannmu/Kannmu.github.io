@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang }}" data-lang="zh" class="sp-flat">
+{% include space-head.html %}
+{%- comment -%}
+  <body data-sp-page> is the CSS scope hook for pages.css / prose.css.
+  Resolution order: page['sp-page'] → page.sp_page → 'post' for posts →
+  'home' for the index → the document's own layout name → slugified title.
+  Everything is slugified so selectors stay simple.
+  data-sp-mode selects the runtime: 'spatial' (station projection) or
+  'ambient' (long-form reading backdrop, `sp_mode: ambient` in front matter).
+{%- endcomment -%}
+{%- assign _sp_page = page['sp-page'] | default: page.sp_page -%}
+{%- if _sp_page == nil or _sp_page == '' -%}
+  {%- if page.collection == 'posts' -%}{%- assign _sp_page = 'post' -%}{%- endif -%}
+{%- endif -%}
+{%- if _sp_page == nil or _sp_page == '' -%}
+  {%- if page.url == '/' -%}
+    {%- assign _sp_page = 'home' -%}
+  {%- elsif page.layout and page.layout != 'space' -%}
+    {%- assign _sp_page = page.layout -%}
+  {%- else -%}
+    {%- assign _sp_page = page.title | default: 'page' -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- assign _sp_mode = page['sp-mode'] | default: page.sp_mode -%}
+{%- if _sp_mode == nil or _sp_mode == '' -%}
+  {%- if page.collection == 'posts' or page.layout == 'post' -%}
+    {%- assign _sp_mode = 'ambient' -%}
+  {%- else -%}
+    {%- assign _sp_mode = 'spatial' -%}
+  {%- endif -%}
+{%- endif -%}
+<body class="sp-body" data-sp-page="{{ _sp_page | slugify }}" data-sp-mode="{{ _sp_mode | downcase }}">
+
+  <!-- Skip link is the FIRST focusable node in the document: WCAG 2.4.1 -->
+  <a class="sp-skip" href="#sp-content">跳转到正文 · Skip to content</a>
+
+  <div class="sp-plate" aria-hidden="true"></div>
+  <canvas id="sp-gl" aria-hidden="true"></canvas>
+
+  {% include space-hud.html %}
+
+  <div class="sp-boot" id="sp-boot" aria-hidden="true">
+    <div class="sp-boot__inner">
+      <div class="sp-boot__t"><span>STRUCTURE / ASSEMBLY</span><span>--</span></div>
+      <div class="sp-boot__bar"><i></i></div>
+    </div>
+  </div>
+
+  <main class="sp-track" id="sp-content">{{ content }}</main>
+
+  <div class="sp-frame" aria-hidden="true"></div>
+
+  <script>
+  /* Watchdog: if the module never boots (404, CSP, WebGL driver failure, parse
+     error) the page must still be a readable document instead of a dead boot
+     overlay. app.js sets html.sp-ready on a successful runtime start. */
+  (function () {
+    var root = document.documentElement;
+    var started = false;
+
+    function settle() {
+      if (root.classList.contains('sp-ready')) { started = true; return; }
+      if (!root.classList.contains('sp-flat')) root.classList.add('sp-flat');
+      var boot = document.getElementById('sp-boot');
+      if (boot) boot.setAttribute('data-done', 'true');
+    }
+
+    /* the module may legitimately need a few seconds for fonts + first frames */
+    setTimeout(function () { if (!started) settle(); }, 7000);
+    /* if the page is fully loaded and nothing has happened after 9s, give up
+       again in case sp-ready was set but the first frame crashed later. */
+    setTimeout(function () {
+      if (!root.classList.contains('sp-ready')) settle();
+    }, 9000);
+  })();
+  </script>
+
+</body>
+</html>

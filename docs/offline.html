@@ -1,35 +1,51 @@
 ---
-layout: default
+layout: space
 title: "离线模式"
+description: "网络已断开。已缓存的页面仍可离线阅读，恢复连接后可获取新内容。"
 hide-in-nav: true
-description: "阅读过的页面可以在离线时访问哦 ;)"
-body-class: "has-hero page-offline"
-no-catalog: true
-header-img: "img/Backgrounds/404-bg.jpg"
+sp-page: error
+sp_mode: ambient
 permalink: /offline.html
 ---
 
-{%- assign hero_img = page.header-img | default: site.header-img -%}
-
-<section class="page-hero page-hero--tall">
-  <div class="page-hero__media"
-       style="background-image:url('{{ site.baseurl }}/{{ hero_img }}')"
-       role="img" aria-label="背景照片"></div>
-  <div class="shell page-hero__inner">
-    <p class="hero__eyebrow" style="margin-bottom:18px">
-      <span class="dot" aria-hidden="true"></span>
+<section class="rd-err" aria-labelledby="rd-offline-title">
+  <div class="rd-err__inner">
+    <p class="sp-eyebrow">
+      <i aria-hidden="true"></i>
       <span>Offline</span>
+      <s aria-hidden="true"></s>
+      <span><span data-zh>网络已断开</span><span data-en>No connection</span></span>
     </p>
-    <h1>网络暂时<em>断开了</em></h1>
-    <p class="page-hero__desc">
-      你之前读过的页面已被缓存，可以继续离线阅读；需要新内容时再连上网络即可。
+
+    <p class="sp-display rd-err__code rd-err__code--word" aria-hidden="true">OFF<em>LINE</em></p>
+
+    <div class="sp-rule rd-err__rule" aria-hidden="true"></div>
+
+    <h1 class="rd-err__title" id="rd-offline-title">
+      <span data-zh>当前处于离线状态</span>
+      <span data-en>The connection is currently offline</span>
+    </h1>
+
+    <p class="rd-err__desc">
+      <span data-zh>已缓存的页面仍可阅读；恢复连接后可获取最新内容。此页面由站点服务工作线程提供。</span>
+      <span data-en>Cached pages remain readable. New content returns once the connection is restored. This page is served by the site service worker.</span>
     </p>
-    <div class="hero__actions">
-      <a class="btn" href="{{ '/' | prepend: site.baseurl }}">
-        回到首页
+
+    <div class="rd-err__acts">
+      <a class="sp-btn sp-btn--solid" href="{{ '/' | relative_url }}">
+        <span><span data-zh>返回首页</span><span data-en>Home</span></span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
-      <a class="btn" href="{{ '/archive/' | prepend: site.baseurl }}">浏览全部文章</a>
+      <a class="sp-btn" href="{{ '/archive/' | relative_url }}">
+        <span><span data-zh>浏览全部文章</span><span data-en>Archive</span></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      </a>
+      <button class="sp-btn" type="button" onclick="window.location.reload()">
+        <span><span data-zh>重新连接</span><span data-en>Retry</span></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>
+      </button>
     </div>
+
+    <p class="rd-err__foot">{{ site.url | default: 'kannmu.top' | remove: 'https://' | remove: 'http://' }} · <span data-zh>离线文档</span><span data-en>Offline document</span></p>
   </div>
 </section>

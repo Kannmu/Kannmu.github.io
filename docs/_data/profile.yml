@@ -307,7 +307,7 @@ built:
     detail:
       zh: 基于确定性种子与形态基因的三维植物生成系统，在浏览器端实时运行。
       en: Browser-side procedural plant generation driven by deterministic seeds and morphological genes.
-    href: /GenPlant/GenPlant/
+    href: /GenPlant/dist/
 
 beyond:
   zh: >-
