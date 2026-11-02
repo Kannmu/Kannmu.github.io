@@ -8,7 +8,14 @@ multilingual: true
 
 {%- assign P = site.data.profile -%}
 {%- assign pubs_by_date = site.data.publications | sort: "date" | reverse -%}
-{%- assign lead_pubs = pubs_by_date | where_exp: "p", "p.author_role == 'first' or p.author_role == 'cofirst'" -%}
+{%- comment -%}
+  GitHub Pages builds with Jekyll 3.10, whose `where_exp` does not accept the
+  boolean operator `or` (added in Jekyll 4). Two single-condition filters plus
+  `concat` produce the same ordered set on both versions.
+{%- endcomment -%}
+{%- assign first_pubs = pubs_by_date | where_exp: "p", "p.author_role == 'first'" -%}
+{%- assign cofirst_pubs = pubs_by_date | where_exp: "p", "p.author_role == 'cofirst'" -%}
+{%- assign lead_pubs = first_pubs | concat: cofirst_pubs | sort: "date" | reverse -%}
 {%- assign paper_count = site.data.publications.size -%}
 {%- assign tool_count = site.data.tools.size -%}
 {%- assign post_count = site.posts.size -%}
