@@ -3,8 +3,8 @@ layout: space
 title: "关于范林涵 Linhan Fan — 人机交互研究者"
 nav-title: "About"
 description: "范林涵（Linhan Fan，涵无 / Kannmu）：东南大学设计学博士研究生，研究眼动与平滑追踪交互、脑机接口与安全神经通信、空中超声触觉以及 XR 与智能座舱人因。含完整论文列表、履历、荣誉与联系方式。"
-extra_css: /assets/space/css/pages.css
 sp_page: about
+sp_mode: ambient
 multilingual: true
 no-catalog: true
 ---
@@ -30,27 +30,25 @@ no-catalog: true
 {%- endfor -%}
 
 <!-- =====================================================================
-     F01 · OVERVIEW · the standing statement monolith
+     01 · OVERVIEW
      ================================================================== -->
 <section class="sp-station" id="sp-about-overview" data-sp-station="about-overview"
          data-sp-floor="01" data-sp-zh="概述" data-sp-en="Overview" aria-label="Overview">
-  <div class="sp-layer">
+  <div class="sp-layer" data-sp-lay="hero">
 
-    <article class="sp-panel ab-mast" data-sp-slot="title"
-             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
-      <p class="sp-eyebrow">
-        <i aria-hidden="true"></i><s aria-hidden="true"></s>
-        <span data-zh>学术主页 · 东南大学</span>
-        <span data-en>Academic Homepage · Southeast University</span>
+    <article class="sp-panel ab-mast">
+      <p class="sp-kicker">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>学术主页</span><span data-en>Academic homepage</span></span>
+        <span>SEU · 2026</span>
       </p>
-      <h1 class="sp-display">
+      <h1 class="ab-display">
         Linhan <em>Fan</em>
         <span class="sp-display__sub">
           <span data-zh>范林涵 · 涵无 / KANNMU</span>
           <span data-en>LINHAN FAN · KANNMU</span>
         </span>
       </h1>
-      <div class="sp-rule ab-mast__rule"></div>
       <p class="ab-role">
         <span data-zh>{{ P.role.zh }}</span>
         <span data-en>{{ P.role.en }}</span>
@@ -66,11 +64,10 @@ no-catalog: true
       </div>
     </article>
 
-    <article class="sp-panel ab-statement" data-sp-slot="lede"
-             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-6,0"
-             data-sp-pos="-600,-50,0" data-sp-anchor="lt" data-sp-order="2">
+    <article class="sp-panel ab-statement">
       <p class="sp-label ab-kicker">
         <span data-zh>研究陈述</span><span data-en>Research statement</span>
+        <span>01 / 08</span>
       </p>
       {%- for para in P.statement -%}
       <p class="sp-body-copy" data-zh>{{ para.zh }}</p>
@@ -78,56 +75,51 @@ no-catalog: true
       {%- endfor -%}
     </article>
 
-    <article class="sp-panel ab-ident" data-sp-slot="aside"
-            
-             data-sp-pos="20,-380,60" data-sp-anchor="lt" data-sp-order="1"
-             aria-label="Identifiers 身份标识">
+    <article class="sp-panel ab-ident" aria-label="Identifiers 身份标识">
       <div class="ab-ident__grid">
         <figure class="ab-portrait">
           <img src="{{ '/img/Kannmu-Avatar.jpg' | relative_url }}"
                alt="范林涵 Linhan Fan 的照片 · portrait" width="320" height="401"
                loading="lazy" decoding="async">
           <figcaption>
-            <span data-zh>涵无 · 拍照的那天在山里</span>
-            <span data-en>Kannmu · somewhere above the treeline</span>
+            <span data-zh>涵无 · 山中</span>
+            <span data-en>Kannmu · above the treeline</span>
           </figcaption>
         </figure>
         <div class="ab-ident__data">
-          <div class="sp-stats ab-stats">
-            <div class="sp-stats__row">
-              <b>{{ pubs.size }}</b>
-              <span><span data-zh>篇论文</span><span data-en>Works</span></span>
-              <em><span data-zh>全部</span><span data-en>All</span></em>
+          <div class="ab-stats">
+            <div class="sp-kpi">
+              <b class="sp-kpi__v">{{ pubs.size }}</b>
+              <span class="sp-kpi__l"><span data-zh>篇论文</span><span data-en>Works</span></span>
+              <em class="sp-kpi__src"><span data-zh>全部</span><span data-en>All</span></em>
             </div>
-            <div class="sp-stats__row">
-              <b>{{ total_cites }}</b>
-              <span><span data-zh>Crossref 引用</span><span data-en>Citations</span></span>
-              <em>Crossref</em>
+            <div class="sp-kpi">
+              <b class="sp-kpi__v">{{ total_cites }}</b>
+              <span class="sp-kpi__l"><span data-zh>Crossref 引用</span><span data-en>Citations</span></span>
+              <em class="sp-kpi__src">Crossref</em>
             </div>
-            <div class="sp-stats__row">
-              <b>{{ first_author_count }}</b>
-              <span><span data-zh>第一 / 共一</span><span data-en>First / co-first</span></span>
-              <em><span data-zh>作者</span><span data-en>Author</span></em>
+            <div class="sp-kpi">
+              <b class="sp-kpi__v">{{ first_author_count }}</b>
+              <span class="sp-kpi__l"><span data-zh>第一 / 共一</span><span data-en>First / co-first</span></span>
+              <em class="sp-kpi__src"><span data-zh>作者</span><span data-en>Author</span></em>
             </div>
-            <div class="sp-stats__row">
-              <b>{{ journal_count }}<i class="ab-slash">/</i>{{ conf_count }}</b>
-              <span><span data-zh>期刊 / 会议</span><span data-en>Journals / Conf.</span></span>
-              <em>{{ pubs.size }} <span data-zh>条目</span><span data-en>items</span></em>
+            <div class="sp-kpi">
+              <b class="sp-kpi__v">{{ journal_count }}<i class="ab-slash">/</i>{{ conf_count }}</b>
+              <span class="sp-kpi__l"><span data-zh>期刊 / 会议</span><span data-en>Journals / Conf.</span></span>
+              <em class="sp-kpi__src">{{ pubs.size }} <span data-zh>条目</span><span data-en>items</span></em>
             </div>
           </div>
           <dl class="ab-ids">
-            <div><dt>ORCID</dt><dd><a href="{{ P.links[1].url }}" target="_blank" rel="noopener">{{ P.identifiers.orcid }}</a></dd></div>
-            <div><dt>Scholar</dt><dd><a href="{{ P.links[0].url }}" target="_blank" rel="noopener">{{ P.identifiers.scholar_id }}</a></dd></div>
+            <div><dt>ORCID</dt><dd><a href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">{{ P.identifiers.orcid }}</a></dd></div>
+            <div><dt>Scholar</dt><dd><a href="https://scholar.google.com/citations?user={{ P.identifiers.scholar_id }}&amp;hl=en" target="_blank" rel="noopener">{{ P.identifiers.scholar_id }}</a></dd></div>
             <div><dt>Scopus</dt><dd>{{ P.identifiers.scopus }}</dd></div>
-            <div><dt>RG</dt><dd><a href="{{ P.links[2].url }}" target="_blank" rel="noopener">{{ P.identifiers.researchgate }}</a></dd></div>
+            <div><dt>RG</dt><dd><a href="https://www.researchgate.net/profile/Lin-Han-Fan" target="_blank" rel="noopener">{{ P.identifiers.researchgate }}</a></dd></div>
           </dl>
         </div>
       </div>
     </article>
 
-    <article class="sp-panel ab-affilblock" data-sp-slot="meta"
-             data-sp-pos="20,60,0" data-sp-anchor="lt" data-sp-order="3"
-             aria-label="Advisor and location 导师与所在地">
+    <article class="sp-panel ab-affilblock" aria-label="Advisor and location 导师与所在地">
       <div class="ab-affilblock__rows">
         <div class="ab-affilblock__row">
           <span class="sp-label"><span data-zh>导师</span><span data-en>Advisor</span></span>
@@ -155,106 +147,121 @@ no-catalog: true
 </section>
 
 <!-- =====================================================================
-     F02 · RESEARCH
+     02 · RESEARCH
      ================================================================== -->
 <section class="sp-station" id="sp-about-research" data-sp-station="about-research"
          data-sp-floor="02" data-sp-zh="研究" data-sp-en="Research" aria-label="Research">
-  <div class="sp-layer">
+  <div class="sp-layer" data-sp-lay="stack">
 
-    <article class="sp-panel ab-sec-head" data-sp-slot="title"
-             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
-      <h2 class="sp-h2">
+    <article class="sp-panel ab-sec-head">
+      <p class="sp-kicker">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>研究</span><span data-en>Research</span></span>
+        <span>02 / 08</span>
+      </p>
+      <h2 class="ab-h2">
         <span data-zh>研究主题</span><span data-en>Research topics</span>
       </h2>
       <p class="sp-lede sp-lede--cjk">
-        <span data-zh>以下按主题归纳，每个主题列出第一作者与共同第一作者论文。</span>
-        <span data-en>Grouped by topic. Only papers with first or co-first authorship are listed under each topic.</span>
+        <span data-zh>四个方向按主题归纳，每个主题列出第一作者与共同第一作者论文。</span>
+        <span data-en>Four directions grouped by topic. Only first- and co-first-author papers are listed under each.</span>
       </p>
       <div class="sp-rule ab-sec-head__rule"></div>
       <p class="sp-meta ab-sec-head__meta">
         <span><b>{{ P.research.size }}</b> <span data-zh>个主题</span><span data-en>topics</span></span>
         <span><b>{{ P.built.size }}</b> <span data-zh>个开源项目</span><span data-en>open projects</span></span>
+        <span><b>{{ pubs.size }}</b> <span data-zh>篇论文</span><span data-en>papers</span></span>
       </p>
     </article>
 
-    {%- for area in P.research -%}
-    {%- case forloop.index -%}
-    {%- when 1 -%}{%- assign px = -600 -%}{%- assign py = -165 -%}{%- assign pz = 60 -%}
-    {%- when 2 -%}{%- assign px = -600 -%}{%- assign py = 70 -%}{%- assign pz = 0 -%}
-    {%- when 3 -%}{%- assign px = 20 -%}{%- assign py = -380 -%}{%- assign pz = 0 -%}
-    {%- else -%}{%- assign px = 20 -%}{%- assign py = -170 -%}{%- assign pz = 0 -%}
-    {%- endcase -%}
+    <div class="ab-areas">
+      {%- for area in P.research -%}
+      <article class="sp-panel ab-area" aria-labelledby="area-{{ area.key }}">
+        <p class="ab-area__no"><b>{{ area.index }}</b><span data-zh>研究方向</span><span data-en>Area</span></p>
+        <h3 class="sp-h3" id="area-{{ area.key }}">
+          <span data-zh>{{ area.title.zh }}</span><span data-en>{{ area.title.en }}</span>
+        </h3>
+        <p class="sp-body-copy ab-area__sum" data-zh>{{ area.summary.zh }}</p>
+        <p class="sp-body-copy sp-copy-en ab-area__sum" data-en>{{ area.summary.en }}</p>
+        <div class="ab-area__kw">
+          {%- for kw in area.keywords -%}<span>{{ kw }}</span>{%- endfor -%}
+        </div>
+        {%- if area.related.size > 0 -%}
+        <div class="ab-area__rel">
+          {%- for rel in area.related -%}
+          {%- assign rel_pub = pubs | where: "id", rel | first -%}
+          <a class="sp-link ab-rel" href="https://doi.org/{{ rel_pub.doi }}" target="_blank" rel="noopener">
+            <span aria-hidden="true">↳</span>{{ rel_pub.venue_short | default: rel }}
+          </a>
+          {%- endfor -%}
+        </div>
+        {%- endif -%}
+      </article>
+      {%- endfor -%}
+    </div>
 
-    <article class="sp-panel ab-area" data-sp-slot="list"{% if forloop.first %} data-sp-slab="ink" data-sp-rot="0,6,0"{% elsif forloop.last %} data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-6,0"{% endif %}
-             data-sp-pos="{{ px }},{{ py }},{{ pz }}" data-sp-anchor="lt" data-sp-order="{{ forloop.index }}"
-             aria-labelledby="area-{{ area.key }}">
-      <p class="ab-area__no"><b>{{ area.index }}</b><span data-zh>研究方向</span><span data-en>Area</span></p>
-      <h3 class="sp-h3" id="area-{{ area.key }}">
-        <span data-zh>{{ area.title.zh }}</span><span data-en>{{ area.title.en }}</span>
-      </h3>
-      <p class="sp-body-copy ab-area__sum" data-zh>{{ area.summary.zh }}</p>
-      <p class="sp-body-copy sp-copy-en ab-area__sum" data-en>{{ area.summary.en }}</p>
-      <div class="ab-area__kw">
-        {%- for kw in area.keywords -%}<span>{{ kw }}</span>{%- endfor -%}
-      </div>
-      {%- if area.related.size > 0 -%}
-      <div class="ab-area__rel">
-        {%- for rel in area.related -%}
-        {%- assign rel_pub = pubs | where: "id", rel | first -%}
-        <a class="sp-link ab-rel" href="https://doi.org/{{ rel_pub.doi }}" target="_blank" rel="noopener">
-          <span aria-hidden="true">↳</span>{{ rel_pub.venue_short | default: rel }}
-        </a>
-        {%- endfor -%}
-      </div>
-      {%- endif -%}
-
-      {%- if forloop.last -%}
-      <div class="ab-built">
-        <p class="sp-label ab-built__label"><span data-zh>研究工具与开源项目</span><span data-en>Tools &amp; open-source projects</span></p>
-        {%- for item in P.built -%}
-        <a class="ab-built__item" href="{% if item.href contains 'http' %}{{ item.href }}{% else %}{{ item.href | relative_url }}{% endif %}"{% if item.href contains 'http' %} target="_blank" rel="noopener"{% endif %}>
-          <b><span data-zh>{{ item.title.zh }}</span><span data-en>{{ item.title.en }}</span></b>
-          <span class="ab-built__detail"><span data-zh>{{ item.detail.zh }}</span><span data-en>{{ item.detail.en }}</span></span>
-          <span class="ab-built__arrow" aria-hidden="true">↗</span>
-        </a>
-        {%- endfor -%}
-      </div>
-      {%- endif -%}
-    </article>
-    {%- endfor -%}
+    <div class="sp-panel ab-built">
+      <p class="sp-label ab-built__label"><span data-zh>研究工具与开源项目</span><span data-en>Tools &amp; open-source projects</span></p>
+      {%- for item in P.built -%}
+      <a class="ab-built__item" href="{% if item.href contains 'http' %}{{ item.href }}{% else %}{{ item.href | relative_url }}{% endif %}"{% if item.href contains 'http' %} target="_blank" rel="noopener"{% endif %}>
+        <b><span data-zh>{{ item.title.zh }}</span><span data-en>{{ item.title.en }}</span></b>
+        <span class="ab-built__detail"><span data-zh>{{ item.detail.zh }}</span><span data-en>{{ item.detail.en }}</span></span>
+        <span class="ab-built__arrow" aria-hidden="true">↗</span>
+      </a>
+      {%- endfor -%}
+    </div>
 
   </div>
 </section>
 
 <!-- =====================================================================
-     F03 · NEWS
+     03 · NEWS
      ================================================================== -->
 <section class="sp-station" id="sp-about-news" data-sp-station="about-news"
          data-sp-floor="03" data-sp-zh="动态" data-sp-en="News" aria-label="News">
-  <div class="sp-layer">
+  <div class="sp-layer" data-sp-lay="split">
 
-    <article class="sp-panel ab-sec-head" data-sp-slot="title"
-             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
-      <h2 class="sp-h2">
-        <span data-zh>论文与会议动态</span><span data-en>Papers &amp; conference activity</span>
+    <article class="sp-panel ab-sec-head">
+      <p class="sp-kicker">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>动态</span><span data-en>News</span></span>
+        <span>03 / 08</span>
+      </p>
+      <h2 class="ab-h2">
+        <span data-zh>论文与会议动态</span><span data-en>Papers &amp; activity</span>
       </h2>
       <p class="sp-lede sp-lede--cjk">
         <span data-zh>按日期倒序排列的发表与会议记录，条目与论文列表一一对应。</span>
-        <span data-en>Publication and conference records in reverse chronological order, each corresponding to an entry in the publication list.</span>
+        <span data-en>Publication and conference records in reverse chronological order, each matching an entry in the publication list.</span>
       </p>
       <div class="sp-rule ab-sec-head__rule"></div>
       <p class="sp-meta ab-sec-head__meta">
         <span><b>{{ P.news.size }}</b> <span data-zh>条动态</span><span data-en>entries</span></span>
         <span>{{ P.news.first.date | date: "%Y.%m" }} — {{ P.news.last.date | date: "%Y.%m" }}</span>
       </p>
+
+      {%- assign venues = pubs | map: "venue" | uniq -%}
+      <div class="ab-venues">
+        <p class="sp-label ab-kicker">
+          <span data-zh>刊载期刊与会议</span><span data-en>Venues</span>
+          <span>{{ venues.size }}</span>
+        </p>
+        <div class="ab-venues__list">
+          {%- for v in venues -%}
+          {%- assign vcount = pubs | where: "venue", v | size -%}
+          {%- assign vpub = pubs | where: "venue", v | first -%}
+          <a class="ab-venue" href="https://doi.org/{{ vpub.doi }}" target="_blank" rel="noopener">
+            <span class="ab-venue__name">{{ v }}</span>
+            <span class="ab-venue__n">{{ vcount }}</span>
+          </a>
+          {%- endfor -%}
+        </div>
+      </div>
     </article>
 
-    <article class="sp-panel ab-news" data-sp-slot="list"
-             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-6,0"
-             data-sp-pos="20,-380,0" data-sp-anchor="lt" data-sp-order="1"
-             aria-label="News list 动态列表">
+    <article class="sp-panel ab-news" aria-label="News list 动态列表">
       {%- for n in P.news -%}
-      <div class="sp-note ab-news__item">
+      <div class="ab-news__item">
         <time datetime="{{ n.date }}">{{ n.date | date: "%Y.%m.%d" }}</time>
         <h3 data-zh>{{ n.zh }}</h3>
         <h3 data-en>{{ n.en }}</h3>
@@ -262,37 +269,23 @@ no-catalog: true
       {%- endfor -%}
     </article>
 
-    {%- assign venues = pubs | map: "venue" | uniq -%}
-    <article class="sp-panel ab-venues" data-sp-slot="meta"
-            
-             data-sp-pos="-600,-120,60" data-sp-anchor="lt" data-sp-order="2"
-             aria-label="Venues 刊载期刊与会议">
-      <p class="sp-label ab-kicker"><span data-zh>刊载期刊与会议</span><span data-en>Venues</span></p>
-      <div class="ab-venues__list">
-        {%- for v in venues -%}
-        {%- assign vcount = pubs | where: "venue", v | size -%}
-        {%- assign vpub = pubs | where: "venue", v | first -%}
-        <a class="sp-item ab-venue" href="https://doi.org/{{ vpub.doi }}" target="_blank" rel="noopener">
-          <span class="ab-venue__name">{{ v }}</span>
-          <span class="ab-venue__n">{{ vcount }}</span>
-        </a>
-        {%- endfor -%}
-      </div>
-    </article>
-
   </div>
 </section>
 
 <!-- =====================================================================
-     F04 · PUBLICATIONS
+     04 · PUBLICATIONS
      ================================================================== -->
 <section class="sp-station" id="sp-about-publications" data-sp-station="about-publications"
          data-sp-floor="04" data-sp-zh="论文" data-sp-en="Publications" aria-label="Publications">
-  <div class="sp-layer">
+  <div class="sp-layer" data-sp-lay="stack">
 
-    <article class="sp-panel ab-pubhead" data-sp-slot="title"
-             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
-      <h2 class="sp-h2">
+    <article class="sp-panel ab-pubhead">
+      <p class="sp-kicker">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>论文</span><span data-en>Publications</span></span>
+        <span>04 / 08</span>
+      </p>
+      <h2 class="ab-h2">
         <span data-zh>全部论文</span><span data-en>All publications</span>
       </h2>
       <p class="sp-lede sp-lede--cjk">
@@ -321,26 +314,8 @@ no-catalog: true
       </p>
     </article>
 
-    {%- for p in pubs_sorted -%}
-    {%- if forloop.index == 1 -%}
-    <article class="sp-panel ab-pubcol" data-sp-slab="ink" data-sp-rot="0,6,0" data-sp-slot="list"
-            
-             data-sp-pos="-600,-125,60" data-sp-anchor="lt" data-sp-order="1"
-             aria-label="Publications 1–4">
-    {%- elsif forloop.index == 5 -%}
-    </article>
-    <article class="sp-panel ab-pubcol" data-sp-slab="ink" data-sp-rot="0,-4,0" data-sp-slot="list"
-            
-             data-sp-pos="20,-380,40" data-sp-anchor="lt" data-sp-order="2"
-             aria-label="Publications 5–10">
-    {%- elsif forloop.index == 11 -%}
-    </article>
-    <article class="sp-panel ab-pubcol" data-sp-slot="list"
-             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-4,0"
-             data-sp-pos="-600,262,0" data-sp-anchor="lt" data-sp-order="3"
-             aria-label="Publications 11">
-    {%- endif -%}
-
+    <article class="sp-panel ab-pubcol" aria-label="Publication list 论文列表">
+      {%- for p in pubs_sorted -%}
       <article class="sp-pub ab-pub" id="{{ p.id }}" data-pub-row
         data-year="{{ p.year }}"
         data-type="{{ p.type }}"
@@ -401,44 +376,42 @@ no-catalog: true
           </div>
         </div>
       </article>
-
-    {%- if forloop.last -%}
+      {%- endfor -%}
     </article>
-    {%- endif -%}
-    {%- endfor -%}
 
   </div>
 </section>
 
 <!-- =====================================================================
-     F05 · CV
+     05 · CV
      ================================================================== -->
 <section class="sp-station" id="sp-about-cv" data-sp-station="about-cv"
          data-sp-floor="05" data-sp-zh="履历" data-sp-en="CV" aria-label="Curriculum vitae">
-  <div class="sp-layer">
+  <div class="sp-layer" data-sp-lay="grid2">
 
-    <article class="sp-panel ab-sec-head" data-sp-slot="title"
-             data-sp-pos="-600,-190,0" data-sp-anchor="lt" data-sp-order="0">
-      <h2 class="sp-h2">
+    <article class="sp-panel ab-sec-head">
+      <p class="sp-kicker">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>履历</span><span data-en>Curriculum vitae</span></span>
+        <span>05 / 08</span>
+      </p>
+      <h2 class="ab-h2">
         <span data-zh>教育与经历</span><span data-en>Education &amp; experience</span>
       </h2>
       <p class="sp-lede sp-lede--cjk">
-        <span data-zh>时间线按阶段排列，当前阶段以冷青标记。</span>
-        <span data-en>Stages are ordered along a timeline; the current stage is marked in cyan.</span>
+        <span data-zh>时间线按阶段排列，当前阶段以 2px 渐变刻度标记。</span>
+        <span data-en>Stages ordered along a timeline; the current stage carries a 2px spectral mark.</span>
       </p>
       <div class="sp-rule ab-sec-head__rule"></div>
       <p class="sp-meta ab-sec-head__meta">
         <span><b>{{ P.education.size }}</b> <span data-zh>段学历</span><span data-en>degrees</span></span>
         <span><b>{{ P.experience.size }}</b> <span data-zh>段经历</span><span data-en>positions</span></span>
-        <span><b>{{ P.location.zh }}</b></span>
+        <span>{{ P.location.zh }}</span>
       </p>
     </article>
 
-    <article class="sp-panel ab-tlbox" data-sp-slab="ink" data-sp-rot="0,6,0" data-sp-slot="list"
-            
-             data-sp-pos="-600,90,60" data-sp-anchor="lt" data-sp-order="1"
-             aria-label="Education 教育">
-      <p class="sp-label ab-kicker"><span data-zh>教育</span><span data-en>Education</span></p>
+    <article class="sp-panel ab-tlbox" aria-label="Education 教育">
+      <p class="sp-label ab-kicker"><span data-zh>教育</span><span data-en>Education</span><span>{{ P.education.size }}</span></p>
       <div class="ab-tl">
         {%- for e in P.education -%}
         <div class="ab-tl__item{% if e.current %} is-current{% endif %}">
@@ -454,11 +427,8 @@ no-catalog: true
       </div>
     </article>
 
-    <article class="sp-panel ab-tlbox" data-sp-slot="list"
-             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-6,0"
-             data-sp-pos="20,-190,0" data-sp-anchor="lt" data-sp-order="2"
-             aria-label="Experience 经历">
-      <p class="sp-label ab-kicker"><span data-zh>经历</span><span data-en>Experience</span></p>
+    <article class="sp-panel ab-tlbox" aria-label="Experience 经历">
+      <p class="sp-label ab-kicker"><span data-zh>经历</span><span data-en>Experience</span><span>{{ P.experience.size }}</span></p>
       <div class="ab-tl">
         {%- for x in P.experience -%}
         <div class="ab-tl__item{% if x.current %} is-current{% endif %}">
@@ -478,15 +448,19 @@ no-catalog: true
 </section>
 
 <!-- =====================================================================
-     F06 · AWARDS
+     06 · AWARDS + CONTINUE
      ================================================================== -->
 <section class="sp-station" id="sp-about-awards" data-sp-station="about-awards"
          data-sp-floor="06" data-sp-zh="荣誉" data-sp-en="Honors" aria-label="Awards and honors">
-  <div class="sp-layer">
+  <div class="sp-layer" data-sp-lay="split">
 
-    <article class="sp-panel ab-sec-head" data-sp-slot="title"
-             data-sp-pos="-600,-210,0" data-sp-anchor="lt" data-sp-order="0">
-      <h2 class="sp-h2">
+    <article class="sp-panel ab-sec-head">
+      <p class="sp-kicker">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>荣誉</span><span data-en>Honors</span></span>
+        <span>06 / 08</span>
+      </p>
+      <h2 class="ab-h2">
         <span data-zh>获奖与荣誉</span><span data-en>Awards &amp; honors</span>
       </h2>
       <p class="sp-lede sp-lede--cjk">
@@ -494,42 +468,40 @@ no-catalog: true
         <span data-en>Award records from graduate and undergraduate study, listed by year.</span>
       </p>
       <div class="sp-rule ab-sec-head__rule"></div>
-    </article>
 
-    <article class="sp-panel ab-awards" data-sp-slot="list"
-             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-6,0"
-             data-sp-pos="20,-210,0" data-sp-anchor="lt" data-sp-order="1"
-             aria-label="Award list 获奖列表">
-      {%- for a in P.awards -%}
-      <div class="ab-award">
-        <span class="ab-award__year">{{ a.year }}</span>
-        <p class="ab-award__title">
-          <span data-zh>{{ a.title.zh }}</span><span data-en>{{ a.title.en }}</span>
+      <div class="ab-awards">
+        {%- for a in P.awards -%}
+        <div class="ab-award">
+          <span class="ab-award__year">{{ a.year }}</span>
+          <p class="ab-award__title">
+            <span data-zh>{{ a.title.zh }}</span><span data-en>{{ a.title.en }}</span>
+          </p>
+        </div>
+        {%- endfor -%}
+        <p class="ab-award__foot">
+          <span data-zh>获奖记录同时列于履历时间线。</span>
+          <span data-en>Award records also appear on the CV timeline.</span>
         </p>
       </div>
-      {%- endfor -%}
-      <p class="ab-award__foot">
-        <span data-zh>获奖记录同时列于履历时间线。</span>
-        <span data-en>Award records also appear on the CV timeline.</span>
-      </p>
     </article>
 
-    <article class="sp-panel ab-cta" data-sp-slot="cta"
-            
-             data-sp-pos="-600,30,60" data-sp-anchor="lt" data-sp-order="2"
-             aria-label="Continue 继续浏览">
+    <article class="sp-panel ab-cta" aria-label="Continue 继续浏览">
       <p class="sp-label ab-kicker"><span data-zh>继续</span><span data-en>Continue</span></p>
       <div class="ab-cta__rows">
-        <a class="sp-item ab-cta__row" href="#sp-about-publications">
+        <a class="ab-cta__row" href="#sp-about-publications">
           <span><span data-zh>论文</span><span data-en>Publications</span></span>
           <span aria-hidden="true">↗</span>
         </a>
-        <a class="sp-item ab-cta__row" href="#sp-about-skills">
+        <a class="ab-cta__row" href="#sp-about-skills">
           <span><span data-zh>工具箱</span><span data-en>Toolkit</span></span>
           <span aria-hidden="true">↗</span>
         </a>
-        <a class="sp-item ab-cta__row" href="#sp-about-contact">
+        <a class="ab-cta__row" href="#sp-about-contact">
           <span><span data-zh>联系</span><span data-en>Contact</span></span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a class="ab-cta__row" href="{{ '/archive/' | relative_url }}">
+          <span><span data-zh>全部文章</span><span data-en>All notes</span></span>
           <span aria-hidden="true">↗</span>
         </a>
       </div>
@@ -539,31 +511,31 @@ no-catalog: true
 </section>
 
 <!-- =====================================================================
-     F07 · SKILLS
+     07 · TOOLKIT
      ================================================================== -->
 <section class="sp-station" id="sp-about-skills" data-sp-station="about-skills"
          data-sp-floor="07" data-sp-zh="技能" data-sp-en="Toolkit" aria-label="Toolkit">
-  <div class="sp-layer">
+  <div class="sp-layer" data-sp-lay="grid3">
 
-    <article class="sp-panel ab-sec-head" data-sp-slot="title"
-             data-sp-pos="-600,-200,0" data-sp-anchor="lt" data-sp-order="0">
-      <h2 class="sp-h2">
+    <article class="sp-panel ab-sec-head">
+      <p class="sp-kicker">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>技能</span><span data-en>Toolkit</span></span>
+        <span>07 / 08</span>
+      </p>
+      <h2 class="ab-h2">
         <span data-zh>工具箱</span><span data-en>Toolkit</span>
       </h2>
       <p class="sp-lede sp-lede--cjk">
         <span data-zh>研究、软件与硬件三组能力，列出日常使用的具体工具。</span>
         <span data-en>Three groups of capability — research, software and hardware — with the tools used day to day.</span>
       </p>
+      <div class="sp-rule ab-sec-head__rule"></div>
     </article>
 
     {%- for group in P.skills -%}
-    {%- if forloop.index == 1 -%}{%- assign px = -600 -%}{%- assign pz = 0 -%}{%- endif -%}
-    {%- if forloop.index == 2 -%}{%- assign px = -192 -%}{%- assign pz = 60 -%}{%- endif -%}
-    {%- if forloop.index == 3 -%}{%- assign px = 216 -%}{%- assign pz = 0 -%}{%- endif -%}
-    <article class="sp-panel ab-skill" data-sp-slot="list"
-             data-sp-pos="{{ px }},-10,{{ pz }}" data-sp-anchor="lt" data-sp-order="{{ forloop.index }}"
-             aria-label="{{ group.label.en }}">
-      <p class="ab-skill__no">0{{ forloop.index }}</p>
+    <article class="sp-panel ab-skill" aria-label="{{ group.label.en }}">
+      <p class="ab-skill__no">0{{ forloop.index }} / {{ group.label.en }}</p>
       <h3 class="sp-h3">
         <span data-zh>{{ group.label.zh }}</span><span data-en>{{ group.label.en }}</span>
       </h3>
@@ -573,10 +545,7 @@ no-catalog: true
     </article>
     {%- endfor -%}
 
-    <article class="sp-panel ab-beyond" data-sp-slot="meta"
-             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-6,0"
-             data-sp-pos="-600,230,0" data-sp-anchor="lt" data-sp-order="4"
-             aria-label="Elsewhere 其他">
+    <article class="sp-panel ab-beyond" aria-label="Elsewhere 其他">
       <p class="sp-label ab-kicker"><span data-zh>其他</span><span data-en>Elsewhere</span></p>
       <p class="sp-body-copy">
         <span data-zh>{{ P.beyond.zh }}</span>
@@ -589,6 +558,9 @@ no-catalog: true
         <a class="sp-link" href="{{ '/Portfolio/' | relative_url }}"><span data-zh>作品集</span><span data-en>Portfolio</span>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
+        <a class="sp-link" href="{{ '/lab/' | relative_url }}"><span data-zh>声场实验</span><span data-en>Acoustic field</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
       </p>
     </article>
 
@@ -596,20 +568,20 @@ no-catalog: true
 </section>
 
 <!-- =====================================================================
-     F08 · CONTACT
+     08 · CONTACT
      ================================================================== -->
 <section class="sp-station" id="sp-about-contact" data-sp-station="about-contact"
          data-sp-floor="08" data-sp-zh="联系" data-sp-en="Contact" aria-label="Contact">
-  <div class="sp-layer">
+  <div class="sp-layer" data-sp-lay="split">
 
-    <article class="sp-panel ab-contact" data-sp-slot="title"
-             data-sp-pos="-600,-300,0" data-sp-anchor="lt" data-sp-order="0">
-      <p class="sp-eyebrow">
-        <i aria-hidden="true"></i><s aria-hidden="true"></s>
-        <span data-zh>联系 · 合作</span><span data-en>Contact · Collaboration</span>
+    <article class="sp-panel ab-contact">
+      <p class="sp-kicker">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>联系</span><span data-en>Contact</span></span>
+        <span>08 / 08</span>
       </p>
-      <h2 class="sp-h2">
-        <span data-zh>合作与交流</span><span data-en>Collaboration &amp; correspondence</span>
+      <h2 class="ab-h2">
+        <span data-zh>合作与交流</span><span data-en>Collaboration</span>
       </h2>
       <p class="sp-lede sp-lede--cjk">
         <span data-zh>{{ P.contact.zh }}</span>
@@ -618,51 +590,46 @@ no-catalog: true
       <div class="sp-rule ab-sec-head__rule"></div>
       <p class="sp-meta ab-sec-head__meta">
         <span>{{ P.location.zh }} · {{ P.location.en }}</span>
+        <span>ORCID {{ P.identifiers.orcid }}</span>
       </p>
+
+      <div class="ab-profiles" aria-label="Profiles 主页">
+        <p class="sp-label ab-kicker"><span data-zh>主页与账号</span><span data-en>Profiles</span></p>
+        <div class="ab-profiles__grid">
+          {%- for link in P.links -%}
+          {%- if link.key == 'email' -%}{%- continue -%}{%- endif -%}
+          <a class="ab-profiles__item" href="{{ link.url }}"{% unless link.url contains 'mailto' %} target="_blank" rel="noopener"{% endunless %}>
+            <span>{{ link.label }}</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          {%- endfor -%}
+        </div>
+      </div>
     </article>
 
-    <article class="sp-panel ab-mails" data-sp-slot="list"
-            
-             data-sp-pos="20,-300,60" data-sp-anchor="lt" data-sp-order="1"
-             aria-label="Email addresses 邮箱">
-      <p class="sp-label ab-kicker"><span data-zh>电子邮件</span><span data-en>Email</span></p>
-      <a class="sp-item ab-mail" href="mailto:{{ P.contact.email }}">
+    <article class="sp-panel ab-mails" aria-label="Email addresses 邮箱">
+      <p class="sp-label ab-kicker"><span data-zh>电子邮件</span><span data-en>Email</span><span>3</span></p>
+      <a class="ab-mail" href="mailto:{{ P.contact.email }}">
         <span>
           <span class="ab-mail__addr">{{ P.contact.email }}</span>
           <span class="ab-mail__tag"><span data-zh>主要邮箱</span><span data-en>Primary</span></span>
         </span>
         <span aria-hidden="true">↗</span>
       </a>
-      <a class="sp-item ab-mail" href="mailto:{{ P.contact.email_academic }}">
+      <a class="ab-mail" href="mailto:{{ P.contact.email_academic }}">
         <span>
           <span class="ab-mail__addr">{{ P.contact.email_academic }}</span>
           <span class="ab-mail__tag"><span data-zh>学术邮箱</span><span data-en>Academic</span></span>
         </span>
         <span aria-hidden="true">↗</span>
       </a>
-      <a class="sp-item ab-mail" href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">
+      <a class="ab-mail" href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">
         <span>
           <span class="ab-mail__addr">ORCID {{ P.identifiers.orcid }}</span>
           <span class="ab-mail__tag"><span data-zh>学术身份</span><span data-en>Identifier</span></span>
         </span>
         <span aria-hidden="true">↗</span>
       </a>
-    </article>
-
-    <article class="sp-panel ab-profiles" data-sp-slot="meta"
-             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-6,0"
-             data-sp-pos="20,80,0" data-sp-anchor="lt" data-sp-order="2"
-             aria-label="Profiles 主页">
-      <p class="sp-label ab-kicker"><span data-zh>主页与账号</span><span data-en>Profiles</span></p>
-      <div class="ab-profiles__grid">
-        {%- for link in P.links -%}
-        {%- if link.key == 'email' -%}{%- continue -%}{%- endif -%}
-        <a class="ab-profiles__item" href="{{ link.url }}"{% unless link.url contains 'mailto' %} target="_blank" rel="noopener"{% endunless %}>
-          <span>{{ link.label }}</span>
-          <span aria-hidden="true">↗</span>
-        </a>
-        {%- endfor -%}
-      </div>
     </article>
 
   </div>

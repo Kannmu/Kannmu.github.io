@@ -1,147 +1,114 @@
 ---
-layout: default
+layout: space
+sp_page: keynote
+sp_mode: ambient
 ---
+{%- comment -%}
+  KEYNOTE DOCUMENT LAYOUT (legacy compatibility).
+  Long talk / essay pages reuse the reading lane with a larger opening block and
+  no comments. Previous / next entries are kept because keynotes are sequential.
+{%- endcomment -%}
+{%- assign rd_chars = content | strip_html | strip_newlines | size -%}
+{%- assign rd_min = rd_chars | divided_by: 620 | plus: 1 -%}
+{%- assign rd_cat = page.categories | join: ' / ' -%}
 
-<!-- Image to hack wechat -->
-<!-- Post Header -->
-{% include intro-header.html type='keynote' %}
+<div class="rd-doc">
+  <div class="rd-lane">
 
+    <header class="rd-head rd-head--keynote">
+      <p class="sp-eyebrow rd-head__eyebrow">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>长文</span><span data-en>Keynote</span></span>
+        <s aria-hidden="true"></s>
+        <span>{% if rd_cat != '' %}{{ rd_cat | escape }}{% else %}<span data-zh>讲稿</span><span data-en>Talk</span>{% endif %}</span>
+      </p>
 
-<!-- Post Content -->
-<article>
-    <div class="container">
-        <div class="row">
+      <h1 class="rd-title" id="rd-title">{{ page.title | escape }}</h1>
 
-            <!-- Post Container -->
-            <div class="post-container
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1 ">
+      {% if page.subtitle %}<p class="rd-sub">{{ page.subtitle | escape }}</p>{% endif %}
 
-				{{ content }}
+      <div class="sp-rule rd-head__rule" aria-hidden="true"></div>
 
-                <hr style="visibility: hidden;">
-                <ul class="pager">
-                    {% if page.previous.url %}
-                    <li class="previous">
-                        <a href="{{ page.previous.url | prepend: site.baseurl | replace: '//', '/' }}" data-toggle="tooltip" data-placement="top" title="{{page.previous.title}}">
-                        Previous<br>
-                        <span>{{page.previous.title}}</span>
-                        </a>
-                    </li>
-                    {% endif %}
-                    {% if page.next.url %}
-                    <li class="next">
-                        <a href="{{ page.next.url | prepend: site.baseurl | replace: '//', '/' }}" data-toggle="tooltip" data-placement="top" title="{{page.next.title}}">
-                        Next<br>
-                        <span>{{page.next.title}}</span>
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-                <hr style="visibility: hidden;">
-
-                {% if site.disqus_username %}
-                <!-- disqus 评论框 start -->
-                <div class="comment">
-                    <div id="disqus_thread" class="disqus-thread">
-
-                    </div>
-                </div>
-                <!-- disqus 评论框 end -->
-                {% endif %}
-
-            </div>
-
-            <!-- Sidebar Container -->
-            <div class="sidebar-container
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1 ">
-
-                <!-- Featured Tags -->
-                {% include featured-tags.html %}
-
-                <!-- Friends Blog -->
-                {% include friends.html %}
-
-            </div>
+      <div class="rd-metabar">
+        <div class="rd-meta">
+          <span class="sp-label"><span data-zh>日期</span><span data-en>Date</span></span>
+          <b><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: '%Y.%m.%d' }}</time></b>
         </div>
-    </div>
-</article>
+        <div class="rd-meta">
+          <span class="sp-label"><span data-zh>长度</span><span data-en>Length</span></span>
+          <b>{{ rd_min }} MIN</b>
+          <small>{{ rd_chars }} <span data-zh>字符</span><span data-en>chars</span></small>
+        </div>
+        <div class="rd-meta">
+          <span class="sp-label"><span data-zh>作者</span><span data-en>Author</span></span>
+          <b><a href="{{ '/about/' | relative_url }}">{{ page.author | default: site.author | default: site.title | escape }}</a></b>
+        </div>
+      </div>
+    </header>
 
-<!-- resize header to fullscreen keynotes -->
-<script async>
-    var $header = document.getElementsByTagName("header")[0];
-    function resize(){
-        /*
-         * leave 85px to both
-         * - told/imply users that there has more content below
-         * - let user can scroll in mobile device, seeing the keynote-view is unscrollable
-         */
-        $header.style.height = (window.innerHeight-85) + 'px';
-    }
-    document.addEventListener('DOMContentLoaded', function(){
-        resize();
-    })
-    window.addEventListener('load', function(){
-        resize();
-    })
-    window.addEventListener('resize', function(){
-        resize();
-    })
-    resize();
-</script>
+    <article class="rd-article" id="rd-article">
+      <div class="rd-article__head">
+        <span class="sp-label"><span data-zh>正文</span><span data-en>Body copy</span></span>
+        <span class="rd-article__len" aria-hidden="true">≈ <b>{{ rd_min }}</b> MIN · {{ page.date | date: '%Y' }}</span>
+      </div>
+      <div class="rd-prose" id="rd-body">{{ content }}</div>
+    </article>
 
+    <footer class="rd-end">
+      <div class="rd-end__hd">
+        <h2 class="sp-h3"><span data-zh>相邻篇目</span><span data-en>Adjacent entries</span></h2>
+      </div>
 
-{% if site.disqus_username %}
-<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
-<script async type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = "{{site.disqus_username}}";
-    var disqus_identifier = "{{page.id}}";
-    var disqus_url = "{{site.url}}{{page.url}}";
+      <nav class="rd-pn" aria-label="Keynote navigation">
+        {% if page.previous %}
+        <a class="rd-pn__a rd-pn__a--prev" href="{{ page.previous.url | relative_url }}">
+          <span class="rd-pn__k">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+            <span data-zh>上一篇</span><span data-en>Previous</span>
+          </span>
+          <span class="rd-pn__t">{{ page.previous.title | escape }}</span>
+        </a>
+        {% else %}
+        <div class="rd-pn__a rd-pn__a--empty" aria-hidden="true">
+          <span class="rd-pn__k"><span data-zh>第一篇</span><span data-en>First entry</span></span>
+          <span class="rd-pn__t">—</span>
+        </div>
+        {% endif %}
 
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<!-- disqus 公共JS代码 end -->
-{% endif %}
+        {% if page.next %}
+        <a class="rd-pn__a rd-pn__a--next" href="{{ page.next.url | relative_url }}">
+          <span class="rd-pn__k">
+            <span data-zh>下一篇</span><span data-en>Next</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+          <span class="rd-pn__t">{{ page.next.title | escape }}</span>
+        </a>
+        {% else %}
+        <div class="rd-pn__a rd-pn__a--empty" aria-hidden="true">
+          <span class="rd-pn__k"><span data-zh>最新一篇</span><span data-en>Latest entry</span></span>
+          <span class="rd-pn__t">—</span>
+        </div>
+        {% endif %}
+      </nav>
 
+      <div class="rd-end__foot">
+        <div class="rd-end__links">
+          <a class="sp-link" href="{{ '/archive/' | relative_url }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+            <span><span data-zh>全部笔记</span><span data-en>All notes</span></span>
+          </a>
+          <a class="sp-link" href="{{ '/' | relative_url }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9h-6v-6H10v6H4z"/></svg>
+            <span><span data-zh>返回首页</span><span data-en>Home</span></span>
+          </a>
+          <a class="sp-link" href="#rd-title">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+            <span><span data-zh>顶部</span><span data-en>Top</span></span>
+          </a>
+        </div>
+        <p class="rd-end__note">© {{ site.time | date: '%Y' }} Kannmu</p>
+      </div>
+    </footer>
 
-{% if site.anchorjs %}
-<!-- async load function -->
-<script async>
-    function async(u, c) {
-      var d = document, t = 'script',
-          o = d.createElement(t),
-          s = d.getElementsByTagName(t)[0];
-      o.src = u;
-      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
-      s.parentNode.insertBefore(o, s);
-    }
-</script>
-<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
-<script async>
-    async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
-        anchors.options = {
-          visible: 'always',
-          placement: 'right',
-          icon: '#'
-        };
-        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
-    })
-</script>
-<style>
-    /* place left on bigger screen */
-    @media all and (min-width: 800px) {
-        .anchorjs-link{
-            position: absolute;
-            left: -0.75em;
-            font-size: 1.1em;
-            margin-top : -0.1em;
-        }
-    }
-</style>
-{% endif %}
+  </div>
+</div>

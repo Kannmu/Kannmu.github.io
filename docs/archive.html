@@ -3,8 +3,8 @@ layout: space
 title: 文章归档与主题索引
 nav-title: Archive
 description: "按年份与主题浏览涵无（Kannmu）的全部文章，涵盖人机交互、人工智能、脑机接口、Unity、Python、硬件设计、开源项目与论文研读。"
-extra_css: /assets/space/css/pages.css
 sp_page: archive
+sp_mode: ambient
 multilingual: true
 no-catalog: true
 ---
@@ -20,19 +20,19 @@ no-catalog: true
 {%- assign tagmap = tagdict | split: '|' -%}
 
 <!-- =====================================================================
-     F01 · INDEX · the standing year index
+     01 · INDEX
      ================================================================== -->
 <section class="sp-station" id="sp-arc-index" data-sp-station="arc-index"
          data-sp-floor="01" data-sp-zh="索引" data-sp-en="Index" aria-label="Archive index">
-  <div class="sp-layer">
+  <div class="sp-layer" data-sp-lay="grid2">
 
-    <article class="sp-panel ar-mast" data-sp-slot="title"
-             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
-      <p class="sp-eyebrow">
-        <i aria-hidden="true"></i><s aria-hidden="true"></s>
-        <span data-zh>文章归档 · 主题索引</span><span data-en>The Archive</span>
+    <article class="sp-panel ar-mast">
+      <p class="sp-kicker">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>文章归档 · 主题索引</span><span data-en>The archive</span></span>
+        <span>{{ all_posts.size }} POSTS</span>
       </p>
-      <h1 class="sp-display ar-display">
+      <h1 class="ar-display">
         <span data-zh>文章<em>归档</em></span>
         <span data-en>Archive &amp; <em>index</em></span>
       </h1>
@@ -48,14 +48,18 @@ no-catalog: true
       </p>
     </article>
 
-    <article class="sp-panel ar-cloud" data-sp-slot="list"
-            
-             data-sp-pos="20,-380,60" data-sp-anchor="lt" data-sp-order="1"
-             aria-label="Topic filter 主题筛选">
+    <article class="sp-panel ar-cloud" aria-label="Topic filter 主题筛选">
       <p class="sp-label ar-kicker">
         <span data-zh>按主题筛选</span><span data-en>Filter by topic</span>
         <span class="ar-kicker__count"><b data-arc-count>{{ all_posts.size }}</b> <span data-zh>篇</span><span data-en>posts</span></span>
       </p>
+
+      <div class="ar-search" role="search">
+        <label for="ar-q"><span data-zh>检索</span><span data-en>Search</span></label>
+        <input id="ar-q" type="search" inputmode="search" autocomplete="off"
+               placeholder="标题 / 主题 · title or topic">
+      </div>
+
       <div class="ar-chips" id="arcChips" data-arc-chips>
         <button class="sp-chip ar-chip" type="button" data-arc-filter="*" aria-pressed="true">
           <span data-zh>全部</span><span data-en>All</span><sup>{{ all_posts.size }}</sup>
@@ -78,19 +82,16 @@ no-catalog: true
         <span aria-hidden="true">↓</span>
       </button>
       <p class="ar-empty" data-arc-empty hidden>
-        <span data-zh>这个主题下暂时没有文章。</span>
-        <span data-en>No posts under this topic yet.</span>
+        <span data-zh>没有匹配的文章，换一个主题或关键词。</span>
+        <span data-en>No matching notes. Try another topic or keyword.</span>
       </p>
     </article>
 
-    <article class="sp-panel ar-years" data-sp-slot="meta"
-             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-12,0"
-             data-sp-pos="-600,-40,0" data-sp-anchor="lt" data-sp-order="2"
-             aria-label="Years 年份索引">
-      <p class="sp-label ar-kicker"><span data-zh>按年份</span><span data-en>By year</span></p>
+    <article class="sp-panel ar-years" aria-label="Years 年份索引">
+      <p class="sp-label ar-kicker"><span data-zh>按年份</span><span data-en>By year</span><span>{{ year_groups.size }}</span></p>
       <div class="ar-years__list">
         {%- for group in year_groups -%}
-        <a class="sp-item ar-year" href="#sp-arc-{{ group.name }}">
+        <a class="ar-year" href="#sp-arc-{{ group.name }}">
           <span class="ar-year__num">{{ group.name }}</span>
           <span class="ar-year__n">{{ group.items.size }} <span data-zh>篇</span><span data-en>posts</span></span>
           <span class="ar-year__go" aria-hidden="true">↓</span>
@@ -98,14 +99,12 @@ no-catalog: true
         {%- endfor -%}
       </div>
       <p class="ar-note">
-        <span data-zh>筛选在页面内完成，不跳转、不刷新；年份链接直接前往对应楼层。</span>
-        <span data-en>Filtering happens in place, without navigation or reload; year links travel to the matching floor.</span>
+        <span data-zh>筛选与检索在页面内完成，不跳转、不刷新；年份链接直接前往对应章节。</span>
+        <span data-en>Filtering and search happen in place, without navigation or reload; year links travel to the matching chapter.</span>
       </p>
     </article>
 
-    <article class="sp-panel ar-legend" data-sp-slot="aside"
-             data-sp-pos="20,120,0" data-sp-anchor="lt" data-sp-order="3"
-             aria-label="Legend 图例">
+    <article class="sp-panel ar-legend" aria-label="Legend 图例">
       <p class="sp-label ar-kicker"><span data-zh>图例</span><span data-en>Legend</span></p>
       <dl class="ar-legend__list">
         <div><dt>10.24</dt><dd><span data-zh>发表日期（月.日）</span><span data-en>Publication date (M.D)</span></dd></div>
@@ -122,26 +121,23 @@ no-catalog: true
 </section>
 
 <!-- =====================================================================
-     F02… · ONE STATION PER YEAR
+     02… · ONE CHAPTER PER YEAR
      ================================================================== -->
 {%- for group in year_groups -%}
 {%- assign gp = group.items.size -%}
-{%- assign half = gp | plus: 1 | divided_by: 2 -%}
-{%- assign splitAt = half | plus: 1 -%}
 <section class="sp-station" id="sp-arc-{{ group.name }}" data-sp-station="arc-{{ group.name }}"
          data-sp-floor="0{{ forloop.index | plus: 1 }}"
          data-sp-zh="{{ group.name }} 年" data-sp-en="Year {{ group.name }}"
          data-arc-station="{{ group.name }}" aria-label="Year {{ group.name }}">
-  <div class="sp-layer">
+  <div class="sp-layer" data-sp-lay="year">
 
-    <article class="sp-panel ar-yhead" data-sp-slot="title"
-             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-12,0"
-             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
-      <p class="sp-eyebrow">
-        <i aria-hidden="true"></i><s aria-hidden="true"></s>
-        <span data-zh>年份 · {{ group.name }}</span><span data-en>Year {{ group.name }}</span>
+    <article class="sp-panel ar-yhead">
+      <p class="sp-kicker">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>年份</span><span data-en>Year</span></span>
+        <span>{{ forloop.index | prepend: '0' }} / 0{{ year_groups.size }}</span>
       </p>
-      <h2 class="sp-display ar-yhead__num">{{ group.name }}</h2>
+      <h2 class="ar-yhead__num">{{ group.name }}</h2>
       <p class="ar-yhead__meta">
         <span><b data-arc-year-count>{{ gp }}</b> <span data-zh>篇文章</span><span data-en>posts</span></span>
         {%- if gp > 0 -%}
@@ -159,20 +155,9 @@ no-catalog: true
       </div>
     </article>
 
-    {%- for post in group.items -%}
-    {%- if forloop.index == 1 -%}
-    <article class="sp-panel ar-postcol" data-sp-slab="ink" data-sp-rot="0,3,0" data-sp-slot="list"
-            
-             data-sp-pos="-270,-380,60" data-sp-anchor="lt" data-sp-order="1"
-             aria-label="{{ group.name }} posts 1">
-    {%- elsif forloop.index == splitAt and gp > 5 -%}
-    </article>
-    <article class="sp-panel ar-postcol" data-sp-slab="ink" data-sp-rot="0,-3,0" data-sp-slot="list"
-            
-             data-sp-pos="180,-380,60" data-sp-anchor="lt" data-sp-order="2"
-             aria-label="{{ group.name }} posts 2">
-    {%- endif -%}
-      <article class="sp-item ar-row" data-arc-row data-tags="{{ post.tags | join: '|' | escape }}">
+    <article class="sp-panel ar-postcol" aria-label="{{ group.name }} posts">
+      {%- for post in group.items -%}
+      <article class="ar-row" data-arc-row data-tags="{{ post.tags | join: '|' | escape }}">
         <a class="ar-row__link" href="{{ post.url | relative_url }}">
           <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%m.%d" }}</time>
           <span class="ar-row__body">
@@ -186,21 +171,16 @@ no-catalog: true
           <span class="ar-row__go" aria-hidden="true">↗</span>
         </a>
       </article>
-    {%- if forloop.last -%}
+      {%- endfor -%}
       <p class="ar-empty" data-arc-empty hidden>
-        <span data-zh>这个主题下暂时没有文章。</span>
-        <span data-en>No posts under this topic yet.</span>
+        <span data-zh>没有匹配的文章，换一个主题或关键词。</span>
+        <span data-en>No matching notes. Try another topic or keyword.</span>
       </p>
     </article>
-    {%- endif -%}
-    {%- endfor -%}
 
     {%- if gp <= 5 -%}
     {%- assign ytags = group.items | map: 'tags' | join: '|' | split: '|' | uniq -%}
-    <article class="sp-panel ar-ytags" data-sp-slot="aside"
-            
-             data-sp-pos="180,-380,60" data-sp-anchor="lt" data-sp-order="2"
-             aria-label="Topics this year 本年主题">
+    <article class="sp-panel ar-ytags" aria-label="Topics this year 本年主题">
       <p class="sp-label ar-kicker">
         <span data-zh>本年主题</span><span data-en>Topics this year</span>
         <span class="ar-kicker__count"><b>{{ ytags.size }}</b></span>
@@ -234,7 +214,7 @@ no-catalog: true
 {%- endfor -%}
 
 <script type="module">
-  /* ARCHIVE — tag filter (in place), year jump links, chip collapse.
+  /* ARCHIVE — tag filter (in place), text search, year jumps, chip collapse.
      Without this file every post and every chip is still visible. */
   (function () {
     const rows = Array.from(document.querySelectorAll('[data-arc-row]'));
@@ -242,7 +222,9 @@ no-catalog: true
     const countEls = Array.from(document.querySelectorAll('[data-arc-count]'));
     const more = document.querySelector('[data-arc-more]');
     const chipBox = document.querySelector('[data-arc-chips]');
+    const q = document.getElementById('ar-q');
     let activeTag = null;
+    let query = '';
 
     /* collapse low-frequency chips once JS is available */
     if (more && chipBox) {
@@ -258,6 +240,12 @@ no-catalog: true
       }
     }
 
+    const matches = (row) => {
+      if (activeTag && !(row.dataset.tags || '').split('|').includes(activeTag)) return false;
+      if (!query) return true;
+      return (row.textContent || '').toLowerCase().includes(query);
+    };
+
     const visibleIn = (station) => station
       ? Array.from(station.querySelectorAll('[data-arc-row]')).filter((r) => !r.hasAttribute('hidden')).length
       : rows.filter((r) => !r.hasAttribute('hidden')).length;
@@ -270,20 +258,19 @@ no-catalog: true
         const yearEl = station.querySelector('[data-arc-year-count]');
         if (yearEl) yearEl.textContent = String(n);
       });
+      const state = [activeTag, query ? '“' + query + '”' : null].filter(Boolean).join(' · ');
       document.querySelectorAll('[data-arc-state]').forEach((el) => {
-        el.textContent = activeTag || '—';
+        el.textContent = state || '—';
       });
       const chipEmpty = document.querySelector('[data-arc-chips] ~ [data-arc-empty]');
       if (chipEmpty) chipEmpty.hidden = total !== 0;
+      document.querySelectorAll('[data-arc-station] [data-arc-empty]').forEach((el) => {
+        const station = el.closest('[data-arc-station]');
+        el.hidden = visibleIn(station) !== 0;
+      });
     }
 
-    function setTag(tag) {
-      activeTag = tag === '*' ? null : tag;
-      chips.forEach((c) => {
-        const on = activeTag ? c.dataset.arcFilter === activeTag : c.dataset.arcFilter === '*';
-        c.setAttribute('aria-pressed', on ? 'true' : 'false');
-      });
-      const matches = (row) => !activeTag || (row.dataset.tags || '').split('|').includes(activeTag);
+    function apply() {
       rows.forEach((row) => {
         const ok = matches(row);
         const hidden = row.hasAttribute('hidden');
@@ -300,6 +287,15 @@ no-catalog: true
       window.setTimeout(syncCounts, 260);
     }
 
+    function setTag(tag) {
+      activeTag = tag === '*' ? null : tag;
+      chips.forEach((c) => {
+        const on = activeTag ? c.dataset.arcFilter === activeTag : c.dataset.arcFilter === '*';
+        c.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      apply();
+    }
+
     chips.forEach((chip) => {
       chip.addEventListener('click', () => {
         const tag = chip.dataset.arcFilter;
@@ -309,14 +305,25 @@ no-catalog: true
       });
     });
 
-    /* year links: tween the scroll so the camera glides to the next floor */
+    if (q) {
+      let timer = 0;
+      q.addEventListener('input', () => {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => {
+          query = q.value.trim().toLowerCase();
+          apply();
+        }, 120);
+      });
+    }
+
+    /* year links: tween the scroll to the chapter, never a native jump */
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     document.querySelectorAll('a[href^="#sp-arc-"]').forEach((a) => {
       a.addEventListener('click', (e) => {
         const target = document.querySelector(a.getAttribute('href'));
         if (!target) return;
         e.preventDefault();
-        const top = target.getBoundingClientRect().top + window.scrollY;
+        const top = target.getBoundingClientRect().top + window.scrollY - 84;
         if (reduce) { window.scrollTo(0, top); return; }
         const from = window.scrollY;
         const dist = top - from;

@@ -462,8 +462,8 @@ export function makePostChain(renderer, quality) {
           fbm(p * 1.15 + vec2(t * 1.35, -t * 0.85)),
           fbm(p * 1.15 + vec2(-t * 0.62, t * 1.10) + 17.0)
         );
-        float v = fbm(p * 3.15 + w * 1.45 + vec2(0.0, t * 0.65));
-        v = fract(v * 2.15 + uv.y * 0.55 + uStation * 0.105 + t * 0.05);
+        float v = fbm(p * 4.6 + w * 1.7 + vec2(0.0, t * 0.65));
+        v = fract(v * 2.9 + uv.y * 0.55 + uStation * 0.105 + t * 0.05);
 
         /* hard banding: 9 flat steps, with a hairline that catches the light */
         float steps = 9.0;
@@ -471,7 +471,11 @@ export function makePostChain(renderer, quality) {
         float frac = fract(v * steps);
         vec3 col = ramp(fract(q + uStation * 0.035));
         col += ramp(fract(q + 0.14)) * smoothstep(0.86, 1.0, frac) * 0.55;
-        col *= 0.74 + 0.16 * smoothstep(0.0, 0.55, uv.y);
+        /* keep the field chromatic but never muddy: pull it toward its own
+           luminance so the void stays graphite, not swamp */
+        float gl = dot(col, vec3(0.2126, 0.7152, 0.0722));
+        col = mix(vec3(gl), col, 0.42);
+        col *= 0.86 + 0.14 * smoothstep(0.0, 0.55, uv.y);
         gl_FragColor = vec4(col, 1.0);
       }
     `,
@@ -534,6 +538,13 @@ export function makePostChain(renderer, quality) {
       uEdge: { value: 0.0 },
       uFlash: { value: 0.0 },
       uStation: { value: 0 },
+      uMask: { value: [
+        new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4(),
+        new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4(),
+        new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4(),
+      ] },
+      uMaskCount: { value: 0 },
+      uMaskStr: { value: 0.80 },
       uA: { value: new THREE.Color(0x7c5cff) },
       uB: { value: new THREE.Color(0x24d6ea) },
       uC: { value: new THREE.Color(0xc6ff4a) },
@@ -547,6 +558,9 @@ export function makePostChain(renderer, quality) {
       uniform vec2 uRes;
       uniform float uAspect, uTime, uVel, uExposure, uAberr, uGrain, uVignette;
       uniform float uReveal, uFade, uWipe, uField, uPoster, uEdge, uFlash, uStation;
+      uniform float uMaskStr;
+      uniform int uMaskCount;
+      uniform vec4 uMask[12];
       varying vec2 vUv;
 
       vec3 aces(vec3 x){
@@ -598,7 +612,7 @@ export function makePostChain(renderer, quality) {
           }
           bloom += smear * 0.06 * abs(uVel);
         }
-        col += bloom * 0.42;
+        col += bloom * 0.48;
 
         /* ---- 2 · exposure + film response ------------------------------- */
         col *= uExposure;
@@ -626,7 +640,7 @@ export function makePostChain(renderer, quality) {
           /* the middle of the frame belongs to the content: light lives at the
              edges and in depth, never behind a paragraph of text */
           float rad = smoothstep(0.26, 1.02, length(c * vec2(uAspect, 1.0)));
-          col += fld * dark * uField * (0.10 + 0.90 * rad) * 0.026;
+          col += fld * dark * uField * (0.10 + 0.90 * rad) * 0.042;
           /* the field lifts the deepest black a hair so bands never crush */
           col += fld * 0.0022 * uField;
         }
@@ -642,6 +656,24 @@ export function makePostChain(renderer, quality) {
           float g = length(vec2(lx1 - lx0, ly1 - ly0));
           float e = smoothstep(0.055, 0.30, g);
           col += vec3(0.72, 0.80, 0.92) * e * uEdge * (1.0 - smoothstep(0.35, 0.9, l0));
+        }
+
+        /* ---- 6b · content occlusion -----------------------------------
+           The DOM tells us where the words are (screen-space rects, updated
+           from the runtime's own projection). The architecture is dimmed
+           inside those rects with a soft 18 px shoulder, so the 3D can be
+           bold everywhere else without ever fighting a paragraph. */
+        if (uMaskStr > 0.001) {
+          float occl = 0.0;
+          for (int i = 0; i < 12; i++) {
+            if (i >= uMaskCount) break;
+            vec4 m = uMask[i];
+            float dx = max(m.x - vUv.x, vUv.x - (m.x + m.z));
+            float dy = max(m.y - vUv.y, vUv.y - (m.y + m.w));
+            float d = max(dx, dy);
+            occl = max(occl, 1.0 - smoothstep(-0.0015, 0.020, d));
+          }
+          col *= 1.0 - occl * uMaskStr;
         }
 
         /* ---- 7 · vignette ---------------------------------------------- */
@@ -707,6 +739,38 @@ export function makePostChain(renderer, quality) {
     renderer.render(quadScene, quadCam);
   }
 
+  /* ---- content mask: the DOM is the authority on where words live ------- */
+  let maskEls = null;
+  let maskTick = 0;
+  const maskRects = [];
+
+  function refreshContentMask(w, h) {
+    if (!maskEls || maskEls.length === 0) {
+      maskEls = Array.from(document.querySelectorAll('[data-sp-station] .sp-panel'));
+    }
+    let n = 0;
+    const list = compositeMat.uniforms.uMask.value;
+    for (let i = 0; i < maskEls.length && n < 12; i++) {
+      const el = maskEls[i];
+      if (el.style.visibility === 'hidden') continue;
+      const op = el.style.opacity === '' ? 1 : parseFloat(el.style.opacity);
+      if (!(op > 0.15)) continue;
+      const r = el.getBoundingClientRect();
+      if (r.width < 10 || r.height < 10) continue;
+      if (r.right < 0 || r.bottom < 0 || r.left > w || r.top > h) continue;
+      const pad = 24;
+      list[n].set(
+        (r.left - pad) / w,
+        (r.top - pad) / h,
+        (r.width + pad * 2) / w,
+        (r.height + pad * 2) / h
+      );
+      n++;
+    }
+    compositeMat.uniforms.uMaskCount.value = n;
+    return n;
+  }
+
   function render(scene, camera, state = {}) {
     /* QA/debug override: set __postChain.debug = { edge: .4, wipe: .5, … } from
        the console or a probe; it is merged over the runtime state every frame. */
@@ -714,6 +778,13 @@ export function makePostChain(renderer, quality) {
     renderer.setRenderTarget(sceneRT);
     renderer.clear();
     renderer.render(scene, camera);
+
+    /* screen-space occlusion rects: refreshed every 4th frame (layout reads are
+       not free, panels only move when the camera moves) */
+    if (++maskTick % 4 === 1) {
+      try { refreshContentMask(window.innerWidth, window.innerHeight); } catch (e) { /* headless */ }
+    }
+    compositeMat.uniforms.uMaskStr.value = state.mask ?? 0.80;
 
     /* field: one cheap quarter-res pass, phase-locked to the floor */
     fieldMat.uniforms.uTime.value = state.time ?? 0;

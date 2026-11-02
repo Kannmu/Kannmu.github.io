@@ -1,80 +1,115 @@
 ---
-layout: default
+layout: space
+sp_page: page
+sp_mode: ambient
 ---
+{%- comment -%}
+  GENERIC DOCUMENT LAYOUT (v3 reading layer).
+  A plain page is the same reading lane as a post: one 880px plate, prose
+  typography from prose.css, no catalog and no comments. Pages that need a
+  spatial composition should not use this layout — use `layout: space` and
+  author stations directly.
+{%- endcomment -%}
+{%- assign rd_chars = content | strip_html | strip_newlines | size -%}
+{%- assign rd_min = rd_chars | divided_by: 620 | plus: 1 -%}
 
-<!-- Page Header -->
-{% include intro-header.html type='page' %}
+<div class="rd-doc">
+  <div class="rd-lane">
 
-<!-- Main Content -->
-<div class="container">
-  <div class="row">
-    {% if site.sidebar == false %}
-    <!-- NO SIDEBAR -->
-    <!-- PostList Container -->
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1
-      postlist-container">
-      
-      {{ content }}
-    </div>
-    <!-- Sidebar Container -->
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1
-      sidebar-container">
-      <!-- Featured Tags -->
+    <header class="rd-head">
+      <p class="sp-eyebrow rd-head__eyebrow">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>页面</span><span data-en>Page</span></span>
+        <s aria-hidden="true"></s>
+        <span>{{ page.nav-title | default: page.title | escape }}</span>
+      </p>
 
-      {% include featured-tags.html %}
+      <h1 class="rd-title" id="rd-title">{{ page.title | escape }}</h1>
 
-      <!-- Friends Blog -->
-      {% include friends.html %}
+      {% if page.subtitle %}<p class="rd-sub">{{ page.subtitle | escape }}</p>{% endif %}
 
-    </div>
-    {% else %}
+      <div class="sp-rule rd-head__rule" aria-hidden="true"></div>
 
-    <!-- USE SIDEBAR -->
-    <!-- PostList Container -->
-    <div class="col-lg-8 col-lg-offset-1 col-md-8 col-md-offset-1 col-sm-12
-      col-xs-12 postlist-container">
-      
+      <div class="rd-metabar">
+        <div class="rd-meta">
+          <span class="sp-label"><span data-zh>类型</span><span data-en>Type</span></span>
+          <b>PAGE</b>
+        </div>
+        <div class="rd-meta">
+          <span class="sp-label"><span data-zh>长度</span><span data-en>Length</span></span>
+          <b>{{ rd_min }} MIN</b>
+          <small>{{ rd_chars }} <span data-zh>字符</span><span data-en>chars</span></small>
+        </div>
+        <div class="rd-meta">
+          <span class="sp-label"><span data-zh>站点</span><span data-en>Site</span></span>
+          <b>{{ site.title | escape }}</b>
+        </div>
+      </div>
+    </header>
 
-      {{ content }}
-    </div>
-    <!-- Sidebar Container -->
-    <div class="col-lg-3 col-lg-offset-0 col-md-3 col-md-offset-0 col-sm-12
-      col-xs-12 sidebar-container">
-      <!-- Featured Tags -->
-      {% include featured-tags.html %}
-      <div id="translate"></div>
-      
-      <!-- Short About -->
-      {% include short-about.html %}
+    <article class="rd-article" id="rd-article">
+      <div class="rd-article__head">
+        <span class="sp-label"><span data-zh>正文</span><span data-en>Body copy</span></span>
+        <span class="rd-article__len" aria-hidden="true">≈ <b>{{ rd_min }}</b> MIN · {{ page.date | default: site.time | date: '%Y' }}</span>
+      </div>
+      <div class="rd-prose" id="rd-body">{{ content }}</div>
+    </article>
 
-      <!-- Friends Blog -->
-      {% include friends.html %}
+    <footer class="rd-end">
+      <div class="rd-end__foot">
+        <div class="rd-end__links">
+          <a class="sp-link" href="{{ '/archive/' | relative_url }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+            <span><span data-zh>全部笔记</span><span data-en>All notes</span></span>
+          </a>
+          <a class="sp-link" href="{{ '/' | relative_url }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9h-6v-6H10v6H4z"/></svg>
+            <span><span data-zh>返回首页</span><span data-en>Home</span></span>
+          </a>
+          <a class="sp-link" href="#rd-title" data-rd-top>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+            <span><span data-zh>顶部</span><span data-en>Top</span></span>
+          </a>
+        </div>
+        <p class="rd-end__note">© {{ site.time | date: '%Y' }} Kannmu</p>
+      </div>
+    </footer>
 
-      <!-- Ads -->
-      {% include ads.html %}
-    </div>
-    {% endif %}
   </div>
 </div>
 
-{% if site.page-mathjax %}
-<!-- Add support for Mathjax by Voleking-->
-<!-- If you want to see formulars well in post preview, Maybe you should add this.-->
-<!-- However, most of the time formulars may not appear in the post preview, you can delete it.-->
-<script async type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    TeX: {
-      equationNumbers: {
-        autoNumber: "AMS"
-      }
-    },
-    tex2jax: {
-      inlineMath: [ ['$','$'] ],
-      displayMath: [ ['$$','$$'] ],
-      processEscapes: true,
-    }
+<script>
+/* heading anchors for plain pages (the post layout has its own reader script) */
+(function () {
+  'use strict';
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var body = document.getElementById('rd-body');
+  if (!body) return;
+  [].forEach.call(body.querySelectorAll('h2, h3'), function (h, i) {
+    if (!h.id) h.id = (h.textContent || '').trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fff-]/g, '') || ('section-' + i);
+    var a = document.createElement('a');
+    a.className = 'rd-anchor';
+    a.href = '#' + h.id;
+    a.setAttribute('aria-label', '链接到本节 · Link to this section');
+    a.textContent = '#';
+    h.appendChild(a);
   });
+  [].forEach.call(document.querySelectorAll('[data-rd-top], .rd-anchor'), function (a) {
+    a.addEventListener('click', function (e) {
+      var t = document.getElementById((a.getAttribute('href') || '').slice(1));
+      if (!t) return;
+      e.preventDefault();
+      var top = t.getBoundingClientRect().top + window.pageYOffset - 96;
+      if (reduce) { window.scrollTo(0, top); return; }
+      var start = window.pageYOffset, delta = top - start, t0 = performance.now();
+      var dur = Math.min(720, Math.max(260, Math.abs(delta) * 0.22));
+      (function step(now) {
+        var k = Math.min(1, (now - t0) / dur);
+        var e2 = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+        window.scrollTo(0, start + delta * e2);
+        if (k < 1) window.requestAnimationFrame(step);
+      })(t0);
+    });
+  });
+})();
 </script>
-<script async type="text/javascript"
-  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-{% endif %}

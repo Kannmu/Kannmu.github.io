@@ -24,9 +24,9 @@ export const STATIONS = [
     floor: 'F01',
     zh: '入口',
     en: 'Entry',
-    pos: [0, 1.62, 6],
-    look: [0, 1.50, -4],
-    fov: 33,
+    pos: [0.0, 1.62, 6],
+    look: [0.0, 1.52, -4],
+    fov: 34,
     accent: 'portal',
     exposure: 1.04,
     fogNear: 14,
@@ -37,8 +37,10 @@ export const STATIONS = [
     floor: 'F02',
     zh: '简介',
     en: 'Profile',
-    pos: [0, 1.55, -16],
-    look: [0, 1.50, -26],
+    /* the camera stands left of the aisle and turns back toward it: the hall
+       reads diagonally while the content plane stays square to the eye. */
+    pos: [-2.4, 1.58, -16],
+    look: [-0.9, 1.50, -26],
     fov: 33,
     accent: 'colonnade',
     exposure: 1.0,
@@ -50,8 +52,8 @@ export const STATIONS = [
     floor: 'F03',
     zh: '研究',
     en: 'Research',
-    pos: [0, 1.70, -38],
-    look: [0, 1.80, -48],
+    pos: [2.6, 1.70, -38],
+    look: [0.8, 1.66, -48],
     fov: 35,
     accent: 'towers',
     exposure: 1.0,
@@ -63,8 +65,8 @@ export const STATIONS = [
     floor: 'F04',
     zh: '论文',
     en: 'Publications',
-    pos: [0, 1.62, -60],
-    look: [0, 1.55, -70],
+    pos: [-2.8, 1.48, -60],
+    look: [-1.0, 1.56, -70],
     fov: 33,
     accent: 'shelves',
     exposure: 0.98,
@@ -76,9 +78,9 @@ export const STATIONS = [
     floor: 'F05',
     zh: '笔记',
     en: 'Notes',
-    pos: [0, 1.50, -82],
-    look: [0, 1.52, -92],
-    fov: 33,
+    pos: [2.2, 1.40, -82],
+    look: [0.6, 1.48, -92],
+    fov: 34,
     accent: 'blades',
     exposure: 1.0,
     fogNear: 14,
@@ -89,8 +91,8 @@ export const STATIONS = [
     floor: 'F06',
     zh: '工具',
     en: 'Tools',
-    pos: [0, 1.60, -104],
-    look: [0, 1.62, -114],
+    pos: [-1.8, 1.72, -104],
+    look: [-0.6, 1.62, -114],
     fov: 35,
     accent: 'ring',
     exposure: 1.02,
@@ -102,8 +104,8 @@ export const STATIONS = [
     floor: 'F07',
     zh: '联系',
     en: 'Contact',
-    pos: [0, 1.55, -126],
-    look: [0, 1.98, -138],
+    pos: [0.9, 1.55, -126],
+    look: [-1.2, 1.82, -138],
     fov: 38,
     accent: 'void',
     exposure: 1.06,
@@ -124,12 +126,12 @@ export const CONTENT_DISTANCE = 8;
    Used by app.js as:  pos += arc * sin(pi * k);  look += lookArc * sin(pi * k)
    ------------------------------------------------------------------------ */
 const FLIGHT = {
-  entry: { arc: [1.15, 0.30, 0.0], lookArc: [-0.55, 0.12, 0.0], bank: 0.018 },
-  profile: { arc: [-0.95, 0.18, 0.0], lookArc: [0.45, 0.05, 0.0], bank: -0.014 },
-  research: { arc: [1.35, -0.22, 0.0], lookArc: [-0.60, -0.10, 0.0], bank: 0.02 },
-  papers: { arc: [-1.05, 0.26, 0.0], lookArc: [0.50, 0.08, 0.0], bank: -0.016 },
-  notes: { arc: [1.2, 0.34, 0.0], lookArc: [-0.52, 0.14, 0.0], bank: 0.018 },
-  tools: { arc: [-1.25, -0.18, 0.0], lookArc: [0.55, -0.06, 0.0], bank: -0.018 },
+  entry: { arc: [1.9, 0.34, -0.55], lookArc: [-0.75, 0.16, 0.0], bank: 0.026 },
+  profile: { arc: [-2.2, 0.22, 0.45], lookArc: [0.62, 0.06, 0.0], bank: -0.024 },
+  research: { arc: [2.35, -0.26, -0.35], lookArc: [-0.80, -0.12, 0.0], bank: 0.028 },
+  papers: { arc: [-2.05, 0.30, 0.40], lookArc: [0.68, 0.10, 0.0], bank: -0.022 },
+  notes: { arc: [1.85, 0.36, -0.50], lookArc: [-0.70, 0.18, 0.0], bank: 0.024 },
+  tools: { arc: [-1.95, -0.20, 0.30], lookArc: [0.72, -0.08, 0.0], bank: -0.020 },
   contact: { arc: [0.0, 0.0, 0.0], lookArc: [0.0, 0.0, 0.0], bank: 0.0 },
 };
 for (const st of STATIONS) Object.assign(st, FLIGHT[st.key] || {});
@@ -138,7 +140,7 @@ for (const st of STATIONS) Object.assign(st, FLIGHT[st.key] || {});
    The composite now writes a proper sRGB signal, which lifted every mid-tone.
    The room must stay near-black with light living on edges and reflections, so
    the per-station exposure is trimmed once, here, instead of in five files. */
-const EXPOSURE_TRIM = 0.8;
+const EXPOSURE_TRIM = 0.95;
 for (const st of STATIONS) st.exposure = +(st.exposure * EXPOSURE_TRIM).toFixed(3);
 
 /** Corridor cross-section shared by the whole building. */

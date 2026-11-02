@@ -260,7 +260,7 @@ function text(ctx, value, x, y, opt) {
   if (value === null || value === undefined || value === '') return;
   const o = opt || {};
   ctx.save();
-  ctx.font = o.font || mono(10);
+  ctx.font = o.font || mono(12);
   ctx.fillStyle = o.color || tokens().mute;
   ctx.textAlign = o.align || 'left';
   ctx.textBaseline = o.baseline || 'alphabetic';
@@ -423,10 +423,14 @@ function makeItem(raw, index) {
     raw: raw,
     index: index,
     label: str(firstVal(raw.label, raw.year, raw.tag, raw.name, raw.axis, raw.date, raw.period, raw.title)),
+    labelZh: str(firstVal(raw.labelZh, raw.tagZh, raw.yearZh, raw.nameZh)),
     value: num(firstVal(raw.value, raw.count, raw.citations, raw.citation_count, raw.n, raw.weight, raw.score, raw.total, raw.v)),
     sub: str(firstVal(raw.sub, raw.venue, raw.venue_short, raw.org, raw.organization, raw.institution, raw.category, raw.type)),
+    subZh: str(firstVal(raw.subZh, raw.venueZh, raw.orgZh, raw.institutionZh, raw.categoryZh)),
     role: str(role),
+    roleZh: str(firstVal(raw.roleZh, raw.detailZh, raw.descriptionZh)),
     title: str(firstVal(raw.title, raw.name, raw.label)),
+    titleZh: str(firstVal(raw.titleZh, raw.nameZh)),
     key: str(firstVal(raw.key, raw.doi, raw.id)),
     short: str(firstVal(raw.short, raw.abbr, raw.short_label)),
     year: num(firstVal(raw.year, raw.start, raw.start_year)),
@@ -434,6 +438,16 @@ function makeItem(raw, index) {
     hi: highlight,
   };
   return item;
+}
+
+/** Bilingual field selector: sub / subZh, role / roleZh, label / labelZh. */
+function loc(item, field, zh) {
+  if (!item) return '';
+  if (zh) {
+    const zhField = field + 'Zh';
+    if (item[zhField]) return item[zhField];
+  }
+  return item[field] || '';
 }
 
 function normaliseRoot(root) {
@@ -585,10 +599,49 @@ function l10n() {
   return isZh() ? L10N.zh : L10N.en;
 }
 
-function drawNoData(g) {
+/* ---- in-figure header: metric + source left, total / scale right --------- */
+
+function chartHead(g, inst, cfg) {
+  const { ctx, w, T } = g;
+  const fig = inst.fig;
+  const metric = str(fig.getAttribute('data-viz-metric') || cfg.metric || '').toUpperCase();
+  const source = str(fig.getAttribute('data-viz-source') || cfg.source || '');
+  const total = str(fig.getAttribute('data-viz-total') || cfg.total || '');
+  const y = 13;
+  const headFont = mono(12, 500);
+  const rightW = total ? measure(ctx, total, headFont) : 0;
+  const left = [metric, source].filter(Boolean).join(' · ');
+  const leftText = fit(ctx, left, Math.max(40, w - rightW - 22), headFont);
+  text(ctx, leftText, 4, y, {
+    font: headFont,
+    color: T.mute,
+    tracking: '0.07em',
+  });
+  if (total) {
+    text(ctx, total, w - 4, y, {
+      align: 'right',
+      font: headFont,
+      color: T.paper,
+      tracking: '0.04em',
+    });
+  }
+  hline(ctx, 0, w, hair(y + 9), T.line1);
+  return y + 9;
+}
+
+
+/** data-viz-h is an exact cap when it is above the chart's structural floor;
+ *  legacy values below the floor (older, pre-header layouts) are ignored so a
+ *  chart can never clip its own axis header. */
+function heightWithCap(fig, ideal, minViable) {
+  const cap = num(fig && fig.getAttribute('data-viz-h'));
+  if (cap && cap >= minViable && cap < ideal) return cap;
+  return ideal;
+}
+function drawNoData(g, topOffset) {
   const { ctx, w, h, T, lang } = g;
   const pad = 8;
-  const top = Math.min(18, h * 0.18);
+  const top = (topOffset || 0) + Math.min(18, (h - (topOffset || 0)) * 0.18);
   const bottom = h - Math.min(22, h * 0.2);
   for (let i = 0; i <= 3; i++) {
     const y = hair(lerp(top, bottom, i / 3));
@@ -601,8 +654,8 @@ function drawNoData(g) {
   text(ctx, L.noData, w / 2, h / 2 + 3, {
     align: 'center',
     baseline: 'middle',
-    font: mono(9.5),
-    color: T.dim,
+    font: mono(12),
+    color: T.mute,
     tracking: '0.14em',
   });
 }
@@ -660,108 +713,121 @@ const SPINE = {
     return { groups: groups, max: max, rows: withYear, categorical: false };
   },
 
-  height(model, w) {
-    if (!model.groups.length) return 150;
-    return clamp(Math.round(w * 0.5), 168, 212);
+  height(model, w, fig) {
+    if (!model.groups.length) return 190;
+    return heightWithCap(fig, clamp(Math.round(w * 0.78), 300, 330), 260);
   },
 
   draw(g, inst) {
     const { ctx, w, h, T, lang, hover, elapsed } = g;
     const model = inst.model;
+    const total = model.rows.reduce(function (sum, wrap) {
+      const value = wrap && wrap.item ? wrap.item.value : wrap && wrap.value;
+      return sum + Math.max(0, value || 0);
+    }, 0);
+    const headBottom = chartHead(g, inst, {
+      metric: 'CITATIONS',
+      source: 'CROSSREF',
+      total: 'TOTAL ' + fmt(total),
+    });
     if (!model.groups.length) {
-      drawNoData(g);
+      drawNoData(g, headBottom);
       inst.hits = [];
       return;
     }
 
-    /* one spectral gradient per first/co-first bar: the mark itself is the
-       gradient, so a 6-citation bar still carries the full spectrum */
     const padL = 6;
-    const padR = 26;
-    const top = 20;
-    const baseline = h - 34;
+    const padR = 46;
+    const top = headBottom + 18;
+    const baseline = h - 32;
     const plotH = baseline - top;
-    const L = L10N[lang];
     const max = model.max;
+    const L = L10N[lang];
 
-    /* scale rules + labels */
-    if (max > 1) {
-      hline(ctx, padL, w - padR, hair(top), T.line1);
-      hline(ctx, padL, w - padR, hair(top + plotH / 2), T.line1);
-      text(ctx, fmt(max), w - 3, top + 3, { align: 'right', font: mono(8.5), color: T.dim });
-      text(ctx, fmt(max / 2), w - 3, top + plotH / 2 + 3, { align: 'right', font: mono(8.5), color: T.dim });
+    /* light line-1 gridline set (0 · 25 · 50 · 75 · 100 %) */
+    for (let i = 0; i <= 4; i++) {
+      const y = baseline - (plotH * i) / 4;
+      hline(ctx, padL, w - padR, hair(y), i === 0 ? T.line2 : T.line1);
+      if (i > 0) {
+        text(ctx, fmt((max * i) / 4), w - 14, Math.floor(y) + 4, {
+          align: 'right',
+          font: mono(12),
+          color: T.mute,
+          tracking: '0.02em',
+        });
+      }
     }
-    hline(ctx, padL, w - padR, hair(baseline), T.line2);
-    text(ctx, '0', w - 3, baseline + 3, { align: 'right', font: mono(8.5), color: T.dim });
 
-    const gap = model.groups.length > 4 ? 8 : 12;
+    /* the v3 seam: one gradient across the plot; each hi bar takes its slice */
+    const seam = spectral(ctx, padL, baseline, w - padR, top);
+
+    const gap = 12;
     const innerW = w - padL - padR - gap * (model.groups.length - 1);
     const bandW = innerW / model.groups.length;
     const hits = [];
     let order = 0;
 
-    model.groups.forEach((group, gi) => {
+    model.groups.forEach(function (group, gi) {
       const bandX = padL + gi * (bandW + gap);
       const n = group.rows.length;
       if (n) {
         const barGap = 4;
-        const barW = clamp((bandW - 10 - (n - 1) * barGap) / n, 3, 14);
+        const barW = Math.max(3, Math.min(14, Math.floor((bandW - 10 - (n - 1) * barGap) / n)));
+        const pitch = barW + barGap;
         const groupW = n * barW + (n - 1) * barGap;
-        const startX = bandX + (bandW - groupW) / 2;
+        const startX = Math.round(bandX + (bandW - groupW) / 2);
 
-        group.rows.forEach((item, ri) => {
-          const x = startX + ri * (barW + barGap);
+        group.rows.forEach(function (item, ri) {
+          const x = startX + ri * pitch;
           const value = Math.max(0, item.value || 0);
-          const fullH = value <= 0 ? 2 : Math.max(2, (value / max) * plotH);
+          const fullH = value <= 0 ? 0 : Math.max(2, (value / max) * plotH);
           const appear = easeOut(clamp((elapsed - 80 - order * 22) / 520, 0, 1));
-          const barH = Math.max(value <= 0 ? 1.5 : 2, fullH * appear);
+          const barH = fullH > 0 ? Math.max(2, Math.round(fullH * appear)) : 0;
           const y = baseline - barH;
           const isHover = hover === order;
-          const barSeam = spectral(ctx, x, baseline, x + barW, y);
 
-          if (value > 0 && item.hi) {
-            ctx.fillStyle = barSeam;
+          if (value <= 0) {
+            /* zero citations: a single hard tick on the baseline, never a tube */
+            hline(ctx, x, x + barW, hair(baseline - 1), item.hi ? seam : rgba(T.paper, 0.34));
+          } else if (item.hi) {
+            ctx.fillStyle = seam;
             ctx.fillRect(x, y, barW, barH);
-          } else if (value > 0) {
-            outline(ctx, x, y, barW, barH, rgba(T.paper, 0.46));
+            hline(ctx, x, x + barW, hair(y), rgba(T.paper, 0.92));
           } else {
-            ctx.fillStyle = item.hi ? barSeam : rgba(T.paper, 0.3);
-            ctx.fillRect(x, baseline - 2, barW, 2);
+            outline(ctx, x, y, barW, barH, rgba(T.paper, 0.42));
+            hline(ctx, x, x + barW, hair(y), rgba(T.paper, 0.92));
           }
 
           if (isHover) {
-            vline(ctx, hair(x + barW / 2), hair(top - 2), hair(baseline + 4), T.line3);
-            outline(ctx, x - 0.5, y - 0.5, barW + 1, barH + 1, T.paper);
+            vline(ctx, hair(x + barW / 2), hair(top - 4), hair(baseline + 4), T.line3);
+            outline(ctx, x - 1, Math.max(top - 1, y - 1), barW + 2, barH + 2, T.paper);
           }
 
-          /* value label above the bar where it fits, inside when it cannot */
-          if (appear > 0.92 && value > 0 && barW >= 9) {
+          /* value labels above the bars — mono, paper, 12px floor */
+          if (appear > 0.92 && value > 0 && pitch >= 15) {
             const label = fmt(value);
-            const labelFont = mono(8.5, 500);
-            if (measure(ctx, label, labelFont) <= barW + 4) {
-              if (y - 5 > top + 7) {
-                text(ctx, label, x + barW / 2, y - 5, {
-                  align: 'center',
-                  font: labelFont,
-                  color: isHover ? T.paper : item.hi ? T.paper2 : T.mute,
-                });
-              } else {
-                text(ctx, label, x + barW / 2, y + 10, {
-                  align: 'center',
-                  font: labelFont,
-                  color: item.hi ? T.ink0 : T.paper2,
-                });
-              }
-            }
+            const labelFont = mono(12, 500);
+            text(ctx, label, x + barW / 2, y - 6, {
+              align: 'center',
+              font: labelFont,
+              color: isHover ? T.paper : item.hi ? T.paper : T.paper2,
+            });
+          } else if (appear > 0.92 && value <= 0 && pitch >= 15) {
+            /* zeros are data too: name them so a base tick is not read as a scale mark */
+            text(ctx, '0', x + barW / 2, baseline - 8, {
+              align: 'center',
+              font: mono(12),
+              color: isHover ? T.paper : T.mute,
+            });
           }
 
           hits.push({
             x: x - 3,
-            y: Math.min(y, baseline - 8) - 3,
+            y: Math.min(y || baseline - 8, baseline - 8) - 3,
             w: Math.max(6, barW + 6),
-            h: Math.max(12, barH + 12),
+            h: Math.max(14, barH + 14),
             cx: x + barW / 2,
-            cy: Math.max(top + 6, y - 4),
+            cy: Math.max(top + 6, (y || baseline) - 4),
             item: item,
             index: order,
           });
@@ -770,14 +836,13 @@ const SPINE = {
       }
 
       const cx = bandX + bandW / 2;
-      vline(ctx, hair(cx), hair(baseline), hair(baseline + 5), T.line2);
-      text(ctx, group.year, cx, baseline + 19, {
+      vline(ctx, hair(cx), hair(baseline), hair(baseline + 6), T.line2);
+      text(ctx, group.year, cx, baseline + 20, {
         align: 'center',
-        font: mono(10),
-        color: T.mute,
+        font: mono(12),
+        color: n ? T.paper : T.mute,
         tracking: '0.04em',
       });
-      if (gi > 0) vline(ctx, hair(bandX - gap / 2), hair(baseline), hair(baseline + 3), T.line1);
     });
 
     inst.hits = hits;
@@ -832,74 +897,116 @@ const TIMELINE = {
     return { rows: rows, lo: lo, hi: hi, categorical: !known.length, span: hi - lo };
   },
 
-  height() {
-    return 132;
+  height(model, w, fig) {
+    if (!model.rows.length) return 160;
+    if (w < 560) return heightWithCap(fig, 30 + model.rows.length * 74, 160);
+    return heightWithCap(fig, 140, 120);
   },
 
   draw(g, inst) {
-    const { ctx, w, h, T, hover, elapsed } = g;
+    const { ctx, w, h, T, hover, elapsed, lang } = g;
     const model = inst.model;
     const rows = model.rows;
+    const zh = lang === 'zh';
+    const headBottom = chartHead(g, inst, {
+      metric: 'POSITIONS',
+      source: 'CV',
+      total: String(rows.length).padStart(2, '0') + ' NODES',
+    });
     if (!rows.length) {
-      drawNoData(g);
+      drawNoData(g, headBottom);
       inst.hits = [];
       return;
     }
 
-    const padL = 24;
-    const padR = 24;
-    const ruleY = 46;
-    const span = model.span;
-    const xFor = (row, i) => {
-      if (model.categorical) {
-        return rows.length === 1 ? w / 2 : padL + (i / (rows.length - 1)) * (w - padL - padR);
+    const nodeMark = function (x, y, current, isHover) {
+      if (current) {
+        const fill = spectral(ctx, x - 3, y - 3, x + 3, y + 3);
+        ctx.fillStyle = fill;
+        ctx.fillRect(Math.round(x) - 2, Math.round(y) - 2, 4, 4);
+        outline(ctx, x - 3, y - 3, 6, 6, rgba(T.paper, 0.85));
+      } else {
+        ctx.fillStyle = rgba(T.paper, isHover ? 0.95 : 0.72);
+        ctx.fillRect(Math.round(x) - 1, Math.round(y) - 1, 2, 2);
       }
-      if (span <= 0) return w / 2;
-      const year = row._year === null ? model.hi : row._year;
-      return padL + ((year - model.lo) / span) * (w - padL - padR);
+      if (isHover) outline(ctx, x - 5, y - 5, 10, 10, T.paper);
     };
 
-    /* minor ticks on the rule */
-    const step = span <= 8 ? 1 : span <= 20 ? 2 : 5;
-    if (!model.categorical && span > 0) {
-      for (let y = Math.ceil(model.lo / step) * step; y <= model.hi; y += step) {
-        const x = padL + ((y - model.lo) / span) * (w - padL - padR);
-        vline(ctx, hair(x), hair(ruleY), hair(ruleY + 4), T.line1);
+    /* ---- vertical mode for narrow panels -------------------------------- */
+    if (w < 560) {
+      const lineX = 14;
+      const top = headBottom + 16;
+      const rowH = 74;
+      const ruleP = easeOut(clamp((elapsed - 40) / 520, 0, 1));
+      if (ruleP > 0) {
+        vline(ctx, hair(lineX), hair(top - 8), hair(top - 8 + rows.length * rowH * ruleP), T.line2);
       }
+
+      const hits = [];
+      const cellW = Math.max(80, w - lineX - 24);
+      rows.forEach(function (row, i) {
+        const y = top + i * rowH + 8;
+        const p = easeOut(clamp((elapsed - 120 - i * 60) / 420, 0, 1));
+        if (p <= 0) return;
+        const current = row.hi;
+        const isHover = hover === i;
+        const yearLabel = row.label || (row._year !== null ? String(row._year) : '');
+        const yearFont = mono(12, current ? 500 : 400);
+        const orgFont = display(14, current ? 550 : 450);
+        const roleFont = mono(12);
+
+        ctx.save();
+        ctx.globalAlpha = p;
+        text(ctx, fit(ctx, yearLabel, cellW, yearFont), lineX + 15, y - 7, {
+          font: yearFont,
+          color: T.paper,
+          tracking: '0.04em',
+        });
+        nodeMark(lineX, y, current, isHover);
+        text(ctx, fit(ctx, loc(row, 'sub', zh), cellW, orgFont), lineX + 15, y + 14, {
+          font: orgFont,
+          color: T.paper,
+        });
+        const roleLines = wrapText(ctx, loc(row, 'role', zh), cellW, 2, roleFont);
+        drawLines(ctx, roleLines, lineX + 15, y + 29, 14, {
+          font: roleFont,
+          color: T.paper2,
+        });
+        ctx.restore();
+
+        if (isHover) hline(ctx, lineX + 5, w - 2, hair(y), T.line2);
+        hits.push({ cx: lineX, cy: y, r: 26, ax: lineX + 15, ay: y - 8, item: row, index: i });
+      });
+      inst.hits = hits;
+      return;
     }
+
+    /* ---- horizontal band ------------------------------------------------ */
+    const padL = 24;
+    const padR = 24;
+    const ruleY = headBottom + 28;
+    const xs = rows.map(function (_, i) {
+      return rows.length === 1 ? w / 2 : padL + (i / (rows.length - 1)) * (w - padL - padR);
+    });
 
     /* the hard rule draws on once, left → right */
     const ruleP = easeOut(clamp((elapsed - 40) / 520, 0, 1));
     if (ruleP > 0) {
-      const rx = padL + (w - padL - padR) * ruleP;
-      hline(ctx, padL, rx, hair(ruleY), T.line2);
+      hline(ctx, padL, padL + (w - padL - padR) * ruleP, hair(ruleY), T.line2);
     }
 
     const hits = [];
-    const nodeY = ruleY;
-
-    rows.forEach((row, i) => {
-      const x = xFor(row, i);
+    rows.forEach(function (row, i) {
+      const x = xs[i];
       const p = easeOut(clamp((elapsed - 140 - i * 70) / 480, 0, 1));
       if (p <= 0) return;
       const current = row.hi;
-      const r = current ? 6 : 4.5;
-      const labelY = nodeY + 24;
-      const roleY = labelY + 15;
       const isHover = hover === i;
+      const labelY = ruleY + 24;
 
-      /* cell for the two-line label. Middle nodes have uneven year spacing,
-         so a centred block is width-limited by the nearest neighbour to keep
-         labels from colliding. */
-      const left = i === 0 ? padL : (xFor(rows[i - 1], i - 1) + x) / 2;
-      const right = i === rows.length - 1 ? w - padR : (x + xFor(rows[i + 1], i + 1)) / 2;
-      const free = Math.min(x - left, right - x);
-      const cellW =
-        i === 0
-          ? Math.max(60, right - padL - 8)
-          : i === rows.length - 1
-            ? Math.max(60, w - padR - left - 8)
-            : Math.max(52, Math.min(right - left - 8, free * 2 - 14));
+      const left = i === 0 ? padL : (xs[i - 1] + x) / 2;
+      const right = i === rows.length - 1 ? w - padR : (x + xs[i + 1]) / 2;
+      const cellW = Math.max(72, right - left - 12);
       let align = 'center';
       let tx = x;
       if (i === 0) {
@@ -909,73 +1016,59 @@ const TIMELINE = {
         align = 'right';
         tx = w - padR;
       }
+      const yearLabel = row.label || (row._year !== null ? String(row._year) : '');
+      const yearFont = mono(12, current ? 500 : 400);
 
       ctx.save();
       ctx.globalAlpha = p;
 
       /* year above the rule */
-      text(ctx, row.label || (row._year !== null ? String(row._year) : ''), x, nodeY - 14, {
-        align: 'center',
-        font: mono(10, current ? 500 : 400),
-        color: isHover ? T.paper : current ? T.paper2 : T.mute,
-        tracking: '0.05em',
+      text(ctx, fit(ctx, yearLabel, cellW, yearFont), tx, ruleY - 14, {
+        align: align,
+        font: yearFont,
+        color: T.paper,
+        tracking: '0.04em',
       });
 
-      /* tick from label to rule */
-      vline(ctx, hair(x), hair(nodeY - 7), hair(nodeY - 2), current ? T.line3 : T.line1);
+      /* 1px tick from label to rule */
+      vline(ctx, hair(x), hair(ruleY - 8), hair(ruleY - 2), current ? T.line3 : T.line1);
 
-      /* node */
-      if (current) {
-        const fill = spectral(ctx, x - r, nodeY, x + r, nodeY);
-        diamond(ctx, x, nodeY, isHover ? r + 1 : r, fill, rgba(T.paper, 0.9));
-      } else {
-        diamond(ctx, x, nodeY, isHover ? r + 1 : r, T.ink0, isHover ? T.paper : T.paper2);
-      }
+      nodeMark(x, ruleY, current, isHover);
 
       /* org + role below */
-      const orgFont = display(12.5, current ? 550 : 450);
-      const org = fit(ctx, row.sub, cellW, orgFont);
-      text(ctx, org, tx, labelY, {
+      const orgFont = display(14, current ? 550 : 450);
+      text(ctx, fit(ctx, loc(row, 'sub', zh), cellW, orgFont), tx, labelY, {
         align: align,
         font: orgFont,
-        color: isHover ? T.paper : T.paper2,
+        color: T.paper,
       });
-      const roleFont = mono(9);
-      const roleLines = wrapText(ctx, row.role, cellW, 2, roleFont);
-      drawLines(ctx, roleLines, tx, roleY, 11.5, {
+      const roleFont = mono(12);
+      const roleLines = wrapText(ctx, loc(row, 'role', zh), cellW, 2, roleFont);
+      drawLines(ctx, roleLines, tx, labelY + 18, 15, {
         align: align,
         font: roleFont,
-        color: T.mute,
+        color: T.paper2,
       });
 
       ctx.restore();
 
-      hits.push({
-        cx: x,
-        cy: nodeY,
-        r: 22,
-        ax: x,
-        ay: labelY,
-        item: row,
-        index: i,
-      });
+      hits.push({ cx: x, cy: ruleY, r: 24, ax: x, ay: labelY, item: row, index: i });
 
       if (isHover) {
-        vline(ctx, hair(x), hair(24), hair(h - 8), T.line2);
-        diamond(ctx, x, nodeY, r + 2, null, T.paper);
+        vline(ctx, hair(x), hair(headBottom + 8), hair(h - 8), T.line2);
       }
     });
 
     inst.hits = hits;
   },
 
-  tip(item) {
-    const head = [item.label, item.sub].filter(Boolean).join(' · ');
-    return [head, item.role].filter(Boolean);
+  tip(item, zh) {
+    const head = [item.label, loc(item, 'sub', zh)].filter(Boolean).join(' · ');
+    return [head, loc(item, 'role', zh)].filter(Boolean);
   },
 
   aria(model, zh) {
-    const parts = model.rows.map((r) => [r.label, r.sub].filter(Boolean).join(' ')).slice(0, 6);
+    const parts = model.rows.map((r) => [r.label, loc(r, 'sub', zh)].filter(Boolean).join(' ')).slice(0, 6);
     return (zh ? '教育经历时间轴 ' : 'TIMELINE ') + parts.join(' · ');
   },
 };
@@ -1004,14 +1097,14 @@ const RADAR = {
     return { rows: rows, values: values, peak: peak, scale: scale, fracs: fracs };
   },
 
-  height(model, w) {
-    if (model.rows.length < 3) return 150;
-    return clamp(Math.round(w * 0.64), 184, 252);
+  height(model, w, fig) {
+    if (model.rows.length < 3) return 190;
+    return heightWithCap(fig, clamp(Math.round(w * 0.75), 240, 320), 220);
   },
 
-  geom(ctx, model, w, h) {
+  geom(ctx, model, w, h, headBottom) {
     const n = model.rows.length;
-    const font = mono(w < 320 ? 9 : 10);
+    const font = mono(12);
     let maxSide = 20;
     const angles = [];
     for (let i = 0; i < n; i++) angles.push(-Math.PI / 2 + (i * TAU) / n);
@@ -1020,12 +1113,12 @@ const RADAR = {
       const tw = measure(ctx, label, font);
       if (Math.abs(Math.cos(angles[i])) > 0.3) maxSide = Math.max(maxSide, tw);
     });
-    const sidePad = Math.min(w * 0.33, maxSide + 14);
-    const topPad = 24;
-    const bottomPad = 24;
+    const sidePad = Math.min(w * 0.34, maxSide + 16);
+    const topPad = 34;
+    const bottomPad = 30;
     const cx = w / 2;
-    const cy = h / 2 + 2;
-    const r = Math.max(30, Math.min(cx - sidePad, cy - topPad, h - cy - bottomPad));
+    const cy = headBottom + (h - headBottom) / 2 + 2;
+    const r = Math.max(30, Math.min(cx - sidePad, cy - headBottom - topPad, h - cy - bottomPad));
     return { cx: cx, cy: cy, r: r, angles: angles, font: font, sidePad: sidePad };
   },
 
@@ -1033,13 +1126,18 @@ const RADAR = {
     const { ctx, w, h, T, hover, elapsed } = g;
     const model = inst.model;
     const rows = model.rows;
+    const headBottom = chartHead(g, inst, {
+      metric: 'RESEARCH',
+      source: 'DIRECTIONS',
+      total: String(rows.length).padStart(2, '0') + ' AXES',
+    });
     if (rows.length < 3) {
-      drawNoData(g);
+      drawNoData(g, headBottom);
       inst.hits = [];
       return;
     }
 
-    const geo = RADAR.geom(ctx, model, w, h);
+    const geo = RADAR.geom(ctx, model, w, h, headBottom);
     const { cx, cy, r, angles, font } = geo;
     const n = rows.length;
 
@@ -1075,7 +1173,7 @@ const RADAR = {
     hline(ctx, hair(cx - 3), hair(cx + 3), hair(cy), T.line2);
     vline(ctx, hair(cx), hair(cy - 3), hair(cy + 3), T.line2);
 
-    /* polygon — gradient fill 12%, gradient stroke */
+    /* polygon — gradient fill at 10%, 1px gradient stroke */
     const p = easeOut(clamp((elapsed - 120) / 700, 0, 1));
     if (p > 0) {
       const grad = spectral(ctx, cx - r, cy - r, cx + r, cy + r);
@@ -1089,10 +1187,10 @@ const RADAR = {
         else ctx.lineTo(x, y);
       }
       ctx.closePath();
-      ctx.fillStyle = spectral(ctx, cx - r, cy - r, cx + r, cy + r, 0.12);
+      ctx.fillStyle = spectral(ctx, cx - r, cy - r, cx + r, cy + r, 0.1);
       ctx.fill();
       ctx.strokeStyle = grad;
-      ctx.lineWidth = 1.25;
+      ctx.lineWidth = 1;
       ctx.stroke();
 
       for (let i = 0; i < n; i++) {
@@ -1101,7 +1199,9 @@ const RADAR = {
         const x = cx + Math.cos(a) * rr;
         const y = cy + Math.sin(a) * rr;
         if (p > 0.94) {
-          diamond(ctx, x, y, hover === i ? 3.6 : 2.6, hover === i ? T.paper : T.ink0, T.paper);
+          const s = hover === i ? 4 : 2;
+          ctx.fillStyle = hover === i ? T.paper : T.paper2;
+          ctx.fillRect(Math.round(x) - s / 2, Math.round(y) - s / 2, s, s);
         }
       }
     }
@@ -1112,8 +1212,8 @@ const RADAR = {
       const a = angles[i];
       const cos = Math.cos(a);
       const sin = Math.sin(a);
-      const lx = cx + cos * (r + 11);
-      const ly = cy + sin * (r + 11);
+      const lx = cx + cos * (r + 12);
+      const ly = cy + sin * (r + 12);
       let align = 'center';
       if (cos > 0.28) align = 'left';
       else if (cos < -0.28) align = 'right';
@@ -1123,19 +1223,19 @@ const RADAR = {
       } else if (sin > 0.72) {
         baseline = 'top';
       }
-      const avail = align === 'left' ? w - lx - 3 : align === 'right' ? lx - 3 : Math.min(w / 2 - 4, 130);
-      const label = fit(ctx, (row.short || row.label || '').toUpperCase(), Math.max(24, avail), font);
+      const avail = align === 'left' ? w - lx - 3 : align === 'right' ? lx - 3 : Math.min(w / 2 - 4, 150);
+      const label = fit(ctx, (row.short || row.label || '').toUpperCase(), Math.max(28, avail), font);
       text(ctx, label, lx, ly, {
         align: align,
         baseline: baseline,
         font: font,
-        color: hover === i ? T.paper : T.mute,
-        tracking: '0.06em',
+        color: hover === i ? T.paper : T.paper2,
+        tracking: '0.05em',
       });
       hits.push({
         cx: cx + cos * r * model.fracs[i],
         cy: cy + sin * r * model.fracs[i],
-        r: 16,
+        r: 18,
         ax: lx,
         ay: ly,
         item: row,
@@ -1146,8 +1246,8 @@ const RADAR = {
     inst.hits = hits;
   },
 
-  tip(item) {
-    const second = item.sub || (item.value !== null ? fmt(item.value) : '');
+  tip(item, zh) {
+    const second = loc(item, 'sub', zh) || (item.value !== null ? fmt(item.value) : '');
     return [item.label, second].filter(Boolean);
   },
 
@@ -1171,49 +1271,52 @@ const TOPICS = {
     return { rows: rows, max: max, total: total };
   },
 
-  height(model, w) {
-    if (!model.rows.length) return 120;
-    return 10 + model.rows.length * TOPICS.rowH + (w < 320 ? 2 : 6);
+  height(model, w, fig) {
+    if (!model.rows.length) return 150;
+    return heightWithCap(fig, 30 + model.rows.length * TOPICS.rowH + 8, 38 + model.rows.length * 20);
   },
 
   draw(g, inst) {
     const { ctx, w, h, T, lang, hover, elapsed } = g;
     const model = inst.model;
     const rows = model.rows;
+    const headBottom = chartHead(g, inst, {
+      metric: 'POSTS',
+      source: 'ARCHIVE',
+      total: 'TOTAL ' + fmt(model.total),
+    });
     if (!rows.length) {
-      drawNoData(g);
+      drawNoData(g, headBottom);
       inst.hits = [];
       return;
     }
-    const L = L10N[lang];
-    const RH = TOPICS.rowH;
-    const labelFont = mono(10);
+    const RH = clamp((h - headBottom - 16) / rows.length, 22, TOPICS.rowH);
+    const labelFont = mono(12);
     let labelW = 0;
     rows.forEach((r) => {
       labelW = Math.max(labelW, measure(ctx, (r.label || '').toUpperCase(), labelFont));
     });
-    const labelCap = Math.max(44, Math.min(Math.round(w * 0.42), labelW + 4));
-    const countW = 26;
+    const labelCap = Math.max(42, Math.min(Math.round(w * 0.42), labelW + 4));
+    const countW = 28;
     const tx0 = labelCap + 10;
-    const tx1 = Math.max(tx0 + 24, w - countW - 4);
-    const trackW = tx1 - tx0;
+    const tx1 = Math.max(tx0 + 24, w - countW - 2);
     const grad = spectral(ctx, tx0, 0, tx1, 0);
 
     const hits = [];
     rows.forEach((row, i) => {
-      const top = 8 + i * RH;
-      const labelY = top + 11;
-      const trackY = top + 17;
+      const top = headBottom + 8 + i * RH;
+      const labelY = top + 12;
+      const trackY = top + 18;
       const value = Math.max(0, row.value || 0);
       const p = easeOut(clamp((elapsed - 60 - i * 38) / 460, 0, 1));
       const isHover = hover === i;
-      const barW = value > 0 ? Math.max(1.5, (value / model.max) * trackW * p) : 0;
+      const barW = value > 0 ? Math.max(1.5, (value / model.max) * (tx1 - tx0) * p) : 0;
 
       const label = fit(ctx, (row.label || '').toUpperCase(), labelCap, labelFont);
-      text(ctx, label, 0, labelY, {
+      text(ctx, label, 4, labelY, {
         font: labelFont,
         color: isHover ? T.paper : T.paper2,
-        tracking: '0.05em',
+        tracking: '0.04em',
       });
 
       hline(ctx, tx0, tx1, hair(trackY), isHover ? T.line3 : T.line1);
@@ -1223,10 +1326,10 @@ const TOPICS = {
         ctx.fillRect(tx0, trackY - 3, barW, 3);
       }
 
-      text(ctx, fmt(row.value || 0), w, labelY, {
+      text(ctx, fmt(row.value || 0), w - 4, labelY, {
         align: 'right',
-        font: mono(11, 500),
-        color: isHover ? T.paper : T.paper2,
+        font: mono(12, 500),
+        color: isHover ? T.paper : T.paper,
       });
 
       if (isHover) {
@@ -1247,8 +1350,6 @@ const TOPICS = {
       });
     });
 
-    /* one hairline under the last row, closing the table */
-    hline(ctx, 0, tx1, hair(h - 2), T.line1);
     inst.hits = hits;
   },
 
@@ -1305,8 +1406,8 @@ const SIGIL = {
     const cy = top + side / 2;
 
     /* deterministic composition: quarter-turn orientation + a few fractions */
-    const turn = Math.floor(rand() * 4);
-    const rot = (turn * Math.PI) / 2;
+    const turn = Math.floor(rand() * 8);
+    const rot = (turn * Math.PI) / 4;
     const R = side * 0.355;
     const baseAngles = [-Math.PI / 2, Math.PI / 6, (Math.PI * 5) / 6];
     const pts = baseAngles.map((a) => {

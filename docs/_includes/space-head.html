@@ -52,6 +52,22 @@
   html:not(.js) .sp-boot,
   html:not(.js) #sp-gl { display: none !important; }
   html:not(.js) .sp-cursor { display: none !important; }
+
+  /* no-JS chart fallback: the <noscript> data tables carry every number and
+     must reflow inside the flat column (DOIs are one long unbreakable token,
+     which otherwise forces a 538 px table into a 380 px column). */
+  html:not(.js) .sp-viz noscript table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+  html:not(.js) .sp-viz noscript th,
+  html:not(.js) .sp-viz noscript td {
+    padding: 4px 6px;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 </style>
 
 <noscript>

@@ -55,8 +55,8 @@
   /* light */
   --paper: #f7f7f4;
   --paper-2: #c9cdd6;
-  --mute: #8c93a3;
-  --dim: #5c6472;
+  --mute: #979dab;
+  --dim: #737b8a;
 
   /* spectral gradient — the only colour on the site */
   --g-violet: #7c5cff;
@@ -188,7 +188,7 @@ body.sp-body {
   left: 50%; top: 10px;
   translate: -50% 0;
   z-index: 300;
-  padding: 12px 20px;
+  padding: 14px 22px;
   font: 700 11px/1 var(--f-mono);
   letter-spacing: .18em;
   text-transform: uppercase;
@@ -454,7 +454,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
 
 .sp-lede {
   font-family: var(--f-cjk);
-  font-size: clamp(20px, 1.55vw, 26px);
+  font-size: clamp(21px, 1.6vw, 28px);
   line-height: 1.45;
   letter-spacing: -.005em;
   color: var(--paper-2);
@@ -465,7 +465,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
 
 .sp-xl {
   font-family: var(--f-cjk);
-  font-size: clamp(22px, 1.85vw, 30px);
+  font-size: clamp(24px, 1.95vw, 32px);
   line-height: 1.38;
   letter-spacing: -.012em;
   color: var(--paper);
@@ -474,7 +474,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
 
 .sp-body-copy {
   font-family: var(--f-cjk);
-  font-size: 20px;
+  font-size: 21px;
   line-height: 1.62;
   letter-spacing: .004em;
   color: var(--paper-2);
@@ -548,7 +548,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
 
 .sp-meta {
   font-family: var(--f-mono);
-  font-size: 13px;
+  font-size: 13.5px;
   line-height: 1.85;
   letter-spacing: .06em;
   color: var(--mute);
@@ -630,6 +630,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
   overflow: hidden;
   transition: color .24s var(--e-out), border-color .24s var(--e-out), background .24s var(--e-out);
 }
+.sp-btn .sp-arrow { color: inherit; }
 .sp-btn svg {
   width: 15px; height: 15px;
   fill: none;
@@ -694,7 +695,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
   padding: 7px 11px;
   border: 1px solid var(--line-1);
   font-family: var(--f-mono);
-  font-size: 11.5px;
+  font-size: 12px;
   letter-spacing: .08em;
   color: var(--paper-2);
   white-space: nowrap;
@@ -732,7 +733,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
 }
 .sp-pub h3 {
   font-family: var(--f-display);
-  font-size: clamp(19px, 1.28vw, 22px);
+  font-size: clamp(20px, 1.35vw, 24px);
   font-weight: 500;
   line-height: 1.28;
   letter-spacing: -.012em;
@@ -754,14 +755,14 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
   display: flex;
   gap: 14px;
   font-family: var(--f-mono);
-  font-size: 11.5px;
+  font-size: 12px;
   letter-spacing: .12em;
   color: var(--mute);
   white-space: nowrap;
 }
 .sp-note h3 {
   font-family: var(--f-cjk);
-  font-size: clamp(18px, 1.22vw, 21px);
+  font-size: clamp(19px, 1.3vw, 23px);
   font-weight: 500;
   line-height: 1.4;
   color: var(--paper);
@@ -795,13 +796,13 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
 .sp-tool p {
   margin-top: 4px;
   font-family: var(--f-cjk);
-  font-size: 15.5px;
+  font-size: 16.5px;
   line-height: 1.55;
   color: var(--paper-2);
 }
 .sp-tool__tech {
   font-family: var(--f-mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: .08em;
   color: var(--mute);
   text-transform: uppercase;
@@ -830,7 +831,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
 }
 .sp-tower__body h3 {
   font-family: var(--f-cjk);
-  font-size: clamp(22px, 1.6vw, 28px);
+  font-size: clamp(23px, 1.65vw, 30px);
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: -.015em;
@@ -841,7 +842,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
 .sp-tower__body p {
   margin-top: 6px;
   font-family: var(--f-mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: .1em;
   text-transform: uppercase;
   color: var(--mute);
@@ -885,7 +886,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
   color: var(--paper);
   font-variant-numeric: tabular-nums;
 }
-.sp-stats__row span { font-family: var(--f-cjk); font-size: 15px; color: var(--paper-2); }
+.sp-stats__row span { font-family: var(--f-cjk); font-size: 16px; color: var(--paper-2); }
 .sp-stats__row em {
   font-family: var(--f-mono);
   font-style: normal;
@@ -901,6 +902,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
+  padding-bottom: 4px;
 }
 .sp-ghost {
   display: block;
@@ -941,14 +943,14 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
   grid-area: l;
   align-self: end;
   font-family: var(--f-cjk);
-  font-size: 15px;
+  font-size: 16px;
   color: var(--paper-2);
 }
 .sp-kpi__src {
   grid-area: s;
   font-family: var(--f-mono);
   font-style: normal;
-  font-size: 10.5px;
+  font-size: 12px;
   letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--dim);
@@ -985,7 +987,42 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
 .sp-grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line-1); }
 .sp-grid2 > *,
 .sp-grid3 > *,
-.sp-grid4 > * { background: var(--ink-0); padding: 18px 20px; min-width: 0; }
+.sp-grid2 > *,
+.sp-grid3 > *,
+.sp-grid4 > * {
+  background: rgba(6, 8, 12, .58);
+  padding: 16px 18px;
+  min-width: 0;
+}
+/* inside a hard-line grid the tile is the card: drop the row chrome */
+.sp-grid2 .sp-tool,
+.sp-grid3 .sp-tool,
+.sp-grid4 .sp-tool { border-top: 0; padding: 0; display: block; }
+.sp-grid2 .sp-tool__mark,
+.sp-grid3 .sp-tool__mark,
+.sp-grid4 .sp-tool__mark {
+  display: inline-grid;
+  place-items: center;
+  min-width: 34px;
+  height: 26px;
+  margin-bottom: 14px;
+}
+.sp-grid2 .sp-tool h3,
+.sp-grid3 .sp-tool h3,
+.sp-grid4 .sp-tool h3 { margin-bottom: 8px; font-size: 20px; }
+.sp-grid2 .sp-tool p,
+.sp-grid3 .sp-tool p,
+.sp-grid4 .sp-tool p {
+  font-size: 14.5px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.sp-grid2 .sp-tool__tech,
+.sp-grid3 .sp-tool__tech,
+.sp-grid4 .sp-tool__tech { display: block; margin-top: 12px; }
 
 .sp-rowline {
   display: grid;
@@ -1005,7 +1042,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
 }
 .sp-rowline__no {
   font-family: var(--f-mono);
-  font-size: 11.5px;
+  font-size: 12px;
   letter-spacing: .1em;
   color: var(--mute);
   font-variant-numeric: tabular-nums;
@@ -1013,7 +1050,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
 .sp-rowline__body { display: flex; flex-direction: column; gap: 5px; }
 .sp-rowline__body b {
   font-family: var(--f-cjk);
-  font-size: clamp(18px, 1.25vw, 22px);
+  font-size: clamp(20px, 1.35vw, 24px);
   font-weight: 500;
   line-height: 1.35;
   color: var(--paper);
@@ -1038,7 +1075,7 @@ body.sp-cursor-hot .sp-cursor::before { background: rgba(255, 255, 255, .12); }
 .sp-figure__cap {
   margin-top: 8px;
   font-family: var(--f-mono);
-  font-size: 10.5px;
+  font-size: 12px;
   letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--dim);
@@ -1297,3 +1334,221 @@ html[data-lang='en'] .sp-copy-zh { display: none !important; }
   html, body { background: #fff; color: #111; }
   .sp-flat .sp-panel { break-inside: avoid; }
 }
+
+/* ---------- 14. v3.1 corrections (lead) --------------------------------- */
+/* KPI figures inside a 2/3/4-up grid become tiles: number on top, label and
+   source under it. Prevents labels breaking one CJK character per line. */
+.sp-grid2 .sp-kpi,
+.sp-grid3 .sp-kpi,
+.sp-grid4 .sp-kpi {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: 'v' 'l' 's';
+  align-items: start;
+  padding: 16px 0 14px;
+}
+.sp-grid2 .sp-kpi__v,
+.sp-grid3 .sp-kpi__v,
+.sp-grid4 .sp-kpi__v { font-size: clamp(36px, 3.1vw, 50px); line-height: .92; }
+.sp-grid2 .sp-kpi__l,
+.sp-grid3 .sp-kpi__l,
+.sp-grid4 .sp-kpi__l { align-self: start; margin-top: 8px; font-size: 14px; }
+.sp-grid2 .sp-kpi__src,
+.sp-grid3 .sp-kpi__src,
+.sp-grid4 .sp-kpi__src { margin-top: 3px; }
+.sp-kpi__l {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+/* charts must never inherit a phantom min-width from their flex parents */
+.sp-viz { position: relative; display: block; width: 100%; margin: 0; }
+.sp-viz canvas { display: block; width: 100% !important; height: auto !important; }
+
+/* ---------- 15. definition lists + panel rhythm (lead, v3.1) ------------ */
+/* Fact sheets read as a ledger: label column, value column, hairline per row. */
+.sp-panel dl { display: grid; gap: 0; margin: 0; }
+.sp-panel dl > div {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 4px 16px;
+  align-items: baseline;
+  padding: 11px 0;
+  border-top: 1px solid var(--line-1);
+}
+.sp-panel dl > div:last-child { border-bottom: 1px solid var(--line-1); }
+.sp-panel dt {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sp-panel dd {
+  min-width: 0;
+  font-family: var(--f-cjk);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--paper-2);
+}
+.sp-panel dd a { color: var(--paper); }
+
+/* breathing room after a button row */
+.sp-row + .sp-meta { margin-top: 18px; }
+.sp-row + .sp-meta.sp-mt-26 { margin-top: 26px; }
+
+@media (max-width: 900px) {
+  .sp-panel dl > div { grid-template-columns: 78px minmax(0, 1fr); gap: 2px 12px; }
+  .sp-panel dd { font-size: 15.5px; }
+}
+
+/* ---------- 16. entrance choreography (lead, v3.2) ---------------------- */
+/* The hero is cut in with a hard mask, not faded: the page assembles itself. */
+@keyframes sp-cut-in {
+  from { clip-path: inset(0 0 106% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes sp-tick {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.sp-panel.is-in .sp-display,
+.sp-panel.is-in .sp-h2 {
+  animation: sp-cut-in 1.05s var(--e-out) both;
+}
+.sp-panel.is-in .sp-ghost {
+  animation: sp-cut-in 1.25s var(--e-out) both;
+}
+.sp-panel.is-in .sp-display { animation-delay: .05s; }
+.sp-panel.is-in .sp-kicker i {
+  transform-origin: 0 50%;
+  animation: sp-tick .9s var(--e-out) both;
+  animation-delay: .12s;
+}
+.sp-station.is-live .sp-kicker i { animation: sp-tick .9s var(--e-out) both; }
+
+/* thin instrument scrollbar (the page is a viewport, not a document) */
+html { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, .22) var(--ink-0); }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--ink-0); }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, .18); }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, .32); }
+
+/* long-form text inside a panel: keep the measure readable */
+.sp-panel .sp-body-copy + .sp-h3,
+.sp-panel .sp-body-copy + .sp-body-copy { margin-top: 16px; }
+.sp-panel .sp-h3 + .sp-body-copy { margin-top: 10px; }
+.sp-panel .sp-lede + .sp-meta { margin-top: 18px; }
+
+/* ---------- 17. type floor sweep (lead, v3.2) --------------------------- */
+/* Nothing that carries reading information is below 12px. */
+.sp-rowline__body em,
+.sp-stats__row em,
+.sp-pub p,
+.sp-tool__tech,
+.sp-kicker,
+.sp-label,
+.sp-eyebrow,
+.sp-caps,
+.sp-figure__cap { font-size: max(12px, 0.75rem); }
+.sp-meta { font-size: 13px; }
+
+/* ---------- 18. label scale (lead, v3.3) -------------------------------- */
+/* Instrument labels are part of the reading experience: 12.5–13px, never less. */
+.sp-label,
+.sp-eyebrow,
+.sp-caps { font-size: 12.5px; }
+.sp-kicker { font-size: 13px; }
+.sp-kpi__src { font-size: 12px; color: var(--mute); }
+.sp-tool__tech,
+.sp-rowline__body em,
+.sp-stats__row em { font-size: 12.5px; }
+.sp-pub p { font-size: 12.5px; }
+.sp-note-tiny { font-size: 14px; }
+.sp-figure__cap { font-size: 12px; color: var(--mute); }
+
+/* ---------- 19. automatic data scrims (lead, v3.3) ---------------------- */
+/* Slots that carry dense data always get the smoked plate, even if the author
+   forgot data-sp-slab: the 3D world must never sit behind white numerals. */
+.sp-panel[data-sp-slot="kpi"]::before,
+.sp-panel[data-sp-slot="facts"]::before,
+.sp-panel[data-sp-slot="viz"]::before,
+.sp-panel[data-sp-slot="detail"]::before,
+.sp-panel[data-sp-slot="grid"]::before,
+.sp-panel[data-sp-slot="list"]::before {
+  content: '';
+  position: absolute;
+  inset: -22px -26px -24px;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(7, 9, 13, .84) 0%, rgba(5, 7, 10, .90) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .10);
+  pointer-events: none;
+}
+/* lighter for wide lists: they have room around the text */
+.sp-panel[data-sp-slot="list"]::before {
+  background: linear-gradient(180deg, rgba(7, 9, 13, .72) 0%, rgba(5, 7, 10, .82) 100%);
+}
+.sp-flat .sp-panel[data-sp-slot]::before { content: none; }
+
+/* ---------- 20. flat-mode layout guard (lead, v3.3) --------------------- */
+/* pages.css paints the flat `.sp-layer` as a grid for the long-form pages; on
+   the home page that grid sizes tracks to the longest unbreakable token (a DOI)
+   and blows the 380 px mobile column out by ~140 px. The home flat layout is a
+   document, not a grid. */
+html.sp-flat body[data-sp-page='home'] .sp-layer {
+  display: block !important;
+  position: static !important;
+}
+html.sp-flat body[data-sp-page='home'] .sp-panel {
+  width: auto !important;
+  max-width: 100%;
+}
+/* long identifiers (DOI, ORCID, mail) may break instead of overflowing */
+.sp-flat .sp-pub p,
+.sp-flat .sp-meta,
+.sp-flat .sp-note-tiny,
+.sp-flat .sp-panel dd,
+.sp-flat .sp-link { overflow-wrap: anywhere; }
+
+/* ---------- 21. mobile type scale (lead, v3.3) -------------------------- */
+@media (max-width: 900px) {
+  .sp-flat .sp-display { font-size: clamp(52px, 13.2vw, 96px); }
+  .sp-flat .sp-display__sub { font-size: 17px; margin-top: 16px; }
+  .sp-flat .sp-body-copy { font-size: 18.5px; line-height: 1.7; }
+  .sp-flat .sp-lede { font-size: 19px; line-height: 1.6; }
+  .sp-flat .sp-xl { font-size: 21px; }
+  .sp-flat .sp-h2 { font-size: clamp(34px, 9vw, 56px); }
+  .sp-flat .sp-h3 { font-size: 24px; }
+  .sp-flat .sp-pub h3 { font-size: 19px; }
+  .sp-flat .sp-quote { font-size: 24px; }
+  .sp-flat .sp-kpi__v { font-size: 46px; }
+  .sp-flat .sp-kpi__l { font-size: 16px; }
+  .sp-flat .sp-panel { margin-bottom: 40px; }
+  .sp-flat .sp-display__sub + .sp-lede { margin-top: 18px; }
+}
+@media (max-width: 560px) {
+  .sp-flat .sp-display { font-size: clamp(46px, 14.5vw, 72px); }
+  .sp-flat .sp-body-copy { font-size: 18px; }
+}
+
+/* ---------- 22. a11y + size floors (lead, v3.3) ------------------------- */
+/* The skip link must be visible the moment it is focused, whatever focused it. */
+.sp-skip:focus,
+.sp-skip:focus-visible {
+  transform: translateY(0) !important;
+  visibility: visible !important;
+  opacity: 1;
+}
+.sp-caps { font-size: 13px; }
+.sp-chip { font-size: 12.5px; }
+.sp-tower__body p { font-size: 12.5px; }
+@media (max-width: 900px) {
+  .sp-flat .sp-display__sub { font-size: 17px !important; }
+  .sp-chip { font-size: 12px; }
+}
+/* rail hit areas: 24 px of visual ink, 44 px of tappable height */
+.sp-rail__btn { min-height: 40px; }

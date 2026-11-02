@@ -59,6 +59,7 @@ const COUNTER_MS = 900;
 const fx = {
   wipeStart: -1,
   fadeStart: -1,
+  fadeReveal: false,   // reduced motion: fade in from black over 160 ms
   reduced: false,
 };
 
@@ -66,10 +67,12 @@ function beginJumpFx() {
   const now = performance.now();
   if (fx.reduced) {
     fx.fadeStart = now;
+    fx.fadeReveal = true;
     fx.wipeStart = -1;
   } else {
     fx.wipeStart = now;
     fx.fadeStart = -1;
+    fx.fadeReveal = false;
   }
   /* CameraRig owns the damped jump kick (engine v3 impulse API). */
   if (app.onJumpImpulse) app.onJumpImpulse();
@@ -80,11 +83,9 @@ function beginJumpFx() {
 const compScaleFor = () => {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const base = Math.min(1, w / 1520, h / 950);
-  /* below 1400 px the fixed floor rail eats the left gutter: reserve it so the
-     px-authored composition can never slide under the numbers. */
-  if (w >= 1400) return base;
-  return Math.min(base, (w - 96) / 1520);
+  /* 70 px of breathing room each side: keeps the projected composition clear of
+     the left rail and the right readout at every desktop width. */
+  return Math.min(1, (w - 140) / 1520, h / 950);
 };
 
 /* --- MASTER SWITCH: physical panel bodies (slabs / plinths / edges) --------
@@ -118,6 +119,8 @@ const app = {
   wipe: 0,
   go: () => {},
   jumpUntil: 0,       // rest detection is suppressed while a jump tween runs
+  snapRig: false,     // reduced motion: land a jump without a camera glide
+  onJumpImpulse: null,
   dispose: null,
   raf: 0,
   started: false,
@@ -476,7 +479,18 @@ function scrollToStation(i, smooth) {
   const idx = clamp(Math.round(i), 0, app.n - 1);
   const top = app.tops[idx];
   if (top == null) return;
-  if (!smooth) { jumpToken++; app.jumpUntil = 0; window.scrollTo(0, top); return; }
+  if (!smooth) {
+    jumpToken++; app.jumpUntil = 0; app.snapRig = true;
+    window.scrollTo(0, top);
+    return;
+  }
+  /* reduced motion: land instantly, no detent / dolly — 160 ms canvas fade */
+  if (fx.reduced) {
+    jumpToken++; app.jumpUntil = 0; app.snapRig = true;
+    beginJumpFx();
+    window.scrollTo(0, top);
+    return;
+  }
 
   const start = window.scrollY;
   const delta = top - start;
@@ -484,7 +498,7 @@ function scrollToStation(i, smooth) {
   const token = ++jumpToken;
   const t0 = performance.now();
   app.jumpUntil = t0 + JUMP_MS;
-  beginJumpFx(delta);
+  beginJumpFx();
   const step = (now) => {
     if (token !== jumpToken) return;
     const k = clamp((now - t0) / JUMP_MS, 0, 1);
@@ -594,6 +608,8 @@ async function initSpatial(q, sections) {
   const rig = new CameraRig(camera);
   rig.reduced = !!q.reduced;
   fx.reduced = !!q.reduced;
+  app.snapRig = !!q.reduced;   // boot straight onto station 01, no dolly
+  app.onJumpImpulse = () => { if (!q.reduced) rig.impulse(0.8); };
 
   const mirror = makeMirrorFloor(renderer, scene, camera, {
     width: 160,
@@ -670,6 +686,11 @@ async function initSpatial(q, sections) {
       panelRecs.push({ el, anchor, ax: a[0], ay: a[1], station: b, root, baseX: x, baseY: y });
     });
   });
+
+  /* reduced motion: panels are present from the first frame (no opacity ramp) */
+  if (q.reduced) {
+    for (let e = 0; e < entries.length; e++) entries[e].maxOpacity = 1;
+  }
 
   /* --- physical panel bodies (OPT-IN: data-sp-slab="glass"|"ink") --------- */
   const bodyGroup = new THREE.Group();
@@ -930,6 +951,15 @@ async function initSpatial(q, sections) {
     if (Number.isFinite(i)) { e.preventDefault(); scrollToStation(i, true); }
   });
 
+  /* in-page deep links (#sp-<key>) get the same blade wipe as a rail jump */
+  const hashToStation = () => {
+    const hash = location.hash;
+    if (!hash || hash.indexOf('#sp-') !== 0) return;
+    const idx = built.findIndex((b) => b.key === hash.slice(4));
+    if (idx >= 0) scrollToStation(idx, true);
+  };
+  window.addEventListener('hashchange', hashToStation);
+
   /* language: panel metrics change, so re-project + re-mill the bodies */
   doc.addEventListener('sp:lang', () => {
     requestAnimationFrame(() => {
@@ -1086,10 +1116,9 @@ async function initSpatial(q, sections) {
     const dt = Math.min(0.05, Math.max(0.0001, raw));
     time += dt;
 
-    /* jump FX timers are wall-clock: a hidden tab resumes settled, never mid-kick */
+    /* jump FX timers are wall-clock: a hidden tab resumes settled, never mid-wipe */
     let wipe = 0;
     let fade = 0;
-    let kick = 0;
     if (fx.wipeStart >= 0) {
       const age = now - fx.wipeStart;
       if (age >= WIPE_MS) fx.wipeStart = -1;
@@ -1097,16 +1126,9 @@ async function initSpatial(q, sections) {
     }
     if (fx.fadeStart >= 0) {
       const age = now - fx.fadeStart;
-      if (age >= FADE_MS) fx.fadeStart = -1;
+      if (age >= FADE_MS) { fx.fadeStart = -1; fade = 0; }
+      else if (fx.fadeReveal) fade = 1 - easeOutCubic(clamp(age / FADE_MS, 0, 1));
       else fade = Math.sin(Math.PI * clamp(age / FADE_MS, 0, 1));
-    }
-    if (fx.kickStart >= 0) {
-      const age = now - fx.kickStart;
-      if (age >= KICK_MS) fx.kickStart = -1;
-      else {
-        const a = 1 - age / KICK_MS;
-        kick = a * a * fx.dir;
-      }
     }
     app.wipe = wipe;
 
@@ -1165,7 +1187,7 @@ async function initSpatial(q, sections) {
     const instV = (sy - lastScroll) / (dt * Math.max(1, h));
     lastScroll = sy;
     vel = damp(vel, clamp(instV, -1, 1), 5.5, dt);
-    const speedKick = clamp(Math.abs(vel) * 1.6, 0, 3.2);
+    const speedKick = q.reduced ? 0 : clamp(Math.abs(vel) * 1.6, 0, 3.2);
 
     _pos.set(lerp(A.pos.x, B.pos.x, k), lerp(A.pos.y, B.pos.y, k), lerp(A.pos.z, B.pos.z, k));
     _look.set(lerp(A.look.x, B.look.x, k), lerp(A.look.y, B.look.y, k), lerp(A.look.z, B.look.z, k));
@@ -1190,15 +1212,21 @@ async function initSpatial(q, sections) {
       bank = num(A.def.bank, 0) * arcK;
     }
 
-    rig.setPose({
-      pos: _pos,
-      look: _look,
-      fov: lerp(A.fov, B.fov, k) + speedKick + kick * 2.6,
-      roll: bank + kick * 0.014,
-    });
-    /* pointer parallax is a garnish, not a pan: keep it inside the safe area */
-    rig.pointer.x = input.pointer.x * 0.3;
-    rig.pointer.y = input.pointer.y * 0.3;
+    const fovTarget = lerp(A.fov, B.fov, k) + speedKick;
+    rig.setPose({ pos: _pos, look: _look, fov: fovTarget, roll: bank });
+    /* pointer parallax is a garnish, not a pan: keep it inside the safe area.
+       reduced motion: no parallax at all. */
+    rig.pointer.x = q.reduced ? 0 : input.pointer.x * 0.3;
+    rig.pointer.y = q.reduced ? 0 : input.pointer.y * 0.3;
+    /* reduced motion: instant jumps land the camera in the same frame */
+    if (q.reduced && app.snapRig) {
+      rig.cur.pos.copy(_pos);
+      rig.cur.look.copy(_look);
+      rig.cur.fov = fovTarget;
+      camera.fov = fovTarget;
+      camera.updateProjectionMatrix();
+      app.snapRig = false;
+    }
     /* piloted, not lerped: stiffer damping mid-swoop, calm at the stations */
     rig.update(dt, { lambda: 7 + 2 * arcK });
 
@@ -1232,7 +1260,7 @@ async function initSpatial(q, sections) {
 
     /* 4 · post chain ------------------------------------------------------ */
     const exposure = lerp(A.exposure, B.exposure, k);
-    const revealK = easeOutCubic(clamp(time / (REVEAL_MS / 1000), 0, 1));
+    const revealK = q.reduced ? 1 : easeOutCubic(clamp(time / (REVEAL_MS / 1000), 0, 1));
     post.render(scene, camera, {
       time,
       velocity: vel,
@@ -1240,15 +1268,18 @@ async function initSpatial(q, sections) {
       reveal: revealK,
       fade,
       wipe,
+      field: 0.55,
       station: i + t,
     });
 
     /* 5 · DOM projection (after the camera moved) ------------------------- */
-    for (let e = 0; e < entries.length; e++) {
-      const entry = entries[e];
-      if (time >= entry.revealAt) {
-        const rp = clamp((time - entry.revealAt) / 0.16, 0, 1);
-        entry.maxOpacity = rp * rp * (3 - 2 * rp);
+    if (!q.reduced) {
+      for (let e = 0; e < entries.length; e++) {
+        const entry = entries[e];
+        if (time >= entry.revealAt) {
+          const rp = clamp((time - entry.revealAt) / 0.16, 0, 1);
+          entry.maxOpacity = rp * rp * (3 - 2 * rp);
+        }
       }
     }
     projector.update(w, h);
@@ -1283,7 +1314,9 @@ async function initSpatial(q, sections) {
 
     /* 6 · HUD ------------------------------------------------------------- */
     const progress = n > 1 ? clamp((i + t) / (n - 1), 0, 1) : 0;
-    app.index = i;
+    /* poseAt() clamps i to n-2 on the final segment; the public index is the
+       station actually on screen, so 07 reports 6 at t=1 (QA contract). */
+    app.index = clamp(Math.round(i + t), 0, n - 1);
     app.t = t;
     app.progress = progress;
     if ((hudTick++ % 3) === 0) {
@@ -1337,6 +1370,7 @@ async function initSpatial(q, sections) {
     revealTimers.length = 0;
     clearTimeout(bodyTimer);
     disposeBodies();
+    app.onJumpImpulse = null;
     try { if (scenes && typeof scenes.dispose === 'function') scenes.dispose(); } catch (e) {}
     try { renderer.dispose(); } catch (e) {}
   };
@@ -1629,14 +1663,19 @@ async function initAmbient(q, sections) {
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+    app.tops = sections.map((el) => Math.round(el.getBoundingClientRect().top + window.scrollY));
   };
   window.addEventListener('resize', onResize);
+
+  /* Battery: the ambient backdrop is decoration behind a readable document.
+     DPR is pinned to 1 above; on phones/tablets the frame budget is 24 fps. */
+  const ambientFps = (q.mobile || window.innerWidth < MIN_SPATIAL_WIDTH) ? 24 : 30;
+  const minFrame = 1 / ambientFps;
 
   const tick = (now) => {
     if (disposed) return;
     const raw = (now - last) / 1000;
-    /* 30fps is plenty for a background */
-    if (raw < 1 / 32) { app.raf = requestAnimationFrame(tick); return; }
+    if (raw < minFrame) { app.raf = requestAnimationFrame(tick); return; }
     last = now;
     const dt = Math.min(0.06, Math.max(0.001, raw));
     if (!q.reduced) time += dt;
@@ -1655,28 +1694,63 @@ async function initAmbient(q, sections) {
     if (++tickFrames % 3 === 0) {
       const fpsEl = doc.getElementById('sp-fps');
       if (fpsEl) fpsEl.textContent = '--';
+      /* keep __sp.state() meaningful on the flat document (QA + deep links) */
+      let idx = 0;
+      let best = Infinity;
+      const sy = window.scrollY;
+      for (let s = 0; s < app.n; s++) {
+        const d = Math.abs(sy - (app.tops[s] || 0));
+        if (d < best) { best = d; idx = s; }
+      }
+      app.index = idx;
+      app.active = idx;
+      app.progress = app.n > 1 ? clamp(idx / (app.n - 1), 0, 1) : 0;
     }
     app.raf = requestAnimationFrame(tick);
   };
 
+  const onVisibility = () => {
+    if (doc.hidden) {
+      if (app.raf) { cancelAnimationFrame(app.raf); app.raf = 0; }
+    } else if (!app.raf && !disposed) {
+      last = performance.now();
+      app.raf = requestAnimationFrame(tick);
+    }
+  };
+  doc.addEventListener('visibilitychange', onVisibility);
+
   app.mode = 'ambient';
   app.started = true;
+  app.n = sections.length;
+  app.tops = sections.map((el) => Math.round(el.getBoundingClientRect().top + window.scrollY));
   html.classList.add('sp-ready');
+
+  /* Flat documents keep the sticky top bar: a jump lands the section top
+     directly below it instead of underneath it. */
+  const stickyTop = () => {
+    const tb = doc.querySelector('.sp-topbar');
+    return tb ? Math.round(tb.getBoundingClientRect().height) : 0;
+  };
+  const scrollTopFor = (el) => Math.max(
+    0,
+    Math.round(el.getBoundingClientRect().top + window.scrollY - stickyTop())
+  );
 
   /* ?sp=N still resolves on the flat fallback: scroll to the Nth section */
   const spN = parseInt(new URLSearchParams(location.search).get('sp'), 10);
   if (Number.isFinite(spN) && sections.length) {
     const target = sections[clamp(spN - 1, 0, sections.length - 1)];
-    requestAnimationFrame(() => window.scrollTo(0, Math.round(target.getBoundingClientRect().top + window.scrollY)));
+    requestAnimationFrame(() => window.scrollTo(0, scrollTopFor(target)));
   }
   app.go = (i) => {
     const el = sections[clamp(Math.round(i), 0, sections.length - 1)];
-    if (el) window.scrollTo(0, Math.round(el.getBoundingClientRect().top + window.scrollY));
+    if (el) window.scrollTo(0, scrollTopFor(el));
   };
   app.dispose = () => {
     disposed = true;
     if (app.raf) { cancelAnimationFrame(app.raf); app.raf = 0; }
     window.removeEventListener('resize', onResize);
+    doc.removeEventListener('visibilitychange', onVisibility);
     try { renderer.dispose(); } catch (e) {}
   };
 
@@ -1706,9 +1780,9 @@ function buildRail(built) {
     btn.setAttribute('data-zh-name', zh);
     btn.setAttribute('data-en-name', en);
     btn.setAttribute('aria-label', `${b.def.floor || pad2(i + 1)} · ${en} / ${zh}`);
-    btn.innerHTML = `<b>${esc(floor)}</b>`
-      + '<i class="sp-rail__bar" aria-hidden="true"></i>'
-      + `<span class="sp-rail__lbl"><em data-zh>${esc(zh)}</em><em data-en>${esc(en)}</em></span>`;
+    /* v3: numerals only — the rail must stay inside the 66 px HUD gutter.
+       The active station name is rendered by the bottom-right readout. */
+    btn.innerHTML = `<b>${esc(floor)}</b>`;
     rail.appendChild(btn);
   });
 }
@@ -1959,7 +2033,11 @@ async function main() {
 
   app.n = sections.length;
 
-  const spatial = !q.reduced && window.innerWidth >= MIN_SPATIAL_WIDTH && q.tier >= 2;
+  /* Reduced motion is NOT a degraded renderer: the station composition stays,
+     the engine drops idle drift / kicks, jumps land instantly and the wipe is
+     replaced by a 160 ms fade (initSpatial handles each of those). Only a
+     narrow viewport or a low tier falls back to the flat/ambient document. */
+  const spatial = window.innerWidth >= MIN_SPATIAL_WIDTH && q.tier >= 2;
   if (!spatial) {
     /* readable document first — ambient only paints behind it */
     html.classList.add('sp-flat');

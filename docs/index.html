@@ -55,54 +55,50 @@ multilingual: true
       <p class="sp-kicker" data-zh><i aria-hidden="true"></i>F01 / 入口<span>东南大学</span></p>
       <p class="sp-kicker" data-en><i aria-hidden="true"></i>F01 / ENTRY<span>SOUTHEAST UNIVERSITY</span></p>
 
-      <h1 class="sp-xl">
-        <span class="sp-line">LINHAN FAN</span>
-        <span class="sp-display__sub">范林涵 · 涵无 / KANNMU</span>
+      <h1 class="sp-display">
+        <span class="sp-line">LINHAN</span>
+        <span class="sp-line">FAN</span>
       </h1>
 
-      <p class="sp-caps">
+      <p class="sp-display__sub">范林涵 · 涵无 / KANNMU</p>
+      <p class="sp-display__sub">
         <span data-zh>{{ P.role.zh }}</span>
-        <span data-en>{{ P.role.en }}</span>
+        <span data-en>Ph.D. Candidate in Design · Southeast University</span>
       </p>
 
       <p class="sp-lede">
-        <span data-zh>研究聚焦人机交互中的眼动输入、脑机接口与空中超声触觉，覆盖原型系统搭建、受控用户实验与可用性评估。成果发表于 Nature Communications、Advanced Engineering Informatics、Displays 等期刊。</span>
-        <span data-en>Research focuses on gaze input, brain–computer interfaces and mid-air ultrasonic haptics within human–computer interaction, spanning prototype systems, controlled user studies and usability evaluation. Work has appeared in Nature Communications, Advanced Engineering Informatics and Displays.</span>
+        <span data-zh>研究聚焦眼动输入、脑机接口与空中超声触觉，覆盖原型系统、受控实验与可用性评估。成果发表于 Nature Communications、Advanced Engineering Informatics、Displays。</span>
+        <span data-en>Research spans gaze input, brain–computer interfaces and mid-air ultrasonic haptics, from prototypes to controlled studies. Published in Nature Communications, Advanced Engineering Informatics and Displays.</span>
       </p>
     </article>
 
     <aside class="sp-panel" data-sp-slot="kpi" data-sp-anchor="rt"
-           data-sp-pos="700,-300,60" data-sp-rot="0,6,0" data-sp-order="2"
+           data-sp-pos="700,-310,60" data-sp-rot="0,6,0" data-sp-order="2"
            style="width:320px" aria-label="关键数据 · Key figures">
-      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>数据<span>2026-10</span></p>
-      <p class="sp-kicker" data-en><i aria-hidden="true"></i>FIGURES<span>2026-10</span></p>
-
-      <div class="sp-grid2">
-        <div class="sp-kpi">
-          <b class="sp-kpi__v" data-count="{{ paper_count }}">{{ paper_count }}</b>
-          <span class="sp-kpi__l"><span data-zh>论文</span><span data-en>Papers</span></span>
-          <em class="sp-kpi__src">publications.yml</em>
-        </div>
-        <div class="sp-kpi">
-          <b class="sp-kpi__v" data-count="{{ total_cites }}">{{ total_cites }}</b>
-          <span class="sp-kpi__l"><span data-zh>引用</span><span data-en>Citations</span></span>
-          <em class="sp-kpi__src">Crossref, 2026-10</em>
-        </div>
-        <div class="sp-kpi">
-          <b class="sp-kpi__v">{% if P.research.size < 10 %}0{% endif %}{{ P.research.size }}</b>
-          <span class="sp-kpi__l"><span data-zh>方向</span><span data-en>Directions</span></span>
-          <em class="sp-kpi__src">profile.yml</em>
-        </div>
-        <div class="sp-kpi">
-          <b class="sp-kpi__v">{% if tool_count < 10 %}0{% endif %}{{ tool_count }}</b>
-          <span class="sp-kpi__l"><span data-zh>工具</span><span data-en>Tools</span></span>
-          <em class="sp-kpi__src">tools.yml</em>
-        </div>
+      <div class="sp-kpi">
+        <b class="sp-kpi__v" data-count="{{ paper_count }}">{{ paper_count }}</b>
+        <span class="sp-kpi__l"><span data-zh>论文</span><span data-en>Papers</span></span>
+        <em class="sp-kpi__src">publications.yml</em>
+      </div>
+      <div class="sp-kpi">
+        <b class="sp-kpi__v" data-count="{{ total_cites }}">{{ total_cites }}</b>
+        <span class="sp-kpi__l"><span data-zh>引用</span><span data-en>Citations</span></span>
+        <em class="sp-kpi__src">Crossref, 2026-10</em>
+      </div>
+      <div class="sp-kpi">
+        <b class="sp-kpi__v">{% if P.research.size < 10 %}0{% endif %}{{ P.research.size }}</b>
+        <span class="sp-kpi__l"><span data-zh>方向</span><span data-en>Directions</span></span>
+        <em class="sp-kpi__src">profile.yml</em>
+      </div>
+      <div class="sp-kpi">
+        <b class="sp-kpi__v">{% if tool_count < 10 %}0{% endif %}{{ tool_count }}</b>
+        <span class="sp-kpi__l"><span data-zh>工具</span><span data-en>Tools</span></span>
+        <em class="sp-kpi__src">tools.yml</em>
       </div>
     </aside>
 
     <div class="sp-panel" data-sp-slot="cta" data-sp-anchor="lb"
-         data-sp-pos="-690,300,150" data-sp-rot="0,3,0" data-sp-order="3"
+         data-sp-pos="-690,275,150" data-sp-rot="0,3,0" data-sp-order="3"
          style="width:700px">
       <div class="sp-row sp-wrap sp-gap-14">
         <a class="sp-btn sp-btn--solid" href="{{ '/about/' | relative_url }}#research">
@@ -116,6 +112,7 @@ multilingual: true
       </div>
       <p class="sp-meta">
         <b><span data-zh>{{ P.location.zh }}</span><span data-en>{{ P.location.en }}</span></b>
+        <span aria-hidden="true">·</span>
         <span data-zh>2023 年至今 · 设计学博士</span>
         <span data-en>Since 2023 · Ph.D. in Design</span>
       </p>
@@ -167,44 +164,45 @@ multilingual: true
     </div>
 
     <aside class="sp-panel" data-sp-slot="facts" data-sp-anchor="rt"
-           data-sp-pos="700,-230,60" data-sp-rot="0,6,0" data-sp-order="3"
+           data-sp-pos="700,-275,60" data-sp-rot="0,6,0" data-sp-order="3"
            style="width:340px" aria-label="档案 · Facts">
-      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>档案<span>基本资料</span></p>
-      <p class="sp-kicker" data-en><i aria-hidden="true"></i>FACTS<span>AT A GLANCE</span></p>
-
       <dl>
         <div class="sp-rowline">
-          <dt class="sp-kicker"><span data-zh>单位</span><span data-en>AFFILIATION</span></dt>
-          <dd>
-            <span data-zh>{{ P.affiliation.zh }}</span>
-            <span data-en>{{ P.affiliation.en }}</span>
+          <dt class="sp-rowline__no"><span data-zh>单位</span><span data-en>UNIT</span></dt>
+          <dd class="sp-rowline__body">
+            <b><span data-zh>东南大学</span><span data-en>Southeast University</span></b>
+            <em><span data-zh>机械工程学院 · 设计科学系</span><span data-en>School of Mechanical Engineering · Department of Design Science</span></em>
           </dd>
         </div>
         <div class="sp-rowline">
-          <dt class="sp-kicker"><span data-zh>项目</span><span data-en>PROGRAMME</span></dt>
-          <dd>
-            <span data-zh>设计学博士研究生 · 2023 年至今</span>
-            <span data-en>Ph.D. in Design · since 2023</span>
+          <dt class="sp-rowline__no"><span data-zh>项目</span><span data-en>PROG.</span></dt>
+          <dd class="sp-rowline__body">
+            <b><span data-zh>设计学博士</span><span data-en>Ph.D. in Design</span></b>
+            <em><span data-zh>2023 年至今</span><span data-en>since 2023</span></em>
           </dd>
         </div>
         <div class="sp-rowline">
-          <dt class="sp-kicker"><span data-zh>导师</span><span data-en>ADVISOR</span></dt>
-          <dd>
-            <a class="sp-link" href="{{ P.advisor.url }}" target="_blank" rel="noopener">
-              <span data-zh>{{ P.advisor.zh }}</span><span data-en>{{ P.advisor.en }}</span>
-              <span class="sp-arrow" aria-hidden="true">↗</span>
-            </a>
+          <dt class="sp-rowline__no"><span data-zh>导师</span><span data-en>ADV.</span></dt>
+          <dd class="sp-rowline__body">
+            <b>
+              <a class="sp-link" href="{{ P.advisor.url }}" target="_blank" rel="noopener">
+                <span data-zh>{{ P.advisor.zh }}</span><span data-en>{{ P.advisor.en }}</span>
+                <span class="sp-arrow" aria-hidden="true">↗</span>
+              </a>
+            </b>
           </dd>
         </div>
         <div class="sp-rowline">
-          <dt class="sp-kicker">ORCID</dt>
-          <dd><a class="sp-link" href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">{{ P.identifiers.orcid }}</a></dd>
+          <dt class="sp-rowline__no">ORCID</dt>
+          <dd class="sp-rowline__body">
+            <b><a class="sp-link" href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">{{ P.identifiers.orcid }}</a></b>
+          </dd>
         </div>
         <div class="sp-rowline">
-          <dt class="sp-kicker"><span data-zh>关键词</span><span data-en>KEYWORDS</span></dt>
-          <dd>
+          <dt class="sp-rowline__no"><span data-zh>关键词</span><span data-en>KEYS</span></dt>
+          <dd class="sp-rowline__body">
             <span class="sp-row sp-wrap sp-gap-8">
-              {%- for area in P.research -%}
+              {%- for area in P.research limit:3 -%}
               <a class="sp-chip" href="{{ '/about/' | relative_url }}#research">{{ area.keywords[0] }}</a>
               {%- endfor -%}
             </span>
@@ -216,7 +214,7 @@ multilingual: true
     <figure class="sp-panel sp-band sp-viz" data-sp-slot="timeline" data-sp-anchor="lb"
             data-sp-pos="-690,340,140" data-sp-rot="0,2,0" data-sp-order="4"
             style="width:1380px"
-            data-viz="timeline" data-viz-h="96"
+            data-viz="timeline"
             data-viz-data='{{ timeline_json | strip_newlines | strip }}'
             role="img" aria-label="教育经历：四川大学工学学士 2019—2023，东南大学设计学博士研究生 2023 年至今 / Education: B.Eng. at Sichuan University 2019–2023, Ph.D. in Design at Southeast University since 2023">
       <figcaption class="sp-viz__cap">
@@ -311,12 +309,13 @@ multilingual: true
       </section>
       {%- endfor -%}
 
-      <figure class="sp-viz" data-viz="radar" data-viz-h="140"
+      <figure class="sp-viz" data-viz="radar"
               data-viz-data='{{ radar_json | strip_newlines | strip }}'
               role="img" aria-label="四个研究方向的等权图谱：眼动与注视交互、脑机接口、空中超声触觉、实验方法与原型系统 / Four equal-weight research axes: gaze, BCI, mid-air ultrasonic haptics, methods and prototype systems">
         <figcaption class="sp-viz__cap">
           <span data-zh>方向图谱 · 四个等权轴</span>
           <span data-en>Direction map · four equal axes</span>
+          · <b id="sp-area-count">01 / {% if P.research.size < 10 %}0{% endif %}{{ P.research.size }}</b>
         </figcaption>
         <noscript>
           <ol>
@@ -327,18 +326,6 @@ multilingual: true
         </noscript>
       </figure>
     </article>
-
-    <aside class="sp-panel" data-sp-slot="index" data-sp-anchor="rb"
-           data-sp-pos="700,330,120" data-sp-rot="0,3,0" data-sp-order="4"
-           style="width:300px" aria-label="方向索引 · Index">
-      <p class="sp-kicker" data-zh><i aria-hidden="true"></i>索引<span>方向</span></p>
-      <p class="sp-kicker" data-en><i aria-hidden="true"></i>INDEX<span>DIRECTIONS</span></p>
-      <b class="sp-kpi__v" id="sp-area-count">01 / {% if P.research.size < 10 %}0{% endif %}{{ P.research.size }}</b>
-      <a class="sp-link" href="{{ '/about/' | relative_url }}#research">
-        <span data-zh>全部研究方向</span><span data-en>All directions</span>
-        <span class="sp-arrow" aria-hidden="true">↗</span>
-      </a>
-    </aside>
 
   </div>
 </section>
@@ -397,7 +384,7 @@ multilingual: true
       <p class="sp-kicker" data-zh><i aria-hidden="true"></i>引用记录<span>第一作者</span></p>
       <p class="sp-kicker" data-en><i aria-hidden="true"></i>CITATION RECORD<span>FIRST AUTHOR</span></p>
 
-      <figure class="sp-viz" data-viz="spine" data-viz-h="180"
+      <figure class="sp-viz" data-viz="spine"
               data-viz-data='{{ spine_json | strip_newlines | strip }}'
               role="img" aria-label="第一作者与共同第一作者论文的引用数：2026 年 0 次，2025 年 28 次，2024 年 6 次 / Citations for first and co-first author papers: 0 in 2026, 28 in 2025, 6 in 2024">
         <figcaption class="sp-viz__cap">
@@ -417,38 +404,26 @@ multilingual: true
         </noscript>
       </figure>
 
-      <div class="sp-grid2">
-        <div class="sp-kpi">
-          <b class="sp-kpi__v">{{ lead_cites }}</b>
-          <span class="sp-kpi__l"><span data-zh>合计引用</span><span data-en>Citations</span></span>
-          <em class="sp-kpi__src">Crossref, 2026-10</em>
+      <div class="sp-stats">
+        <div class="sp-stats__row">
+          <b>{{ lead_cites }}</b>
+          <span><span data-zh>第一作者引用</span><span data-en>First-author citations</span></span>
+          <em>Crossref, 2026-10</em>
         </div>
-        <div class="sp-kpi">
-          <b class="sp-kpi__v">{{ lead_pubs.size }}</b>
-          <span class="sp-kpi__l"><span data-zh>论文</span><span data-en>Papers</span></span>
-          <em class="sp-kpi__src">first / co-first</em>
+        <div class="sp-stats__row">
+          <b>{{ lead_pubs.size }}</b>
+          <span><span data-zh>第一作者论文</span><span data-en>First / co-first papers</span></span>
+          <em>F04</em>
         </div>
-      </div>
-    </aside>
-
-    <aside class="sp-panel" data-sp-slot="kpi" data-sp-anchor="rb"
-           data-sp-pos="700,330,120" data-sp-rot="0,3,0" data-sp-order="4"
-           style="width:400px" aria-label="论文总量 · Totals">
-      <div class="sp-grid3">
-        <div class="sp-kpi">
-          <b class="sp-kpi__v" data-count="{{ paper_count }}">{{ paper_count }}</b>
-          <span class="sp-kpi__l"><span data-zh>全部论文</span><span data-en>Papers</span></span>
-          <em class="sp-kpi__src">publications.yml</em>
+        <div class="sp-stats__row">
+          <b>{{ paper_count }}</b>
+          <span><span data-zh>全部论文</span><span data-en>All papers</span></span>
+          <em>publications.yml</em>
         </div>
-        <div class="sp-kpi">
-          <b class="sp-kpi__v" data-count="{{ total_cites }}">{{ total_cites }}</b>
-          <span class="sp-kpi__l"><span data-zh>总引用</span><span data-en>Citations</span></span>
-          <em class="sp-kpi__src">Crossref, 2026-10</em>
-        </div>
-        <div class="sp-kpi">
-          <b class="sp-kpi__v">{{ lead_pubs.size }}</b>
-          <span class="sp-kpi__l"><span data-zh>第一作者</span><span data-en>First author</span></span>
-          <em class="sp-kpi__src">F04</em>
+        <div class="sp-stats__row">
+          <b>{{ total_cites }}</b>
+          <span><span data-zh>总引用</span><span data-en>Total citations</span></span>
+          <em>Crossref, 2026-10</em>
         </div>
       </div>
     </aside>
@@ -484,12 +459,10 @@ multilingual: true
         {%- for post in site.posts limit:6 -%}
         <li>
           <a class="sp-rowline" href="{{ post.url | relative_url }}">
-            <span class="sp-rowline__no">{{ post.date | date: "%Y.%m.%d" }}</span>
+            <span class="sp-rowline__no">0{{ forloop.index }}</span>
             <span class="sp-rowline__body">
               <b>{{ post.title }}</b>
-              <em>
-                {%- if post.tags.size > 0 -%}{{ post.tags | first }}{%- else -%}Note{%- endif -%}
-              </em>
+              <em>{{ post.date | date: "%Y.%m.%d" }} · {% if post.tags.size > 0 %}{{ post.tags | first }}{% else %}Note{% endif %}</em>
             </span>
             <span class="sp-arrow" aria-hidden="true">↗</span>
           </a>
@@ -504,12 +477,12 @@ multilingual: true
       <p class="sp-kicker" data-zh><i aria-hidden="true"></i>主题<span>按标签</span></p>
       <p class="sp-kicker" data-en><i aria-hidden="true"></i>TOPICS<span>BY TAG</span></p>
 
-      <figure class="sp-viz" data-viz="topics" data-viz-h="150"
+      <figure class="sp-viz" data-viz="topics"
               data-viz-data='{{ topics_json | strip_newlines | strip }}'
               role="img" aria-label="文章主题分布：技术博客 5 篇，Python 4 篇，Project 4 篇，PCB 3 篇，Hardware 3 篇，作品集 3 篇 / Post topics: Tech blog 5, Python 4, Project 4, PCB 3, Hardware 3, Portfolio 3">
         <figcaption class="sp-viz__cap">
-          <span data-zh>前六项 · {{ post_count }} 篇文章</span>
-          <span data-en>Top six · {{ post_count }} posts</span>
+          <span data-zh>前六项 · 按标签</span>
+          <span data-en>Top six · by tag</span>
         </figcaption>
         <noscript>
           <table>
@@ -527,11 +500,7 @@ multilingual: true
         </noscript>
       </figure>
 
-      <p class="sp-meta">
-        <b>{{ post_count }}</b>
-        <span data-zh>篇文章 · {{ site.posts.last.date | date: "%Y" }}—{{ site.posts.first.date | date: "%Y" }}</span>
-        <span data-en>posts · {{ site.posts.last.date | date: "%Y" }}–{{ site.posts.first.date | date: "%Y" }}</span>
-      </p>
+      <p class="sp-meta">{{ site.posts.last.date | date: "%Y" }}—{{ site.posts.first.date | date: "%Y" }}</p>
       <a class="sp-link" href="{{ '/archive/' | relative_url }}">
         <span data-zh>全部文章</span><span data-en>All posts</span>
         <span class="sp-arrow" aria-hidden="true">↗</span>
@@ -579,33 +548,33 @@ multilingual: true
     <div class="sp-panel sp-band" data-sp-slot="grid" data-sp-anchor="ct"
          data-sp-pos="0,-120,-20" data-sp-rot="0,-2,0" data-sp-order="2"
          style="width:1200px" aria-label="工具列表 · Tools">
-      <ul class="sp-grid4">
+      <ul class="sp-grid4" style="width:100%">
         {%- for tool in site.data.tools -%}
         {%- case tool.name -%}
           {%- when 'CalcFlow' -%}
-            {%- assign tool_desc_zh = '把表达式拆成可引用的计算节点，依赖与结果随输入实时更新。' -%}
-            {%- assign tool_desc_en = 'Splits an expression into referenceable compute nodes whose dependencies and results update as inputs change.' -%}
+            {%- assign tool_desc_zh = '把表达式拆成可引用的计算节点。' -%}
+            {%- assign tool_desc_en = 'Referenceable compute nodes for multi-step expressions.' -%}
           {%- when 'PhoLo' -%}
-            {%- assign tool_desc_zh = '在浏览器本地把照片排成规整画布，只平移与等比例缩放，不裁剪、不拉伸、不上传。' -%}
-            {%- assign tool_desc_en = 'Arranges photos into a regular local canvas with translation and proportional scaling only — no cropping, no stretching, no uploads.' -%}
+            {%- assign tool_desc_zh = '浏览器本地排版照片，只平移与等比缩放。' -%}
+            {%- assign tool_desc_en = 'Local photo layout with translation and proportional scaling only.' -%}
           {%- when 'Kannmu Image Studio' -%}
-            {%- assign tool_desc_zh = '面向 Gemini 图像模型的生成与编辑工作台，可组合提示词、参考图与局部蒙版。' -%}
-            {%- assign tool_desc_en = 'A generation and editing bench for Gemini image models: prompts, reference images and local masks in one place.' -%}
+            {%- assign tool_desc_zh = 'Gemini 图像生成与编辑工作台。' -%}
+            {%- assign tool_desc_en = 'A Gemini image generation and editing bench.' -%}
           {%- when 'GenPlant' -%}
-            {%- assign tool_desc_zh = '用确定性种子与形态基因生成可重复的三维植物，实时观察、调整并保存。' -%}
-            {%- assign tool_desc_en = 'Deterministic seeds and morphological genes generate reproducible 3D plants, observed, adjusted and saved live in the browser.' -%}
+            {%- assign tool_desc_zh = '确定性种子生成可重复的三维植物。' -%}
+            {%- assign tool_desc_en = 'Deterministic seeds for reproducible 3D plants.' -%}
           {%- when 'ZenMux Balance Monitor' -%}
-            {%- assign tool_desc_zh = '读取 ZenMux 管理接口的滚动额度、月度订阅与模型用量，集中查看余额、趋势与供应商分布。' -%}
-            {%- assign tool_desc_en = 'Reads rolling quota, monthly subscription and model usage from the ZenMux admin API, gathering balance, trend and provider distribution.' -%}
+            {%- assign tool_desc_zh = '读取 ZenMux 额度、订阅与模型用量。' -%}
+            {%- assign tool_desc_en = 'Quota, subscription and model usage from the ZenMux API.' -%}
           {%- when 'UMH Lab' -%}
-            {%- assign tool_desc_zh = '超声空中触觉的展示与交互模拟器，介绍相控阵硬件、聚焦原理、触觉模式与相关成果。' -%}
-            {%- assign tool_desc_en = 'A showcase and interaction simulator for mid-air ultrasonic haptics: phased-array hardware, focusing, tactile patterns and related results.' -%}
+            {%- assign tool_desc_zh = '超声空中触觉的展示与交互模拟器。' -%}
+            {%- assign tool_desc_en = 'A mid-air ultrasonic haptics showcase and simulator.' -%}
           {%- when 'UMH Demo' -%}
-            {%- assign tool_desc_zh = 'UMH v7 演示台：84 路阵列的聚焦触觉与定向音频，通过 Web Serial 驱动，内置无硬件演示模式。' -%}
-            {%- assign tool_desc_en = 'The UMH v7 bench: 84-channel focusing and directional audio over Web Serial, with a hardware-free demo mode.' -%}
+            {%- assign tool_desc_zh = '84 路阵列的聚焦触觉与定向音频演示台。' -%}
+            {%- assign tool_desc_en = 'The 84-channel focusing and directional-audio bench.' -%}
           {%- when 'T-Sim 做T训练场' -%}
-            {%- assign tool_desc_zh = '以真实 A 股与 ETF 分钟级行情逐根回放，未来不可见，训练择时、仓位纪律与成本意识。' -%}
-            {%- assign tool_desc_en = 'Bar-by-bar replay of real minute-level A-share and ETF data with no look-ahead — timing, position discipline and cost awareness.' -%}
+            {%- assign tool_desc_zh = 'A 股与 ETF 分钟级行情逐根回放训练。' -%}
+            {%- assign tool_desc_en = 'Bar-by-bar A-share and ETF replay for timing practice.' -%}
           {%- else -%}
             {%- assign tool_desc_zh = tool.description -%}
             {%- assign tool_desc_en = tool.description -%}
@@ -624,19 +593,6 @@ multilingual: true
         {%- endfor -%}
       </ul>
     </div>
-
-    <aside class="sp-panel" data-sp-slot="index" data-sp-anchor="cb"
-           data-sp-pos="0,395,130" data-sp-rot="0,2,0" data-sp-order="3"
-           style="width:900px" aria-label="工具数量 · Tool count">
-      <div class="sp-kpi">
-        <b class="sp-kpi__v">{% if tool_count < 10 %}0{% endif %}{{ tool_count }}</b>
-        <span class="sp-kpi__l">
-          <span data-zh>个工具 · 全部在浏览器中运行</span>
-          <span data-en>tools · all run in the browser</span>
-        </span>
-        <em class="sp-kpi__src">tools.yml, 2026-10</em>
-      </div>
-    </aside>
 
   </div>
 </section>
@@ -686,12 +642,13 @@ multilingual: true
                 {%- else -%}{{ l.label }}
               {%- endcase -%}
             </b>
+            {%- if key == 'orcid' or key == 'email' -%}
             <em>
               {%- if key == 'orcid' -%}{{ P.identifiers.orcid }}
-              {%- elsif key == 'email' -%}{{ P.contact.email }}
-              {%- else -%}{{ l.url | remove: 'https://' | remove: 'http://' | split: '/' | first }}
+              {%- else -%}{{ P.contact.email }}
               {%- endif -%}
             </em>
+            {%- endif -%}
           </span>
           <span class="sp-arrow" aria-hidden="true">↗</span>
         </a>
@@ -702,7 +659,7 @@ multilingual: true
     <footer class="sp-panel sp-band" data-sp-slot="meta" data-sp-anchor="lb"
             data-sp-pos="-690,330,130" data-sp-rot="0,2,0" data-sp-order="3"
             style="width:900px">
-      <div class="sp-grid4">
+      <div class="sp-grid4" style="width:100%">
         <div>
           <p class="sp-kicker" data-zh><i aria-hidden="true"></i>地点<span>PLACE</span></p>
           <p class="sp-kicker" data-en><i aria-hidden="true"></i>PLACE<span>LOCATION</span></p>
@@ -718,15 +675,12 @@ multilingual: true
         <div>
           <p class="sp-kicker" data-zh><i aria-hidden="true"></i>许可<span>代码</span></p>
           <p class="sp-kicker" data-en><i aria-hidden="true"></i>LICENCE<span>CODE</span></p>
-          <p class="sp-caps">
-            <span data-zh>仓库许可 Apache-2.0</span>
-            <span data-en>Repository licence Apache-2.0</span>
-          </p>
+          <p class="sp-caps">Apache-2.0</p>
         </div>
         <div>
-          <p class="sp-kicker" data-zh><i aria-hidden="true"></i>版权<span>2023—2026</span></p>
-          <p class="sp-kicker" data-en><i aria-hidden="true"></i>COPYRIGHT<span>2023–2026</span></p>
-          <p class="sp-caps">© 2023–2026 Linhan Fan</p>
+          <p class="sp-kicker" data-zh><i aria-hidden="true"></i>版权</p>
+          <p class="sp-kicker" data-en><i aria-hidden="true"></i>COPYRIGHT</p>
+          <p class="sp-meta"><span class="sp-nowrap">© 2023–2026 Linhan Fan</span></p>
         </div>
       </div>
     </footer>

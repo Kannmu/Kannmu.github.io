@@ -3,49 +3,29 @@ layout: space
 title: "离线模式"
 description: "网络已断开。已缓存的页面仍可离线阅读，恢复连接后可获取新内容。"
 hide-in-nav: true
-sp-page: error
+sp_page: error
 sp_mode: ambient
 permalink: /offline.html
 ---
 
 <section class="rd-err" aria-labelledby="rd-offline-title">
   <div class="rd-err__inner">
-    <p class="sp-eyebrow">
-      <i aria-hidden="true"></i>
-      <span>Offline</span>
-      <s aria-hidden="true"></s>
-      <span><span data-zh>网络已断开</span><span data-en>No connection</span></span>
-    </p>
 
-    <p class="sp-display rd-err__code rd-err__code--word" aria-hidden="true">OFF<em>LINE</em></p>
-
-    <div class="sp-rule rd-err__rule" aria-hidden="true"></div>
+    <div class="sp-numeral rd-err__num rd-err__num--word" aria-hidden="true">
+      <span class="sp-ghost">OFFLINE</span>
+    </div>
 
     <h1 class="rd-err__title" id="rd-offline-title">
-      <span data-zh>当前处于离线状态</span>
-      <span data-en>The connection is currently offline</span>
+      <span data-zh>网络已断开，已缓存的页面仍可阅读。</span>
+      <span data-en>The connection is offline; cached pages remain readable.</span>
     </h1>
-
-    <p class="rd-err__desc">
-      <span data-zh>已缓存的页面仍可阅读；恢复连接后可获取最新内容。此页面由站点服务工作线程提供。</span>
-      <span data-en>Cached pages remain readable. New content returns once the connection is restored. This page is served by the site service worker.</span>
-    </p>
 
     <div class="rd-err__acts">
       <a class="sp-btn sp-btn--solid" href="{{ '/' | relative_url }}">
         <span><span data-zh>返回首页</span><span data-en>Home</span></span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
-      <a class="sp-btn" href="{{ '/archive/' | relative_url }}">
-        <span><span data-zh>浏览全部文章</span><span data-en>Archive</span></span>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
-      </a>
-      <button class="sp-btn" type="button" onclick="window.location.reload()">
-        <span><span data-zh>重新连接</span><span data-en>Retry</span></span>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>
-      </button>
     </div>
 
-    <p class="rd-err__foot">{{ site.url | default: 'kannmu.top' | remove: 'https://' | remove: 'http://' }} · <span data-zh>离线文档</span><span data-en>Offline document</span></p>
   </div>
 </section>

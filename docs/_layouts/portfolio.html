@@ -1,57 +1,80 @@
 ---
-layout: default
+layout: space
+sp_page: portfolio
+sp_mode: ambient
 ---
+{%- comment -%}
+  PORTFOLIO DOCUMENT LAYOUT (legacy compatibility).
+  A portfolio entry is a reading page with images: one 880px lane, prose type,
+  figure captions in mono. The interactive portfolio is docs/Portfolio.html;
+  this layout exists for simple per-project pages that only carry markdown.
+{%- endcomment -%}
+{%- assign rd_chars = content | strip_html | strip_newlines | size -%}
+{%- assign rd_min = rd_chars | divided_by: 620 | plus: 1 -%}
 
+<div class="rd-doc">
+  <div class="rd-lane">
 
-<!-- Page Header -->
-{% include intro-header.html type='page' %}
+    <header class="rd-head">
+      <p class="sp-eyebrow rd-head__eyebrow">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>作品集</span><span data-en>Portfolio</span></span>
+        <s aria-hidden="true"></s>
+        <span>{{ page.date | default: site.time | date: '%Y' }}</span>
+      </p>
 
+      <h1 class="rd-title" id="rd-title">{{ page.title | escape }}</h1>
 
-<!-- Main Content -->
-<article>
+      {% if page.subtitle %}<p class="rd-sub">{{ page.subtitle | escape }}</p>{% endif %}
 
-<div class="container">
+      <div class="sp-rule rd-head__rule" aria-hidden="true"></div>
 
-  <div class="row">
-  <!-- <center> -->
-
-      
-  <!-- </center> -->
-
-    <div class="
-    col-lg-8 col-lg-offset-2
-    col-md-10 col-md-offset-1
-    post-container">
-
-    <!-- <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="https://music.163.com/outchain/player?type=2&id=1381615652&auto=1&height=66"></iframe> -->
-    
-    <div id="translate"></div>
-
-      {{ content }}
-    
-    </div>
-
-    {% unless page.no-catalog %}
-        <div class="
-            col-lg-2 col-lg-offset-10
-            visible-lg-block
-            sidebar-container
-            catalog-container">
-            <div class="side-catalog">
-                <hr class="hidden-sm hidden-xs">
-                <h5>
-                    <a class="catalog-toggle" href="#">CATALOG</a>
-                </h5>
-                <ul class="catalog-body"></ul>
-            </div>
+      <div class="rd-metabar">
+        <div class="rd-meta">
+          <span class="sp-label"><span data-zh>类型</span><span data-en>Type</span></span>
+          <b>PROJECT</b>
         </div>
-      {% endunless %}
-    
+        <div class="rd-meta">
+          <span class="sp-label"><span data-zh>长度</span><span data-en>Length</span></span>
+          <b>{{ rd_min }} MIN</b>
+        </div>
+        <div class="rd-meta">
+          <span class="sp-label"><span data-zh>站点</span><span data-en>Site</span></span>
+          <b>{{ site.title | escape }}</b>
+        </div>
+      </div>
+
+      {% if page.tags and page.tags.size > 0 %}
+      <div class="rd-tags">
+        <span class="sp-label"><span data-zh>标签</span><span data-en>Tags</span></span>
+        {% for tag in page.tags %}<span class="sp-chip">{{ tag | escape }}</span>{% endfor %}
+      </div>
+      {% endif %}
+    </header>
+
+    <article class="rd-article" id="rd-article">
+      <div class="rd-article__head">
+        <span class="sp-label"><span data-zh>正文</span><span data-en>Body copy</span></span>
+        <span class="rd-article__len" aria-hidden="true">≈ <b>{{ rd_min }}</b> MIN</span>
+      </div>
+      <div class="rd-prose" id="rd-body">{{ content }}</div>
+    </article>
+
+    <footer class="rd-end">
+      <div class="rd-end__foot">
+        <div class="rd-end__links">
+          <a class="sp-link" href="{{ '/Portfolio/' | relative_url }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+            <span><span data-zh>全部作品</span><span data-en>All work</span></span>
+          </a>
+          <a class="sp-link" href="{{ '/' | relative_url }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9h-6v-6H10v6H4z"/></svg>
+            <span><span data-zh>返回首页</span><span data-en>Home</span></span>
+          </a>
+        </div>
+        <p class="rd-end__note">© {{ site.time | date: '%Y' }} Kannmu</p>
+      </div>
+    </footer>
+
   </div>
-      
 </div>
-</article>
-
-
-
-

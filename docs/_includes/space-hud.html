@@ -24,22 +24,22 @@
 
   <nav class="sp-menu" aria-label="Primary">
     <a href="{{ '/' | relative_url }}" data-sp-cursor="INDEX" {% if _sp_url == '/' %}aria-current="page"{% endif %}>
-      <i aria-hidden="true">00</i><span data-zh>首页</span><span data-en>Home</span>
+      <span data-zh>首页</span><span data-en>Home</span><i aria-hidden="true">00</i>
     </a>
     <a href="{{ '/about/' | relative_url }}" data-sp-cursor="OPEN" {% if _sp_url == '/about/' %}aria-current="page"{% endif %}>
-      <i aria-hidden="true">01</i><span data-zh>关于</span><span data-en>About</span>
+      <span data-zh>关于</span><span data-en>About</span><i aria-hidden="true">01</i>
     </a>
     <a href="{{ '/archive/' | relative_url }}" data-sp-cursor="OPEN" {% if _sp_url == '/archive/' %}aria-current="page"{% endif %}>
-      <i aria-hidden="true">02</i><span data-zh>文章</span><span data-en>Archive</span>
+      <span data-zh>文章</span><span data-en>Archive</span><i aria-hidden="true">02</i>
     </a>
     <a href="{{ '/tools/' | relative_url }}" data-sp-cursor="OPEN" {% if _sp_url == '/tools/' %}aria-current="page"{% endif %}>
-      <i aria-hidden="true">03</i><span data-zh>工具</span><span data-en>Tools</span>
+      <span data-zh>工具</span><span data-en>Tools</span><i aria-hidden="true">03</i>
     </a>
     <a href="{{ '/Portfolio/' | relative_url }}" data-sp-cursor="OPEN" {% if _sp_url == '/Portfolio/' %}aria-current="page"{% endif %}>
-      <i aria-hidden="true">04</i><span data-zh>作品</span><span data-en>Work</span>
+      <span data-zh>作品</span><span data-en>Work</span><i aria-hidden="true">04</i>
     </a>
     <a href="{{ '/lab/' | relative_url }}" data-sp-cursor="OPEN" {% if _sp_url == '/lab/' %}aria-current="page"{% endif %}>
-      <i aria-hidden="true">05</i><span data-zh>实验</span><span data-en>Lab</span>
+      <span data-zh>实验</span><span data-en>Lab</span><i aria-hidden="true">05</i>
     </a>
   </nav>
 
@@ -54,15 +54,15 @@
 <!-- left floor rail: 7 buttons injected by app.js (button[data-sp-jump]) -->
 <nav class="sp-rail" id="sp-rail" aria-label="Sections"><!-- populated by app.js --></nav>
 
-<!-- right readout: current floor, total, live progress -->
+<!-- bottom-right readout: floor / total / station name + progress -->
 <div class="sp-readout" aria-hidden="true">
-  <div class="sp-readout__lvl"><b id="sp-level">01</b><span id="sp-total">/07</span></div>
-  <div class="sp-readout__name" id="sp-name">入口</div>
+  <div class="sp-readout__lvl">
+    <b id="sp-level">01</b><span id="sp-total">/07</span>
+    <span class="sp-readout__name" id="sp-name">入口</span>
+  </div>
   <div class="sp-meter">
     <div class="sp-meter__bar"><i></i></div>
-    <div class="sp-meter__txt">
-      <span data-zh>位置</span><span data-en>Position</span><span id="sp-pct">000%</span>
-    </div>
+    <span id="sp-pct">000%</span>
   </div>
 </div>
 
@@ -79,7 +79,7 @@
   <i></i>
 </div>
 
-<!-- top-right: floor plan (spatial mode only) -->
+<!-- bottom-left: floor plan above the telemetry (spatial mode only) -->
 <div class="sp-map-wrap" id="sp-map-wrap" aria-hidden="true">
   <div class="sp-map__cap">
     <span data-zh>平面</span><span data-en>Plan</span>

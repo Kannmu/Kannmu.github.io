@@ -3,8 +3,8 @@ layout: space
 title: "研究与设计作品集"
 nav-title: "Portfolio"
 description: "范林涵（Kannmu）的研究与设计作品集：眼动与眨眼交互、脑机接口、超声相控阵触觉、机器人硬件、机械结构、交互原型、发明专利与摄影作品。"
-extra_css: /assets/space/css/pages.css
 sp_page: portfolio
+sp_mode: ambient
 multilingual: true
 no-catalog: true
 ---
@@ -12,25 +12,24 @@ no-catalog: true
 {%- assign P = site.data.profile -%}
 
 <!-- =====================================================================
-     F01 · PROTOTYPES · the standing project list
+     01 · PROTOTYPES · HARDWARE
      ================================================================== -->
 <section class="sp-station" id="sp-pf-prototypes" data-sp-station="pf-prototypes"
          data-sp-floor="01" data-sp-zh="原型" data-sp-en="Prototypes" aria-label="Prototypes">
-  <div class="sp-layer">
+  <div class="sp-layer" data-sp-lay="stack">
 
-    <article class="sp-panel pf-mast" data-sp-slot="title"
-             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
-      <p class="sp-eyebrow">
-        <i aria-hidden="true"></i><s aria-hidden="true"></s>
-        <span data-zh>作品集 · 原型 · 硬件 · 专利</span>
-        <span data-en>Portfolio · Prototypes · Hardware · Patents</span>
+    <article class="sp-panel pf-mast">
+      <p class="sp-kicker">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>作品集 · 原型 · 硬件 · 专利</span><span data-en>Portfolio · Prototypes · Hardware · Patents</span></span>
+        <span>2026</span>
       </p>
-      <h1 class="sp-display pf-display">
+      <h1 class="pf-display">
         <span data-zh>研究与设计<em>作品集</em></span>
         <span data-en>Research and <em>design work</em></span>
       </h1>
       <p class="sp-lede sp-lede--cjk">
-        <span data-zh>本页汇总交互原型、机械与硬件实现，以及已授权发明专利。各原型均可独立运行或复现。</span>
+        <span data-zh>本页汇总交互原型、机械与硬件实现，以及已授权专利。各原型均可独立运行或复现。</span>
         <span data-en>An overview of interaction prototypes, mechanical and hardware work, and granted patents. Each prototype runs or can be reproduced independently.</span>
       </p>
       <div class="sp-rule pf-rule"></div>
@@ -41,94 +40,88 @@ no-catalog: true
       </p>
     </article>
 
-    <article class="sp-panel pf-group" data-sp-slot="list"
-             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-6,0"
-             data-sp-pos="20,-380,0" data-sp-anchor="lt" data-sp-order="1"
-             aria-label="Interaction systems 交互系统">
-      <p class="pf-group__head">
-        <span class="pf-group__name"><span data-zh>交互系统</span><span data-en>Interaction systems</span></span>
-        <span class="pf-group__span">2023 — 2026</span>
-      </p>
+    <div class="pf-groups">
+      <article class="sp-panel pf-group" aria-label="Interaction systems 交互系统">
+        <p class="pf-group__head">
+          <span class="pf-group__name"><span data-zh>交互系统</span><span data-en>Interaction systems</span></span>
+          <span class="pf-group__span">2023 — 2026</span>
+        </p>
 
-      <a class="pf-row" href="{{ '/UMH/' | relative_url }}">
-        <span class="pf-row__no">P.01</span>
-        <span class="pf-row__body">
-          <span class="pf-row__title"><span data-zh>UMH · 超声空中触觉装置</span><span data-en>UMH · Ultrasonic haptic device</span></span>
-          <span class="pf-row__kw">Ultrasonic Haptics · 60-element phased array</span>
-          <span class="pf-row__desc"><span data-zh>60 阵元六边形相控阵原型，用于验证高密度阵列布局与焦点控制策略。配套浏览器端可视化可实时查看焦点位置与调制波形。</span><span data-en>A 60-element hexagonal phased-array prototype for validating dense array layouts and focal-point control. A browser-side visualiser shows focal position and modulation waveforms in real time.</span></span>
-        </span>
-        <span class="pf-row__go" aria-hidden="true">↗</span>
-      </a>
+        <a class="pf-row" href="{{ '/UMH/' | relative_url }}">
+          <span class="pf-row__no">P.01</span>
+          <span class="pf-row__body">
+            <span class="pf-row__title"><span data-zh>UMH · 超声空中触觉装置</span><span data-en>UMH · Ultrasonic haptic device</span></span>
+            <span class="pf-row__kw">Ultrasonic Haptics · 60-element phased array</span>
+            <span class="pf-row__desc"><span data-zh>60 阵元六边形相控阵原型，用于验证高密度阵列布局与焦点控制策略。配套浏览器端可视化可实时查看焦点位置与调制波形。</span><span data-en>A 60-element hexagonal phased-array prototype for validating dense array layouts and focal-point control. A browser-side visualiser shows focal position and modulation waveforms in real time.</span></span>
+          </span>
+          <span class="pf-row__go" aria-hidden="true">↗</span>
+        </a>
 
-      <div class="pf-row">
-        <span class="pf-row__no">P.02</span>
-        <span class="pf-row__body">
-          <span class="pf-row__title"><span data-zh>Take-A-Look · 远距离目标选取</span><span data-en>Take-A-Look · Distant target selection</span></span>
-          <span class="pf-row__kw">Virtual Reality · Natural Gesture</span>
-          <span class="pf-row__desc"><span data-zh>面向工业虚拟现实的交互方案：以自然手势表达指向意图，使操作者无需在车间中移动即可选中远处设备。</span><span data-en>An interaction scheme for industrial VR: natural gestures express pointing intent, so an operator can select distant equipment without moving around the shop floor.</span></span>
-        </span>
-      </div>
+        <div class="pf-row">
+          <span class="pf-row__no">P.02</span>
+          <span class="pf-row__body">
+            <span class="pf-row__title"><span data-zh>Take-A-Look · 远距离目标选取</span><span data-en>Take-A-Look · Distant target selection</span></span>
+            <span class="pf-row__kw">Virtual Reality · Natural Gesture</span>
+            <span class="pf-row__desc"><span data-zh>面向工业虚拟现实的交互方案：以自然手势表达指向意图，使操作者无需在车间中移动即可选中远处设备。</span><span data-en>An interaction scheme for industrial VR: natural gestures express pointing intent, so an operator can select distant equipment without moving around the shop floor.</span></span>
+          </span>
+        </div>
 
-      <a class="pf-row" href="https://github.com/Kannmu/ErgoLabUnity" target="_blank" rel="noopener">
-        <span class="pf-row__no">P.03</span>
-        <span class="pf-row__body">
-          <span class="pf-row__title"><span data-zh>ErgoUnity · 工效学实验框架</span><span data-en>ErgoUnity · Ergonomics experiment framework</span></span>
-          <span class="pf-row__kw">Open Source · Unity</span>
-          <span class="pf-row__desc"><span data-zh>面向心理学与工效学实验的 Unity 框架：实验流程管理、数据记录与分析、通用界面与组件预制体。把实验程序从逐次重写变为配置运行，已在多组实验中使用并开源。</span><span data-en>A Unity framework for psychology and ergonomics experiments: workflow management, logging and analysis, shared UI and prefabs. It turns each study from a rewrite into a configuration, has been used across several experiments and is released as open source.</span></span>
-        </span>
-        <span class="pf-row__go" aria-hidden="true">↗</span>
-      </a>
+        <a class="pf-row" href="https://github.com/Kannmu/ErgoLabUnity" target="_blank" rel="noopener">
+          <span class="pf-row__no">P.03</span>
+          <span class="pf-row__body">
+            <span class="pf-row__title"><span data-zh>ErgoUnity · 工效学实验框架</span><span data-en>ErgoUnity · Ergonomics experiment framework</span></span>
+            <span class="pf-row__kw">Open Source · Unity</span>
+            <span class="pf-row__desc"><span data-zh>面向心理学与工效学实验的 Unity 框架：实验流程管理、数据记录与分析、通用界面与组件预制体。把实验程序从逐次重写变为配置运行，已在多组实验中使用并开源。</span><span data-en>A Unity framework for psychology and ergonomics experiments: workflow management, logging and analysis, shared UI and prefabs. It turns each study from a rewrite into a configuration, has been used across several experiments and is released as open source.</span></span>
+          </span>
+          <span class="pf-row__go" aria-hidden="true">↗</span>
+        </a>
 
-      <div class="pf-row">
-        <span class="pf-row__no">P.04</span>
-        <span class="pf-row__body">
-          <span class="pf-row__title"><span data-zh>手 · 眼 · 口 多通道交互</span><span data-en>Hand–eye–speech multimodal interaction</span></span>
-          <span class="pf-row__kw">Multimodal · Speech + Gaze + Gesture</span>
-          <span class="pf-row__desc"><span data-zh>技术负责人。整合语音识别、Unity 程序、UDP 通信、界面交互与动画，考察同一任务中多通道的分工方式与冲突处理。</span><span data-en>Technical lead. Speech recognition, a Unity application, UDP communication, UI interaction and animation were combined to examine channel allocation and conflict handling within a single task.</span></span>
-        </span>
-      </div>
-    </article>
+        <div class="pf-row">
+          <span class="pf-row__no">P.04</span>
+          <span class="pf-row__body">
+            <span class="pf-row__title"><span data-zh>手 · 眼 · 口 多通道交互</span><span data-en>Hand–eye–speech multimodal interaction</span></span>
+            <span class="pf-row__kw">Multimodal · Speech + Gaze + Gesture</span>
+            <span class="pf-row__desc"><span data-zh>技术负责人。整合语音识别、Unity 程序、UDP 通信、界面交互与动画，考察同一任务中多通道的分工方式与冲突处理。</span><span data-en>Technical lead. Speech recognition, a Unity application, UDP communication, UI interaction and animation were combined to examine channel allocation and conflict handling within a single task.</span></span>
+          </span>
+        </div>
+      </article>
 
-    <article class="sp-panel pf-group" data-sp-slab="ink" data-sp-rot="0,6,0" data-sp-slot="list"
-            
-             data-sp-pos="-600,-100,60" data-sp-anchor="lt" data-sp-order="2"
-             aria-label="Hardware and machinery 硬件与机械">
-      <p class="pf-group__head">
-        <span class="pf-group__name"><span data-zh>硬件与机械</span><span data-en>Hardware &amp; machinery</span></span>
-        <span class="pf-group__span">2019 — 2023</span>
-      </p>
+      <article class="sp-panel pf-group" aria-label="Hardware and machinery 硬件与机械">
+        <p class="pf-group__head">
+          <span class="pf-group__name"><span data-zh>硬件与机械</span><span data-en>Hardware &amp; machinery</span></span>
+          <span class="pf-group__span">2019 — 2023</span>
+        </p>
 
-      <div class="pf-row">
-        <span class="pf-row__no">H.01</span>
-        <span class="pf-row__body">
-          <span class="pf-row__title"><span data-zh>MRI 环境下的气动步进马达</span><span data-en>Pneumatic stepper motor for MRI environments</span></span>
-          <span class="pf-row__kw">Medical Robotics · Non-magnetic</span>
-          <span class="pf-row__desc"><span data-zh>用于核磁共振强磁场与强电场环境的机器人动力源：全非金属结构，行星减速齿轮采用 POM 自润滑材料，在满足 MRI 安全条件的同时提供输出力矩与定位精度。</span><span data-en>A drive for robots operating inside the strong magnetic and electric fields of an MRI scanner: an all-non-metallic structure with self-lubricating POM planetary gears, providing output torque and positioning accuracy while meeting MRI safety requirements.</span></span>
-        </span>
-      </div>
+        <div class="pf-row">
+          <span class="pf-row__no">H.01</span>
+          <span class="pf-row__body">
+            <span class="pf-row__title"><span data-zh>MRI 环境下的气动步进马达</span><span data-en>Pneumatic stepper motor for MRI environments</span></span>
+            <span class="pf-row__kw">Medical Robotics · Non-magnetic</span>
+            <span class="pf-row__desc"><span data-zh>用于核磁共振强磁场与强电场环境的机器人动力源：全非金属结构，行星减速齿轮采用 POM 自润滑材料，在满足 MRI 安全条件的同时提供输出力矩与定位精度。</span><span data-en>A drive for robots operating inside the strong magnetic and electric fields of an MRI scanner: an all-non-metallic structure with self-lubricating POM planetary gears, providing output torque and positioning accuracy while meeting MRI safety requirements.</span></span>
+          </span>
+        </div>
 
-      <div class="pf-row">
-        <span class="pf-row__no">H.02</span>
-        <span class="pf-row__body">
-          <span class="pf-row__title"><span data-zh>Robocon · R1 机器人整机</span><span data-en>Robocon · R1 robot, complete build</span></span>
-          <span class="pf-row__kw">Robotics · Mechanical + Driver</span>
-          <span class="pf-row__desc"><span data-zh>R1 机器人总负责人与硬件组组长。负责整机机械结构与驱动电路设计，完成从方案、装配到赛场调试的全流程；该队获全国大学生机器人大赛国家一等奖。</span><span data-en>R1 robot lead and hardware team lead. Responsible for the chassis structure and driver-circuit design, from concept and assembly through competition debugging; the team won a national first prize at the China University Robot Competition.</span></span>
-        </span>
-      </div>
+        <div class="pf-row">
+          <span class="pf-row__no">H.02</span>
+          <span class="pf-row__body">
+            <span class="pf-row__title"><span data-zh>Robocon · R1 机器人整机</span><span data-en>Robocon · R1 robot, complete build</span></span>
+            <span class="pf-row__kw">Robotics · Mechanical + Driver</span>
+            <span class="pf-row__desc"><span data-zh>R1 机器人总负责人与硬件组组长。负责整机机械结构与驱动电路设计，完成从方案、装配到赛场调试的全流程；该队获全国大学生机器人大赛国家一等奖。</span><span data-en>R1 robot lead and hardware team lead. Responsible for the chassis structure and driver-circuit design, from concept and assembly through competition debugging; the team won a national first prize at the China University Robot Competition.</span></span>
+          </span>
+        </div>
 
-      <div class="pf-row">
-        <span class="pf-row__no">H.03</span>
-        <span class="pf-row__body">
-          <span class="pf-row__title"><span data-zh>实验装置与测量链路</span><span data-en>Apparatus and measurement chains</span></span>
-          <span class="pf-row__kw">Instrumentation · Sensors + Acquisition</span>
-          <span class="pf-row__desc"><span data-zh>压力传感器、EEG 采集、眼动仪与 STM32 的协同搭建，包括器件选型、时钟同步与数据清洗，使生理信号以可分析的精度进入实验软件。</span><span data-en>Pressure sensors, EEG acquisition, eye trackers and STM32 boards combined into working rigs — component selection, clock synchronisation and data cleaning — so that physiological signals reach the experiment software at analysable precision.</span></span>
-        </span>
-      </div>
-    </article>
+        <div class="pf-row">
+          <span class="pf-row__no">H.03</span>
+          <span class="pf-row__body">
+            <span class="pf-row__title"><span data-zh>实验装置与测量链路</span><span data-en>Apparatus and measurement chains</span></span>
+            <span class="pf-row__kw">Instrumentation · Sensors + Acquisition</span>
+            <span class="pf-row__desc"><span data-zh>压力传感器、EEG 采集、眼动仪与 STM32 的协同搭建，包括器件选型、时钟同步与数据清洗，使生理信号以可分析的精度进入实验软件。</span><span data-en>Pressure sensors, EEG acquisition, eye trackers and STM32 boards combined into working rigs — component selection, clock synchronisation and data cleaning — so that physiological signals reach the experiment software at analysable precision.</span></span>
+          </span>
+        </div>
+      </article>
+    </div>
 
-    <article class="sp-panel pf-scope" data-sp-slot="meta"
-             data-sp-pos="20,200,0" data-sp-anchor="lt" data-sp-order="3"
-             aria-label="Scope 范围">
+    <article class="sp-panel pf-scope" aria-label="Scope 范围">
       <p class="sp-label pf-kicker"><span data-zh>范围</span><span data-en>Scope</span></p>
       <p class="sp-body-copy">
         <span data-zh>内容分为三部分：面向具体实验或产品问题搭建的交互系统；核磁环境下的驱动结构与机器人整机等机械实现；以及由此形成的两项已授权专利。实验装置与测量链路单独列在最后。</span>
@@ -140,20 +133,19 @@ no-catalog: true
 </section>
 
 <!-- =====================================================================
-     F02 · PATENTS
+     02 · PATENTS
      ================================================================== -->
 <section class="sp-station" id="sp-pf-patents" data-sp-station="pf-patents"
          data-sp-floor="02" data-sp-zh="专利" data-sp-en="Patents" aria-label="Patents">
-  <div class="sp-layer">
+  <div class="sp-layer" data-sp-lay="split">
 
-    <article class="sp-panel pf-mast" data-sp-slot="title"
-             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
-      <p class="sp-eyebrow">
-        <i aria-hidden="true"></i><s aria-hidden="true"></s>
-        <span data-zh>专利 · 实用新型</span>
-        <span data-en>Patents · Utility models</span>
+    <article class="sp-panel pf-mast">
+      <p class="sp-kicker">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>专利 · 实用新型</span><span data-en>Patents · Utility models</span></span>
+        <span>02 / 03</span>
       </p>
-      <h2 class="sp-h2">
+      <h2 class="pf-h2">
         <span data-zh>已授权专利</span>
         <span data-en>Granted patents</span>
       </h2>
@@ -169,10 +161,7 @@ no-catalog: true
       </p>
     </article>
 
-    <article class="sp-panel pf-patents" data-sp-slot="list"
-             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-6,0"
-             data-sp-pos="20,-380,0" data-sp-anchor="lt" data-sp-order="1"
-             aria-label="Patent list 专利列表">
+    <article class="sp-panel pf-patents" aria-label="Patent list 专利列表">
       <div class="pf-patent">
         <span class="pf-patent__no">ZL 2021 2<br>2309425.9</span>
         <span class="pf-patent__body">
@@ -205,21 +194,18 @@ no-catalog: true
       </p>
     </article>
 
-    <article class="sp-panel pf-continue" data-sp-slot="cta"
-            
-             data-sp-pos="-600,-120,60" data-sp-anchor="lt" data-sp-order="2"
-             aria-label="Continue 继续浏览">
+    <article class="sp-panel pf-continue" aria-label="Continue 继续浏览">
       <p class="sp-label pf-kicker"><span data-zh>继续</span><span data-en>Continue</span></p>
       <div class="pf-continue__list">
-        <a class="sp-item pf-continue__row" href="#sp-pf-prototypes">
+        <a class="pf-continue__row" href="#sp-pf-prototypes">
           <span><span data-zh>原型与硬件</span><span data-en>Prototypes &amp; hardware</span></span>
           <span aria-hidden="true">↑</span>
         </a>
-        <a class="sp-item pf-continue__row" href="#sp-pf-photography">
+        <a class="pf-continue__row" href="#sp-pf-photography">
           <span><span data-zh>摄影</span><span data-en>Photography</span></span>
           <span aria-hidden="true">↓</span>
         </a>
-        <a class="sp-item pf-continue__row" href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">
+        <a class="pf-continue__row" href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">
           <span>ORCID <span data-zh>学术记录</span><span data-en>record</span></span>
           <span aria-hidden="true">↗</span>
         </a>
@@ -230,26 +216,25 @@ no-catalog: true
 </section>
 
 <!-- =====================================================================
-     F03 · PHOTOGRAPHY
+     03 · PHOTOGRAPHY
      ================================================================== -->
 <section class="sp-station" id="sp-pf-photography" data-sp-station="pf-photography"
          data-sp-floor="03" data-sp-zh="摄影" data-sp-en="Photography" aria-label="Photography">
-  <div class="sp-layer">
+  <div class="sp-layer" data-sp-lay="stack">
 
-    <article class="sp-panel pf-mast" data-sp-slot="title"
-             data-sp-pos="-600,-380,0" data-sp-anchor="lt" data-sp-order="0">
-      <p class="sp-eyebrow">
-        <i aria-hidden="true"></i><s aria-hidden="true"></s>
-        <span data-zh>摄影 · 图像</span>
-        <span data-en>Photography · Images</span>
+    <article class="sp-panel pf-mast">
+      <p class="sp-kicker">
+        <i aria-hidden="true"></i>
+        <span><span data-zh>摄影 · 图像</span><span data-en>Photography · Images</span></span>
+        <span>03 / 03</span>
       </p>
-      <h2 class="sp-h2">
+      <h2 class="pf-h2">
         <span data-zh>摄影作品</span>
         <span data-en>Photographs</span>
       </h2>
       <p class="sp-lede sp-lede--cjk">
-        <span data-zh>本站背景照片均出自作者。下列图像按原图尺寸的一半显示，保持横向 4:3 记录格式。</span>
-        <span data-en>All background photographs on this site were taken by the author. The images below are shown at half their native width in their original 4:3 landscape format.</span>
+        <span data-zh>本站背景照片均出自作者。下列图像按原图尺寸的一半显示，保持横向 4:3 记录格式；点击可放大查看。</span>
+        <span data-en>All background photographs on this site were taken by the author. The images below are shown at half their native width in their original 4:3 landscape format; select one to enlarge it.</span>
       </p>
       <div class="sp-rule pf-rule"></div>
       <p class="sp-meta pf-mast__meta">
@@ -258,89 +243,108 @@ no-catalog: true
       </p>
     </article>
 
-    <article class="sp-panel pf-photos" data-sp-slot="list"
-             data-sp-slab="glass" data-sp-plinth="1" data-sp-edge="1" data-sp-rot="0,-6,0"
-             data-sp-pos="-600,-60,0" data-sp-anchor="lt" data-sp-order="1"
-             aria-label="Photographs 1–8">
+    <article class="sp-panel pf-photos" aria-label="Photographs 摄影作品">
       <div class="pf-photos__grid">
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg_0.jpg' | relative_url }}" alt="摄影作品 Photograph · Bg_0" width="638" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg_0 · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg_0.jpg' | relative_url }}" alt="摄影作品 Photograph · Bg_0" width="638" height="480" decoding="async">
+          </button>
           <figcaption>Bg_0</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg_1.jpg' | relative_url }}" alt="摄影作品 Photograph · Bg_1" width="655" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg_1 · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg_1.jpg' | relative_url }}" alt="摄影作品 Photograph · Bg_1" width="655" height="480" decoding="async">
+          </button>
           <figcaption>Bg_1</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg_3.jpg' | relative_url }}" alt="摄影作品 Photograph · Bg_3" width="626" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg_3 · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg_3.jpg' | relative_url }}" alt="摄影作品 Photograph · Bg_3" width="626" height="480" decoding="async">
+          </button>
           <figcaption>Bg_3</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg_4.jpg' | relative_url }}" alt="摄影作品 Photograph · Bg_4" width="759" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg_4 · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg_4.jpg' | relative_url }}" alt="摄影作品 Photograph · Bg_4" width="759" height="480" decoding="async">
+          </button>
           <figcaption>Bg_4</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg (5).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (5)" width="744" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg (5) · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg (5).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (5)" width="744" height="480" decoding="async">
+          </button>
           <figcaption>Bg (5)</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg (10).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (10)" width="685" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg (10) · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg (10).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (10)" width="685" height="480" decoding="async">
+          </button>
           <figcaption>Bg (10)</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg (11).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (11)" width="672" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg (11) · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg (11).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (11)" width="672" height="480" decoding="async">
+          </button>
           <figcaption>Bg (11)</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg (12).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (12)" width="854" height="456" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg (12) · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg (12).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (12)" width="854" height="456" decoding="async">
+          </button>
           <figcaption>Bg (12)</figcaption>
         </figure>
-      </div>
-    </article>
-
-    <article class="sp-panel pf-photos" data-sp-slab="ink" data-sp-rot="0,6,0" data-sp-slot="list"
-            
-             data-sp-pos="20,-380,60" data-sp-anchor="lt" data-sp-order="2"
-             aria-label="Photographs 9–16">
-      <div class="pf-photos__grid">
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg(14).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg(14)" width="719" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg(14) · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg(14).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg(14)" width="719" height="480" decoding="async">
+          </button>
           <figcaption>Bg(14)</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg (15).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (15)" width="689" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg (15) · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg (15).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (15)" width="689" height="480" decoding="async">
+          </button>
           <figcaption>Bg (15)</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg (16).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (16)" width="672" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg (16) · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg (16).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (16)" width="672" height="480" decoding="async">
+          </button>
           <figcaption>Bg (16)</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg(17).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg(17)" width="582" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg(17) · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg(17).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg(17)" width="582" height="480" decoding="async">
+          </button>
           <figcaption>Bg(17)</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/DSC_1925.jpg' | relative_url }}" alt="摄影作品 Photograph · DSC_1925" width="594" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 DSC_1925 · enlarge">
+            <img src="{{ '/img/Backgrounds/DSC_1925.jpg' | relative_url }}" alt="摄影作品 Photograph · DSC_1925" width="594" height="480" decoding="async">
+          </button>
           <figcaption>DSC_1925</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg (6).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (6)" width="709" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg (6) · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg (6).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (6)" width="709" height="480" decoding="async">
+          </button>
           <figcaption>Bg (6)</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg (7).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (7)" width="719" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg (7) · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg (7).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (7)" width="719" height="480" decoding="async">
+          </button>
           <figcaption>Bg (7)</figcaption>
         </figure>
         <figure class="pf-photo">
-          <img src="{{ '/img/Backgrounds/Bg (9).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (9)" width="673" height="480" loading="lazy" decoding="async">
+          <button class="pf-photo__open" type="button" data-pf-photo aria-label="放大 Bg (9) · enlarge">
+            <img src="{{ '/img/Backgrounds/Bg (9).jpg' | relative_url }}" alt="摄影作品 Photograph · Bg (9)" width="673" height="480" decoding="async">
+          </button>
           <figcaption>Bg (9)</figcaption>
         </figure>
       </div>
     </article>
 
-    <article class="sp-panel pf-credit" data-sp-slot="meta"
-             data-sp-pos="20,30,0" data-sp-anchor="lt" data-sp-order="3"
-             aria-label="Credit 版权说明">
+    <article class="sp-panel pf-credit" aria-label="Credit 版权说明">
       <p class="sp-label pf-kicker"><span data-zh>说明</span><span data-en>Note</span></p>
       <p class="sp-body-copy">
         <span data-zh>照片用于站点背景与作品展示，未作裁切以外的处理；路网、星空与山脊等题材来自不同时间的记录。</span>
@@ -351,17 +355,29 @@ no-catalog: true
   </div>
 </section>
 
+<!-- lightbox: native <dialog>, no dependency, no-JS safe (images stay visible) -->
+<dialog class="pf-lb" id="pf-lb" aria-label="Photograph 照片">
+  <button class="pf-lb__close" type="button" data-pf-lb-close aria-label="关闭 Close">✕</button>
+  <figure>
+    <img id="pf-lb-img" alt="" width="1200" height="900">
+    <figcaption id="pf-lb-cap"></figcaption>
+  </figure>
+</dialog>
+
 <script type="module">
-  /* PORTFOLIO — in-page station travel; images stay lazy and untouched. */
+  /* PORTFOLIO — in-page chapter travel + photograph lightbox.
+     Both are enhancements: without JS the rows still scroll and every
+     photograph remains visible in the grid. */
   (function () {
     if (!document.body || document.body.dataset.spPage !== 'portfolio') return;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     document.querySelectorAll('a[href^="#sp-pf-"]').forEach((a) => {
       a.addEventListener('click', (e) => {
         const target = document.querySelector(a.getAttribute('href'));
         if (!target) return;
         e.preventDefault();
-        const top = target.getBoundingClientRect().top + window.scrollY;
+        const top = target.getBoundingClientRect().top + window.scrollY - 84;
         if (reduce) { window.scrollTo(0, top); return; }
         const from = window.scrollY;
         const dist = top - from;
@@ -375,5 +391,27 @@ no-catalog: true
         })(t0);
       });
     });
+
+    const dlg = document.getElementById('pf-lb');
+    const big = document.getElementById('pf-lb-img');
+    const cap = document.getElementById('pf-lb-cap');
+    if (!dlg || !big || typeof dlg.showModal !== 'function') return;
+
+    document.querySelectorAll('[data-pf-photo]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const img = btn.querySelector('img');
+        if (!img) return;
+        const fig = btn.closest('.pf-photo');
+        big.src = img.currentSrc || img.src;
+        big.alt = img.alt || '';
+        cap.textContent = fig ? (fig.querySelector('figcaption') || {}).textContent || '' : '';
+        dlg.showModal();
+      });
+    });
+
+    dlg.addEventListener('click', (e) => {
+      if (e.target === dlg) dlg.close();
+    });
+    dlg.querySelector('[data-pf-lb-close]').addEventListener('click', () => dlg.close());
   })();
 </script>

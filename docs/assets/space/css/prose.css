@@ -1,146 +1,158 @@
 /* =============================================================================
-   Kannmu · SPATIAL  —  prose.css
-   Long-form reading layer: the reading lane (scrim), post header, article
-   typography, code, tables, figures, catalog, comments, prev/next, 404/offline.
-   Owner: reader-post. Loaded after space.css on every space page; every rule
-   hangs off an .rd-* class that only the post / 404 / offline layouts emit.
+   KANMMU · v3 “SPECTRAL VECTOR” — THE READING LAYER
+   -----------------------------------------------------------------------------
+   OWNER: pages-architect.  Styles _layouts/post.html (layout: post) and the
+   legacy document layouts that wrap content in `.rd-doc`.
+
+   A post is a document, not a deck.  The world stays as a fixed backdrop
+   (document mode); `.rd-lane` is the controlled reading plate: a scrim bounded
+   by two 1px rules, radius 0, no blur, no shadow.
+
+   Type contract
+     · body        19px / 1.72, measure 68ch
+     · H1          clamp(40px, 5vw, 76px)
+     · H2 / H3     32–40 / 22–27, hairline + mono index
+     · blockquote  2px spectral left rule
+     · code        --ink-1 body, 1px border, mono 15px
+     · tables      hard top/bottom rules, no zebra
+     · captions    mono 12px
+     · links       ruled underline that draws on hover
    ========================================================================== */
 
-/* ---------------------------------------------------------------------------
-   0. Reading tokens
-   -------------------------------------------------------------------------- */
-:root {
+/* =============================================================================
+   0 · TOKENS
+   ========================================================================== */
+.rd-doc,
+.rd-doc * { box-sizing: border-box; }
+
+.rd-doc {
   --rd-measure: 68ch;
-  --rd-frame: 810px;
+  --rd-frame: 880px;
   --rd-pad-x: clamp(22px, 3.4vw, 54px);
-  --rd-body: 18px;
-  --rd-lh: 1.85;
-  --rd-gap: 1.4em;
-  /* the lane never lets a bright reflection sit under the text */
-  --rd-scrim-a: rgba(4, 7, 11, .66);
-  --rd-scrim-b: rgba(4, 7, 11, .72);
-  --rd-scrim-c: rgba(5, 9, 14, .78);
+  --rd-body: 19px;
+  --rd-lh: 1.72;
+  --rd-gap: 1.45em;
+  --rd-scrim-a: rgba(5, 6, 10, .60);
+  --rd-scrim-b: rgba(5, 6, 10, .76);
+  --rd-scrim-c: rgba(5, 6, 10, .84);
+  position: relative;
+  z-index: 2;
+  padding: 0 0 clamp(60px, 8vh, 100px);
 }
 
-/* ---------------------------------------------------------------------------
-   1. Document + reading lane
-   The page is normal document flow. One centred lane carries a non-blurred,
-   square scrim (no box-shadow, no radius) so every glyph sits on a controlled
-   value; the 3D architecture stays visible in the side bays and behind the HUD.
-   -------------------------------------------------------------------------- */
-.rd-doc {
-  position: relative;
-  z-index: 3;
-  pointer-events: auto;            /* the track itself may be inert */
-  width: 100%;
-  padding-bottom: clamp(30px, 6vh, 70px);
-}
+/* the title block starts just below the top bar: no dead air above the kicker
+   (the lane enters at ~120–150px under the 64px header) */
+body[data-sp-page='post'] .sp-track { padding-top: clamp(84px, 9.6vh, 108px); }
 
 .rd-lane {
   position: relative;
-  width: min(var(--rd-frame), calc(100vw - 560px));
+  width: min(var(--rd-frame), calc(100vw - 520px));
   margin: 0 auto;
-  background: linear-gradient(
-    180deg,
-    var(--rd-scrim-a) 0%,
-    var(--rd-scrim-b) 9%,
-    var(--rd-scrim-b) 52%,
-    var(--rd-scrim-c) 100%
-  );
-  border-left: 1px solid var(--ln-2);
-  border-right: 1px solid var(--ln-2);
-  border-bottom: 1px solid var(--ln-1);
+  background:
+    linear-gradient(180deg,
+      var(--rd-scrim-a) 0%,
+      var(--rd-scrim-b) 12%,
+      var(--rd-scrim-b) 55%,
+      var(--rd-scrim-c) 100%);
+  border-inline: 1px solid var(--line-1);
+  box-shadow: none;
 }
 
-/* ---------------------------------------------------------------------------
-   2. Header
-   -------------------------------------------------------------------------- */
-.rd-head {
-  padding: clamp(50px, 8.4vh, 104px) var(--rd-pad-x) clamp(26px, 3.8vh, 42px);
-}
-/* with the spatial HUD the top bar is fixed and sits over the document, so the
-   header must clear it; in the sticky/flat document the bar is in flow already */
-html:not(.sp-flat) .rd-head {
-  padding-top: calc(var(--hud-h) + clamp(50px, 8.4vh, 104px));
-}
-
-.rd-head__eyebrow { margin-bottom: clamp(18px, 2.6vh, 32px); }
+/* =============================================================================
+   1 · HEADER
+   ========================================================================== */
+.rd-head { padding: clamp(24px, 2.2vw, 32px) var(--rd-pad-x) clamp(24px, 3vw, 38px); }
+.rd-head__eyebrow { margin-bottom: clamp(20px, 2.6vw, 30px); }
 
 .rd-title {
-  margin: 0;
-  max-width: 26ch;
   font-family: var(--f-display);
-  font-weight: 600;
-  font-size: clamp(30px, 3.5vw, 50px);
-  line-height: 1.06;
-  letter-spacing: -.032em;
-  color: var(--c-white);
+  font-weight: 700;
+  font-stretch: 106%;
+  font-size: clamp(40px, 5vw, 76px);
+  line-height: .98;
+  letter-spacing: -.04em;
+  color: var(--paper);
   text-wrap: balance;
+  overflow-wrap: break-word;
 }
-.rd-title em { font-style: normal; color: var(--c-cyan); }
+/* CJK titles never letter-space as tightly as the Latin display cut */
+.rd-title:lang(zh),
+.rd-title [data-zh] {
+  font-family: var(--f-cjk);
+  font-weight: 700;
+  letter-spacing: -.025em;
+  line-height: 1.14;
+}
+.rd-title em {
+  font-style: normal;
+  color: transparent;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
 
 .rd-sub {
-  margin: clamp(14px, 2vh, 22px) 0 0;
-  max-width: 46ch;
-  font-family: var(--f-display);
-  font-size: clamp(15px, 1.15vw, 18px);
-  font-weight: 350;
+  margin-top: 20px;
+  max-width: var(--rd-measure);
+  font-family: var(--f-cjk);
+  font-size: clamp(17px, 1.5vw, 21px);
+  font-weight: 400;
   line-height: 1.5;
-  letter-spacing: .002em;
-  color: var(--c-steel);
+  color: var(--paper-2);
   text-wrap: pretty;
 }
 
-.rd-head__rule { margin: clamp(26px, 3.6vh, 42px) 0 0; }
+.rd-head__rule { margin: clamp(24px, 3vw, 38px) 0 0; }
 
-/* meta strip: hard 1px grid, mono values */
+/* meta bar: hairline cells, mono throughout */
 .rd-metabar {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: clamp(18px, 2.4vh, 26px) 0 0;
-  border-bottom: 1px solid var(--ln-1);
+  grid-template-columns: auto auto 1fr;
+  align-items: start;
+  gap: 0;
+  margin-top: clamp(20px, 2.6vw, 30px);
+  border-top: 1px solid var(--line-1);
+  border-bottom: 1px solid var(--line-1);
 }
 .rd-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
+  padding: 15px 22px;
+  border-left: 1px solid var(--line-1);
   min-width: 0;
-  padding: 16px 20px 16px 18px;
-  border-left: 1px solid var(--ln-1);
 }
 .rd-meta:first-child { border-left: 0; padding-left: 0; }
 .rd-meta .sp-label {
-  font-size: 11px;
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--f-mono);
+  font-size: 12px;
   letter-spacing: .18em;
-  color: var(--c-steel);
+  color: var(--dim);
 }
-.rd-meta b,
-.rd-meta a {
-  font: 400 13.5px/1.35 var(--f-mono);
+.rd-meta b {
+  display: block;
+  font-family: var(--f-mono);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: .02em;
+  color: var(--paper);
   font-variant-numeric: tabular-nums;
-  letter-spacing: .06em;
-  color: var(--c-mist);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
-.rd-meta a {
-  color: var(--c-white);
-  border-bottom: 1px solid var(--ln-3);
-  transition: color .25s, border-color .25s;
+.rd-meta b a {
+  color: inherit;
+  border-bottom: 1px solid transparent;
+  transition: border-color .24s var(--e-out);
 }
-.rd-meta a:hover { color: var(--c-cyan); border-color: var(--c-cyan); }
+.rd-meta b a:hover { border-bottom-color: var(--paper); }
 .rd-meta small {
   display: block;
-  margin-top: 3px;
-  font: 400 11px/1.5 var(--f-mono);
-  letter-spacing: .13em;
-  text-transform: uppercase;
-  color: var(--c-steel);
-  opacity: .82;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin-top: 6px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: .06em;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
 }
 
 .rd-tags {
@@ -150,362 +162,347 @@ html:not(.sp-flat) .rd-head {
   gap: 8px;
   margin-top: 20px;
 }
-.rd-tags .sp-label { margin-right: 6px; color: var(--c-steel); }
-.rd-tags .sp-chip { text-decoration: none; }
+.rd-tags .sp-label { margin-right: 4px; font-size: 12px; color: var(--dim); }
+.rd-tags .sp-chip { min-height: 32px; font-size: 12px; }
 
-/* ---------------------------------------------------------------------------
-   3. Article
-   -------------------------------------------------------------------------- */
-.rd-article {
-  padding: 0 var(--rd-pad-x) clamp(42px, 6vh, 76px);
-  border-top: 1px solid var(--ln-1);
-}
-
+/* =============================================================================
+   2 · ARTICLE / PROSE
+   ========================================================================== */
+.rd-article { padding: 0 var(--rd-pad-x) clamp(44px, 6vw, 78px); }
 .rd-article__head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  margin: 0 0 clamp(24px, 3.6vh, 40px);
-  padding: clamp(18px, 2.6vh, 26px) 0 14px;
-  border-bottom: 1px solid var(--ln-1);
+  padding-bottom: 14px;
+  margin-bottom: clamp(24px, 3vw, 36px);
+  border-bottom: 1px solid var(--line-2);
 }
-.rd-article__head .sp-label { color: var(--c-steel); }
+.rd-article__head .sp-label { font-size: 12px; color: var(--mute); }
 .rd-article__len {
-  font: 400 11px/1 var(--f-mono);
-  letter-spacing: .16em;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .1em;
   text-transform: uppercase;
-  color: var(--c-dim);
-  white-space: nowrap;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
 }
-.rd-article__len b { color: var(--c-cyan); font-weight: 400; }
+.rd-article__len b { color: var(--paper-2); font-weight: 400; }
 
-/* ---------------------------------------------------------------------------
-   4. Prose typography
-   -------------------------------------------------------------------------- */
 .rd-prose {
   max-width: var(--rd-measure);
-  margin: 0 auto;
-  font-family: var(--f-display);
+  font-family: var(--f-cjk);
   font-size: var(--rd-body);
-  font-weight: 380;
   line-height: var(--rd-lh);
   letter-spacing: .006em;
-  color: var(--c-mist);
-  counter-reset: rd-h2 rd-li;
-  text-rendering: optimizeLegibility;
+  color: var(--paper-2);
   overflow-wrap: break-word;
-  word-break: break-word;
 }
-
 .rd-prose p { margin: 0 0 var(--rd-gap); text-wrap: pretty; }
-
-/* Latin-only blocks take the tighter 1.72 leading; CJK keeps 1.85.
-   post.html tags CJK-free blocks with lang="en" — no per-glyph bookkeeping. */
-.rd-prose :is(p, li, blockquote):lang(en) { line-height: 1.72; }
+.rd-prose :is(p, li, blockquote):lang(en) { line-height: 1.7; }
 .rd-prose > p:first-of-type { margin-top: 0; }
 
 .rd-prose strong,
-.rd-prose b { font-weight: 600; color: var(--c-white); }
-
+.rd-prose b { font-weight: 600; color: var(--paper); }
 .rd-prose em,
 .rd-prose i { font-style: italic; }
 
+/* links: a hairline that becomes a solid rule on hover */
 .rd-prose a {
-  color: var(--c-mist);
-  text-decoration: underline;
-  text-decoration-color: rgba(143, 230, 255, .42);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  text-decoration-skip-ink: none;
-  transition: color .25s var(--e-out), text-decoration-color .25s var(--e-out), background .25s;
+  color: var(--paper);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-2);
+  transition: border-color .24s var(--e-out), color .2s;
 }
 .rd-prose a:hover,
 .rd-prose a:focus-visible {
-  color: var(--c-cyan);
-  text-decoration-color: var(--c-cyan);
-  background: rgba(143, 230, 255, .06);
+  color: var(--paper);
+  border-bottom-color: var(--paper);
 }
 
-/* --- headings ------------------------------------------------------------ */
+/* --- headings ----------------------------------------------------------- */
+.rd-prose { counter-reset: rd-h2; }
 .rd-prose h2 {
   position: relative;
-  counter-increment: rd-h2;
-  margin: 2.2em 0 .9em;
-  padding: 0 0 .5em;
+  margin: 2.1em 0 .6em;
+  padding-top: 1.75em;
+  border-top: 1px solid var(--line-2);
   font-family: var(--f-display);
-  font-weight: 550;
-  font-size: clamp(25px, 2.35vw, 30px);
-  line-height: 1.26;
-  letter-spacing: -.018em;
-  color: var(--c-white);
-  border-bottom: 1px solid var(--ln-2);
+  font-weight: 700;
+  font-stretch: 104%;
+  font-size: clamp(28px, 2.7vw, 40px);
+  line-height: 1.08;
+  letter-spacing: -.03em;
+  color: var(--paper);
   text-wrap: balance;
-  scroll-margin-top: calc(var(--hud-h) + 28px);
 }
 .rd-prose h2::before {
   content: counter(rd-h2, decimal-leading-zero);
-  display: block;
-  margin-bottom: 14px;
-  font: 400 10.5px/1 var(--f-mono);
-  letter-spacing: .26em;
-  color: var(--c-cyan);
+  position: absolute;
+  top: .62em;
+  left: 0;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: .16em;
+  color: var(--dim);
+  counter-increment: rd-h2;
 }
-.rd-prose > h2:first-child { margin-top: 0; }
+.rd-prose > h2:first-child { margin-top: 0; border-top: 0; padding-top: 1.55em; }
 
 .rd-prose h3 {
-  position: relative;
-  margin: 2em 0 .75em;
-  padding-left: 18px;
+  margin: 1.9em 0 .55em;
   font-family: var(--f-display);
-  font-weight: 500;
-  font-size: clamp(19px, 1.72vw, 22px);
-  line-height: 1.42;
-  letter-spacing: -.008em;
-  color: var(--c-white);
-  text-wrap: balance;
-  scroll-margin-top: calc(var(--hud-h) + 28px);
+  font-weight: 600;
+  font-stretch: 102%;
+  font-size: clamp(21px, 1.9vw, 27px);
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  color: var(--paper);
+  text-wrap: pretty;
 }
 .rd-prose h3::before {
   content: '';
-  position: absolute;
-  left: 0;
-  top: .46em;
-  width: 1px;
-  height: .92em;
-  background: var(--c-cyan);
-  opacity: .5;
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+  margin-right: 14px;
+  margin-bottom: .28em;
+  background: var(--grad);
+  vertical-align: middle;
+  opacity: .9;
 }
-
 .rd-prose h4 {
-  margin: 2em 0 .7em;
-  font: 500 11px/1.5 var(--f-mono);
-  letter-spacing: .2em;
+  margin: 1.7em 0 .4em;
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.4;
+  letter-spacing: .14em;
   text-transform: uppercase;
-  color: var(--c-steel);
-  scroll-margin-top: calc(var(--hud-h) + 28px);
+  color: var(--mute);
 }
 .rd-prose h5,
 .rd-prose h6 {
-  margin: 1.8em 0 .6em;
-  font: 500 12px/1.5 var(--f-display);
-  letter-spacing: .04em;
-  color: var(--c-mist);
+  margin: 1.5em 0 .35em;
+  font-family: var(--f-cjk);
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--paper-2);
 }
 
-/* permalink anchors sit after the heading text, never over it */
+/* heading anchors (injected by post.html) */
 .rd-prose :is(h2, h3, h4) .rd-anchor {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  margin-left: 12px;
-  translate: 0 -.06em;
-  font: 400 11px/1 var(--f-mono);
-  color: var(--c-dim);
-  border: 1px solid transparent;
+  margin-left: .4em;
+  font-family: var(--f-mono);
+  font-size: .62em;
+  font-weight: 400;
+  color: var(--dim);
   text-decoration: none;
+  border: 0;
   opacity: 0;
-  transition: opacity .25s var(--e-out), color .25s, border-color .25s;
-  vertical-align: middle;
+  transition: opacity .2s, color .2s;
 }
 .rd-prose :is(h2, h3, h4):hover .rd-anchor,
 .rd-prose .rd-anchor:focus-visible { opacity: 1; }
-.rd-prose .rd-anchor:hover {
-  color: var(--c-cyan);
-  border-color: var(--ln-2);
-  background: rgba(143, 230, 255, .07);
-}
+.rd-prose .rd-anchor:hover { color: var(--paper); }
 
-/* --- lists --------------------------------------------------------------- */
+/* --- lists -------------------------------------------------------------- */
 .rd-prose ul,
 .rd-prose ol {
-  margin: 0 0 1.5em;
-  padding-left: 1.35em;
-  list-style: none;
+  margin: 0 0 var(--rd-gap);
+  padding-left: 1.4em;
 }
-.rd-prose li { margin: .38em 0; position: relative; }
+.rd-prose li { margin: .42em 0; position: relative; }
+.rd-prose ul { list-style: none; padding-left: 1.35em; }
 .rd-prose ul > li::before {
   content: '';
   position: absolute;
-  left: -1.05em;
-  top: .82em;
-  width: 6px;
+  left: -1.1em;
+  top: .72em;
+  width: 7px;
   height: 1px;
-  background: var(--c-steel);
+  background: var(--line-3);
 }
-.rd-prose ol { counter-reset: rd-li; padding-left: 1.9em; }
+.rd-prose ol { counter-reset: rd-li; padding-left: 1.9em; list-style: none; }
 .rd-prose ol > li::before {
   counter-increment: rd-li;
   content: counter(rd-li, decimal-leading-zero);
   position: absolute;
   left: -1.9em;
-  top: .48em;
-  font: 400 10px/1 var(--f-mono);
-  letter-spacing: .04em;
-  color: var(--c-cyan);
-  opacity: .8;
+  top: .18em;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .06em;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
 }
 .rd-prose li > ul,
-.rd-prose li > ol { margin: .4em 0 .2em; }
+.rd-prose li > ol { margin: .45em 0 .2em; }
 .rd-prose li > p { margin: 0 0 .4em; }
 
-/* --- blockquote ---------------------------------------------------------- */
+/* --- blockquote: the 2px spectral rule ---------------------------------- */
 .rd-prose blockquote {
   position: relative;
-  margin: 2.1em 0;
-  padding: 4px 0 4px 22px;
-  border-left: 1px solid var(--c-cyan-2);
-  background: linear-gradient(90deg, rgba(143, 230, 255, .055), rgba(143, 230, 255, 0) 74%);
-  color: var(--c-steel);
+  margin: 2em 0;
+  padding: 4px 0 4px 26px;
+  border: 0;
+  font-family: var(--f-serif);
+  font-size: clamp(20px, 1.7vw, 24px);
+  font-style: italic;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--paper);
+}
+.rd-prose blockquote::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--grad);
 }
 .rd-prose blockquote p { margin: 0 0 .8em; }
 .rd-prose blockquote p:last-child { margin-bottom: 0; }
 .rd-prose blockquote em,
-.rd-prose blockquote i { color: var(--c-mist); }
+.rd-prose blockquote i { color: var(--paper-2); }
+.rd-prose blockquote:lang(zh),
+.rd-prose blockquote [data-zh] {
+  font-family: var(--f-cjk);
+  font-style: normal;
+  font-size: .82em;
+  line-height: 1.7;
+}
 
-/* --- rules --------------------------------------------------------------- */
 .rd-prose hr {
-  width: 100%;
+  position: relative;
   height: 1px;
-  margin: 3.2em 0;
+  margin: 2.6em 0;
   border: 0;
-  background: var(--ln-2);
+  background: var(--line-2);
+}
+.rd-prose hr::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 56px;
+  height: 1px;
+  background: var(--paper);
 }
 
-/* --- inline code --------------------------------------------------------- */
+/* --- inline code -------------------------------------------------------- */
 .rd-prose code {
-  padding: .1em .38em;
+  padding: 2px 6px;
   font-family: var(--f-mono);
-  font-size: .86em;
-  font-weight: 400;
-  letter-spacing: .01em;
-  color: #e4f1fa;
-  background: rgba(150, 195, 226, .075);
-  border: 1px solid var(--ln-1);
-  white-space: nowrap;
+  font-size: .82em;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--paper);
+  background: var(--ink-1);
+  border: 1px solid var(--line-1);
+  border-radius: 0;
+  overflow-wrap: break-word;
 }
-.rd-prose a > code { border-color: var(--ln-2); }
+.rd-prose a > code { border-color: var(--line-2); }
 .rd-prose kbd {
-  padding: .1em .4em;
-  font: 400 .82em/1.4 var(--f-mono);
-  color: var(--c-mist);
-  background: rgba(150, 195, 226, .07);
-  border: 1px solid var(--ln-2);
+  padding: 2px 6px;
+  font-family: var(--f-mono);
+  font-size: .78em;
+  color: var(--paper);
+  background: var(--ink-2);
+  border: 1px solid var(--line-2);
   border-bottom-width: 2px;
+  border-radius: 0;
 }
 
-/* ---------------------------------------------------------------------------
-   5. Code blocks (Rouge / kramdown output, line numbers on)
-   -------------------------------------------------------------------------- */
+/* --- code blocks -------------------------------------------------------- */
 .rd-prose div.highlighter-rouge,
-.rd-prose div.highlight { margin: 1.9em 0; }
+.rd-prose div.highlight { margin: 2em 0; }
 
 .rd-prose div.highlighter-rouge > div.highlight {
   position: relative;
-  margin: 0;
-  padding: 0;
-  background: #05090e;
-  border: 1px solid var(--ln-2);
   overflow-x: auto;
   overflow-y: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(143, 230, 255, .35) transparent;
+  background: var(--ink-1);
+  border: 1px solid var(--line-1);
+  border-radius: 0;
+  -webkit-overflow-scrolling: touch;
 }
-.rd-prose div.highlighter-rouge > div.highlight::-webkit-scrollbar { height: 5px; }
-.rd-prose div.highlighter-rouge > div.highlight::-webkit-scrollbar-track { background: rgba(186, 220, 240, .05); }
-.rd-prose div.highlighter-rouge > div.highlight::-webkit-scrollbar-thumb { background: rgba(143, 230, 255, .35); }
+.rd-prose div.highlighter-rouge > div.highlight::-webkit-scrollbar { height: 4px; }
+.rd-prose div.highlighter-rouge > div.highlight::-webkit-scrollbar-track { background: var(--ink-0); }
+.rd-prose div.highlighter-rouge > div.highlight::-webkit-scrollbar-thumb { background: var(--line-2); }
 
 .rd-prose pre,
 .rd-prose pre.highlight,
 .rd-prose code.highlighter-rouge {
   margin: 0;
+  padding: 20px 22px;
   font-family: var(--f-mono);
-  font-size: 14.5px;
+  font-size: 15px;
+  font-weight: 400;
   line-height: 1.7;
   letter-spacing: 0;
+  color: var(--paper-2);
+  background: var(--ink-1);
+  border: 1px solid var(--line-1);
+  border-radius: 0;
+  overflow-x: auto;
   tab-size: 2;
-  -moz-tab-size: 2;
 }
-.rd-prose pre.highlight {
-  overflow: visible;
-  background: none;
-  border: 0;
-  padding: 16px 0;
-  color: #cfe0ec;
-}
-.rd-prose pre.highlight > code {
-  display: block;
-  padding: 0 18px;
+.rd-prose > pre,
+.rd-prose > pre.highlight { margin: 2em 0; }
+.rd-prose pre.highlight { padding: 20px 22px; background: var(--ink-1); }
+.rd-prose pre.highlight > code,
+.rd-prose pre > code {
+  padding: 0;
   font-size: inherit;
+  color: inherit;
   background: none;
   border: 0;
   white-space: pre;
-  color: inherit;
 }
 
-/* rouge gutter: a hairline column of dim line numbers */
-.rd-prose table.rouge-table {
-  display: table;
-  width: 100%;
-  min-width: max-content;
-  margin: 0;
-  border: 0;
-  border-collapse: collapse;
-  background: none;
-  font-size: inherit;
-}
-.rd-prose table.rouge-table td {
-  padding: 0;
-  border: 0;
-  background: none;
-  vertical-align: top;
-}
+/* line-numbered blocks (Rouge table layout) */
+.rd-prose table.rouge-table { width: 100%; margin: 0; border: 0; }
+.rd-prose table.rouge-table td { padding: 0; border: 0; vertical-align: top; }
 .rd-prose table.rouge-table td.rouge-gutter {
   width: 1%;
-  padding: 0 14px 0 16px;
-  border-right: 1px solid var(--ln-2);
-  user-select: none;
-  -webkit-user-select: none;
+  background: rgba(255, 255, 255, .012);
+  border-right: 1px solid var(--line-1);
 }
 .rd-prose table.rouge-table td.rouge-gutter pre.lineno {
-  margin: 0;
-  padding: 0;
-  font-size: inherit;
-  line-height: inherit;
-  color: var(--c-dim);
+  padding: 20px 12px 20px 16px;
+  color: var(--dim);
   text-align: right;
-  background: none;
+  user-select: none;
   border: 0;
-  white-space: pre;
+  background: none;
 }
-.rd-prose table.rouge-table td.rouge-code { padding: 0 18px 0 16px; }
+.rd-prose table.rouge-table td.rouge-code { padding: 0; }
 .rd-prose table.rouge-table td.rouge-code pre {
-  margin: 0;
-  padding: 0;
-  font-size: inherit;
-  line-height: inherit;
-  background: none;
+  padding: 20px 22px 20px 18px;
   border: 0;
-  white-space: pre;
-  color: #cfe0ec;
+  background: none;
 }
 .rd-prose table.rouge-table td.rouge-code pre code { white-space: pre; }
 
-/* rouge token colours — cold, low-chroma; cyan stays reserved */
+/* monochrome syntax: weight and value, not a rainbow */
 .rd-prose .highlight .c,
 .rd-prose .highlight .c1,
 .rd-prose .highlight .cm,
 .rd-prose .highlight .cs,
-.rd-prose .highlight .cd { color: #6c8296; font-style: normal; }
+.rd-prose .highlight .cd,
+.rd-prose .highlight .ch { color: var(--dim); font-style: normal; }
 .rd-prose .highlight .k,
 .rd-prose .highlight .kd,
 .rd-prose .highlight .kn,
 .rd-prose .highlight .kp,
 .rd-prose .highlight .kr,
 .rd-prose .highlight .kt,
-.rd-prose .highlight .kc { color: #b9d7ea; font-weight: 500; }
+.rd-prose .highlight .kc { color: var(--paper); font-weight: 500; }
 .rd-prose .highlight .s,
 .rd-prose .highlight .s1,
 .rd-prose .highlight .s2,
@@ -517,7 +514,9 @@ html:not(.sp-flat) .rd-head {
 .rd-prose .highlight .si,
 .rd-prose .highlight .sx,
 .rd-prose .highlight .sr,
-.rd-prose .highlight .ss { color: #93bccd; }
+.rd-prose .highlight .ss,
+.rd-prose .highlight .sa,
+.rd-prose .highlight .dl { color: var(--paper-2); }
 .rd-prose .highlight .m,
 .rd-prose .highlight .mf,
 .rd-prose .highlight .mh,
@@ -525,7 +524,7 @@ html:not(.sp-flat) .rd-head {
 .rd-prose .highlight .mo,
 .rd-prose .highlight .il,
 .rd-prose .highlight .mb,
-.rd-prose .highlight .mx { color: #adcbde; }
+.rd-prose .highlight .mx { color: var(--paper-2); }
 .rd-prose .highlight .na,
 .rd-prose .highlight .nb,
 .rd-prose .highlight .nc,
@@ -536,171 +535,155 @@ html:not(.sp-flat) .rd-head {
 .rd-prose .highlight .nn,
 .rd-prose .highlight .nt,
 .rd-prose .highlight .nv,
-.rd-prose .highlight .no { color: #d6e8f4; }
+.rd-prose .highlight .no,
+.rd-prose .highlight .py { color: var(--paper); }
 .rd-prose .highlight .cp,
 .rd-prose .highlight .cpf,
 .rd-prose .highlight .gh,
-.rd-prose .highlight .gu { color: #86a9bd; }
-.rd-prose .highlight .gd { color: #d9a3a3; }
-.rd-prose .highlight .gi { color: #9fd0b8; }
+.rd-prose .highlight .gu { color: var(--mute); }
+.rd-prose .highlight .gd { color: var(--g-rose); }
+.rd-prose .highlight .gi { color: var(--g-lime); }
 .rd-prose .highlight .err,
-.rd-prose .highlight .gr { color: #e2a0a0; background: rgba(226, 160, 160, .08); }
-.rd-prose .highlight .w { color: #3c4a56; }
+.rd-prose .highlight .gr { color: var(--g-rose); background: none; }
+.rd-prose .highlight .w { color: var(--dim); }
 
-/* ---------------------------------------------------------------------------
-   6. Tables
-   -------------------------------------------------------------------------- */
-/* a wide table scrolls inside its own wrapper instead of pushing the page;
-   post.html adds the wrapper (a bare `display:block` table would collapse its
-   columns, and `overflow` does nothing on a table box) */
+/* --- tables: hard rules, no zebra --------------------------------------- */
 .rd-tablewrap {
-  max-width: 100%;
   margin: 2em 0;
   overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(143, 230, 255, .35) transparent;
+  -webkit-overflow-scrolling: touch;
 }
-.rd-tablewrap::-webkit-scrollbar { height: 5px; }
-.rd-tablewrap::-webkit-scrollbar-thumb { background: rgba(143, 230, 255, .35); }
+.rd-tablewrap::-webkit-scrollbar { height: 4px; }
+.rd-tablewrap::-webkit-scrollbar-thumb { background: var(--line-2); }
 .rd-prose .rd-tablewrap > table { width: max-content; min-width: 100%; margin: 0; }
 
 .rd-prose table {
-  display: table;
   width: 100%;
-  max-width: 100%;
   margin: 2em 0;
   border-collapse: collapse;
-  border-top: 1px solid var(--ln-2);
-  font-size: 16px;
-  line-height: 1.62;
-  table-layout: auto;
+  font-family: var(--f-cjk);
+  font-size: 15px;
+  line-height: 1.6;
 }
 .rd-prose table td,
 .rd-prose table th { overflow-wrap: anywhere; }
-.rd-prose thead { background: rgba(150, 195, 226, .04); }
+.rd-prose thead { background: none; }
 .rd-prose th {
-  padding: 10px 14px;
-  font: 500 9.5px/1.4 var(--f-mono);
-  letter-spacing: .16em;
+  padding: 10px 14px 10px 0;
+  border-top: 2px solid var(--line-3);
+  border-bottom: 1px solid var(--line-2);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .12em;
   text-transform: uppercase;
+  color: var(--mute);
   text-align: left;
-  color: var(--c-steel);
-  border-bottom: 1px solid var(--ln-2);
-  white-space: nowrap;
+  vertical-align: bottom;
 }
 .rd-prose td {
-  padding: 11px 14px;
-  border-bottom: 1px solid var(--ln-1);
-  color: var(--c-mist);
+  padding: 12px 14px 12px 0;
+  border-bottom: 1px solid var(--line-1);
+  color: var(--paper-2);
   vertical-align: top;
+  font-variant-numeric: tabular-nums;
 }
-.rd-prose tbody tr:hover td { background: rgba(143, 230, 255, .03); }
+.rd-prose tbody tr:last-child td { border-bottom: 1px solid var(--line-2); }
+.rd-prose tbody tr:hover td { background: rgba(255, 255, 255, .02); }
 .rd-prose th:first-child,
 .rd-prose td:first-child { padding-left: 0; }
+.rd-prose th:last-child,
+.rd-prose td:last-child { padding-right: 0; }
 
-/* ---------------------------------------------------------------------------
-   7. Media
-   -------------------------------------------------------------------------- */
+/* --- media -------------------------------------------------------------- */
 .rd-prose img {
   display: block;
   max-width: 100%;
   height: auto;
-  margin: 1.9em auto;
-  background: #03060a;
-  border: 1px solid var(--ln-1);
-  object-fit: contain;
+  border: 1px solid var(--line-1);
+  background: var(--ink-1);
 }
-.rd-prose p > img:only-child { margin: 1.9em auto; }
-.rd-prose a > img { border-color: var(--ln-2); }
-.rd-prose a:hover > img { border-color: var(--c-cyan-soft); }
+.rd-prose p > img:only-child { margin: 2em auto; }
+.rd-prose a > img { border-color: var(--line-2); }
+.rd-prose a:hover > img { border-color: var(--line-3); }
 
-.rd-prose figure { margin: 2.1em 0; padding: 0; }
+.rd-prose figure { margin: 2.2em 0; padding: 0; }
 .rd-prose figure img { margin: 0 auto; }
 .rd-prose figcaption {
-  margin-top: 12px;
-  padding: 10px 0 0 14px;
-  border-top: 1px solid var(--ln-1);
-  border-left: 1px solid var(--ln-2);
-  font: 400 11.5px/1.65 var(--f-cjk);
-  letter-spacing: .04em;
-  color: var(--c-dim);
+  margin-top: 10px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  letter-spacing: .06em;
+  color: var(--dim);
+  text-wrap: pretty;
 }
 .rd-prose figcaption b,
-.rd-prose figcaption strong { color: var(--c-steel); font-weight: 500; }
+.rd-prose figcaption strong { color: var(--mute); font-weight: 500; }
 
-.rd-prose iframe,
-.rd-prose video {
+.rd-prose iframe {
   display: block;
   width: 100%;
   max-width: 100%;
-  margin: 1.9em auto;
-  border: 1px solid var(--ln-2);
-  background: #03060a;
+  margin: 2em 0;
+  border: 1px solid var(--line-1);
+  background: var(--ink-1);
 }
-.rd-prose video { height: auto; }
+.rd-prose video { width: 100%; height: auto; margin: 2em 0; border: 1px solid var(--line-1); }
 
-/* math never overflows the measure */
 .rd-prose .katex-display {
   margin: 1.8em 0;
-  padding: 4px 0;
+  padding: 14px 0;
   overflow-x: auto;
   overflow-y: hidden;
+  border-top: 1px solid var(--line-1);
+  border-bottom: 1px solid var(--line-1);
 }
 .rd-prose .katex { font-size: 1.02em; }
 
-/* kramdown footnotes */
 .rd-prose .footnotes {
-  margin-top: 3.2em;
-  padding-top: 1.4em;
-  border-top: 1px solid var(--ln-2);
-  font-size: .9em;
-  color: var(--c-steel);
+  margin-top: 2.6em;
+  padding-top: 20px;
+  border-top: 1px solid var(--line-2);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--mute);
 }
 .rd-prose .footnotes ol { padding-left: 1.9em; }
 
-/* ---------------------------------------------------------------------------
-   8. Catalog (right-hand TOC) + reading progress
-   -------------------------------------------------------------------------- */
+/* =============================================================================
+   3 · READING PROGRESS + CATALOG
+   ========================================================================== */
 .rd-prog {
   position: fixed;
-  top: 0;
   left: 0;
   right: 0;
-  height: 1px;
-  z-index: 60;
-  background: rgba(186, 220, 240, .07);
+  top: 0;
+  z-index: 45;
+  height: 2px;
+  background: transparent;
   pointer-events: none;
 }
 .rd-prog i {
   display: block;
   height: 100%;
   width: 100%;
-  background: var(--c-cyan);
-  box-shadow: 0 0 10px var(--c-cyan-soft);
+  background: var(--grad);
   transform: scaleX(var(--rd-p, 0));
-  transform-origin: left center;
-  transition: transform .12s linear;
+  transform-origin: 0 50%;
 }
 
 .rd-toc {
   position: fixed;
-  top: calc(var(--hud-h) + 30px);
-  right: 0;
+  right: max(24px, calc((100vw - 880px) / 2 - 224px));
+  top: 50%;
+  translate: 0 -50%;
   z-index: 30;
-  width: clamp(212px, 15.5vw, 252px);
-  max-height: calc(100svh - var(--hud-h) - 132px);
+  width: 196px;
+  max-height: 62vh;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 16px 18px 18px 24px;
-  /* same scrim language as the lane: a vertical band, not a floating card */
-  background: linear-gradient(90deg,
-    rgba(4, 7, 11, 0) 0%,
-    rgba(4, 7, 11, .74) 16%,
-    rgba(4, 7, 11, .90) 100%);
-  border-left: 1px solid var(--ln-1);
-  pointer-events: auto;
+  gap: 12px;
 }
 .rd-toc[data-empty='1'] { display: none; }
 .rd-toc__hd {
@@ -709,365 +692,252 @@ html:not(.sp-flat) .rd-head {
   justify-content: space-between;
   gap: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid var(--ln-2);
+  border-bottom: 1px solid var(--line-2);
 }
-.rd-toc__hd .sp-label { color: var(--c-steel); }
+.rd-toc__hd .sp-label { font-size: 12px; color: var(--dim); }
 .rd-toc__pct {
-  font: 400 12px/1 var(--f-mono);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .06em;
+  color: var(--paper-2);
   font-variant-numeric: tabular-nums;
-  letter-spacing: .07em;
-  color: var(--c-cyan);
 }
 .rd-toc__list {
+  flex: 1 1 auto;
+  min-height: 0;
   margin: 0;
-  padding: 0 0 0 1px;
-  list-style: none;
-  border-left: 1px solid var(--ln-1);
+  padding: 0;
   overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(143, 230, 255, .25) transparent;
+  list-style: none;
 }
-.rd-toc__list::-webkit-scrollbar { width: 3px; }
-.rd-toc__list::-webkit-scrollbar-thumb { background: rgba(143, 230, 255, .25); }
+.rd-toc__list::-webkit-scrollbar { width: 2px; }
+.rd-toc__list::-webkit-scrollbar-thumb { background: var(--line-2); }
 .rd-toc__li { margin: 0; }
-.rd-toc__li--h3 { padding-left: 12px; }
+.rd-toc__li--h3 { padding-left: 14px; }
 .rd-toc__a {
   position: relative;
-  display: grid;
-  grid-template-columns: 2.1em 1fr;
-  gap: 6px;
-  padding: 6px 0 6px 11px;
-  font: 400 12.5px/1.55 var(--f-cjk);
-  letter-spacing: .02em;
-  color: var(--c-steel);
-  text-decoration: none;
-  transition: color .25s var(--e-out), background .25s;
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  padding: 7px 0 7px 11px;
+  font-family: var(--f-cjk);
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--mute);
+  transition: color .2s;
 }
-.rd-toc__li--h3 .rd-toc__a {
-  grid-template-columns: 1fr;
-  font-size: 11.5px;
-  color: rgba(147, 169, 189, .72);
-}
+.rd-toc__li--h3 .rd-toc__a { font-size: 12px; color: var(--dim); }
 .rd-toc__no {
-  font: 400 10.5px/1.9 var(--f-mono);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .04em;
+  color: var(--dim);
   font-variant-numeric: tabular-nums;
-  letter-spacing: .06em;
-  color: var(--c-dim);
-  transition: color .25s;
 }
 .rd-toc__li--h3 .rd-toc__no { display: none; }
 .rd-toc__a::before {
   content: '';
   position: absolute;
-  left: -1px;
-  top: 0;
-  bottom: 0;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
   width: 1px;
-  background: var(--c-cyan);
+  background: var(--paper);
   transform: scaleY(0);
-  transform-origin: top center;
-  transition: transform .35s var(--e-out);
+  transform-origin: 50% 0;
+  transition: transform .3s var(--e-out);
 }
-.rd-toc__a:hover { color: var(--c-mist); background: rgba(143, 230, 255, .04); }
-.rd-toc__a[aria-current='true'] { color: var(--c-cyan); }
+.rd-toc__a:hover { color: var(--paper-2); }
+.rd-toc__a[aria-current='true'] { color: var(--paper); }
 .rd-toc__a[aria-current='true']::before { transform: scaleY(1); }
-.rd-toc__a[aria-current='true'] .rd-toc__no { color: var(--c-cyan); }
-
+.rd-toc__a[aria-current='true'] .rd-toc__no { color: var(--paper-2); }
 .rd-toc__back {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font: 500 9px/1 var(--f-mono);
-  letter-spacing: .18em;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-1);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .14em;
   text-transform: uppercase;
-  color: var(--c-steel);
-  text-decoration: none;
-  transition: color .25s;
+  color: var(--mute);
+  transition: color .2s;
 }
-.rd-toc__back:hover { color: var(--c-cyan); }
-.rd-toc__back svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.4; }
+.rd-toc__back:hover { color: var(--paper); }
+.rd-toc__back svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 1.4; }
 
-/* ---------------------------------------------------------------------------
-   9. Comments
-   -------------------------------------------------------------------------- */
+/* =============================================================================
+   4 · COMMENTS / END MATTER
+   ========================================================================== */
 .rd-comments {
-  padding: clamp(40px, 6vh, 74px) var(--rd-pad-x) clamp(34px, 5vh, 58px);
-  border-top: 1px solid var(--ln-1);
+  padding: clamp(30px, 4vw, 52px) var(--rd-pad-x);
+  border-top: 1px solid var(--line-1);
 }
 .rd-comments__hd {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 18px;
-  max-width: var(--rd-measure);
-  margin: 0 auto 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--ln-2);
+  gap: 16px;
+  margin-bottom: 22px;
 }
+.rd-comments__hd .sp-label { font-size: 12px; color: var(--dim); }
 .rd-comments__mount {
   position: relative;
-  max-width: var(--rd-measure);
-  margin: 0 auto;
-  min-height: 190px;
-  padding: 22px clamp(16px, 2.2vw, 26px);
-  background: rgba(4, 7, 11, .62);
-  border: 1px solid var(--ln-2);
+  padding: 18px;
+  border: 1px solid var(--line-1);
+  background: rgba(9, 11, 16, .5);
+  min-height: 120px;
 }
 .rd-comments__mount iframe { width: 100% !important; border: 0; }
 .rd-comments__fallback {
-  position: absolute;
-  inset: 0;
   display: grid;
   place-items: center;
-  padding: 24px;
-  text-align: center;
-  font: 400 11px/1.75 var(--f-mono);
+  min-height: 84px;
+  font-family: var(--f-mono);
+  font-size: 12px;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: var(--c-dim);
-  pointer-events: none;
-  transition: opacity .4s var(--e-out);
+  color: var(--dim);
+  transition: opacity .3s;
 }
 .rd-comments__mount[data-loaded='1'] .rd-comments__fallback { opacity: 0; }
 
-/* ---------------------------------------------------------------------------
-   10. End — prev / next + colophon
-   -------------------------------------------------------------------------- */
 .rd-end {
-  padding: clamp(36px, 5.4vh, 64px) var(--rd-pad-x) clamp(44px, 6.4vh, 74px);
-  border-top: 1px solid var(--ln-1);
+  padding: clamp(30px, 4vw, 52px) var(--rd-pad-x) clamp(34px, 4.4vw, 58px);
+  border-top: 1px solid var(--line-2);
 }
 .rd-end__hd {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 18px;
-  max-width: var(--rd-measure);
-  margin: 0 auto;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--ln-2);
+  gap: 16px;
+  margin-bottom: 20px;
 }
+.rd-end__hd .sp-label { font-size: 12px; color: var(--dim); }
 .rd-pn {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  max-width: var(--rd-measure);
-  margin: 0 auto;
-  border-bottom: 1px solid var(--ln-2);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--line-1);
 }
 .rd-pn__a {
-  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: clamp(22px, 3vw, 30px) 24px clamp(22px, 3vw, 30px) 0;
-  text-decoration: none;
-  transition: background .35s var(--e-out);
+  gap: 10px;
+  padding: 20px 0;
+  transition: background .3s var(--e-out), padding .3s var(--e-out);
 }
-.rd-pn__a + .rd-pn__a {
-  border-left: 1px solid var(--ln-1);
-  padding-left: 24px;
-  padding-right: 0;
-  text-align: right;
-  align-items: flex-end;
-}
-.rd-pn__a:hover { background: rgba(143, 230, 255, .035); }
+.rd-pn__a + .rd-pn__a { border-left: 1px solid var(--line-1); padding-left: 24px; }
+.rd-pn__a:hover { background: rgba(255, 255, 255, .025); }
+.rd-pn__a--next { text-align: right; align-items: flex-end; padding-left: 24px; }
 .rd-pn__k {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 9px;
-  font: 500 11px/1 var(--f-mono);
-  letter-spacing: .18em;
+  gap: 8px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .16em;
   text-transform: uppercase;
-  color: var(--c-dim);
-  transition: color .3s;
+  color: var(--dim);
+  transition: color .2s;
 }
-.rd-pn__a:hover .rd-pn__k { color: var(--c-cyan); }
+.rd-pn__a:hover .rd-pn__k { color: var(--paper); }
 .rd-pn__k svg {
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.4;
-  transition: transform .35s var(--e-out);
+  transition: transform .3s var(--e-out);
 }
-.rd-pn__a:hover .rd-pn__k svg { transform: translateX(-4px); }
-.rd-pn__a--next:hover .rd-pn__k svg { transform: translateX(4px); }
+.rd-pn__a:hover .rd-pn__k svg { transform: translateX(-3px); }
+.rd-pn__a--next:hover .rd-pn__k svg { transform: translateX(3px); }
 .rd-pn__t {
-  font-family: var(--f-display);
-  font-weight: 450;
-  font-size: clamp(17px, 1.35vw, 20px);
-  line-height: 1.4;
-  letter-spacing: -.005em;
-  color: var(--c-mist);
-  text-wrap: pretty;
-  transition: color .3s;
+  font-family: var(--f-cjk);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--paper-2);
+  transition: color .2s;
 }
-.rd-pn__a:hover .rd-pn__t { color: var(--c-white); }
-.rd-pn__a--empty { opacity: .38; }
+.rd-pn__a:hover .rd-pn__t { color: var(--paper); }
+.rd-pn__a--empty { opacity: .42; }
 
 .rd-end__foot {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 18px;
-  max-width: var(--rd-measure);
-  margin: clamp(24px, 3.6vh, 40px) auto 0;
+  gap: 16px;
+  margin-top: clamp(26px, 3vw, 40px);
+  padding-top: 18px;
+  border-top: 1px solid var(--line-1);
 }
 .rd-end__links { display: flex; flex-wrap: wrap; gap: 26px; }
 .rd-end__note {
-  margin: 0;
-  font: 400 11px/1.7 var(--f-mono);
-  letter-spacing: .16em;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .1em;
+  color: var(--dim);
   text-transform: uppercase;
-  color: rgba(147, 169, 189, .55);
 }
 
-/* ---------------------------------------------------------------------------
-   11. 404 / offline — one screen, no station maths
-   -------------------------------------------------------------------------- */
-.rd-err {
-  position: relative;
-  z-index: 3;
-  pointer-events: auto;
-  min-height: 100svh;
-  display: flex;
-  align-items: center;
-  padding: clamp(40px, 7vh, 96px) var(--gut) clamp(60px, 10vh, 120px);
-  background: linear-gradient(180deg, rgba(4, 7, 11, .52) 0%, rgba(4, 7, 11, .62) 62%, rgba(5, 9, 14, .70) 100%);
-}
-/* the sticky document bar already occupies its height in flow */
-html.sp-flat .rd-err { min-height: calc(100svh - var(--hud-h)); }
-@media (max-width: 900px) { html.sp-flat .rd-err { min-height: calc(100svh - 74px); } }
-.rd-err__inner {
-  width: 100%;
-  max-width: 780px;
-  margin: 0 auto;
-}
-.rd-err__code {
-  margin: clamp(16px, 2.6vh, 26px) 0 clamp(18px, 3vh, 30px);
-  font-family: var(--f-display);
-  font-weight: 600;
-  font-size: clamp(96px, 16vw, 210px);
-  line-height: .82;
-  letter-spacing: -.06em;
-  color: var(--c-white);
-  font-variant-numeric: tabular-nums;
-}
-.rd-err__code em {
-  font-style: normal;
-  color: var(--c-cyan);
-  text-shadow: none;   /* hard-edged: the space system has no soft shadows */
-}
-.rd-err__code--word {
-  font-size: clamp(52px, 10.5vw, 142px);
-  letter-spacing: -.055em;
-}
-.rd-err__rule { margin: 0 0 clamp(22px, 3vh, 34px); }
-.rd-err__title {
-  margin: 0 0 16px;
-  font-family: var(--f-display);
-  font-weight: 550;
-  font-size: clamp(20px, 2vw, 27px);
-  line-height: 1.3;
-  letter-spacing: -.015em;
-  color: var(--c-white);
-}
-.rd-err__desc {
-  margin: 0 0 clamp(26px, 4vh, 40px);
-  max-width: 54ch;
-  font-family: var(--f-cjk);
-  font-size: 15px;
-  line-height: 1.9;
-  letter-spacing: .01em;
-  color: var(--c-steel);
-}
-.rd-err__acts { display: flex; flex-wrap: wrap; gap: 12px; }
-
-/* space.css resets `a { color: inherit }` and `button { border:0 }` at a higher
-   specificity than .sp-btn, so solid anchors rendered light-on-white and button
-   variants lost their frame. Restored here for the error pages only. */
-.rd-err__acts .sp-btn,
-.rd-err__acts button.sp-btn {
-  height: 44px;
-  padding: 0 20px;
-  color: var(--c-white);
-  border: 1px solid var(--ln-3);
-  background: rgba(150, 195, 226, .05);
-  text-decoration: none;
-}
-.rd-err__acts .sp-btn--solid {
-  color: var(--c-void);
-  background: var(--c-white);
-  border-color: var(--c-white);
-}
-.rd-err__acts .sp-btn > span,
-.rd-err__acts button.sp-btn > span { color: inherit; }
-.rd-err__foot {
-  margin: clamp(30px, 5vh, 54px) 0 0;
-  font: 400 11px/1.7 var(--f-mono);
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: rgba(147, 169, 189, .55);
-}
-
-/* ---------------------------------------------------------------------------
-   12. (HUD clean-up is owned by the runtime: .sp-flat already hides the rail,
-   readout, status, hint and minimap on document pages.)
-   -------------------------------------------------------------------------- */
-
-/* ---------------------------------------------------------------------------
-   13. Responsive
-   -------------------------------------------------------------------------- */
-@media (max-width: 1339px) {
-  /* narrow catalog: chapter level only, so labels never wrap to four lines */
-  .rd-toc__li--h3 { display: none; }
-}
-
-@media (max-width: 1439px) {
-  .rd-lane { width: min(var(--rd-frame), calc(100vw - 480px)); }
-}
-
-@media (max-width: 1199px) {
-  .rd-lane { width: min(var(--rd-frame), calc(100vw - 2 * var(--gut))); }
+/* =============================================================================
+   5 · RESPONSIVE
+   ========================================================================== */
+@media (max-width: 1240px) {
+  .rd-lane { width: min(var(--rd-frame), calc(100vw - 96px)); }
   .rd-toc { display: none; }
 }
 
-@media (max-width: 860px) {
-  :root { --rd-body: 18px; --rd-lh: 1.85; }
-  .rd-lane { border-left: 0; border-right: 0; }
-  .rd-head { padding-top: 64px; }
-  .rd-title { font-size: clamp(27px, 6.4vw, 38px); max-width: none; }
-  .rd-sub { font-size: 15px; max-width: none; }
+@media (max-width: 900px) {
+  .rd-lane {
+    width: 100%;
+    border-inline: 0;
+    background: rgba(5, 6, 10, .84);
+  }
+  .rd-doc { padding-top: 0; }
+  .rd-head { padding-top: clamp(30px, 7vw, 46px); }
+}
+
+@media (max-width: 620px) {
+  .rd-doc {
+    --rd-measure: none;
+    --rd-pad-x: 20px;
+    --rd-body: 18px;
+    --rd-lh: 1.7;
+  }
+  .rd-title { font-size: clamp(32px, 9vw, 40px); line-height: 1.06; overflow-wrap: anywhere; }
+  .rd-sub { font-size: 16px; }
   .rd-metabar { grid-template-columns: 1fr 1fr; }
   .rd-meta { padding: 12px 14px; }
   .rd-meta:first-child { padding-left: 0; }
   .rd-meta:nth-child(3) { border-left: 0; padding-left: 0; }
-  .rd-article { padding-bottom: 40px; }
-  .rd-prose h2 { margin-top: 2.3em; }
-  .rd-pn { grid-template-columns: 1fr; }
-  .rd-pn__a + .rd-pn__a {
-    border-left: 0;
-    border-top: 1px solid var(--ln-1);
-    padding-left: 0;
-    text-align: left;
-    align-items: flex-start;
-  }
-  .rd-err__code { font-size: clamp(84px, 24vw, 150px); }
-  .rd-err__code--word { font-size: clamp(40px, 11.5vw, 84px); letter-spacing: -.045em; }
-}
-
-@media (max-width: 520px) {
-  .rd-meta { padding: 12px 10px; }
+  .rd-prose h2 { margin-top: 1.9em; }
   .rd-prose pre,
-  .rd-prose pre.highlight { font-size: 13px; }
-  .rd-article__head { flex-direction: column; gap: 6px; align-items: flex-start; }
+  .rd-prose pre.highlight { padding: 16px 16px; font-size: 13.5px; }
+  .rd-prose blockquote { padding-left: 18px; }
+  .rd-pn { grid-template-columns: 1fr; }
+  .rd-pn__a + .rd-pn__a { border-left: 0; border-top: 1px solid var(--line-1); padding-left: 0; }
+  .rd-pn__a--next { text-align: left; align-items: flex-start; }
+  .rd-article__head { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .rd-prose table { font-size: 14px; }
 }
 
-/* ---------------------------------------------------------------------------
-   14. Motion / print
-   -------------------------------------------------------------------------- */
+@media (max-width: 420px) {
+  .rd-doc { --rd-pad-x: 18px; --rd-body: 18px; --rd-lh: 1.68; }
+  .rd-title { font-size: 31px; }
+  .rd-meta { padding: 11px 10px; }
+  .rd-meta b { font-size: 13px; }
+  .rd-prose h2 { font-size: 26px; }
+  .rd-prose h3 { font-size: 20px; }
+  .rd-prose pre,
+  .rd-prose pre.highlight { font-size: 13px; padding: 14px 14px; }
+  .rd-end__links { gap: 18px; }
+}
+
+/* =============================================================================
+   6 · MOTION / PRINT
+   ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
   .rd-prog i,
   .rd-toc__a::before,
@@ -1076,11 +946,12 @@ html.sp-flat .rd-err { min-height: calc(100svh - var(--hud-h)); }
 }
 
 @media print {
-  .rd-toc,
-  .rd-prog,
-  .rd-anchor { display: none !important; }
-  .rd-lane { background: none; border: 0; width: auto; }
-  .rd-prose { color: #111; max-width: none; }
-  .rd-prose h2,
-  .rd-prose h3 { color: #000; }
+  .sp-topbar, .rd-toc, .rd-prog, .sp-cursor, .sp-frame, .sp-plate,
+  #sp-gl, .rd-comments { display: none !important; }
+  .rd-doc { padding: 0; }
+  .rd-lane { width: auto; background: #fff; border: 0; }
+  .rd-prose { color: #111; max-width: none; font-size: 11.5pt; }
+  .rd-prose h2, .rd-prose h3, .rd-title { color: #000; }
+  .rd-prose a { color: #111; border-bottom-color: #999; }
+  .rd-prose pre, .rd-prose code { background: #f4f4f2; color: #111; border-color: #ccc; }
 }

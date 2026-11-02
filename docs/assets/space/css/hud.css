@@ -141,7 +141,7 @@
 
 .sp-menu a i {
   font-style: normal;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 400;
   letter-spacing: .04em;
   color: var(--hud-mute);
@@ -191,7 +191,7 @@
 
 .sp-lang button {
   min-width: 44px;
-  height: 32px;
+  height: 40px;
   padding: 0 10px;
   border-radius: 0;
   font: 500 12px/1 var(--hud-mono);
@@ -208,7 +208,10 @@
   background: var(--hud-paper);
 }
 
-/* ---------- 2. Left floor rail ------------------------------------------ */
+/* ---------- 2. Left floor rail -------------------------------------------
+   v3: 7 mono numerals only, right-aligned inside a 24 px column. The whole
+   instrument lives left of x=66 so it can never collide with projected
+   panels (the active station name lives in the bottom-right readout). */
 .sp-rail {
   position: fixed;
   left: var(--hud-gut);
@@ -217,82 +220,48 @@
   z-index: 44;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
+  width: 24px;
   pointer-events: auto;
 }
 
 .sp-rail__btn {
   position: relative;
-  display: grid;
-  grid-template-columns: 24px 28px;
+  display: flex;
   align-items: center;
-  column-gap: 10px;
-  width: max-content;
-  min-width: 62px;
-  height: 34px;
+  justify-content: flex-end;
+  width: 24px;
+  height: 40px;                 /* 40 px tap target, 24 px wide */
+  padding: 7px 2px 7px 0;       /* keeps the 26 px optical rhythm */
   border-radius: 0;
-  text-align: left;
+  text-align: right;
   font: 400 12px/1 var(--hud-mono);
-  letter-spacing: .12em;
+  letter-spacing: .02em;
   color: var(--hud-mute);
   transition: color .3s var(--hud-ease);
 }
 
 .sp-rail__btn b {
-  font-weight: 500;
+  display: block;
+  width: 100%;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
+  text-align: right;
   color: inherit;
 }
-
-.sp-rail__bar {
-  position: relative;
-  display: block;
-  width: 28px;
-  height: 1px;
-  background: var(--hud-line2);
-  overflow: hidden;
-}
-
-.sp-rail__bar::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--hud-grad);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform .5s var(--hud-ease);
-}
-
-.sp-rail__lbl {
-  position: absolute;
-  left: calc(100% + 10px);
-  top: 50%;
-  translate: 0 -50%;
-  padding: 4px 8px;
-  border: 1px solid var(--hud-line1);
-  background: rgba(5, 6, 10, .86);
-  font: 400 12px/1 var(--hud-mono);
-  letter-spacing: .12em;
-  color: var(--hud-paper2);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .25s var(--hud-ease);
-}
-
-.sp-rail__lbl em { font-style: normal; }
-
-.sp-rail:hover .sp-rail__btn span,
-.sp-rail:focus-within .sp-rail__btn:focus span { opacity: 1; }
 
 .sp-rail__btn:hover,
 .sp-rail__btn:focus-visible { color: var(--hud-paper); }
 
-.sp-rail__btn:hover .sp-rail__lbl { opacity: 1; }
-
 .sp-rail__btn[aria-current='true'] { color: var(--hud-paper); }
-.sp-rail__btn[aria-current='true'] .sp-rail__bar { background: var(--hud-grad); }
-.sp-rail__btn[aria-current='true'] .sp-rail__bar::after { transform: scaleX(1); }
+
+/* inverted numeral = the live floor */
+.sp-rail__btn[aria-current='true'] b {
+  padding: 7px 2px;
+  background: var(--hud-paper);
+  color: var(--hud-bg);
+  text-align: center;
+}
 
 /* ---------- 3. Right readout -------------------------------------------- */
 .sp-readout {
@@ -303,55 +272,56 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 6px;
+  gap: 7px;
   pointer-events: none;
   font-family: var(--hud-mono);
   text-align: right;
+  white-space: nowrap;
 }
 
 .sp-readout__lvl {
   display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  line-height: .78;
+  align-items: baseline;
+  gap: 7px;
+  line-height: 1;
 }
 
 .sp-readout__lvl b {
-  font: 300 clamp(48px, 5.4vw, 78px)/.78 var(--hud-mono);
-  letter-spacing: -.06em;
+  font: 300 32px/1 var(--hud-mono);
+  letter-spacing: -.04em;
   font-variant-numeric: tabular-nums;
-  color: transparent;
-  -webkit-text-stroke: 1px var(--hud-paper);
+  color: var(--hud-paper);
 }
 
 .sp-readout__lvl span {
-  padding-bottom: 6px;
   font: 400 12px/1 var(--hud-mono);
   letter-spacing: .1em;
   color: var(--hud-mute);
 }
 
-.sp-readout__name {
-  max-width: 220px;
+.sp-readout__lvl .sp-readout__name {
+  max-width: 190px;
+  margin-left: 6px;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  font: 500 12px/1.2 var(--hud-mono);
+  font: 500 12px/1 var(--hud-mono);
   letter-spacing: .16em;
   text-transform: uppercase;
   color: var(--hud-paper2);
 }
 
 .sp-meter {
-  width: clamp(140px, 12vw, 188px);
-  padding-top: 7px;
-  border-top: 1px solid var(--hud-line2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: clamp(168px, 13vw, 208px);
 }
 
 .sp-meter__bar {
   position: relative;
+  flex: 1 1 auto;
   height: 1px;
-  background: var(--hud-line1);
+  background: var(--hud-line2);
   overflow: hidden;
 }
 
@@ -364,20 +334,12 @@
   background: var(--hud-grad);
 }
 
-.sp-meter__txt {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  padding-top: 6px;
+#sp-pct {
+  flex: 0 0 auto;
   font: 400 12px/1 var(--hud-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--hud-mute);
-}
-
-.sp-meter__txt span:last-child {
-  color: var(--hud-paper2);
+  letter-spacing: .08em;
   font-variant-numeric: tabular-nums;
+  color: var(--hud-paper2);
 }
 
 /* ---------- 4. Bottom-left telemetry ------------------------------------ */
@@ -388,10 +350,10 @@
   z-index: 44;
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 0;
   pointer-events: none;
-  font: 400 12px/1 var(--hud-mono);
-  letter-spacing: .1em;
+  font: 400 10.5px/1 var(--hud-mono);
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--hud-mute);
 }
@@ -399,8 +361,15 @@
 .sp-status span {
   display: inline-flex;
   align-items: baseline;
-  gap: 7px;
+  gap: 6px;
   white-space: nowrap;
+}
+
+/* 1 px rules separate the three instruments: hard-line, not punctuation */
+.sp-status span + span {
+  margin-left: 13px;
+  padding-left: 13px;
+  border-left: 1px solid var(--hud-line2);
 }
 
 .sp-status em {
@@ -411,8 +380,9 @@
 
 .sp-status b {
   font-weight: 400;
-  color: var(--hud-paper2);
+  color: var(--hud-paper);
   font-variant-numeric: tabular-nums;
+  letter-spacing: .08em;
 }
 
 /* ---------- 5. Bottom-centre scroll hint -------------------------------- */
@@ -489,7 +459,7 @@
 .sp-map {
   display: block;
   width: 100%;
-  height: 54px;
+  height: 48px;
   border: 0;
   background: transparent;
 }
@@ -582,12 +552,14 @@ html.sp-coarse .sp-cursor { display: none !important; }
 .sp-flat .sp-map-wrap,
 .sp-flat .sp-cursor { display: none !important; }
 
-.sp-flat .sp-topbar {
+.sp-flat .sp-topbar,
+.sp-flat.sp-ambient .sp-topbar {
   position: sticky;
   top: 0;
   height: auto;
   min-height: 64px;
-  background: rgba(5, 6, 10, .97);
+  /* solid: content scrolls underneath a sticky bar, nothing may ghost through */
+  background: var(--hud-bg);
   border-bottom: 1px solid var(--hud-line2);
 }
 
@@ -595,29 +567,30 @@ html.sp-coarse .sp-cursor { display: none !important; }
 
 .sp-flat .sp-brand__sub { color: var(--hud-mute); }
 
+/* sticky bar: an in-page anchor / deep link must not hide the station head */
+.sp-flat [data-sp-station] { scroll-margin-top: 112px; }
+
 /* ---------- 9. Reduced motion -------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .sp-hint i { animation: none; }
   .sp-cursor { display: none !important; }
   .sp-topbar *,
-  .sp-rail__bar::after,
+  .sp-rail__btn,
   .sp-menu a::after { transition-duration: .001ms !important; }
 }
 
 /* ---------- 10. Responsive ------------------------------------------------ */
 @media (max-width: 1359px) {
-  .sp-readout__lvl b { font-size: 54px; }
+  .sp-readout__lvl b { font-size: 30px; }
   .sp-readout__name { max-width: 160px; }
   .sp-map-wrap { width: 136px; }
-  .sp-map { height: 48px; }
-  .sp-status { gap: 12px; }
+  .sp-map { height: 38px; }
+  .sp-status { gap: 0; }
 }
 
 @media (max-width: 1179px) {
-  .sp-rail__bar { display: none; }
-  .sp-rail__btn { grid-template-columns: 24px; min-width: 24px; }
   .sp-map-wrap { display: none; }
-  .sp-readout__lvl b { font-size: 46px; }
+  .sp-readout__lvl b { font-size: 28px; }
   .sp-status span:nth-child(3) { display: none; }
 }
 
