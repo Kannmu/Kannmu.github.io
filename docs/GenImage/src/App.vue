@@ -1,20 +1,34 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useStorage } from '@vueuse/core'
 import {
   AlertCircle,
   CheckCircle2,
   Cloud,
   DollarSign,
+  History,
   Image as ImageIcon,
   MessageSquareText,
   Server,
   Sparkles
 } from 'lucide-vue-next'
 import ApiKeyInput from './components/ApiKeyInput.vue'
+import HistoryPanel from './components/HistoryPanel.vue'
 import ImageDisplay from './components/ImageDisplay.vue'
 import ImageGenerator from './components/ImageGenerator.vue'
 import LoadingSpinner from './components/LoadingSpinner.vue'
+import {
+  HISTORY_LIMIT_DEFAULT,
+  clampHistoryLimit
+} from './services/historyPolicy'
+import {
+  clearHistory,
+  deleteHistoryRecord,
+  loadHistory,
+  saveHistoryRecord,
+  type HistoryRecord,
+  type HistorySnapshot
+} from './services/historyStore'
 import {
   GPT_IMAGE_BASE_URL,
   generateImage,
@@ -53,6 +67,7 @@ type GenerationRecord = {
   provider: ProviderId
   prompt: string
   model: string
+  modelName?: string
   aspectRatio: string
   imageSize: string
   quality?: string
@@ -86,6 +101,17 @@ let loadingTimer: ReturnType<typeof setInterval> | undefined
 const error = ref<string | null>(null)
 const zenMuxTotalCost = ref(0)
 const generations = ref<GenerationRecord[]>([])
+const historyLimit = useStorage<number>('genimage-history-limit', HISTORY_LIMIT_DEFAULT)
+const historyRecords = ref<HistoryRecord[]>([])
+const historyBytes = ref(0)
+const historyBudgetBytes = ref(0)
+const historyStatus = ref<'loading' | 'ready' | 'unavailable'>('loading')
+const historyError = ref<string | null>(null)
+const activeHistoryId = ref<string | null>(null)
+const resultSection = ref<HTMLElement | null>(null)
+
+const activeHistoryRecord = computed(() => historyRecords.value.find((record) => record.id === activeHistoryId.value) || null)
+const isViewingHistory = computed(() => Boolean(activeHistoryRecord.value))
 
 const activeApiKey = computed({
   get: () => selectedProvider.value === 'zenmux' ? zenMuxApiKey.value : gptImageApiKey.value,
@@ -99,7 +125,8 @@ const activeProviderMeta = computed(() => providerMeta[selectedProvider.value])
 const apiReady = computed(() => Boolean(activeApiKey.value.trim()))
 const normalizedGptImageBaseUrl = computed(() => gptImageBaseUrl.value.trim().replace(/\/+$/, ''))
 const visibleGenerations = computed(() => generations.value.filter((record) => record.provider === selectedProvider.value))
-const latestGeneration = computed(() => visibleGenerations.value[0] || null)
+const latestGeneration = computed<GenerationRecord | HistoryRecord | null>(() =>
+  activeHistoryRecord.value || visibleGenerations.value[0] || null)
 const latestFinalImage = computed(() => {
   const images = latestGeneration.value?.items.filter((item): item is TimelineImageItem => item.kind === 'image') || []
   return images.length > 0 ? images[images.length - 1] : null
@@ -107,7 +134,139 @@ const latestFinalImage = computed(() => {
 
 watch(selectedProvider, () => {
   error.value = null
+  activeHistoryId.value = null
 })
+
+const applyHistorySnapshot = (snapshot: HistorySnapshot) => {
+  historyRecords.value = snapshot.records
+  historyBytes.value = snapshot.bytes
+  historyBudgetBytes.value = snapshot.budgetBytes
+  historyStatus.value = 'ready'
+  historyError.value = null
+
+  if (activeHistoryId.value && !snapshot.records.some((record) => record.id === activeHistoryId.value)) {
+    activeHistoryId.value = null
+  }
+}
+
+const describeHistoryFailure = (caughtError: unknown) => {
+  if (caughtError instanceof Error && caughtError.message) return caughtError.message
+  return '历史记录读取失败，浏览器本地数据库可能被禁用。'
+}
+
+const refreshHistory = async () => {
+  try {
+    applyHistorySnapshot(await loadHistory(clampHistoryLimit(historyLimit.value)))
+  } catch (caughtError) {
+    historyStatus.value = 'unavailable'
+    historyError.value = describeHistoryFailure(caughtError)
+  }
+}
+
+const toHistoryRecord = (record: GenerationRecord): HistoryRecord => ({
+  id: record.id,
+  provider: record.provider,
+  prompt: record.prompt,
+  model: record.model,
+  modelName: record.modelName,
+  aspectRatio: record.aspectRatio,
+  imageSize: record.imageSize,
+  quality: record.quality,
+  outputFormat: record.outputFormat,
+  outputCount: record.outputCount,
+  background: record.background,
+  outputCompression: record.outputCompression,
+  moderation: record.moderation,
+  inputFidelity: record.inputFidelity,
+  operation: record.operation,
+  status: record.status === 'failed' ? 'failed' : 'completed',
+  items: record.items.map((item) => item.kind === 'text'
+    ? {
+        id: item.id,
+        kind: 'text' as const,
+        text: item.text,
+        isThought: item.isThought,
+        thoughtSignature: item.thoughtSignature
+      }
+    : {
+        id: item.id,
+        kind: 'image' as const,
+        imageUrl: item.imageUrl,
+        mimeType: item.mimeType,
+        isThought: item.isThought,
+        isFinal: item.isFinal
+      }),
+  error: record.error,
+  finishReason: record.finishReason,
+  createdAt: record.createdAt,
+  updatedAt: record.updatedAt,
+  responseId: record.responseId,
+  modelVersion: record.modelVersion,
+  usageMetadata: record.usageMetadata
+})
+
+const persistGeneration = async (id: string) => {
+  const record = generations.value.find((entry) => entry.id === id)
+  if (!record || record.status === 'streaming') return
+
+  try {
+    applyHistorySnapshot(await saveHistoryRecord(toHistoryRecord(record), clampHistoryLimit(historyLimit.value)))
+  } catch (caughtError) {
+    historyStatus.value = 'unavailable'
+    historyError.value = describeHistoryFailure(caughtError)
+  }
+}
+
+const selectHistoryRecord = async (record: HistoryRecord) => {
+  activeHistoryId.value = record.id
+  error.value = null
+  await nextTick()
+  resultSection.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+const removeHistoryRecord = async (id: string) => {
+  try {
+    applyHistorySnapshot(await deleteHistoryRecord(id, clampHistoryLimit(historyLimit.value)))
+  } catch (caughtError) {
+    historyStatus.value = 'unavailable'
+    historyError.value = describeHistoryFailure(caughtError)
+  }
+}
+
+const removeAllHistory = async () => {
+  try {
+    applyHistorySnapshot(await clearHistory(clampHistoryLimit(historyLimit.value)))
+    activeHistoryId.value = null
+  } catch (caughtError) {
+    historyStatus.value = 'unavailable'
+    historyError.value = describeHistoryFailure(caughtError)
+  }
+}
+
+const updateHistoryLimit = (limit: number) => {
+  const normalized = clampHistoryLimit(limit)
+  if (historyLimit.value !== normalized) historyLimit.value = normalized
+  else void refreshHistory()
+}
+
+watch(historyLimit, () => {
+  const normalized = clampHistoryLimit(historyLimit.value)
+  if (normalized !== historyLimit.value) {
+    historyLimit.value = normalized
+    return
+  }
+  void refreshHistory()
+})
+
+onMounted(() => {
+  const normalizedLimit = clampHistoryLimit(historyLimit.value)
+  if (normalizedLimit !== historyLimit.value) historyLimit.value = normalizedLimit
+  void refreshHistory()
+})
+
+const returnToLatest = () => {
+  activeHistoryId.value = null
+}
 
 const stopLoadingTimer = () => {
   if (loadingTimer !== undefined) clearInterval(loadingTimer)
@@ -186,6 +345,7 @@ const handleGenerate = async (payload: GeneratePayload) => {
   loadingProvider.value = provider
   startLoadingTimer()
   error.value = null
+  activeHistoryId.value = null
 
   const now = new Date().toISOString()
   const recordId = createId('generation')
@@ -194,6 +354,7 @@ const handleGenerate = async (payload: GeneratePayload) => {
     provider,
     prompt: payload.prompt,
     model: payload.model,
+    modelName: payload.modelName,
     aspectRatio: payload.aspectRatio,
     imageSize: payload.imageSize,
     quality: payload.quality,
@@ -243,6 +404,7 @@ const handleGenerate = async (payload: GeneratePayload) => {
       record.modelVersion = result.modelVersion
       record.usageMetadata = result.usageMetadata || null
     })
+    await persistGeneration(recordId)
   } catch (caughtError) {
     const message = getApiErrorMessage(caughtError, providerMeta[provider].shortName)
 
@@ -252,6 +414,7 @@ const handleGenerate = async (payload: GeneratePayload) => {
       record.error = message
     })
     error.value = message
+    await persistGeneration(recordId)
   } finally {
     stopLoadingTimer()
     loading.value = false
@@ -306,6 +469,7 @@ const handleGenerate = async (payload: GeneratePayload) => {
             v-model="activeApiKey"
             :label="activeProviderMeta.keyLabel"
             :placeholder="activeProviderMeta.keyPlaceholder"
+            :accent="selectedProvider === 'gpt-image-2' ? 'emerald' : 'blue'"
             description="API Key 仅保存在当前浏览器的本地存储中，不会写入项目文件。"
           />
           <label v-if="selectedProvider === 'gpt-image-2'" class="block space-y-2">
@@ -347,6 +511,8 @@ const handleGenerate = async (payload: GeneratePayload) => {
           :loading="loading"
           :provider="selectedProvider"
           :ready="apiReady"
+          :api-key="activeApiKey"
+          :base-url="normalizedGptImageBaseUrl"
           @generate="handleGenerate"
         />
       </section>
@@ -364,22 +530,42 @@ const handleGenerate = async (payload: GeneratePayload) => {
         <span class="break-words text-sm font-medium">{{ error }}</span>
       </div>
 
-      <section v-if="latestGeneration" class="space-y-5">
+      <section v-if="latestGeneration" ref="resultSection" class="scroll-mt-6 space-y-5">
         <div class="flex flex-wrap items-end justify-between gap-4 border-b border-gray-200 pb-4">
           <div>
-            <h2 class="text-xl font-semibold text-gray-950">最近一次结果</h2>
-            <p class="mt-1 text-sm text-gray-500">{{ latestGeneration.operation === 'edit' ? '图片编辑' : '图片生成' }}</p>
+            <h2 class="flex flex-wrap items-center gap-2 text-xl font-semibold text-gray-950">
+              <template v-if="isViewingHistory">
+                <History class="h-5 w-5 text-emerald-600" />
+                历史记录
+                <span class="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">只读</span>
+              </template>
+              <template v-else>最近一次结果</template>
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">
+              {{ latestGeneration.operation === 'edit' ? '图片编辑' : '图片生成' }}
+              <template v-if="isViewingHistory"> · {{ new Date(latestGeneration.createdAt).toLocaleString('zh-CN') }}</template>
+            </p>
           </div>
-          <div class="flex flex-wrap gap-2 text-xs font-medium">
-            <span class="rounded-full bg-gray-200 px-3 py-1 text-gray-700">{{ latestGeneration.model }}</span>
-            <span class="rounded-full bg-blue-50 px-3 py-1 text-blue-700">{{ latestGeneration.imageSize }}</span>
-            <span v-if="latestGeneration.quality" class="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">{{ latestGeneration.quality }}</span>
-            <span v-if="latestGeneration.outputFormat" class="rounded-full bg-amber-50 px-3 py-1 uppercase text-amber-800">{{ latestGeneration.outputFormat }}</span>
-            <span v-if="latestGeneration.outputCount" class="rounded-full bg-gray-100 px-3 py-1 text-gray-700">{{ latestGeneration.outputCount }} 张</span>
-            <span v-if="latestGeneration.background && latestGeneration.background !== 'auto'" class="rounded-full bg-cyan-50 px-3 py-1 text-cyan-800">背景 {{ latestGeneration.background }}</span>
-            <span v-if="latestGeneration.outputCompression !== undefined" class="rounded-full bg-fuchsia-50 px-3 py-1 text-fuchsia-800">压缩 {{ latestGeneration.outputCompression }}%</span>
-            <span v-if="latestGeneration.moderation" class="rounded-full bg-lime-50 px-3 py-1 text-lime-800">审核 {{ latestGeneration.moderation }}</span>
-            <span v-if="latestGeneration.inputFidelity" class="rounded-full bg-indigo-50 px-3 py-1 text-indigo-800">保真 {{ latestGeneration.inputFidelity }}</span>
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="flex flex-wrap gap-2 text-xs font-medium">
+              <span class="rounded-full bg-gray-200 px-3 py-1 text-gray-700">{{ latestGeneration.model }}</span>
+              <span class="rounded-full bg-blue-50 px-3 py-1 text-blue-700">{{ latestGeneration.imageSize }}</span>
+              <span v-if="latestGeneration.quality" class="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">{{ latestGeneration.quality }}</span>
+              <span v-if="latestGeneration.outputFormat" class="rounded-full bg-amber-50 px-3 py-1 uppercase text-amber-800">{{ latestGeneration.outputFormat }}</span>
+              <span v-if="latestGeneration.outputCount" class="rounded-full bg-gray-100 px-3 py-1 text-gray-700">{{ latestGeneration.outputCount }} 张</span>
+              <span v-if="latestGeneration.background && latestGeneration.background !== 'auto'" class="rounded-full bg-cyan-50 px-3 py-1 text-cyan-800">背景 {{ latestGeneration.background }}</span>
+              <span v-if="latestGeneration.outputCompression !== undefined" class="rounded-full bg-fuchsia-50 px-3 py-1 text-fuchsia-800">压缩 {{ latestGeneration.outputCompression }}%</span>
+              <span v-if="latestGeneration.moderation" class="rounded-full bg-lime-50 px-3 py-1 text-lime-800">审核 {{ latestGeneration.moderation }}</span>
+              <span v-if="latestGeneration.inputFidelity" class="rounded-full bg-indigo-50 px-3 py-1 text-indigo-800">保真 {{ latestGeneration.inputFidelity }}</span>
+            </div>
+            <button
+              v-if="isViewingHistory"
+              type="button"
+              class="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:border-gray-300 hover:bg-gray-50"
+              @click="returnToLatest"
+            >
+              返回最新
+            </button>
           </div>
         </div>
 
@@ -435,6 +621,20 @@ const handleGenerate = async (payload: GeneratePayload) => {
           <span>图片已准备好，可下载、复制或全屏查看。</span>
         </div>
       </section>
+
+      <HistoryPanel
+        :records="historyRecords"
+        :limit="historyLimit"
+        :bytes="historyBytes"
+        :budget-bytes="historyBudgetBytes"
+        :active-id="activeHistoryId"
+        :status="historyStatus"
+        :error="historyError"
+        @select="selectHistoryRecord"
+        @delete="removeHistoryRecord"
+        @clear="removeAllHistory"
+        @update:limit="updateHistoryLimit"
+      />
     </main>
 
     <footer class="border-t border-gray-200 bg-white py-6 text-center text-xs text-gray-500">

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { onClickOutside } from '@vueuse/core'
+import { onClickOutside, useStorage } from '@vueuse/core'
 import {
+  AlertCircle,
   Check,
   ChevronDown,
   Cpu,
@@ -10,6 +11,7 @@ import {
   Plus,
   RectangleHorizontal,
   RectangleVertical,
+  RefreshCw,
   SlidersHorizontal,
   Sparkles,
   Square,
@@ -18,8 +20,8 @@ import {
   ZoomIn
 } from 'lucide-vue-next'
 import ImageDisplay from './ImageDisplay.vue'
+import { useGptImageModels } from '../composables/useGptImageModels'
 import {
-  gptImageModels,
   zenMuxModels,
   type GeneratePayload,
   type ImageBackground,
@@ -34,6 +36,8 @@ const props = defineProps<{
   loading: boolean
   provider: ProviderId
   ready: boolean
+  apiKey: string
+  baseUrl: string
 }>()
 
 const emit = defineEmits<{
@@ -48,7 +52,9 @@ type ModelOption = {
 }
 
 const prompt = ref('')
+const zenMuxModelOptions: ModelOption[] = zenMuxModels.map((model) => ({ ...model }))
 const selectedZenMuxModel = ref(zenMuxModels[0].id as string)
+const selectedGptModelId = useStorage('genimage-gpt-image-model', '')
 const zenMuxAspectRatio = ref('1:1')
 const zenMuxImageSize = ref('2K')
 const gptImageSizePreset = ref('1024x1024')
@@ -71,6 +77,21 @@ const maskInput = ref<HTMLInputElement | null>(null)
 const previewImage = ref<string | null>(null)
 const uploadError = ref<string | null>(null)
 const maskError = ref<string | null>(null)
+
+const {
+  models: gptModelOptions,
+  total: gptCatalogTotal,
+  fallback: gptCatalogFallback,
+  loading: gptModelsLoading,
+  error: gptModelsError,
+  fetchedAt: gptModelsFetchedAt,
+  fromCache: gptModelsFromCache,
+  refresh: refreshGptModels
+} = useGptImageModels({
+  enabled: () => props.provider === 'gpt-image-2',
+  apiKey: () => props.apiKey,
+  baseUrl: () => props.baseUrl
+})
 
 const zenMuxRatios = [
   { label: '方形', value: '1:1' },
@@ -126,17 +147,47 @@ const inputFidelityOptions: Array<{ label: string, value: ImageInputFidelity }> 
   { label: '高保真', value: 'high' }
 ]
 
-const models = computed<ModelOption[]>(() => props.provider === 'zenmux'
-  ? zenMuxModels.map((model) => ({ ...model }))
-  : gptImageModels.map((model) => ({ ...model })))
+const currentZenMuxModel = computed<ModelOption | null>(() =>
+  zenMuxModelOptions.find((model) => model.id === selectedZenMuxModel.value) || zenMuxModelOptions[0] || null)
+
+const currentGptModel = computed<ModelOption | null>(() =>
+  gptModelOptions.value.find((model) => model.id === selectedGptModelId.value) || gptModelOptions.value[0] || null)
 
 const selectedModel = computed(() => props.provider === 'zenmux'
-  ? selectedZenMuxModel.value
-  : gptImageModels[0].id)
+  ? (currentZenMuxModel.value?.id || '')
+  : (currentGptModel.value?.id || ''))
 
-const currentModel = computed(() => models.value.find((model) => model.id === selectedModel.value) || models.value[0])
+const currentModel = computed<ModelOption | null>(() =>
+  props.provider === 'zenmux' ? currentZenMuxModel.value : currentGptModel.value)
+
+const modelAvailable = computed(() => Boolean(selectedModel.value))
+
+const gptModelsUpdatedLabel = computed(() => {
+  if (!gptModelsFetchedAt.value) return '尚未获取'
+  return new Date(gptModelsFetchedAt.value).toLocaleTimeString('zh-CN', {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+})
+
+watch(gptModelOptions, (options) => {
+  const [firstModel] = options
+  if (!firstModel) return
+  if (!options.some((model) => model.id === selectedGptModelId.value)) {
+    selectedGptModelId.value = firstModel.id
+  }
+}, { immediate: true })
+
 const isGptImage = computed(() => props.provider === 'gpt-image-2')
 const operationLabel = computed(() => referenceImages.value.length > 0 ? '编辑图片' : '生成图片')
+const generateButtonLabel = computed(() => {
+  if (!props.ready) return '请先填写 API Key'
+  if (props.loading) return '正在处理…'
+  if (isGptImage.value && !modelAvailable.value) {
+    return gptModelsLoading.value ? '正在获取模型列表…' : '暂无可用模型，请刷新'
+  }
+  return operationLabel.value
+})
 const isCustomGptSize = computed(() => gptImageSizePreset.value === 'custom')
 const selectedGptSize = computed(() => gptSizes.find((option) => option.value === gptImageSizePreset.value))
 const resolvedGptImageSize = computed(() => isCustomGptSize.value
@@ -183,7 +234,8 @@ watch(() => referenceImages.value.length, (count) => {
 })
 
 const selectModel = (modelId: string) => {
-  selectedZenMuxModel.value = modelId
+  if (props.provider === 'zenmux') selectedZenMuxModel.value = modelId
+  else selectedGptModelId.value = modelId
   isModelDropdownOpen.value = false
 }
 
@@ -266,7 +318,8 @@ const removeImage = (index: number) => {
 }
 
 const generate = () => {
-  if (!prompt.value.trim() || (isGptImage.value && (gptSizeError.value || gptCountError.value))) return
+  if (!prompt.value.trim() || !selectedModel.value) return
+  if (isGptImage.value && (gptSizeError.value || gptCountError.value)) return
 
   const gptSize = resolvedGptImageSize.value
   emit('generate', {
@@ -275,6 +328,7 @@ const generate = () => {
     aspectRatio: isGptImage.value ? getAspectRatio(gptSize) : zenMuxAspectRatio.value,
     imageSize: isGptImage.value ? gptSize : zenMuxImageSize.value,
     model: selectedModel.value,
+    modelName: currentModel.value?.name,
     quality: isGptImage.value ? gptQuality.value : undefined,
     outputFormat: isGptImage.value ? gptOutputFormat.value : undefined,
     outputCount: isGptImage.value ? gptOutputCount.value : undefined,
@@ -291,59 +345,143 @@ const generate = () => {
 <template>
   <div class="w-full space-y-6">
     <div ref="modelDropdownRef" class="space-y-2">
-      <label class="text-sm font-medium text-gray-700">模型</label>
-
-      <div v-if="isGptImage" class="flex min-h-16 items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3">
-        <div class="rounded-lg bg-emerald-50 p-2 text-emerald-700">
-          <Cpu class="h-5 w-5" />
-        </div>
-        <div class="min-w-0">
-          <div class="font-medium text-gray-900">{{ currentModel?.name }}</div>
-          <div class="mt-0.5 text-xs text-gray-500">OpenAI 兼容 Images API</div>
-        </div>
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <label class="text-sm font-medium text-gray-700">模型</label>
+        <span v-if="isGptImage" class="inline-flex items-center gap-1 text-xs text-gray-500">
+          <RefreshCw :class="['h-3.5 w-3.5', gptModelsLoading ? 'animate-spin' : '']" />
+          实时列表 · GET /v1/models
+        </span>
       </div>
 
-      <div v-else class="relative">
-        <button
-          type="button"
-          class="flex min-h-16 w-full items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3 text-left shadow-sm transition hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          @click="isModelDropdownOpen = !isModelDropdownOpen"
-        >
-          <div class="flex min-w-0 items-center gap-3">
-            <div class="rounded-lg bg-blue-50 p-2 text-blue-700">
-              <Cpu class="h-5 w-5" />
-            </div>
-            <div class="min-w-0">
-              <div class="truncate font-medium text-gray-900">{{ currentModel?.name }}</div>
-              <div class="mt-0.5 text-xs text-gray-500">
-                输入 ${{ currentModel?.inputPrice }}/M · 输出 ${{ currentModel?.outputPrice }}/M
+      <div class="relative">
+        <div class="flex items-stretch gap-2">
+          <button
+            type="button"
+            :class="[
+              'flex min-h-16 flex-1 items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 text-left shadow-sm transition hover:border-gray-300 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-70',
+              isGptImage ? 'focus:ring-emerald-600' : 'focus:ring-blue-500'
+            ]"
+            :disabled="isGptImage && !modelAvailable && gptModelsLoading"
+            @click="isModelDropdownOpen = !isModelDropdownOpen"
+          >
+            <div class="flex min-w-0 items-center gap-3">
+              <div :class="['rounded-lg p-2', isGptImage ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700']">
+                <Cpu class="h-5 w-5" />
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="truncate font-medium text-gray-900">
+                    {{ currentModel?.name || (isGptImage && gptModelsLoading ? '正在获取模型列表…' : '暂无可用模型') }}
+                  </span>
+                  <span v-if="isGptImage && gptModelOptions.length > 0" class="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                    {{ gptModelOptions.length }} 个可用
+                  </span>
+                </div>
+                <div class="mt-0.5 truncate text-xs text-gray-500">
+                  <template v-if="isGptImage">{{ currentModel?.id || '请刷新模型列表后选择模型' }}</template>
+                  <template v-else>输入 ${{ currentModel?.inputPrice }}/M · 输出 ${{ currentModel?.outputPrice }}/M</template>
+                </div>
               </div>
             </div>
-          </div>
-          <ChevronDown :class="['h-5 w-5 shrink-0 text-gray-400 transition-transform', isModelDropdownOpen ? 'rotate-180' : '']" />
-        </button>
+            <ChevronDown :class="['h-5 w-5 shrink-0 text-gray-400 transition-transform', isModelDropdownOpen ? 'rotate-180' : '']" />
+          </button>
+
+          <button
+            v-if="isGptImage"
+            type="button"
+            class="flex shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white px-3.5 text-gray-500 transition hover:border-gray-300 hover:text-gray-900 disabled:cursor-wait disabled:opacity-60"
+            :disabled="gptModelsLoading"
+            title="刷新模型列表"
+            aria-label="刷新模型列表"
+            @click="refreshGptModels"
+          >
+            <RefreshCw :class="['h-5 w-5', gptModelsLoading ? 'animate-spin' : '']" />
+          </button>
+        </div>
 
         <Transition name="dropdown">
-          <div v-if="isModelDropdownOpen" class="absolute z-30 mt-2 w-full rounded-lg border border-gray-200 bg-white p-1.5 shadow-xl">
-            <button
-              v-for="model in models"
-              :key="model.id"
-              type="button"
-              :class="[
-                'flex w-full items-center justify-between rounded-lg p-3 text-left transition',
-                selectedModel === model.id ? 'bg-blue-50 text-blue-950' : 'text-gray-800 hover:bg-gray-50'
-              ]"
-              @click="selectModel(model.id)"
-            >
-              <div>
-                <div class="font-medium">{{ model.name }}</div>
-                <div class="mt-1 text-xs text-gray-500">输入 ${{ model.inputPrice }}/M · 输出 ${{ model.outputPrice }}/M</div>
+          <div v-if="isModelDropdownOpen" class="absolute left-0 right-0 z-30 mt-2 max-h-96 overflow-y-auto rounded-lg border border-gray-200 bg-white p-1.5 shadow-xl">
+            <template v-if="!isGptImage">
+              <button
+                v-for="model in zenMuxModelOptions"
+                :key="model.id"
+                type="button"
+                :class="[
+                  'flex w-full items-center justify-between rounded-lg p-3 text-left transition',
+                  selectedModel === model.id ? 'bg-blue-50 text-blue-950' : 'text-gray-800 hover:bg-gray-50'
+                ]"
+                @click="selectModel(model.id)"
+              >
+                <div>
+                  <div class="font-medium">{{ model.name }}</div>
+                  <div class="mt-1 text-xs text-gray-500">输入 ${{ model.inputPrice }}/M · 输出 ${{ model.outputPrice }}/M</div>
+                </div>
+                <Check v-if="selectedModel === model.id" class="h-5 w-5 text-blue-600" />
+              </button>
+            </template>
+
+            <template v-else>
+              <button
+                v-for="(model, index) in gptModelOptions"
+                :key="model.id"
+                type="button"
+                :class="[
+                  'flex w-full items-center justify-between gap-3 rounded-lg p-3 text-left transition',
+                  selectedModel === model.id ? 'bg-emerald-50 text-emerald-950' : 'text-gray-800 hover:bg-gray-50'
+                ]"
+                @click="selectModel(model.id)"
+              >
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="truncate font-medium">{{ model.name }}</span>
+                    <span v-if="index === 0" class="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600">服务端首选</span>
+                  </div>
+                  <div class="mt-1 break-all font-mono text-xs text-gray-500">{{ model.id }}</div>
+                </div>
+                <Check v-if="selectedModel === model.id" class="h-5 w-5 shrink-0 text-emerald-600" />
+              </button>
+
+              <div v-if="gptModelOptions.length === 0" class="space-y-3 p-4 text-sm text-gray-600">
+                <p v-if="gptModelsLoading">正在从服务端获取模型列表…</p>
+                <template v-else>
+                  <p class="break-words">{{ gptModelsError || '服务端暂未返回可用模型。' }}</p>
+                  <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50" @click="refreshGptModels">
+                    <RefreshCw class="h-4 w-4" />
+                    重新获取
+                  </button>
+                </template>
               </div>
-              <Check v-if="selectedModel === model.id" class="h-5 w-5 text-blue-600" />
-            </button>
+
+              <div class="sticky bottom-0 mt-1 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 bg-white px-2 pb-1 pt-2 text-xs text-gray-500">
+                <span>
+                  服务端共 {{ gptCatalogTotal }} 个模型 · 更新于 {{ gptModelsUpdatedLabel }}
+                  <span v-if="gptModelsFromCache" class="text-amber-700">（缓存）</span>
+                </span>
+                <button type="button" class="font-medium text-emerald-700 hover:text-emerald-900" @click="refreshGptModels">刷新</button>
+              </div>
+            </template>
           </div>
         </Transition>
       </div>
+
+      <div v-if="isGptImage && gptModelsError" class="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
+        <AlertCircle class="mt-0.5 h-4 w-4 shrink-0" />
+        <div class="min-w-0 flex-1">
+          <p class="font-medium">
+            模型列表获取失败{{ gptModelsFromCache && gptModelOptions.length > 0 ? '，当前显示上次缓存的列表' : '' }}
+          </p>
+          <p class="mt-0.5 break-words">{{ gptModelsError }}</p>
+        </div>
+        <button type="button" class="shrink-0 rounded-md border border-amber-300 bg-white px-2 py-1 font-medium text-amber-900 hover:bg-amber-100" @click="refreshGptModels">
+          重试
+        </button>
+      </div>
+      <p v-else-if="isGptImage && gptCatalogFallback" class="text-xs leading-5 text-amber-700">
+        未能从模型名称识别图像模型，已列出服务端全部 {{ gptModelOptions.length }} 个模型，请确认所选模型支持图片生成。
+      </p>
+      <p v-else-if="isGptImage && gptModelOptions.length > 0" class="text-xs leading-5 text-gray-500">
+        模型列表随服务端实时更新，模型下线后会自动从列表移除。
+      </p>
     </div>
 
     <div class="space-y-2">
@@ -605,13 +743,13 @@ const generate = () => {
 
     <button
       type="button"
-      :disabled="loading || !ready || !prompt.trim() || (isGptImage && !!(gptSizeError || gptCountError))"
+      :disabled="loading || !ready || !modelAvailable || !prompt.trim() || (isGptImage && !!(gptSizeError || gptCountError))"
       class="flex min-h-14 w-full items-center justify-center gap-2 rounded-lg bg-gray-950 px-5 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:shadow-none"
       @click="generate"
     >
       <ImagePlus v-if="referenceImages.length > 0" class="h-5 w-5" />
       <Sparkles v-else class="h-5 w-5" />
-      <span>{{ !ready ? '请先填写 API Key' : (loading ? '正在处理…' : operationLabel) }}</span>
+      <span>{{ generateButtonLabel }}</span>
     </button>
   </div>
 

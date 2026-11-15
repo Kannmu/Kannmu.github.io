@@ -1,4 +1,9 @@
 import axios from 'axios'
+import { getApiPayloadError } from './apiErrors'
+import { resolveGptImageRequestBaseUrl } from './gptImageEndpoints'
+
+export { getApiErrorMessage } from './apiErrors'
+export { GPT_IMAGE_BASE_URL } from './gptImageEndpoints'
 
 export type ProviderId = 'zenmux' | 'gpt-image-2'
 export type OutputFormat = 'png' | 'jpeg' | 'webp'
@@ -13,6 +18,7 @@ export type GeneratePayload = {
   aspectRatio: string
   imageSize: string
   model: string
+  modelName?: string
   quality?: ImageQuality
   outputFormat?: OutputFormat
   outputCount?: number
@@ -75,24 +81,7 @@ type GptImageData = {
   revised_prompt?: string
 }
 
-type ApiErrorPayload = {
-  error?: {
-    message?: string
-  } | string
-  message?: string
-  detail?: string
-}
-
-const getApiPayloadError = (data: unknown) => {
-  if (!data || typeof data !== 'object') return null
-  const payload = data as ApiErrorPayload
-  const apiMessage = typeof payload.error === 'string' ? payload.error : payload.error?.message
-  return apiMessage || payload.message || payload.detail || null
-}
-
 const ZENMUX_BASE_URL = 'https://zenmux.ai/api/vertex-ai/v1'
-export const GPT_IMAGE_BASE_URL = 'https://bya.re'
-const GPT_IMAGE_PROXY_URL = '/gpt-image-api'
 const GPT_IMAGE_REQUEST_CONFIG = {
   // GPT Image responds only after generation. 4K requests can legitimately take
   // longer than five minutes, so the browser must not impose a fixed deadline.
@@ -140,13 +129,6 @@ export const zenMuxModels = [
   }
 ] as const
 
-export const gptImageModels = [
-  {
-    id: 'gpt-image-2',
-    name: 'GPT Image 2'
-  }
-] as const
-
 const extractMimeType = (dataUrl: string) => dataUrl.match(/^data:([^;,]+)[;,]/)?.[1] || 'image/jpeg'
 const extractBase64Data = (dataUrl: string) => dataUrl.split(',')[1] || ''
 const buildImageUrl = (mimeType: string, data?: string) => data ? `data:${mimeType};base64,${data}` : null
@@ -191,32 +173,6 @@ const getGptImageRequestParameters = (payload: GeneratePayload, operation: 'gene
   if (operation === 'edit' && payload.inputFidelity) parameters.input_fidelity = payload.inputFidelity
 
   return parameters
-}
-
-export const getApiErrorMessage = (error: unknown, providerName = 'API') => {
-  if (axios.isAxiosError(error)) {
-    const data = error.response?.data as ApiErrorPayload | undefined
-    const apiMessage = getApiPayloadError(data)
-    if (apiMessage) return apiMessage
-
-    if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
-      return `${providerName} 请求等待超时。图片可能仍在服务端生成，请稍后重试。`
-    }
-
-    if (!error.response && (error.code === 'ERR_NETWORK' || error.message === 'Network Error')) {
-      return `未收到 ${providerName} 的响应。请求可能被网络或反向代理中断，并不表示图片生成失败。`
-    }
-
-    if (error.response?.status) {
-      return `${providerName} 请求失败（HTTP ${error.response.status}）。`
-    }
-
-    return error.message
-  }
-
-  const apiMessage = getApiPayloadError(error)
-  if (apiMessage) return apiMessage
-  return error instanceof Error ? error.message : '图片生成失败'
 }
 
 export const generateWithZenMux = async ({ apiKey, payload }: GenerateOptions): Promise<ProviderGenerationResult> => {
@@ -302,14 +258,16 @@ export const generateWithZenMux = async ({ apiKey, payload }: GenerateOptions): 
   }
 }
 
-export const generateWithGptImage = async ({ apiKey, payload, baseUrl = GPT_IMAGE_BASE_URL }: GenerateOptions): Promise<ProviderGenerationResult> => {
+export const generateWithGptImage = async ({ apiKey, payload, baseUrl }: GenerateOptions): Promise<ProviderGenerationResult> => {
+  if (!payload.model.trim()) throw new Error('尚未选择模型，请先刷新模型列表。')
+
   const headers = {
     ...GPT_IMAGE_REQUEST_CONFIG.headers,
     Authorization: `Bearer ${apiKey}`
   }
   const operation = payload.images.length > 0 ? 'edit' : 'generate'
   const parameters = getGptImageRequestParameters(payload, operation)
-  const requestBaseUrl = baseUrl === GPT_IMAGE_BASE_URL ? GPT_IMAGE_PROXY_URL : baseUrl.replace(/\/+$/, '')
+  const requestBaseUrl = resolveGptImageRequestBaseUrl(baseUrl)
   let response
 
   if (operation === 'edit') {
