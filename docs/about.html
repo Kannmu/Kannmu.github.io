@@ -1,10 +1,10 @@
 ---
-layout: space
+layout: default
 title: "关于范林涵 Linhan Fan — 人机交互研究者"
 nav-title: "About"
 description: "范林涵（Linhan Fan，涵无 / Kannmu）：东南大学设计学博士研究生，研究眼动与平滑追踪交互、脑机接口与安全神经通信、空中超声触觉以及 XR 与智能座舱人因。含完整论文列表、履历、荣誉与联系方式。"
-sp_page: about
-sp_mode: ambient
+body-class: "has-hero page-about"
+academic_sync: true
 multilingual: true
 no-catalog: true
 ---
@@ -13,773 +13,499 @@ no-catalog: true
 {%- assign pubs = site.data.publications -%}
 {%- assign pubs_sorted = pubs | sort: "date" | reverse -%}
 
+{%- assign metrics = site.data.metrics -%}
 {%- assign total_cites = 0 -%}
-{%- assign first_author_count = 0 -%}
-{%- assign journal_count = 0 -%}
-{%- assign conf_count = 0 -%}
 {%- for p in pubs -%}
   {%- assign total_cites = total_cites | plus: p.citation_count -%}
-  {%- if p.author_role == 'first' or p.author_role == 'cofirst' -%}
-    {%- assign first_author_count = first_author_count | plus: 1 -%}
-  {%- endif -%}
-  {%- if p.type == 'journal' -%}
-    {%- assign journal_count = journal_count | plus: 1 -%}
-  {%- else -%}
-    {%- assign conf_count = conf_count | plus: 1 -%}
-  {%- endif -%}
 {%- endfor -%}
 
-<!-- =====================================================================
-     01 · OVERVIEW
-     ================================================================== -->
-<section class="sp-station" id="sp-about-overview" data-sp-station="about-overview"
-         data-sp-floor="01" data-sp-zh="概述" data-sp-en="Overview" aria-label="Overview">
-  <div class="sp-layer" data-sp-lay="hero">
-
-    <article class="sp-panel ab-mast">
-      <p class="sp-kicker">
-        <i aria-hidden="true"></i>
-        <span><span data-zh>学术主页</span><span data-en>Academic homepage</span></span>
-        <span>SEU · 2026</span>
+<!-- ======================================================================
+     Masthead
+     ====================================================================== -->
+<section class="about-hero">
+  <div class="shell about-hero__inner">
+    <div>
+      <p class="hero__eyebrow" style="margin-bottom:26px">
+        <span class="dot" aria-hidden="true"></span>
+        <span data-zh>学术主页 · Academic Homepage</span>
+        <span data-en>Academic Homepage</span>
       </p>
-      <h1 class="ab-display">
+
+      <h1>
         Linhan <em>Fan</em>
-        <span class="sp-display__sub">
-          <span data-zh>范林涵 · 涵无 / KANNMU</span>
-          <span data-en>LINHAN FAN · KANNMU</span>
-        </span>
+        <span class="about-hero__zh" aria-label="范林涵"><span data-zh>范 林 涵</span><span data-en>涵无 · Kannmu</span></span>
       </h1>
-      <p class="ab-role">
+
+      <p class="about-hero__role">
         <span data-zh>{{ P.role.zh }}</span>
         <span data-en>{{ P.role.en }}</span>
-      </p>
-      <p class="ab-affil">
+        <br>
         <span data-zh>{{ P.affiliation.zh }} · 导师 <a href="{{ P.advisor.url }}" target="_blank" rel="noopener">{{ P.advisor.zh }}</a></span>
         <span data-en>{{ P.affiliation.en }} · Advised by <a href="{{ P.advisor.url }}" target="_blank" rel="noopener">{{ P.advisor.en }}</a></span>
       </p>
-      <div class="ab-links">
-        {%- for link in P.links -%}
-        <a class="sp-chip" href="{{ link.url }}"{% unless link.url contains 'mailto' %} target="_blank" rel="noopener"{% endunless %}>{% if link.key == 'zhihu' %}<span data-zh>{{ link.label }}</span><span data-en>Zhihu</span>{% else %}{{ link.label }}{% endif %}</a>
-        {%- endfor -%}
-      </div>
-    </article>
-
-    <article class="sp-panel ab-statement">
-      <p class="sp-label ab-kicker">
-        <span data-zh>研究陈述</span><span data-en>Research statement</span>
-        <span>01 / 08</span>
-      </p>
-      {%- for para in P.statement -%}
-      <p class="sp-body-copy" data-zh>{{ para.zh }}</p>
-      <p class="sp-body-copy sp-copy-en" data-en>{{ para.en }}</p>
-      {%- endfor -%}
-    </article>
-
-    <article class="sp-panel ab-ident" aria-label="Identifiers 身份标识">
-      <div class="ab-ident__grid">
-        <figure class="ab-portrait">
-          <img src="{{ '/img/Kannmu-Avatar.jpg' | relative_url }}"
-               alt="范林涵 Linhan Fan 的照片 · portrait" width="320" height="401"
-               loading="lazy" decoding="async">
-          <figcaption>
-            <span data-zh>涵无 · 山中</span>
-            <span data-en>Kannmu · above the treeline</span>
-          </figcaption>
-        </figure>
-        <div class="ab-ident__data">
-          <div class="ab-stats">
-            <div class="sp-kpi">
-              <b class="sp-kpi__v">{{ pubs.size }}</b>
-              <span class="sp-kpi__l"><span data-zh>篇论文</span><span data-en>Works</span></span>
-              <em class="sp-kpi__src"><span data-zh>全部</span><span data-en>All</span></em>
-            </div>
-            <div class="sp-kpi">
-              <b class="sp-kpi__v">{{ total_cites }}</b>
-              <span class="sp-kpi__l"><span data-zh>Crossref 引用</span><span data-en>Citations</span></span>
-              <em class="sp-kpi__src">Crossref</em>
-            </div>
-            <div class="sp-kpi">
-              <b class="sp-kpi__v">{{ first_author_count }}</b>
-              <span class="sp-kpi__l"><span data-zh>第一 / 共一</span><span data-en>First / co-first</span></span>
-              <em class="sp-kpi__src"><span data-zh>作者</span><span data-en>Author</span></em>
-            </div>
-            <div class="sp-kpi">
-              <b class="sp-kpi__v">{{ journal_count }}<i class="ab-slash">/</i>{{ conf_count }}</b>
-              <span class="sp-kpi__l"><span data-zh>期刊 / 会议</span><span data-en>Journals / Conf.</span></span>
-              <em class="sp-kpi__src">{{ pubs.size }} <span data-zh>条目</span><span data-en>items</span></em>
-            </div>
-          </div>
-          <dl class="ab-ids">
-            <div><dt>ORCID</dt><dd><a href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">{{ P.identifiers.orcid }}</a></dd></div>
-            <div><dt>Scholar</dt><dd><a href="https://scholar.google.com/citations?user={{ P.identifiers.scholar_id }}&amp;hl=en" target="_blank" rel="noopener">{{ P.identifiers.scholar_id }}</a></dd></div>
-            <div><dt>Scopus</dt><dd>{{ P.identifiers.scopus }}</dd></div>
-            <div><dt>RG</dt><dd><a href="https://www.researchgate.net/profile/Lin-Han-Fan" target="_blank" rel="noopener">{{ P.identifiers.researchgate }}</a></dd></div>
-          </dl>
-        </div>
-      </div>
-    </article>
-
-    <article class="sp-panel ab-affilblock" aria-label="Advisor and location 导师与所在地">
-      <div class="ab-affilblock__rows">
-        <div class="ab-affilblock__row">
-          <span class="sp-label"><span data-zh>导师</span><span data-en>Advisor</span></span>
-          <p>
-            <a href="{{ P.advisor.url }}" target="_blank" rel="noopener" data-zh>{{ P.advisor.zh }}</a>
-            <a href="{{ P.advisor.url }}" target="_blank" rel="noopener" data-en>{{ P.advisor.en }}</a>
-            <span class="ab-affilblock__note">
-              <span data-zh>{{ P.advisor.note.zh }}</span>
-              <span data-en>{{ P.advisor.note.en }}</span>
-            </span>
-          </p>
-        </div>
-        <div class="ab-affilblock__row">
-          <span class="sp-label"><span data-zh>所在地</span><span data-en>Location</span></span>
-          <p><span data-zh>{{ P.location.zh }}</span><span data-en>{{ P.location.en }}</span></p>
-        </div>
-        <div class="ab-affilblock__row">
-          <span class="sp-label"><span data-zh>关键词</span><span data-en>Keywords</span></span>
-          <p><span data-zh>{{ P.tagline.zh }}</span><span data-en>{{ P.tagline.en }}</span></p>
-        </div>
-      </div>
-    </article>
-
-  </div>
-</section>
-
-<!-- =====================================================================
-     02 · RESEARCH
-     ================================================================== -->
-<section class="sp-station" id="sp-about-research" data-sp-station="about-research"
-         data-sp-floor="02" data-sp-zh="研究" data-sp-en="Research" aria-label="Research">
-  <div class="sp-layer" data-sp-lay="stack">
-
-    <article class="sp-panel ab-sec-head">
-      <p class="sp-kicker">
-        <i aria-hidden="true"></i>
-        <span><span data-zh>研究</span><span data-en>Research</span></span>
-        <span>02 / 08</span>
-      </p>
-      <h2 class="ab-h2">
-        <span data-zh>研究主题</span><span data-en>Research topics</span>
-      </h2>
-      <p class="sp-lede sp-lede--cjk">
-        <span data-zh>四个方向按主题归纳，每个主题列出第一作者与共同第一作者论文。</span>
-        <span data-en>Four directions grouped by topic. Only first- and co-first-author papers are listed under each.</span>
-      </p>
-      <div class="sp-rule ab-sec-head__rule"></div>
-      <p class="sp-meta ab-sec-head__meta">
-        <span><b>{{ P.research.size }}</b> <span data-zh>个主题</span><span data-en>topics</span></span>
-        <span><b>{{ P.built.size }}</b> <span data-zh>个开源项目</span><span data-en>open projects</span></span>
-        <span><b>{{ pubs.size }}</b> <span data-zh>篇论文</span><span data-en>papers</span></span>
-      </p>
-    </article>
-
-    <div class="ab-areas">
-      {%- for area in P.research -%}
-      <article class="sp-panel ab-area" aria-labelledby="area-{{ area.key }}">
-        <p class="ab-area__no"><b>{{ area.index }}</b><span data-zh>研究方向</span><span data-en>Area</span></p>
-        <h3 class="sp-h3" id="area-{{ area.key }}">
-          <span data-zh>{{ area.title.zh }}</span><span data-en>{{ area.title.en }}</span>
-        </h3>
-        <p class="sp-body-copy ab-area__sum" data-zh>{{ area.summary.zh }}</p>
-        <p class="sp-body-copy sp-copy-en ab-area__sum" data-en>{{ area.summary.en }}</p>
-        <div class="ab-area__kw">
-          {%- for kw in area.keywords -%}<span>{{ kw }}</span>{%- endfor -%}
-        </div>
-        {%- if area.related.size > 0 -%}
-        <div class="ab-area__rel">
-          {%- for rel in area.related -%}
-          {%- assign rel_pub = pubs | where: "id", rel | first -%}
-          <a class="sp-link ab-rel" href="https://doi.org/{{ rel_pub.doi }}" target="_blank" rel="noopener">
-            <span aria-hidden="true">↳</span>{{ rel_pub.venue_short | default: rel }}
-          </a>
-          {%- endfor -%}
-        </div>
-        {%- endif -%}
-      </article>
-      {%- endfor -%}
     </div>
 
-    <div class="sp-panel ab-built">
-      <p class="sp-label ab-built__label"><span data-zh>研究工具与开源项目</span><span data-en>Tools &amp; open-source projects</span></p>
-      {%- for item in P.built -%}
-      <a class="ab-built__item" href="{% if item.href contains 'http' %}{{ item.href }}{% else %}{{ item.href | relative_url }}{% endif %}"{% if item.href contains 'http' %} target="_blank" rel="noopener"{% endif %}>
-        <b><span data-zh>{{ item.title.zh }}</span><span data-en>{{ item.title.en }}</span></b>
-        <span class="ab-built__detail"><span data-zh>{{ item.detail.zh }}</span><span data-en>{{ item.detail.en }}</span></span>
-        <span class="ab-built__arrow" aria-hidden="true">↗</span>
+    <figure class="about-portrait">
+      <img src="{{ '/img/Kannmu-Avatar.jpg' | prepend: site.baseurl }}"
+           alt="范林涵 Linhan Fan 的照片" width="520" height="650">
+      <figcaption>
+        <span data-zh>涵无 · 拍照的那天在山里</span>
+        <span data-en>Kannmu · somewhere above the treeline</span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="shell">
+    <div class="about-links">
+      {%- for link in P.links -%}
+      <a href="{{ link.url }}" {% unless link.url contains 'mailto' %}target="_blank" rel="noopener"{% endunless %}>
+        {{ link.label }}
       </a>
       {%- endfor -%}
     </div>
-
   </div>
 </section>
 
-<!-- =====================================================================
-     03 · NEWS
-     ================================================================== -->
-<section class="sp-station" id="sp-about-news" data-sp-station="about-news"
-         data-sp-floor="03" data-sp-zh="动态" data-sp-en="News" aria-label="News">
-  <div class="sp-layer" data-sp-lay="split">
+<!-- ======================================================================
+     Body
+     ====================================================================== -->
+<div class="band band--paper">
+  <div class="shell about-body">
 
-    <article class="sp-panel ab-sec-head">
-      <p class="sp-kicker">
+    <!-- Sticky index -->
+    <nav class="about-index" aria-label="页面章节">
+      {%- for s in P.sections -%}
+      <a href="#{{ s.id }}" data-target="{{ s.id }}">
         <i aria-hidden="true"></i>
-        <span><span data-zh>动态</span><span data-en>News</span></span>
-        <span>03 / 08</span>
-      </p>
-      <h2 class="ab-h2">
-        <span data-zh>论文与会议动态</span><span data-en>Papers &amp; activity</span>
-      </h2>
-      <p class="sp-lede sp-lede--cjk">
-        <span data-zh>按日期倒序排列的发表与会议记录，条目与论文列表一一对应。</span>
-        <span data-en>Publication and conference records in reverse chronological order, each matching an entry in the publication list.</span>
-      </p>
-      <div class="sp-rule ab-sec-head__rule"></div>
-      <p class="sp-meta ab-sec-head__meta">
-        <span><b>{{ P.news.size }}</b> <span data-zh>条动态</span><span data-en>entries</span></span>
-        <span>{{ P.news.first.date | date: "%Y.%m" }} — {{ P.news.last.date | date: "%Y.%m" }}</span>
-      </p>
+        <span data-zh>{{ s.zh }}</span><span data-en>{{ s.en }}</span>
+      </a>
+      {%- endfor -%}
+    </nav>
 
-      {%- assign venues = pubs | map: "venue" | uniq -%}
-      <div class="ab-venues">
-        <p class="sp-label ab-kicker">
-          <span data-zh>刊载期刊与会议</span><span data-en>Venues</span>
-          <span>{{ venues.size }}</span>
-        </p>
-        <div class="ab-venues__list">
-          {%- for v in venues -%}
-          {%- assign vcount = pubs | where: "venue", v | size -%}
-          {%- assign vpub = pubs | where: "venue", v | first -%}
-          <a class="ab-venue" href="https://doi.org/{{ vpub.doi }}" target="_blank" rel="noopener">
-            <span class="ab-venue__name">{{ v }}</span>
-            <span class="ab-venue__n">{{ vcount }}</span>
-          </a>
+    <div class="about-main">
+
+      <!-- 01 · Overview ------------------------------------------------- -->
+      <section id="overview">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>01</b> <span data-zh>概述</span><span data-en>Overview</span></p>
+          <h2 class="sec-title">
+            <span data-zh>人机交互研究概览</span>
+            <span data-en>Research overview</span>
+          </h2>
+        </div>
+
+        <div class="statement" data-reveal>
+          {%- for para in P.statement -%}
+          <p data-zh>{{ para.zh }}</p>
+          <p data-en>{{ para.en }}</p>
           {%- endfor -%}
         </div>
-      </div>
-    </article>
+      </section>
 
-    <article class="sp-panel ab-news" aria-label="News list 动态列表">
-      {%- for n in P.news -%}
-      <div class="ab-news__item">
-        <time datetime="{{ n.date }}">{{ n.date | date: "%Y.%m.%d" }}</time>
-        <h3 data-zh>{{ n.zh }}</h3>
-        <h3 data-en>{{ n.en }}</h3>
-      </div>
-      {%- endfor -%}
-    </article>
-
-  </div>
-</section>
-
-<!-- =====================================================================
-     04 · PUBLICATIONS
-     ================================================================== -->
-<section class="sp-station" id="sp-about-publications" data-sp-station="about-publications"
-         data-sp-floor="04" data-sp-zh="论文" data-sp-en="Publications" aria-label="Publications">
-  <div class="sp-layer" data-sp-lay="stack">
-
-    <article class="sp-panel ab-pubhead">
-      <p class="sp-kicker">
-        <i aria-hidden="true"></i>
-        <span><span data-zh>论文</span><span data-en>Publications</span></span>
-        <span>04 / 08</span>
-      </p>
-      <h2 class="ab-h2">
-        <span data-zh>全部论文</span><span data-en>All publications</span>
-      </h2>
-      <p class="sp-lede sp-lede--cjk">
-        <span data-zh>按发表时间倒序，含合作论文；第一与共同第一作者已标注。DOI 与引用数取自 Crossref 记录。</span>
-        <span data-en>Newest first, including co-authored work; first and co-first authorship are marked. DOIs and citation counts follow the Crossref records.</span>
-      </p>
-      <div class="ab-filters" role="group" aria-label="筛选论文 Filter publications">
-        <button class="sp-chip ab-filter" type="button" data-pub-filter="all" aria-pressed="true">
-          <span data-zh>全部</span><span data-en>All</span>
-        </button>
-        <button class="sp-chip ab-filter" type="button" data-pub-filter="first" aria-pressed="false">
-          <span data-zh>第一作者</span><span data-en>First author</span>
-        </button>
-        <button class="sp-chip ab-filter" type="button" data-pub-filter="journal" aria-pressed="false">
-          <span data-zh>期刊</span><span data-en>Journal</span>
-        </button>
-        <button class="sp-chip ab-filter" type="button" data-pub-filter="conference" aria-pressed="false">
-          <span data-zh>会议</span><span data-en>Conference</span>
-        </button>
-        <button class="sp-chip ab-filter" type="button" data-pub-filter="gaze" aria-pressed="false">Gaze</button>
-        <button class="sp-chip ab-filter" type="button" data-pub-filter="bci" aria-pressed="false">BCI</button>
-      </div>
-      <p class="sp-meta ab-pubcount">
-        <span><b data-pub-count>{{ pubs.size }}</b> <span data-zh>条 / 共 {{ pubs.size }}</span><span data-en>entries of {{ pubs.size }}</span></span>
-        <span data-zh>筛选可叠加</span><span data-en>chips combine</span>
-      </p>
-    </article>
-
-    <article class="sp-panel ab-pubcol" aria-label="Publication list 论文列表">
-      {%- for p in pubs_sorted -%}
-      <article class="sp-pub ab-pub" id="{{ p.id }}" data-pub-row
-        data-year="{{ p.year }}"
-        data-type="{{ p.type }}"
-        data-role="{{ p.author_role }}"
-        data-topics="{{ p.topics | join: '|' }}"
-        data-bib-key="{{ p.id }}"
-        data-bib-type="{% if p.type == 'conference' %}inproceedings{% else %}article{% endif %}"
-        data-bib-title="{{ p.title | escape }}"
-        data-bib-authors="{{ p.authors | replace: ' ; ', ' and ' | escape }}"
-        data-bib-venue="{{ p.venue | escape }}"
-        data-bib-venuekey="{% if p.type == 'conference' %}booktitle{% else %}journal{% endif %}"
-        data-bib-year="{{ p.year }}"
-        data-bib-volume="{{ p.volume }}"
-        data-bib-issue="{{ p.issue }}"
-        data-bib-pages="{{ p.pages }}"
-        data-bib-publisher="{{ p.publisher | escape }}"
-        data-bib-doi="{{ p.doi }}">
-        <span class="sp-pub__yr">{{ p.year }}</span>
-        <div class="ab-pub__body">
-          <h3><a href="https://doi.org/{{ p.doi }}" target="_blank" rel="noopener">{{ p.title }}</a></h3>
-          <p class="ab-pub__venue">
-            <span class="ab-pub__j">{{ p.venue }}</span>
-            {%- if p.volume %}<span class="ab-sep" aria-hidden="true">·</span><span>Vol. {{ p.volume }}{% if p.issue %}({{ p.issue }}){% endif %}</span>{% endif %}
-            {%- if p.pages %}<span class="ab-sep" aria-hidden="true">·</span><span>pp. {{ p.pages }}</span>{% endif %}
-            <span class="ab-sep" aria-hidden="true">·</span><span>{{ p.publisher }}</span>
-            {%- if p.citation_count > 0 %}<span class="ab-sep" aria-hidden="true">·</span><span class="ab-pub__cite">{{ p.citation_count }} <span data-zh>次引用</span><span data-en>cited</span></span>{% endif %}
+      <!-- 02 · Research -------------------------------------------------- -->
+      <section id="research">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>02</b> <span data-zh>研究主题</span><span data-en>Research topics</span></p>
+          <h2 class="sec-title">
+            <span data-zh>研究主题</span>
+            <span data-en>Research topics</span>
+          </h2>
+          <p class="sec-lede">
+            <span data-zh>以下按主题归纳，列出每个主题下由本人担任第一或共同第一作者的论文。</span>
+            <span data-en>Grouped by topic. Only papers on which the author is first or co-first author are listed under each topic.</span>
           </p>
-          <div class="ab-pub__meta">
-            {%- case p.author_role -%}
-            {%- when 'first' -%}
-            <span class="ab-badge ab-badge--key"><span data-zh>第一作者</span><span data-en>First author</span></span>
-            {%- when 'cofirst' -%}
-            <span class="ab-badge ab-badge--key"><span data-zh>共同第一作者</span><span data-en>Co-first author</span></span>
-            {%- endcase -%}
-            {%- if p.type == 'conference' -%}
-            <span class="ab-badge">Conference</span>
-            {%- endif -%}
-            {%- for t in p.topics limit: 2 -%}
-            <span class="ab-badge">{{ t }}</span>
+        </div>
+
+        <div class="area-list">
+          {%- for area in P.research -%}
+          <article class="area" data-reveal>
+            <div class="area__no">{{ area.index }}</div>
+            <div>
+              <h3>
+                <span data-zh>{{ area.title.zh }}</span>
+                <span data-en>{{ area.title.en }}</span>
+                <span class="area__tag" aria-hidden="true">
+                  {%- if forloop.index == 1 -%}Gaze{%- elsif forloop.index == 2 -%}BCI{%- elsif forloop.index == 3 -%}Haptics{%- else -%}Methods{%- endif -%}
+                </span>
+              </h3>
+              <p data-zh>{{ area.summary.zh }}</p>
+              <p data-en>{{ area.summary.en }}</p>
+              <div class="area__foot">
+                {%- for kw in area.keywords -%}
+                <span class="chip">{{ kw }}</span>
+                {%- endfor -%}
+                {%- if area.related.size > 0 -%}
+                {%- for rel in area.related -%}
+                {%- assign rel_pub = site.data.publications | where: "id", rel | first -%}
+                <a class="chip chip--teal" href="#{{ rel }}" title="{{ rel_pub.title }}">↳ {{ rel_pub.venue_short | default: rel }}</a>
+                {%- endfor -%}
+                {%- endif -%}
+              </div>
+            </div>
+          </article>
+          {%- endfor -%}
+        </div>
+
+        <!-- Tools and open-source projects -->
+        <div style="margin-top:48px" data-reveal>
+          <p class="sec-label" style="margin-bottom:18px">
+            <b>▸</b> <span data-zh>研究工具与开源项目</span><span data-en>Tools &amp; open-source projects</span>
+          </p>
+          <div class="built-grid">
+            {%- for item in P.built -%}
+            <a class="built" href="{% if item.href contains 'http' %}{{ item.href }}{% else %}{{ item.href | prepend: site.baseurl }}{% endif %}"{% if item.href contains 'http' %} target="_blank" rel="noopener"{% endif %}>
+              <h4>
+                <span data-zh>{{ item.title.zh }}</span><span data-en>{{ item.title.en }}</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </h4>
+              <p data-zh>{{ item.detail.zh }}</p>
+              <p data-en>{{ item.detail.en }}</p>
+            </a>
             {%- endfor -%}
-            <span class="ab-pub__acts">
-              <a href="https://doi.org/{{ p.doi }}" target="_blank" rel="noopener">DOI ↗</a>
-              <a href="https://scholar.google.com/scholar?q={{ p.title | url_encode }}" target="_blank" rel="noopener">Scholar</a>
-              <button type="button" data-pub-abstract aria-expanded="false" aria-controls="abs-{{ p.id }}">
-                <span data-zh>摘要</span><span data-en>Abstract</span>
-              </button>
-              <button type="button" data-bib-copy>
-                <span data-zh>BibTeX</span><span data-en>BibTeX</span>
-              </button>
-            </span>
-          </div>
-          {%- if p.note %}
-          <p class="ab-pub__note">{{ p.note }}</p>
-          {%- endif %}
-          <div class="ab-abstract" id="abs-{{ p.id }}" hidden>
-            <p class="sp-body-copy" data-zh>{{ p.abstract_zh }}</p>
-            <p class="sp-body-copy sp-copy-en" data-en>{{ p.abstract_en }}</p>
           </div>
         </div>
-      </article>
-      {%- endfor -%}
-    </article>
+      </section>
 
-  </div>
-</section>
+      <!-- 03 · News ----------------------------------------------------- -->
+      <section id="news">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>03</b> <span data-zh>最近动态</span><span data-en>News</span></p>
+          <h2 class="sec-title">
+            <span data-zh>论文与会议动态</span>
+            <span data-en>Papers &amp; conference activity</span>
+          </h2>
+        </div>
 
-<!-- =====================================================================
-     05 · CV
-     ================================================================== -->
-<section class="sp-station" id="sp-about-cv" data-sp-station="about-cv"
-         data-sp-floor="05" data-sp-zh="履历" data-sp-en="CV" aria-label="Curriculum vitae">
-  <div class="sp-layer" data-sp-lay="grid2">
-
-    <article class="sp-panel ab-sec-head">
-      <p class="sp-kicker">
-        <i aria-hidden="true"></i>
-        <span><span data-zh>履历</span><span data-en>Curriculum vitae</span></span>
-        <span>05 / 08</span>
-      </p>
-      <h2 class="ab-h2">
-        <span data-zh>教育与经历</span><span data-en>Education &amp; experience</span>
-      </h2>
-      <p class="sp-lede sp-lede--cjk">
-        <span data-zh>时间线按阶段排列，当前阶段以 2px 渐变刻度标记。</span>
-        <span data-en>Stages ordered along a timeline; the current stage carries a 2px spectral mark.</span>
-      </p>
-      <div class="sp-rule ab-sec-head__rule"></div>
-      <p class="sp-meta ab-sec-head__meta">
-        <span><b>{{ P.education.size }}</b> <span data-zh>段学历</span><span data-en>degrees</span></span>
-        <span><b>{{ P.experience.size }}</b> <span data-zh>段经历</span><span data-en>positions</span></span>
-        <span>{{ P.location.zh }}</span>
-      </p>
-    </article>
-
-    <article class="sp-panel ab-tlbox" aria-label="Education 教育">
-      <p class="sp-label ab-kicker"><span data-zh>教育</span><span data-en>Education</span><span>{{ P.education.size }}</span></p>
-      <div class="ab-tl">
-        {%- for e in P.education -%}
-        <div class="ab-tl__item{% if e.current %} is-current{% endif %}">
-          <span class="ab-tl__mark" aria-hidden="true"></span>
-          <div class="ab-tl__head">
-            <h3><span data-zh>{{ e.institution.zh }}</span><span data-en>{{ e.institution.en }}</span></h3>
-            <span class="ab-tl__period"><span data-zh>{{ e.period }}</span><span data-en>{{ e.period_en }}</span></span>
+        <div class="news-list" data-reveal>
+          {%- for n in P.news -%}
+          <div class="news-item">
+            <time datetime="{{ n.date }}">{{ n.date | date: "%Y · %m.%d" }}</time>
+            <p data-zh>{{ n.zh }}</p>
+            <p data-en>{{ n.en }}</p>
           </div>
-          <p class="ab-tl__detail"><span data-zh>{{ e.detail.zh }}</span><span data-en>{{ e.detail.en }}</span></p>
-          <p class="ab-tl__loc"><span data-zh>{{ e.location.zh }}</span><span data-en>{{ e.location.en }}</span></p>
-        </div>
-        {%- endfor -%}
-      </div>
-    </article>
-
-    <article class="sp-panel ab-tlbox" aria-label="Experience 经历">
-      <p class="sp-label ab-kicker"><span data-zh>经历</span><span data-en>Experience</span><span>{{ P.experience.size }}</span></p>
-      <div class="ab-tl">
-        {%- for x in P.experience -%}
-        <div class="ab-tl__item{% if x.current %} is-current{% endif %}">
-          <span class="ab-tl__mark" aria-hidden="true"></span>
-          <div class="ab-tl__head">
-            <h3><span data-zh>{{ x.role.zh }}</span><span data-en>{{ x.role.en }}</span></h3>
-            <span class="ab-tl__period"><span data-zh>{{ x.period }}</span><span data-en>{{ x.period_en }}</span></span>
-          </div>
-          <p class="ab-tl__org"><span data-zh>{{ x.organization.zh }}</span><span data-en>{{ x.organization.en }}</span></p>
-          <p class="ab-tl__detail"><span data-zh>{{ x.detail.zh }}</span><span data-en>{{ x.detail.en }}</span></p>
-        </div>
-        {%- endfor -%}
-      </div>
-    </article>
-
-  </div>
-</section>
-
-<!-- =====================================================================
-     06 · AWARDS + CONTINUE
-     ================================================================== -->
-<section class="sp-station" id="sp-about-awards" data-sp-station="about-awards"
-         data-sp-floor="06" data-sp-zh="荣誉" data-sp-en="Honors" aria-label="Awards and honors">
-  <div class="sp-layer" data-sp-lay="split">
-
-    <article class="sp-panel ab-sec-head">
-      <p class="sp-kicker">
-        <i aria-hidden="true"></i>
-        <span><span data-zh>荣誉</span><span data-en>Honors</span></span>
-        <span>06 / 08</span>
-      </p>
-      <h2 class="ab-h2">
-        <span data-zh>获奖与荣誉</span><span data-en>Awards &amp; honors</span>
-      </h2>
-      <p class="sp-lede sp-lede--cjk">
-        <span data-zh>研究生阶段与本科阶段的获奖记录，按年份排列。</span>
-        <span data-en>Award records from graduate and undergraduate study, listed by year.</span>
-      </p>
-      <div class="sp-rule ab-sec-head__rule"></div>
-
-      <div class="ab-awards">
-        {%- for a in P.awards -%}
-        <div class="ab-award">
-          <span class="ab-award__year">{{ a.year }}</span>
-          <p class="ab-award__title">
-            <span data-zh>{{ a.title.zh }}</span><span data-en>{{ a.title.en }}</span>
-          </p>
-        </div>
-        {%- endfor -%}
-        <p class="ab-award__foot">
-          <span data-zh>获奖记录同时列于履历时间线。</span>
-          <span data-en>Award records also appear on the CV timeline.</span>
-        </p>
-      </div>
-    </article>
-
-    <article class="sp-panel ab-cta" aria-label="Continue 继续浏览">
-      <p class="sp-label ab-kicker"><span data-zh>继续</span><span data-en>Continue</span></p>
-      <div class="ab-cta__rows">
-        <a class="ab-cta__row" href="#sp-about-publications">
-          <span><span data-zh>论文</span><span data-en>Publications</span></span>
-          <span aria-hidden="true">↗</span>
-        </a>
-        <a class="ab-cta__row" href="#sp-about-skills">
-          <span><span data-zh>工具箱</span><span data-en>Toolkit</span></span>
-          <span aria-hidden="true">↗</span>
-        </a>
-        <a class="ab-cta__row" href="#sp-about-contact">
-          <span><span data-zh>联系</span><span data-en>Contact</span></span>
-          <span aria-hidden="true">↗</span>
-        </a>
-        <a class="ab-cta__row" href="{{ '/archive/' | relative_url }}">
-          <span><span data-zh>全部文章</span><span data-en>All notes</span></span>
-          <span aria-hidden="true">↗</span>
-        </a>
-      </div>
-    </article>
-
-  </div>
-</section>
-
-<!-- =====================================================================
-     07 · TOOLKIT
-     ================================================================== -->
-<section class="sp-station" id="sp-about-skills" data-sp-station="about-skills"
-         data-sp-floor="07" data-sp-zh="技能" data-sp-en="Toolkit" aria-label="Toolkit">
-  <div class="sp-layer" data-sp-lay="grid3">
-
-    <article class="sp-panel ab-sec-head">
-      <p class="sp-kicker">
-        <i aria-hidden="true"></i>
-        <span><span data-zh>技能</span><span data-en>Toolkit</span></span>
-        <span>07 / 08</span>
-      </p>
-      <h2 class="ab-h2">
-        <span data-zh>工具箱</span><span data-en>Toolkit</span>
-      </h2>
-      <p class="sp-lede sp-lede--cjk">
-        <span data-zh>研究、软件与硬件三组能力，列出日常使用的具体工具。</span>
-        <span data-en>Three groups of capability — research, software and hardware — with the tools used day to day.</span>
-      </p>
-      <div class="sp-rule ab-sec-head__rule"></div>
-    </article>
-
-    {%- for group in P.skills -%}
-    <article class="sp-panel ab-skill" aria-label="{{ group.label.en }}">
-      <p class="ab-skill__no">0{{ forloop.index }} / {{ group.label.en }}</p>
-      <h3 class="sp-h3">
-        <span data-zh>{{ group.label.zh }}</span><span data-en>{{ group.label.en }}</span>
-      </h3>
-      <div class="ab-skill__tags">
-        {%- for item in group.items -%}<span>{{ item }}</span>{%- endfor -%}
-      </div>
-    </article>
-    {%- endfor -%}
-
-    <article class="sp-panel ab-beyond" aria-label="Elsewhere 其他">
-      <p class="sp-label ab-kicker"><span data-zh>其他</span><span data-en>Elsewhere</span></p>
-      <p class="sp-body-copy">
-        <span data-zh>{{ P.beyond.zh }}</span>
-        <span data-en>{{ P.beyond.en }}</span>
-      </p>
-      <p class="sp-meta ab-beyond__meta">
-        <a class="sp-link" href="{{ '/tools/' | relative_url }}"><span data-zh>在线工具</span><span data-en>Online tools</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-        <a class="sp-link" href="{{ '/Portfolio/' | relative_url }}"><span data-zh>作品集</span><span data-en>Portfolio</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-        <a class="sp-link" href="{{ '/lab/' | relative_url }}"><span data-zh>声场实验</span><span data-en>Acoustic field</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-      </p>
-    </article>
-
-  </div>
-</section>
-
-<!-- =====================================================================
-     08 · CONTACT
-     ================================================================== -->
-<section class="sp-station" id="sp-about-contact" data-sp-station="about-contact"
-         data-sp-floor="08" data-sp-zh="联系" data-sp-en="Contact" aria-label="Contact">
-  <div class="sp-layer" data-sp-lay="split">
-
-    <article class="sp-panel ab-contact">
-      <p class="sp-kicker">
-        <i aria-hidden="true"></i>
-        <span><span data-zh>联系</span><span data-en>Contact</span></span>
-        <span>08 / 08</span>
-      </p>
-      <h2 class="ab-h2">
-        <span data-zh>合作与交流</span><span data-en>Collaboration</span>
-      </h2>
-      <p class="sp-lede sp-lede--cjk">
-        <span data-zh>{{ P.contact.zh }}</span>
-        <span data-en>{{ P.contact.en }}</span>
-      </p>
-      <div class="sp-rule ab-sec-head__rule"></div>
-      <p class="sp-meta ab-sec-head__meta">
-        <span>{{ P.location.zh }} · {{ P.location.en }}</span>
-        <span>ORCID {{ P.identifiers.orcid }}</span>
-      </p>
-
-      <div class="ab-profiles" aria-label="Profiles 主页">
-        <p class="sp-label ab-kicker"><span data-zh>主页与账号</span><span data-en>Profiles</span></p>
-        <div class="ab-profiles__grid">
-          {%- for link in P.links -%}
-          {%- if link.key == 'email' -%}{%- continue -%}{%- endif -%}
-          <a class="ab-profiles__item" href="{{ link.url }}"{% unless link.url contains 'mailto' %} target="_blank" rel="noopener"{% endunless %}>
-            <span>{{ link.label }}</span>
-            <span aria-hidden="true">↗</span>
-          </a>
           {%- endfor -%}
         </div>
+      </section>
+
+      <!-- 04 · Publications --------------------------------------------- -->
+      <section id="publications">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>04</b> <span data-zh>论文</span><span data-en>Publications</span></p>
+          <h2 class="sec-title" id="sp-about-publications">
+            <span data-zh>论文与引用</span>
+            <span data-en>Publications &amp; citations</span>
+          </h2>
+          <p class="sec-lede">
+            <span data-zh>共 <strong data-metric="works">{{ pubs.size }}</strong> 篇论文，Crossref 引用共 <strong data-metric="citations">{{ total_cites }}</strong> 次。</span>
+            <span data-en><strong data-metric="works">{{ pubs.size }}</strong> publications with <strong data-metric="citations">{{ total_cites }}</strong> Crossref citations in total.</span>
+          </p>
+          <p class="pub-sync-note">
+            <span data-zh>GitHub Actions 定期从 ORCID 和 Crossref 同步。</span>
+            <span data-en>Updated from ORCID and Crossref by GitHub Actions.</span>
+            {% if metrics.updated %}
+            <span data-zh>最近构建所用数据：</span><span data-en>Build snapshot:</span>
+            <time id="publication-snapshot" datetime="{{ metrics.updated | date_to_xmlschema }}">{{ metrics.updated | date: '%Y-%m-%d' }}</time>
+            {%- endif %}
+            <span data-sync-state role="status"></span>
+          </p>
+        </div>
+
+        <div class="pub-toolbar" data-reveal>
+          <div class="pub-filters" role="group" aria-label="筛选论文">
+            <button class="pub-filter" data-filter="all" aria-pressed="true">
+              <span data-zh>全部</span><span data-en>All</span>
+            </button>
+            <button class="pub-filter" data-filter="first" aria-pressed="false">
+              <span data-zh>第一 / 共同第一作者</span><span data-en>First / co-first author</span>
+            </button>
+            <button class="pub-filter" data-filter="journal" aria-pressed="false">Journal</button>
+            <button class="pub-filter" data-filter="conference" aria-pressed="false">Conference</button>
+            <button class="pub-filter" data-filter="gaze" aria-pressed="false">Gaze</button>
+            <button class="pub-filter" data-filter="bci" aria-pressed="false">BCI</button>
+          </div>
+          <p class="micro" style="margin:0">
+            <span data-pub-count>{{ pubs.size }}</span>
+            <span data-zh> 篇</span><span data-en> entries</span>
+          </p>
+        </div>
+
+        <div class="pub-list" data-publist data-orcid="{{ P.identifiers.orcid | escape }}">
+          <template>
+            <article class="pub" data-role="coauthor">
+              <div class="pub__year"></div>
+              <div class="pub__main">
+                <h3 class="pub__title"><a target="_blank" rel="noopener"></a></h3>
+                <div class="pub__venue">
+                  <span class="j"></span>
+                  <span data-citation hidden>
+                    <span data-zh>Crossref 引用 <b data-citation-value></b> 次</span>
+                    <span data-en><b data-citation-value></b> Crossref citations</span>
+                  </span>
+                </div>
+                <p class="pub__badges">
+                  <span class="chip chip--teal"><span data-zh>ORCID 新收录</span><span data-en>New on ORCID</span></span>
+                </p>
+              </div>
+            </article>
+          </template>
+          {%- for p in pubs_sorted -%}
+          <article class="pub" id="{{ p.id }}"
+            data-year="{{ p.year }}"
+            data-type="{{ p.type }}"
+            data-role="{{ p.author_role }}"
+            data-topics="{{ p.topics | join: '|' | escape }}"
+            data-doi="{{ p.doi | escape }}"
+            data-reveal>
+
+            <div class="pub__year">{{ p.year }}</div>
+
+            <div class="pub__main">
+              <h3 class="pub__title">
+                <a href="https://doi.org/{{ p.doi | escape }}" target="_blank" rel="noopener">{{ p.title | escape }}</a>
+              </h3>
+
+              <p class="pub__authors">
+                {%- assign author_list = p.authors | split: " ; " -%}
+                {%- for a in author_list -%}
+                  {%- if a == p.self_name -%}<b>{{ a | escape }}</b>{%- else -%}{{ a | escape }}{%- endif -%}
+                  {%- unless forloop.last %}, {% endunless -%}
+                {%- endfor -%}
+              </p>
+
+              <div class="pub__venue">
+                <span class="j">{{ p.venue | escape }}</span>
+                {%- if p.volume %}<span class="sep" aria-hidden="true"></span><span>Vol. {{ p.volume | escape }}{% if p.issue %}({{ p.issue | escape }}){% endif %}</span>{% endif -%}
+                {%- if p.pages %}<span class="sep" aria-hidden="true"></span><span>pp. {{ p.pages | escape }}</span>{% endif -%}
+                <span class="sep" aria-hidden="true"></span><span>{{ p.publisher | escape }}</span>
+                {%- if p.citation_count != nil %}
+                <span class="sep" aria-hidden="true"></span>
+                <span data-citation="{{ p.citation_count }}">
+                  <span data-zh>Crossref 引用 <b data-citation-value>{{ p.citation_count }}</b> 次</span>
+                  <span data-en><b data-citation-value>{{ p.citation_count }}</b> Crossref citations</span>
+                </span>
+                {%- endif %}
+              </div>
+
+              <div class="pub__badges">
+                {%- case p.author_role -%}
+                {%- when 'first' -%}
+                <span class="chip chip--accent"><span data-zh>第一作者</span><span data-en>First author</span></span>
+                {%- when 'cofirst' -%}
+                <span class="chip chip--accent"><span data-zh>共同第一作者</span><span data-en>Co-first author</span></span>
+                {%- endcase -%}
+                {%- if p.type == 'conference' -%}
+                <span class="chip chip--teal">Conference</span>
+                {%- endif -%}
+                {%- for t in p.topics limit:3 -%}
+                <span class="chip">{{ t }}</span>
+                {%- endfor -%}
+              </div>
+
+              <div class="pub__actions">
+                <a class="pub-act" href="https://doi.org/{{ p.doi | escape }}" target="_blank" rel="noopener">DOI ↗</a>
+                <a class="pub-act" href="https://scholar.google.com/scholar?q={{ p.title | url_encode }}" target="_blank" rel="noopener">Scholar</a>
+                {%- if p.abstract_zh != "" or p.abstract_en != "" %}
+                <button class="pub-act" type="button" data-toggle-pub="abstract" aria-expanded="false">
+                  <span data-zh>摘要</span><span data-en>Abstract</span>
+                </button>
+                {%- endif %}
+                <button class="pub-act pub-act--ghost" type="button"
+                  data-copy="#cite-{{ p.id }}"
+                  data-copied="BibTeX 已复制到剪贴板">BibTeX</button>
+              </div>
+
+              {%- if p.note %}
+              <p class="micro" style="margin-top:12px;letter-spacing:.04em;text-transform:none">{{ p.note }}</p>
+              {%- endif %}
+
+              <div class="pub__abstract">
+                <div>
+                  <p data-zh>{{ p.abstract_zh }}</p>
+                  <p data-en>{{ p.abstract_en }}</p>
+                </div>
+              </div>
+
+              {%- capture entry_type -%}{% if p.type == 'conference' %}inproceedings{% else %}article{% endif %}{%- endcapture -%}
+              {%- capture venue_key -%}{% if p.type == 'conference' %}booktitle{% else %}journal{% endif %}{%- endcapture -%}
+              {%- capture bibtex -%}
+@{{ entry_type }}{ {{ p.id }},
+  title     = { {{ p.title }} },
+  author    = { {{ p.authors | replace: ' ; ', ' and ' }} },
+  {{ venue_key }} = { {{ p.venue }} },
+  year      = { {{ p.year }} },
+  {%- if p.volume %}
+  volume    = { {{ p.volume }} },
+  {%- endif %}
+  {%- if p.issue %}
+  number    = { {{ p.issue }} },
+  {%- endif %}
+  {%- if p.pages %}
+  pages     = { {{ p.pages }} },
+  {%- endif %}
+  publisher = { {{ p.publisher }} },
+  doi       = { {{ p.doi }} }
+}
+              {%- endcapture -%}
+              <pre class="pub__cite" id="cite-{{ p.id }}" hidden>{{ bibtex | escape }}</pre>
+            </div>
+          </article>
+          {%- endfor -%}
+        </div>
+
+        <p class="arc-empty" data-pub-empty hidden>
+          <span data-zh>这个筛选下暂无条目。</span><span data-en>No entries under this filter.</span>
+        </p>
+
+      </section>
+
+      <!-- 05 · CV ------------------------------------------------------- -->
+      <section id="cv">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>05</b> <span data-zh>履历</span><span data-en>Curriculum Vitae</span></p>
+          <h2 class="sec-title">
+            <span data-zh>教育与经历</span>
+            <span data-en>Education &amp; experience</span>
+          </h2>
+        </div>
+
+        <div class="cv-grid">
+          <div class="cv-col" data-reveal>
+            <h3><span data-zh>教育</span><span data-en>Education</span></h3>
+            <div class="tl">
+              {%- for e in P.education -%}
+              <div class="tl__item {% if e.current %}is-current{% endif %}">
+                <div class="tl__top">
+                  <h4><span data-zh>{{ e.institution.zh }}</span><span data-en>{{ e.institution.en }}</span></h4>
+                  <span class="tl__period">
+                    <span data-zh>{{ e.period }}</span><span data-en>{{ e.period_en }}</span>
+                  </span>
+                </div>
+                <p class="tl__detail">
+                  <span data-zh>{{ e.detail.zh }}</span><span data-en>{{ e.detail.en }}</span>
+                </p>
+                <span class="tl__loc">
+                  <span data-zh>{{ e.location.zh }}</span><span data-en>{{ e.location.en }}</span>
+                </span>
+              </div>
+              {%- endfor -%}
+            </div>
+          </div>
+
+          <div class="cv-col" data-reveal data-reveal-delay="90">
+            <h3><span data-zh>经历</span><span data-en>Experience</span></h3>
+            <div class="tl">
+              {%- for x in P.experience -%}
+              <div class="tl__item {% if x.current %}is-current{% endif %}">
+                <div class="tl__top">
+                  <h4>
+                    <span data-zh>{{ x.role.zh }}</span><span data-en>{{ x.role.en }}</span>
+                  </h4>
+                  <span class="tl__period">
+                    <span data-zh>{{ x.period }}</span><span data-en>{{ x.period_en }}</span>
+                  </span>
+                </div>
+                <p class="tl__detail">
+                  <strong><span data-zh>{{ x.organization.zh }}</span><span data-en>{{ x.organization.en }}</span></strong><br>
+                  <span data-zh>{{ x.detail.zh }}</span><span data-en>{{ x.detail.en }}</span>
+                </p>
+              </div>
+              {%- endfor -%}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 · Honors --------------------------------------------------- -->
+      <section id="awards">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>06</b> <span data-zh>荣誉</span><span data-en>Honors</span></p>
+          <h2 class="sec-title">
+            <span data-zh>获奖与荣誉</span>
+            <span data-en>Awards &amp; honors</span>
+          </h2>
+        </div>
+
+        <div class="award-list" data-reveal>
+          {%- for a in P.awards -%}
+          <div class="award">
+            <span class="award__year">{{ a.year }}</span>
+            <p class="award__title">
+              <span data-zh>{{ a.title.zh }}</span><span data-en>{{ a.title.en }}</span>
+            </p>
+          </div>
+          {%- endfor -%}
+        </div>
+      </section>
+
+      <!-- 07 · Toolkit -------------------------------------------------- -->
+      <section id="skills">
+        <div class="sec-head" data-reveal>
+          <p class="sec-label"><b>07</b> <span data-zh>工具</span><span data-en>Toolkit</span></p>
+          <h2 class="sec-title">
+            <span data-zh>工具箱</span>
+            <span data-en>What I build with</span>
+          </h2>
+        </div>
+
+        <div class="skill-groups" data-reveal>
+          {%- for group in P.skills -%}
+          <div class="skill-group">
+            <h4>
+              <span data-zh>{{ group.label.zh }}</span><span data-en>{{ group.label.en }}</span>
+            </h4>
+            <div class="skill-tags">
+              {%- for item in group.items -%}
+              <span>{{ item }}</span>
+              {%- endfor -%}
+            </div>
+          </div>
+          {%- endfor -%}
+        </div>
+
+        <div class="aside-note" data-reveal>
+          <p class="sec-label" style="margin-bottom:14px">
+            <b>▸</b> <span data-zh>其他</span><span data-en>Elsewhere</span>
+          </p>
+          <p data-zh>{{ P.beyond.zh }}</p>
+          <p data-en>{{ P.beyond.en }}</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================================
+     Contact
+     ====================================================================== -->
+<section id="contact" class="band band--ink band--tight">
+  <div class="shell">
+    <div class="contact-block" data-reveal>
+      <div>
+        <p class="sec-label" style="color:rgba(255,255,255,.42);margin-bottom:16px">
+          <b>08</b> <span data-zh>联系</span><span data-en>Contact</span>
+        </p>
+        <h3>
+          <span data-zh>一起做点能用的东西</span>
+          <span data-en>Let's build something that runs</span>
+        </h3>
+        <p data-zh>{{ P.contact.zh }}</p>
+        <p data-en>{{ P.contact.en }}</p>
       </div>
-    </article>
-
-    <article class="sp-panel ab-mails" aria-label="Email addresses 邮箱">
-      <p class="sp-label ab-kicker"><span data-zh>电子邮件</span><span data-en>Email</span><span>3</span></p>
-      <a class="ab-mail" href="mailto:{{ P.contact.email }}">
-        <span>
-          <span class="ab-mail__addr">{{ P.contact.email }}</span>
-          <span class="ab-mail__tag"><span data-zh>主要邮箱</span><span data-en>Primary</span></span>
-        </span>
-        <span aria-hidden="true">↗</span>
-      </a>
-      <a class="ab-mail" href="mailto:{{ P.contact.email_academic }}">
-        <span>
-          <span class="ab-mail__addr">{{ P.contact.email_academic }}</span>
-          <span class="ab-mail__tag"><span data-zh>学术邮箱</span><span data-en>Academic</span></span>
-        </span>
-        <span aria-hidden="true">↗</span>
-      </a>
-      <a class="ab-mail" href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">
-        <span>
-          <span class="ab-mail__addr">ORCID {{ P.identifiers.orcid }}</span>
-          <span class="ab-mail__tag"><span data-zh>学术身份</span><span data-en>Identifier</span></span>
-        </span>
-        <span aria-hidden="true">↗</span>
-      </a>
-    </article>
-
+      <div class="contact-mails">
+        <a href="mailto:{{ P.contact.email }}">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 7.2L4.4 7h15.2L12 12.2z"/></svg>
+          {{ P.contact.email }}
+        </a>
+        <a href="mailto:{{ P.contact.email_academic }}">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+          {{ P.contact.email_academic }}
+        </a>
+        <a href="https://orcid.org/{{ P.identifiers.orcid }}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM9.6 6.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM8.4 10h1.5v8H8.4v-8zm3 0h3.2c2.6 0 4.4 1.7 4.4 4 0 2.4-1.8 4-4.4 4h-3.2v-8zm1.5 1.4v5.2h1.6c1.9 0 3-.8 3-2.6 0-1.7-1.1-2.6-3-2.6h-1.6z"/></svg>
+          ORCID {{ P.identifiers.orcid }}
+        </a>
+      </div>
+    </div>
   </div>
 </section>
-
-<script type="module">
-  /* ABOUT — publication filter · abstract accordion · BibTeX copy.
-     Progressive enhancement only: every control works without this file. */
-  (function () {
-    const root = document.body;
-    if (!root || root.dataset.spPage !== 'about') return;
-
-    const rows = Array.from(document.querySelectorAll('[data-pub-row]'));
-    const chips = Array.from(document.querySelectorAll('[data-pub-filter]'));
-    const countEls = Array.from(document.querySelectorAll('[data-pub-count]'));
-    if (!rows.length) return;
-
-    const matches = (row, key) => {
-      if (key === 'all') return true;
-      if (key === 'first') return row.dataset.role === 'first' || row.dataset.role === 'cofirst';
-      if (key === 'journal') return row.dataset.type === 'journal';
-      if (key === 'conference') return row.dataset.type === 'conference';
-      return (row.dataset.topics || '').split('|').includes(key);
-    };
-    const active = () => chips
-      .filter((c) => c.getAttribute('aria-pressed') === 'true' && c.dataset.pubFilter !== 'all')
-      .map((c) => c.dataset.pubFilter);
-
-    function applyFilter() {
-      const keys = active();
-      let shown = 0;
-      rows.forEach((row) => {
-        const ok = keys.every((k) => matches(row, k));
-        if (ok) shown += 1;
-        const wasVisible = !row.hasAttribute('hidden');
-        if (ok && !wasVisible) {
-          row.hidden = false;
-          row.classList.remove('is-fading');
-          requestAnimationFrame(() => row.classList.remove('is-fading'));
-        } else if (!ok && wasVisible) {
-          row.classList.add('is-fading');
-          window.setTimeout(() => {
-            if (row.classList.contains('is-fading')) row.hidden = true;
-          }, 240);
-        }
-      });
-      countEls.forEach((el) => { el.textContent = String(shown); });
-    }
-
-    chips.forEach((chip) => {
-      chip.addEventListener('click', () => {
-        const key = chip.dataset.pubFilter;
-        const on = chip.getAttribute('aria-pressed') === 'true';
-        if (key === 'all') {
-          chips.forEach((c) => c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'));
-        } else {
-          chip.setAttribute('aria-pressed', on ? 'false' : 'true');
-          const all = chips.find((c) => c.dataset.pubFilter === 'all');
-          if (all) all.setAttribute('aria-pressed', active().length ? 'false' : 'true');
-        }
-        applyFilter();
-      });
-    });
-
-    /* --- abstract accordion (one open at a time) ---------------------- */
-    const absButtons = Array.from(document.querySelectorAll('[data-pub-abstract]'));
-    function closeAll(except) {
-      absButtons.forEach((btn) => {
-        if (btn === except) return;
-        const panel = document.getElementById(btn.getAttribute('aria-controls'));
-        btn.setAttribute('aria-expanded', 'false');
-        if (panel) panel.hidden = true;
-        const row = btn.closest('[data-pub-row]');
-        if (row) row.classList.remove('is-open');
-        const col = btn.closest('.sp-panel');
-        if (col && !col.querySelector('[data-pub-row].is-open')) col.classList.remove('is-expanded');
-      });
-    }
-    absButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const panel = document.getElementById(btn.getAttribute('aria-controls'));
-        if (!panel) return;
-        const open = btn.getAttribute('aria-expanded') === 'true';
-        closeAll(btn);
-        btn.setAttribute('aria-expanded', open ? 'false' : 'true');
-        panel.hidden = open;
-        const row = btn.closest('[data-pub-row]');
-        if (row) row.classList.toggle('is-open', !open);
-        const col = btn.closest('.sp-panel');
-        if (col) col.classList.toggle('is-expanded', !open);
-      });
-    });
-
-    /* --- BibTeX ------------------------------------------------------- */
-    const bibFor = (row) => {
-      const d = row.dataset;
-      const lines = ['@' + (d.bibType || 'article') + '{' + d.bibKey + ','];
-      const push = (k, v) => { if (v) lines.push('  ' + (k + ' ').padEnd(11, ' ') + '= { ' + v + ' },'); };
-      push('title', d.bibTitle);
-      push('author', d.bibAuthors);
-      push(d.bibVenuekey || 'journal', d.bibVenue);
-      push('year', d.bibYear);
-      push('volume', d.bibVolume);
-      push('number', d.bibIssue);
-      push('pages', d.bibPages);
-      push('publisher', d.bibPublisher);
-      push('doi', d.bibDoi);
-      lines.push('}');
-      return lines.join('\n');
-    };
-
-    const copyText = async (text) => {
-      if (navigator.clipboard && window.isSecureContext) {
-        try { await navigator.clipboard.writeText(text); return true; } catch (e) { /* fall through */ }
-      }
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.setAttribute('readonly', '');
-      ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
-      document.body.appendChild(ta);
-      ta.select();
-      let ok = false;
-      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
-      document.body.removeChild(ta);
-      return ok;
-    };
-
-    document.querySelectorAll('[data-bib-copy]').forEach((btn) => {
-      const zh = btn.querySelector('[data-zh]');
-      const en = btn.querySelector('[data-en]');
-      const originalZh = zh ? zh.textContent : 'BibTeX';
-      const originalEn = en ? en.textContent : 'BibTeX';
-      let timer = 0;
-      btn.addEventListener('click', async () => {
-        const row = btn.closest('[data-pub-row]');
-        if (!row) return;
-        const ok = await copyText(bibFor(row));
-        btn.classList.toggle('is-copied', ok);
-        btn.classList.toggle('is-failed', !ok);
-        if (zh) zh.textContent = ok ? '已复制' : '复制失败';
-        if (en) en.textContent = ok ? 'copied' : 'copy failed';
-        window.clearTimeout(timer);
-        timer = window.setTimeout(() => {
-          btn.classList.remove('is-copied', 'is-failed');
-          if (zh) zh.textContent = originalZh;
-          if (en) en.textContent = originalEn;
-        }, 1400);
-      });
-    });
-
-    applyFilter();
-  })();
-</script>

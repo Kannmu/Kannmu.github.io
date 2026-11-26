@@ -249,21 +249,34 @@
     targets.forEach(function (t) { spy.observe(t); });
   }
 
+  /* Preserve direct links from the previous About layout. */
+  if (body.classList.contains('page-about')) {
+    function followAboutLink() {
+      var hash = window.location.hash;
+      if (!hash.startsWith('#sp-about-') || document.getElementById(hash.slice(1))) return;
+      var section = document.getElementById(hash.slice('#sp-about-'.length));
+      if (section) section.scrollIntoView();
+    }
+    on(window, 'load', followAboutLink);
+    on(window, 'hashchange', followAboutLink);
+  }
+
   /* --------------------------------------------------- publications filters */
   var pubList = $('[data-publist]');
   if (pubList) {
-    var pubs = $$('.pub', pubList);
     var filters = $$('.pub-filter');
     var empty = $('[data-pub-empty]');
+    var activeFilter = 'all';
 
     function applyFilter(key) {
       var shown = 0;
-      pubs.forEach(function (p) {
+      $$('.pub', pubList).forEach(function (p) {
+        var role = p.getAttribute('data-role');
         var match = key === 'all' ||
           p.getAttribute('data-year') === key ||
           p.getAttribute('data-type') === key ||
-          p.getAttribute('data-role') === key ||
-          (p.getAttribute('data-topics') || '').indexOf(key) !== -1;
+          role === key || (key === 'first' && role === 'cofirst') ||
+          (p.getAttribute('data-topics') || '').split('|').includes(key);
         p.classList.toggle('is-hidden', !match);
         if (match) shown++;
       });
@@ -276,9 +289,11 @@
       on(btn, 'click', function () {
         filters.forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
         btn.setAttribute('aria-pressed', 'true');
-        applyFilter(btn.getAttribute('data-filter'));
+        activeFilter = btn.getAttribute('data-filter');
+        applyFilter(activeFilter);
       });
     });
+    on(pubList, 'publicationsupdated', function () { applyFilter(activeFilter); });
   }
 
   /* ------------------------------------------- abstract / bibtex expansion */
@@ -290,7 +305,8 @@
       if (target === 'abstract') {
         var open = pub.classList.toggle('is-open');
         btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        btn.querySelector('span').textContent = open ? '收起' : '摘要';
+        btn.querySelector('[data-zh]').textContent = open ? '收起' : '摘要';
+        btn.querySelector('[data-en]').textContent = open ? 'Collapse' : 'Abstract';
       }
     });
   });

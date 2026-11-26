@@ -22,12 +22,14 @@
         {% if page.url contains 'about' %}aria-current="page"{% endif %}>About</a>
       <a href="{{ '/archive/' | prepend: site.baseurl }}"
         {% if page.url contains 'archive' %}aria-current="page"{% endif %}>Archive</a>
-      <a href="{{ '/tools/' | prepend: site.baseurl }}"
-        {% if page.url contains 'tools' %}aria-current="page"{% endif %}>Tools</a>
+      <a href="{{ '/tools/' | relative_url }}"
+        {% if page.url == '/tools/' %}aria-current="page"{% endif %}>Tools</a>
+      <a href="{{ '/lab/' | relative_url }}"
+        {% if page.url == '/lab/' %}aria-current="page"{% endif %}>Lab</a>
     </nav>
 
     <div class="site-tools">
-      <button class="tool-btn" id="themeToggle" type="button"
+      <button class="tool-btn theme-toggle" id="themeToggle" type="button"
         aria-label="切换日间 / 夜间模式" title="切换日间 / 夜间模式">
         <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="4"></circle>

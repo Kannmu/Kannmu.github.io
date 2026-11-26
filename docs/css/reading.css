@@ -1,0 +1,40 @@
+/* Quiet, static treatment for the existing secondary page layouts. */
+:root {
+  --ink-0: #101a15;
+  --ink-1: #16231b;
+  --ink-2: #1c2a21;
+  --paper: #edf3ee;
+  --paper-2: #d5e1d8;
+  --mute: #a8bcb0;
+  --dim: #92a89b;
+  --g-cyan: #a7ccb1;
+  --g-violet: var(--g-cyan);
+  --g-lime: var(--g-cyan);
+  --g-rose: var(--g-cyan);
+  --grad: linear-gradient(var(--g-cyan), var(--g-cyan));
+  --grad-2: var(--grad);
+}
+
+body.sp-body .sp-topbar {
+  background: var(--ink-0);
+}
+
+html.sp-flat body:is([data-sp-page='archive'], [data-sp-page='tools'], [data-sp-page='portfolio']) .sp-track,
+.rd-lane {
+  background: var(--ink-1);
+}
+
+.sp-track [id] {
+  scroll-margin-top: 82px;
+}
+
+@media (max-width: 900px) {
+  .sp-track [id] {
+    scroll-margin-top: 106px;
+  }
+}
+
+.sp-lang button[aria-pressed='true'] {
+  background: var(--paper);
+  color: var(--ink-0);
+}

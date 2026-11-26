@@ -4,20 +4,8 @@ title: "空中超声声场 · UMH 84 通道相控阵模拟器"
 description: "以 84 通道 40 kHz 超声相控阵为对象的交互式声场模拟器：相位延迟、焦距与偏转、栅瓣、焦斑 FWHM、Rayleigh 极限与声压量级，并说明线性模型的边界。"
 extra_css: /assets/space/css/lab.css
 sp_page: lab
-sp_mode: ambient
 multilingual: true
 ---
-
-<script>
-  /* THE SITE'S DOCUMENT MODE
-     _layouts/space.html forwards `sp_mode` only once the runtime agent wires it
-     up.  app.js reads <body data-sp-mode> before it boots, so setting it here
-     early in the body makes the ambient/flat document path deterministic.  If
-     the layout already emitted the attribute this is a no-op. */
-  if (document.body && !document.body.dataset.spMode) {
-    document.body.dataset.spMode = 'ambient';
-  }
-</script>
 
 <section class="sp-station sp-lab" id="sp-lab" data-sp-station="lab" aria-labelledby="lab-title">
   <div class="sp-layer">

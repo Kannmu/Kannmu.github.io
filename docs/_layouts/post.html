@@ -1,21 +1,9 @@
 ---
 layout: space
-sp-page: post
-sp_mode: ambient
 ---
 {%- comment -%}
-  READING LAYOUT — a document, not a deck.
-  No .sp-station / .sp-layer / .sp-panel: the runtime keeps the WebGL
-  architecture as a fixed backdrop (document / ambient mode) and the page is
-  plain flow. The whole column lives inside one `.rd-lane` scrim so body text
-  always sits on a controlled value instead of the live render.
-  Typography: assets/space/css/prose.css.
-
-  NOTE ON THE TWO KEYS ABOVE — Jekyll does not merge a layout's front matter into
-  `page`, so `sp-page: post` / `sp_mode: ambient` here document the intent but
-  are not read by `_layouts/space.html`. The runtime resolves them structurally
-  instead: `page.layout == 'post'` (or `page.collection == 'posts'`) → post +
-  ambient. Keep them in sync with `_includes/space-head.html`'s resolver.
+  The article stays in normal document flow. Typography and the reading
+  progress and contents widgets use assets/space/css/prose.css.
 {%- endcomment -%}
 {%- assign rd_chars = content | strip_html | strip_newlines | size -%}
 {%- assign rd_min = rd_chars | divided_by: 620 | plus: 1 -%}

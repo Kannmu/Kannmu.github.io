@@ -112,6 +112,24 @@ test('returns a parseable JSON error when the upstream connection fails', async 
   assert.match(payload.error.message, /上游连接/)
 })
 
+test('forwards Bearer authentication for GET /v1/models', async () => {
+  const modelsUrl = 'https://kannmu.top/gpt-image-api/v1/models'
+  const payload = { data: [{ id: 'gpt-image-test' }] }
+  globalThis.fetch = async (url, init) => {
+    assert.equal(url, 'https://bya.re/v1/models')
+    assert.equal(init.method, 'GET')
+    assert.equal(init.headers.get('Authorization'), 'Bearer fake-genimage-key')
+    return Response.json(payload)
+  }
+
+  const response = await worker.fetch(new Request(modelsUrl, {
+    headers: { Authorization: 'Bearer fake-genimage-key' }
+  }))
+
+  assert.equal(response.status, 200)
+  assert.deepEqual(await response.json(), payload)
+})
+
 test('preserves the upstream status for short GET requests', async () => {
   globalThis.fetch = async () => new Response(JSON.stringify({
     error: { message: 'invalid API key' }

@@ -34,7 +34,7 @@
 
 ## 🛠️ 项目结构
 
-本项目基于 [Jekyll](https://jekyllrb.com/) 构建，视觉层为自建的 WebGL 空间引擎（three.js 已本地化）。
+本项目基于 [Jekyll](https://jekyllrb.com/) 构建。博客首页与学术主页使用绿色 2D 版式，文章和其他目录页按文档流排版。
 
 - `docs/`: 博客的核心源代码。
   - `_posts/`: 所有的博客文章 (Markdown)。
@@ -85,8 +85,8 @@
 
 页面结构：
 
-- `/` — 首页（研究概览 + 第一/共同一作论文 + 最近文章）
-- `/about/` — 学术主页（研究主题、完整论文列表、筛选、摘要展开、BibTeX 复制、履历）
+- `/` — 首页（博客简介、最近文章、工具入口）
+- `/about/` — 学术主页（研究主题、论文与引用数、筛选、摘要展开、BibTeX 复制、履历）
 - `/Portfolio/` — 作品集（原型、专利、摄影）
 - `/archive/` — 全部文章，按年份分组 + 主题标签筛选
 - `/tools/` — 工具索引（各工具本身仍是独立子应用）
@@ -97,7 +97,7 @@
 
 ---
 
-## 🌐 3D 空间架构（v4）
+## 🌐 3D 空间架构（v4 历史设计）
 
 整站是一次连续的三维穿行：访问者像无人机一样在一座冷色调玻璃幕墙建筑内部移动，
 内容以真实 DOM 文字悬浮在建筑结构之前，因此**文字始终保持像素级清晰、可选中、可被搜索引擎抓取**，
@@ -211,7 +211,7 @@ cd docs && JEKYLL_NO_BUNDLER_REQUIRE=true jekyll build   # Windows 上绕开 wdm
    并把 ORCID 上尚未收录的成果追加到列表顶部。结果缓存 12 小时。
 2. **定时任务回写仓库**（`.github/workflows/sync-academic.yml`）
    每天定时运行 `docs/_scripts/sync_academic.py`，更新 `_data/publications.yml`
-   的引用数与新增条目，并生成 `_data/metrics.yml`，随后自动提交。
+   的引用数与新增条目，并生成 `_data/metrics.yml`。数据自动提交后，工作流向 GitHub Pages 请求重新构建。
    也可以在 Actions 页面手动触发，或在本地运行：
 
    ```bash

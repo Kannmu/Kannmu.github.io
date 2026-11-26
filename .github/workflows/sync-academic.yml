@@ -2,8 +2,7 @@ name: Sync academic record
 
 # Keeps the publication list on kannmu.top in sync with ORCID and Crossref.
 # The job refreshes citation counts, appends newly indexed papers, and commits
-# the regenerated data files back to the repository — GitHub Pages then rebuilds
-# the site automatically, so no manual editing is ever required.
+# the regenerated data files and requests a GitHub Pages rebuild.
 
 on:
   schedule:
@@ -17,6 +16,7 @@ on:
 
 permissions:
   contents: write
+  pages: write
 
 concurrency:
   group: sync-academic
@@ -45,7 +45,7 @@ jobs:
 
       - name: Commit changes if the record moved
         run: |
-          if [[ -z "$(git status --porcelain -- docs/_data)" ]]; then
+          if git diff --quiet -- docs/_data/publications.yml docs/_data/metrics.yml; then
             echo "No changes — the record is already up to date."
             exit 0
           fi
@@ -58,3 +58,12 @@ jobs:
           Automated refresh of citation counts and newly indexed works.
           Source: ORCID 0009-0000-8611-7194 / Crossref REST API."
           git push
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+        id: record
+
+      # Pushes using GITHUB_TOKEN do not trigger branch-based Pages builds.
+      - name: Request a Pages rebuild
+        if: steps.record.outputs.changed == 'true' && github.ref_name == github.event.repository.default_branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"

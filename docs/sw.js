@@ -11,7 +11,7 @@
 // A namespace can prevent potential name conflicts and mis-deletion.
 const CACHE_NAMESPACE = 'main-'
 
-const CACHE = CACHE_NAMESPACE + 'precache-then-runtime';
+const CACHE = CACHE_NAMESPACE + 'precache-then-runtime-v2';
 const PRECACHE_LIST = [
   "./",
   "./offline.html",
@@ -23,9 +23,12 @@ const PRECACHE_LIST = [
   "./img/Backgrounds/Bg_2.jpg",
   "./css/hux-blog.min.css",
   "./css/bootstrap.min.css",
-  "//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css",
-  // "//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/fontawesome-webfont.woff2?v=4.6.3",
-  // "//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"
+  "./css/site.css",
+  "./css/reading.css",
+  "./assets/space/css/space.css",
+  "./assets/space/css/hud.css",
+  "./assets/space/css/pages.css",
+  "./assets/space/css/prose.css"
 ]
 const HOSTNAME_WHITELIST = [
   self.location.hostname,
@@ -36,7 +39,7 @@ const HOSTNAME_WHITELIST = [
   "fonts.googleapis.com",
   "fonts.gstatic.com"
 ]
-const DEPRECATED_CACHES = ['precache-v1', 'runtime', 'main-precache-v1', 'main-runtime']
+const DEPRECATED_CACHES = ['precache-v1', 'runtime', 'main-precache-v1', 'main-runtime', 'main-precache-then-runtime']
 
 
 // The Util Function to hack URLs of intercepted requests
@@ -102,11 +105,10 @@ const getRedirectUrl = (req) => {
  */
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(cache => {
-      return cache.addAll(PRECACHE_LIST)
-        .then(self.skipWaiting())
-        .catch(err => console.log(err))
-    })
+    caches.open(CACHE)
+      .then(cache => cache.addAll(PRECACHE_LIST))
+      .catch(err => console.log(err))
+      .then(() => self.skipWaiting())
   )
 });
 
@@ -118,14 +120,13 @@ self.addEventListener('install', e => {
  *  waitUntil(): activating ====> activated
  */
 self.addEventListener('activate', event => {
-  // delete old deprecated caches.
-  caches.keys().then(cacheNames => Promise.all(
-    cacheNames
-      .filter(cacheName => DEPRECATED_CACHES.includes(cacheName))
-      .map(cacheName => caches.delete(cacheName))
-  ))
-  console.log('service worker activated.')
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys()
+      .then(cacheNames => Promise.all(
+        cacheNames.filter(name => DEPRECATED_CACHES.includes(name)).map(name => caches.delete(name))
+      ))
+      .then(() => self.clients.claim())
+  );
 });
 
 
@@ -168,8 +169,21 @@ self.addEventListener('fetch', event => {
   //console.log(` - type: ${event.request.type}; destination: ${event.request.destination}`)
   //console.log(` - mode: ${event.request.mode}, accept: ${event.request.headers.get('accept')}`)
 
-  // Skip some of cross-origin requests, like those for Google Analytics.
-  if (HOSTNAME_WHITELIST.indexOf(new URL(event.request.url).hostname) > -1) {
+  const request = event.request;
+  const url = new URL(request.url);
+
+  // Let authenticated and API requests reach the network intact. The static
+  // cache rewrites the URL and must never strip API headers or cache responses.
+  if (request.method !== 'GET' ||
+      request.headers.has('Authorization') ||
+      request.headers.has('x-api-key') ||
+      request.headers.has('x-goog-api-key') ||
+      url.pathname.startsWith('/gpt-image-api/')) {
+    return;
+  }
+
+  // Skip some cross-origin requests, like those for Google Analytics.
+  if (HOSTNAME_WHITELIST.includes(url.hostname)) {
 
     // Redirect in SW manually fixed github pages 404s on repo?blah
     if (shouldRedirect(event.request)) {

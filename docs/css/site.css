@@ -4374,5 +4374,72 @@ html[data-lang="zh"] .intro-copy p:first-of-type::first-letter {
   color: var(--ink);
 }
 
+/* Green palette for the 2D home and About pages. */
+:root {
+  --paper: #f4f6f1;
+  --paper-2: #fff;
+  --paper-3: #e8eee6;
+  --ink: #17231b;
+  --ink-2: #3d4f42;
+  --ink-3: #596b5d;
+  --ink-band: #142119;
+  --ink-band-2: #1c2c22;
+  --accent: #2e6043;
+  --accent-2: #34684a;
+  --accent-soft: rgba(46, 96, 67, .1);
+  --teal: #2e6043;
+  --teal-soft: var(--accent-soft);
+}
 
+html[data-theme='dark'] {
+  --paper: #101a15;
+  --paper-2: #17241b;
+  --paper-3: #202e24;
+  --ink: #edf3ee;
+  --ink-2: #c4d3c8;
+  --ink-3: #a0b5a6;
+  --accent: #a6cbb1;
+  --accent-2: #a6cbb1;
+  --accent-soft: rgba(166, 203, 177, .12);
+  --teal: #a6cbb1;
+}
 
+body::after,
+.about-hero::before,
+.about-hero::after {
+  content: none;
+}
+
+.page-home .hero {
+  min-height: clamp(430px, 67svh, 720px);
+}
+
+.page-home .hero__media {
+  animation: none;
+  transform: none;
+  filter: none;
+}
+
+.page-home .hero__veil {
+  background: linear-gradient(to top, rgba(8, 21, 13, .88), rgba(8, 21, 13, .18) 78%);
+}
+
+.page-home .hero__inner {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+#recent-posts,
+.about-main :is(h2[id], .pub[id]) {
+  scroll-margin-top: calc(var(--nav-h) + 24px);
+}
+
+.pub-sync-note {
+  margin-top: .65rem;
+  color: var(--ink-3);
+  font-size: .875rem;
+}
+
+.pub-sync-note [data-sync-state]:not(:empty) {
+  display: block;
+  margin-top: .25rem;
+}
